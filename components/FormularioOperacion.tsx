@@ -1,7 +1,6 @@
 // components/FormularioOperacion.tsx
 import { useState, useEffect, useCallback } from "react";
-import { db, auth } from "../lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const FormularioOperacion = () => {
@@ -12,7 +11,7 @@ const FormularioOperacion = () => {
     valor_reserva: "",
     numero_sobre_reserva: "",
     numero_sobre_refuerzo: "",
-    porcentaje_honorarios_asesor: "",
+    porcentaje_honorarios_asesor: "", // Este campo se llenará automáticamente con la comisión del usuario
     honorarios_brutos: "",
     referido: "",
     compartido: "",
@@ -20,7 +19,9 @@ const FormularioOperacion = () => {
 
   const [userUID, setUserUID] = useState<string | null>(null);
   const [valorNeto, setValorNeto] = useState(0);
+  const [comision, setComision] = useState(0);
 
+  // Obtener el UID del usuario autenticado
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUserUID(user ? user.uid : null);
@@ -28,27 +29,60 @@ const FormularioOperacion = () => {
     return () => unsubscribe();
   }, []);
 
+  // Obtener la comisión del usuario desde la API
+  useEffect(() => {
+    const fetchUserCommission = async () => {
+      if (!userUID) return;
+
+      try {
+        const response = await fetch(
+          `/api/getUserCommission?user_uid=${userUID}`
+        );
+        if (!response.ok) {
+          throw new Error("Error al obtener la comisión del usuario");
+        }
+
+        const data = await response.json();
+        setComision(data.comision);
+        setFormData((prevData) => ({
+          ...prevData,
+          porcentaje_honorarios_asesor: data.comision.toString(), // Asignar la comisión al campo correspondiente
+        }));
+      } catch (error) {
+        console.error("Error al obtener la comisión:", error);
+      }
+    };
+
+    fetchUserCommission();
+  }, [userUID]);
+
   useEffect(() => {
     const valor_reserva = parseFloat(formData.valor_reserva) || 0;
     const honorarios_brutos = parseFloat(formData.honorarios_brutos) || 0;
-    const porcentaje_honorarios_asesor = parseFloat(formData.porcentaje_honorarios_asesor) || 0;
+    const porcentaje_honorarios_asesor =
+      parseFloat(formData.porcentaje_honorarios_asesor) || 0;
 
     const calculatedValorNeto =
       valor_reserva *
       (honorarios_brutos / 100) *
       (porcentaje_honorarios_asesor / 100);
     setValorNeto(calculatedValorNeto);
-  }, [formData.valor_reserva, formData.honorarios_brutos, formData.porcentaje_honorarios_asesor]);
+  }, [
+    formData.valor_reserva,
+    formData.honorarios_brutos,
+    formData.porcentaje_honorarios_asesor,
+  ]);
 
-  const handleChange = useCallback((
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
-  }, []);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    },
+    []
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,13 +99,28 @@ const FormularioOperacion = () => {
         valor_reserva: parseFloat(formData.valor_reserva) || 0,
         numero_sobre_reserva: parseFloat(formData.numero_sobre_reserva) || 0,
         numero_sobre_refuerzo: parseFloat(formData.numero_sobre_refuerzo) || 0,
-        porcentaje_honorarios_asesor: parseFloat(formData.porcentaje_honorarios_asesor) || 0,
+        porcentaje_honorarios_asesor:
+          parseFloat(formData.porcentaje_honorarios_asesor) || 0,
         honorarios_brutos: parseFloat(formData.honorarios_brutos) || 0,
         valor_neto: valorNeto,
         user_uid: userUID,
       };
 
-      await addDoc(collection(db, "reservas"), dataToSubmit);
+      // Enviar los datos al endpoint de la API
+      const response = await fetch("/api/operations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSubmit),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "Error al guardar la operación");
+        return;
+      }
+
       alert("Operación guardada exitosamente");
       setFormData({
         fecha_operacion: "",
@@ -151,15 +200,10 @@ const FormularioOperacion = () => {
         onChange={handleChange}
         className="w-full p-2 mb-4 border border-gray-300 rounded"
       />
-      <input
-        type="number"
-        name="porcentaje_honorarios_asesor"
-        placeholder="Porcentaje de Honorarios (e.g., 10%)"
-        value={formData.porcentaje_honorarios_asesor}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      />
+      {/* Mostrar la comisión del usuario como un párrafo */}
+      <p className="w-full p-2 mb-4 border-gray-300 rounded">
+        Porcentaje de Honorarios (Comisión): {comision}%
+      </p>
       <input
         type="number"
         name="honorarios_brutos"

@@ -11,13 +11,13 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
         <div className="text-white text-xl font-bold">App de Asesor</div>
         <div className="flex space-x-4">
           <button
-            onClick={() => setActiveView('reservationInput')}
+            onClick={() => setActiveView("reservationInput")}
             className="text-white hover:bg-blue-600 px-3 py-2 rounded"
           >
-            Formulario de Reservas
+            Formulario de Operaciones
           </button>
           <button
-            onClick={() => setActiveView('dashboard')}
+            onClick={() => setActiveView("dashboard")}
             className="text-white hover:bg-blue-600 px-3 py-2 rounded"
           >
             Dashboard

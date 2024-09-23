@@ -1,22 +1,41 @@
-// pages/login.tsx
-import { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../lib/firebase';
-import { useRouter } from 'next/router';
+// Modificación en pages/login.tsx
+import { useState } from "react";
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence,
+} from "firebase/auth";
+import { auth } from "../lib/firebase";
+import { useRouter } from "next/router";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     try {
+      // Configurar la persistencia de sesión a browserSessionPersistence
+      await setPersistence(auth, browserSessionPersistence);
+
+      // Autenticación del usuario
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard'); // Redirigir al dashboard una vez autenticado
+
+      // Inicia el temporizador para cerrar sesión después de 60 minutos
+      setTimeout(() => {
+        auth.signOut();
+        alert("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
+        router.push("/login"); // Redirigir al login después de cerrar sesión
+      }, 60 * 60 * 1000); // 60 minutos en milisegundos
+
+      // Redirigir al dashboard una vez autenticado
+      router.push("/dashboard");
     } catch {
-      setError('Error al iniciar sesión, verifica tus credenciales.');
+      setError("Error al iniciar sesión, verifica tus credenciales.");
     }
   };
 
