@@ -36,7 +36,7 @@ const Bubbles = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4  bg-white p-4 rounded-lg">
       {bubbleData.slice(0, 3).map((data, index) => (
         <div
           key={index}

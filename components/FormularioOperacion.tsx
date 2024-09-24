@@ -150,128 +150,136 @@ const FormularioOperacion = () => {
   return (
     <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md">
       <h2 className="text-2xl mb-4">Agregar Operación</h2>
-      <input
-        type="date"
-        name="fecha_operacion"
-        value={formData.fecha_operacion}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      />
-      <input
-        type="text"
-        name="direccion_reserva"
-        placeholder="Dirección de la Reserva"
-        value={formData.direccion_reserva}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      />
-      <select
-        name="tipo_operacion"
-        value={formData.tipo_operacion}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      >
-        <option value="">Selecciona el Tipo de Operación</option>
-        <option value="Venta">Venta</option>
-        <option value="Alquiler temporal">Alquiler temporal</option>
-        <option value="Alquiler">Alquiler</option>
-        <option value="Alquiler Comercial">Alquiler Comercial</option>
-        <option value="Fondo de Comercio">Fondo de Comercio</option>
-        <option value="Desarrollo">Desarrollo</option>
-      </select>
-      <div className="flex items-center mb-4">
-        <label className="mr-4">
+      <div className="flex flex-wrap -mx-2">
+        <div className="w-full md:w-1/2 px-2">
+          {/* Left column */}
           <input
-            type="checkbox"
-            name="punta_compradora"
-            checked={formData.punta_compradora}
+            type="date"
+            name="fecha_operacion"
+            value={formData.fecha_operacion}
             onChange={handleChange}
-            className="mr-2"
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+            required
           />
-          Punta Compradora / Inquilina
-        </label>
-        <label>
           <input
-            type="checkbox"
-            name="punta_vendedora"
-            checked={formData.punta_vendedora}
+            type="text"
+            name="direccion_reserva"
+            placeholder="Dirección de la Reserva"
+            value={formData.direccion_reserva}
             onChange={handleChange}
-            className="mr-2"
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+            required
           />
-          Punta Vendedora / Propietario
-        </label>
+          <select
+            name="tipo_operacion"
+            value={formData.tipo_operacion}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+            required
+          >
+            <option value="">Selecciona el Tipo de Operación</option>
+            <option value="Venta">Venta</option>
+            <option value="Alquiler temporal">Alquiler temporal</option>
+            <option value="Alquiler">Alquiler</option>
+            <option value="Alquiler Comercial">Alquiler Comercial</option>
+            <option value="Fondo de Comercio">Fondo de Comercio</option>
+            <option value="Desarrollo">Desarrollo</option>
+          </select>
+          <div className="flex items-center mb-4">
+            <label className="mr-4">
+              <input
+                type="checkbox"
+                name="punta_compradora"
+                checked={formData.punta_compradora}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              Punta Compradora / Inquilina
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="punta_vendedora"
+                checked={formData.punta_vendedora}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              Punta Vendedora / Propietario
+            </label>
+          </div>
+          <input
+            type="number"
+            name="valor_reserva"
+            placeholder="Valor de Reserva"
+            value={formData.valor_reserva}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+            required
+          />
+          <input
+            type="number"
+            name="numero_sobre_reserva"
+            placeholder="Sobre de Reserva (opcional)"
+            value={formData.numero_sobre_reserva}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+          />
+        </div>
+        <div className="w-full md:w-1/2 px-2">
+          {/* Right column */}
+          <input
+            type="number"
+            name="numero_sobre_refuerzo"
+            placeholder="Sobre de Refuerzo (opcional)"
+            value={formData.numero_sobre_refuerzo}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+          />
+          <input
+            type="number"
+            name="honorarios_brutos"
+            placeholder="Honorarios Brutos"
+            value={formData.honorarios_brutos}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+            required
+          />
+          <input
+            type="text"
+            name="referido"
+            placeholder="Referido"
+            value={formData.referido}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+            required
+          />
+          <input
+            type="text"
+            name="compartido"
+            placeholder="Compartido"
+            value={formData.compartido}
+            onChange={handleChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+            required
+          />
+          <div className="w-full p-2 mb-4">
+            <p className="p-2 mb-2 border-gray-300 rounded">
+              Porcentaje de Honorarios (Comisión): {comision}%
+            </p>
+            <p className="p-2 mb-2 border-gray-300 rounded">
+              Valor Neto: {valorNeto.toFixed(2)}
+            </p>
+          </div>
+        </div>
       </div>
-      <input
-        type="number"
-        name="valor_reserva"
-        placeholder="Valor de Reserva"
-        value={formData.valor_reserva}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      />
-      <input
-        type="number"
-        name="numero_sobre_reserva"
-        placeholder="Sobre de Reserva (opcional)"
-        value={formData.numero_sobre_reserva}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-      />
-      <input
-        type="number"
-        name="numero_sobre_refuerzo"
-        placeholder="Sobre de Refuerzo (opcional)"
-        value={formData.numero_sobre_refuerzo}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-      />
-      {/* Mostrar la comisión del usuario como un párrafo */}
-
-      <input
-        type="number"
-        name="honorarios_brutos"
-        placeholder="Honorarios Brutos"
-        value={formData.honorarios_brutos}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      />
-      <input
-        type="text"
-        name="referido"
-        placeholder="Referido"
-        value={formData.referido}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      />
-      <input
-        type="text"
-        name="compartido"
-        placeholder="Compartido"
-        value={formData.compartido}
-        onChange={handleChange}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
-        required
-      />
-      <div className="w-full p-2 mb-4 flex justify-items-start">
-        <p className="p-2 mb-4 border-gray-300 rounded">
-          Porcentaje de Honorarios (Comisión): {comision}%
-        </p>
-        <p className=" p-2 mb-4 border-gray-300 rounded">
-          Valor Neto: {valorNeto.toFixed(2)}
-        </p>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className=" bg-[#7ED994] text-white p-2 rounded hover:bg-[#7ED994]/80 transition-all duration-300 font-bold"
+        >
+          Guardar Operación
+        </button>
       </div>
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-      >
-        Guardar Operación
-      </button>
     </form>
   );
 };

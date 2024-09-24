@@ -9,6 +9,8 @@ import OperationsList from "@/components/OperationsList";
 import CuadroPrincipalChart from "@/components/CuadroPrincipalChart";
 import MonthlyBarChart from "@/components/MonthlyBarChart";
 import Bubbles from "@/components/Bubbles";
+import EventCalendar from "@/components/EventCalendar";
+import EventsList from "@/components/EventsList";
 
 const Dashboard = () => {
   const [userID, setUserID] = useState<string | null>(null);
@@ -29,8 +31,18 @@ const Dashboard = () => {
     <PrivateRoute>
       <PrivateLayout>
         <div className="p-2">
-          <h1 className="text-2xl font-bold mb-6">DashBoard</h1>
-          <Bubbles />
+          {/* <h1 className="text-2xl font-bold mb-6">DashBoard</h1> */}
+          <div className="flex gap-6 justify-between">
+            <div className="w-[40%]">
+              <Bubbles />
+            </div>
+            <div className="w-[20%]">
+              <EventCalendar />
+            </div>
+            <div className="w-[40%]">
+              <EventsList />
+            </div>
+          </div>
           <div className="flex flex-col justify-between gap-6">
             <div className="hidden md:block">
               <OperationsList userID={userID} />

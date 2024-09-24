@@ -81,7 +81,7 @@ const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
               cx="50%"
               cy="50%"
               labelLine={false}
-              outerRadius={80}
+              outerRadius={120}
               fill="#8884d8"
               dataKey="value"
             >
@@ -89,11 +89,21 @@ const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
+                  stroke="white"
+                  strokeWidth={3}
+                  strokeOpacity={0.7}
+                  strokeLinecap="round"
                 />
               ))}
             </Pie>
             <Tooltip />
-            <Legend wrapperStyle={{ paddingTop: "20px" }} />
+            <Legend
+              wrapperStyle={{
+                paddingTop: "20px",
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>

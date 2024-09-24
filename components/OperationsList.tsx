@@ -118,10 +118,8 @@ const OperationsList = ({ userID }: OperationsListProps) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">
-        Lista de Operaciones
-      </h2>
+    <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Lista de Operaciones</h2>
       {operaciones.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (
