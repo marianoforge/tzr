@@ -8,6 +8,8 @@ const FormularioOperacion = () => {
     fecha_operacion: "",
     direccion_reserva: "",
     tipo_operacion: "",
+    punta_compradora: false,
+    punta_vendedora: false,
     valor_reserva: "",
     numero_sobre_reserva: "",
     numero_sobre_refuerzo: "",
@@ -15,6 +17,7 @@ const FormularioOperacion = () => {
     honorarios_brutos: "",
     referido: "",
     compartido: "",
+    estado: "En Curso", // Initialize estado as "En Curso"
   });
 
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -29,7 +32,6 @@ const FormularioOperacion = () => {
     return () => unsubscribe();
   }, []);
 
-  // Obtener la comisión del usuario desde la API
   useEffect(() => {
     const fetchUserCommission = async () => {
       if (!userUID) return;
@@ -75,10 +77,11 @@ const FormularioOperacion = () => {
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = e.target;
+      const { name, value, type } = e.target;
       setFormData((prevData) => ({
         ...prevData,
-        [name]: value,
+        [name]:
+          type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
       }));
     },
     []
@@ -95,7 +98,7 @@ const FormularioOperacion = () => {
     try {
       const dataToSubmit = {
         ...formData,
-        fecha_operacion: new Date(formData.fecha_operacion),
+        fecha_operacion: new Date(formData.fecha_operacion).toISOString(),
         valor_reserva: parseFloat(formData.valor_reserva) || 0,
         numero_sobre_reserva: parseFloat(formData.numero_sobre_reserva) || 0,
         numero_sobre_refuerzo: parseFloat(formData.numero_sobre_refuerzo) || 0,
@@ -104,6 +107,7 @@ const FormularioOperacion = () => {
         honorarios_brutos: parseFloat(formData.honorarios_brutos) || 0,
         valor_neto: valorNeto,
         user_uid: userUID,
+        estado: formData.estado, // Ensure estado is included in the data to submit
       };
 
       // Enviar los datos al endpoint de la API
@@ -126,6 +130,8 @@ const FormularioOperacion = () => {
         fecha_operacion: "",
         direccion_reserva: "",
         tipo_operacion: "",
+        punta_compradora: false,
+        punta_vendedora: false,
         valor_reserva: "",
         numero_sobre_reserva: "",
         numero_sobre_refuerzo: "",
@@ -133,6 +139,7 @@ const FormularioOperacion = () => {
         honorarios_brutos: "",
         referido: "",
         compartido: "",
+        estado: "En Curso", // Reset estado to "En Curso"
       });
     } catch (error) {
       console.error("Error al guardar la operación:", error);
@@ -175,6 +182,28 @@ const FormularioOperacion = () => {
         <option value="Fondo de Comercio">Fondo de Comercio</option>
         <option value="Desarrollo">Desarrollo</option>
       </select>
+      <div className="flex items-center mb-4">
+        <label className="mr-4">
+          <input
+            type="checkbox"
+            name="punta_compradora"
+            checked={formData.punta_compradora}
+            onChange={handleChange}
+            className="mr-2"
+          />
+          Punta Compradora / Inquilina
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            name="punta_vendedora"
+            checked={formData.punta_vendedora}
+            onChange={handleChange}
+            className="mr-2"
+          />
+          Punta Vendedora / Propietario
+        </label>
+      </div>
       <input
         type="number"
         name="valor_reserva"
@@ -201,9 +230,7 @@ const FormularioOperacion = () => {
         className="w-full p-2 mb-4 border border-gray-300 rounded"
       />
       {/* Mostrar la comisión del usuario como un párrafo */}
-      <p className="w-full p-2 mb-4 border-gray-300 rounded">
-        Porcentaje de Honorarios (Comisión): {comision}%
-      </p>
+
       <input
         type="number"
         name="honorarios_brutos"
@@ -231,9 +258,14 @@ const FormularioOperacion = () => {
         className="w-full p-2 mb-4 border border-gray-300 rounded"
         required
       />
-      <p className="w-full p-2 mb-4 border-gray-300 rounded">
-        Valor Neto: {valorNeto.toFixed(2)}
-      </p>
+      <div className="w-full p-2 mb-4 flex justify-items-start">
+        <p className="p-2 mb-4 border-gray-300 rounded">
+          Porcentaje de Honorarios (Comisión): {comision}%
+        </p>
+        <p className=" p-2 mb-4 border-gray-300 rounded">
+          Valor Neto: {valorNeto.toFixed(2)}
+        </p>
+      </div>
       <button
         type="submit"
         className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"

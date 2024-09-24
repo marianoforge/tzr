@@ -1,76 +1,132 @@
 // components/CuadroPrincipal.tsx
 import { useEffect, useState } from "react";
+import { formatNumber } from "../utils/formatNumber";
 
 interface Operacion {
+  id: string; // assuming each operation has a unique ID
+  tipo_operacion: string; // assuming this field exists for the type of operation
+  punta_compradora: boolean;
+  punta_vendedora: boolean;
   valor_reserva: number;
   honorarios_brutos: number;
   valor_neto: number;
 }
 
-const CuadroPrincipal = () => {
-  const [operaciones, setOperaciones] = useState<Operacion[]>([]);
-  const [numeroOperaciones, setNumeroOperaciones] = useState(0);
-  const [puntas, setPuntas] = useState(0);
-  const [facturacionBruto, setFacturacionBruto] = useState(0);
-  const [facturacionNeta, setFacturacionNeta] = useState(0);
+interface CuadroPrincipalProps {
+  userID: string;
+}
 
-  // Fetch the operations data from your API
+const CuadroPrincipal = ({ userID }: CuadroPrincipalProps) => {
+  const [operaciones, setOperaciones] = useState<Operacion[]>([]);
+  const [totals, setTotals] = useState({
+    facturacion_bruta: 0,
+    facturacion_neta: 0,
+    punta_compradora: 0,
+    punta_vendedora: 0,
+  });
+
+  // Fetch the operations data from your API using the userID
   useEffect(() => {
     const fetchOperaciones = async () => {
+      if (!userID) return; // Ensure userID is available before making the request
+
       try {
-        const response = await fetch("/api/operaciones"); // Assumes you have an endpoint that returns the operations
+        const response = await fetch(
+          `/api/operationsPerUser?user_uid=${userID}`
+        );
         if (!response.ok) {
-          throw new Error("Error al obtener las operaciones");
+          throw new Error("Error fetching operations");
         }
+
         const data = await response.json();
         setOperaciones(data);
+        calculateTotals(data);
       } catch (error) {
         console.error("Error fetching operations:", error);
       }
     };
 
     fetchOperaciones();
-  }, []);
+  }, [userID]);
 
-  // Calculate the values to display in the columns
-  useEffect(() => {
-    setNumeroOperaciones(operaciones.length);
-
-    // Assuming each operation counts as a single point
-    setPuntas(operaciones.length);
-
-    // Calculate the total gross and net billing
-    const totalBruto = operaciones.reduce(
+  const calculateTotals = (operations: Operacion[]) => {
+    const totalFacturacionBruta = operations.reduce(
       (acc, op) => acc + op.honorarios_brutos,
       0
     );
-    const totalNeto = operaciones.reduce((acc, op) => acc + op.valor_neto, 0);
-
-    setFacturacionBruto(totalBruto);
-    setFacturacionNeta(totalNeto);
-  }, [operaciones]);
+    const totalFacturacionNeta = operations.reduce(
+      (acc, op) => acc + op.valor_neto,
+      0
+    );
+    const totalPuntaCompradora = operations.filter(
+      (op) => op.punta_compradora
+    ).length;
+    const totalPuntaVendedora = operations.filter(
+      (op) => op.punta_vendedora
+    ).length;
+    setTotals({
+      facturacion_bruta: totalFacturacionBruta,
+      facturacion_neta: totalFacturacionNeta,
+      punta_compradora: totalPuntaCompradora,
+      punta_vendedora: totalPuntaVendedora,
+    });
+  };
 
   return (
-    <div className="bg-white p-6 rounded shadow-md">
+    <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">
       <h2 className="text-2xl font-bold mb-4">Cuadro Principal</h2>
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="border-b-2">
-            <th className="py-2 px-4">Numero de Operaciones</th>
-            <th className="py-2 px-4">Puntas</th>
-            <th className="py-2 px-4">Facturación Total Bruto</th>
-            <th className="py-2 px-4">Facturación Neta</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="py-2 px-4">{numeroOperaciones}</td>
-            <td className="py-2 px-4">{puntas}</td>
-            <td className="py-2 px-4">{facturacionBruto.toFixed(2)}</td>
-            <td className="py-2 px-4">{facturacionNeta.toFixed(2)}</td>
-          </tr>
-        </tbody>
-      </table>
+      {operaciones.length === 0 ? (
+        <p className="text-center text-gray-600">No existen operaciones</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="hidden md:table-header-group">
+              <tr className="border-b-2">
+                <th className="py-2 px-4">Tipo de Operación</th>
+                <th className="py-2 px-4">Punta Compradora</th>
+                <th className="py-2 px-4">Punta Vendedora</th>
+                <th className="py-2 px-4">Facturación Neta</th>
+              </tr>
+            </thead>
+            <tbody>
+              {operaciones.map((operacion) => (
+                <tr
+                  key={operacion.id}
+                  className="border-b md:table-row flex flex-col md:flex-row mb-4"
+                >
+                  <td className="py-2 px-4 before:content-['Tipo_de_Operación:'] md:before:content-none">
+                    {operacion.tipo_operacion}
+                  </td>
+
+                  <td className="py-2 px-4 before:content-['Punta_Compradora:'] md:before:content-none">
+                    {operacion.punta_compradora ? "Si" : "No"}
+                  </td>
+                  <td className="py-2 px-4 before:content-['Punta_Vendedora:'] md:before:content-none">
+                    {operacion.punta_vendedora ? "Si" : "No"}
+                  </td>
+
+                  <td className="py-2 px-4 before:content-['Facturación_Neta:'] md:before:content-none">
+                    ${formatNumber(operacion.valor_neto)}
+                  </td>
+                </tr>
+              ))}
+              {/* Total row */}
+              <tr className="font-bold hidden md:table-row">
+                <td className="py-2 px-4">Total</td>
+                <td className="py-2 px-4">
+                  {formatNumber(totals.punta_compradora)}
+                </td>
+                <td className="py-2 px-4">
+                  {formatNumber(totals.punta_vendedora)}
+                </td>
+                <td className="py-2 px-4">
+                  ${formatNumber(totals.facturacion_neta)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

@@ -14,6 +14,8 @@ export default async function handler(
     fecha_operacion,
     direccion_reserva,
     tipo_operacion,
+    punta_compradora,
+    punta_vendedora,
     valor_reserva,
     numero_sobre_reserva,
     numero_sobre_refuerzo,
@@ -23,6 +25,7 @@ export default async function handler(
     compartido,
     valor_neto,
     user_uid,
+    estado,
   } = req.body;
 
   if (!user_uid) {
@@ -31,9 +34,11 @@ export default async function handler(
 
   try {
     const dataToSubmit = {
-      fecha_operacion: new Date(fecha_operacion),
+      fecha_operacion,
       direccion_reserva,
       tipo_operacion,
+      punta_compradora,
+      punta_vendedora,
       valor_reserva: parseFloat(valor_reserva) || 0,
       numero_sobre_reserva: parseFloat(numero_sobre_reserva) || 0,
       numero_sobre_refuerzo: parseFloat(numero_sobre_refuerzo) || 0,
@@ -45,6 +50,8 @@ export default async function handler(
       compartido,
       user_uid,
       createdAt: new Date(),
+      updatedAt: new Date(),
+      estado,
     };
 
     // Guardar la operación en Firestore

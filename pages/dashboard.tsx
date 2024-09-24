@@ -2,14 +2,45 @@
 import CuadroPrincipal from "@/components/CuadroPrincipal";
 import PrivateRoute from "../components/PrivateRoute";
 import PrivateLayout from "@/components/PrivateLayout";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import OperationsList from "@/components/OperationsList";
+import CuadroPrincipalChart from "@/components/CuadroPrincipalChart";
+import MonthlyBarChart from "@/components/MonthlyBarChart";
+import Bubbles from "@/components/Bubbles";
 
 const Dashboard = () => {
+  const [userID, setUserID] = useState<string | null>(null);
+
+  // Get the authenticated user's ID
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserID(user ? user.uid : null);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (!userID) {
+    return <p>Loading user information...</p>; // Optional loading state or redirect
+  }
+
   return (
     <PrivateRoute>
       <PrivateLayout>
         <div className="p-2">
-          <h1>DashBoard</h1>
-          <CuadroPrincipal />
+          <h1 className="text-2xl font-bold mb-6">DashBoard</h1>
+          <Bubbles />
+          <div className="flex flex-col justify-between gap-6">
+            <div className="hidden md:block">
+              <OperationsList userID={userID} />
+            </div>
+            <div className="flex flex-col md:flex-row justify-evenly gap-6">
+              <CuadroPrincipal userID={userID} />
+              <CuadroPrincipalChart userID={userID} />
+            </div>
+            <MonthlyBarChart userID={userID} />
+          </div>
         </div>
       </PrivateLayout>
     </PrivateRoute>
