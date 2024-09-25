@@ -1,41 +1,70 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { db } from "../lib/firebase";
+import { collection, query, getDocs, orderBy } from "firebase/firestore";
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+}
 
 const EventsList = () => {
-  // TEMPORARY
-  const events = [
-    {
-      id: 1,
-      title: "Lorem ipsum dolor",
-      time: "12:00 PM - 2:00 PM",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    {
-      id: 2,
-      title: "Lorem ipsum dolor",
-      time: "12:00 PM - 2:00 PM",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    {
-      id: 3,
-      title: "Lorem ipsum dolor",
-      time: "12:00 PM - 2:00 PM",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-  ];
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const eventsCollection = collection(db, "events");
+        const eventsQuery = query(eventsCollection, orderBy("date", "asc"));
+        const querySnapshot = await getDocs(eventsQuery);
+
+        const fetchedEvents: Event[] = querySnapshot.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as Event)
+        );
+
+        setEvents(fetchedEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center">Cargando eventos...</div>;
+  }
+
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-lg">
-      {events.map((event) => (
-        <div
-          className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-[#D98B84] even:border-t-[#5FAAD7]"
-          key={event.id}
-        >
-          <div className="flex items-center justify-between">
-            <h1 className="font-semibold text-gray-600">{event.title}</h1>
-            <span className="text-gray-300 text-xs">{event.time}</span>
+      {events.length === 0 ? (
+        <p className="text-center text-gray-500">No hay eventos programados.</p>
+      ) : (
+        events.map((event) => (
+          <div
+            className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-[#D98B84] even:border-t-[#5FAAD7]"
+            key={event.id}
+          >
+            <div className="flex items-center justify-between">
+              <h1 className="font-semibold text-gray-600">{event.title}</h1>
+              <span className="text-gray-300 text-xs">
+                {event.date} | {event.startTime} - {event.endTime}
+              </span>
+            </div>
+            <p className="mt-2 text-gray-400 text-sm">{event.description}</p>
           </div>
-          <p className="mt-2 text-gray-400 text-sm">{event.description}</p>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 };

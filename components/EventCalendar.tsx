@@ -13,9 +13,6 @@ const EventCalendar = () => {
   return (
     <div className="bg-white flex p-7 rounded-lg">
       <Calendar onChange={onChange} value={value} />
-      <div className="flex items-center justify-between">
-        {/* <Image src="/moreDark.png" alt="" width={20} height={20} /> */}
-      </div>
     </div>
   );
 };

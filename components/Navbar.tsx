@@ -13,17 +13,24 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
         </div>
         <div className="flex space-x-4 items-center">
           <button
+            onClick={() => setActiveView("dashboard")}
+            className="text-white hover:bg-[#3A6D8A] px-3 py-2 rounded transition duration-150 ease-in-out"
+          >
+            Dashboard
+          </button>
+          <button
             onClick={() => setActiveView("reservationInput")}
             className="text-white hover:bg-[#3A6D8A] px-3 py-2 rounded transition duration-150 ease-in-out"
           >
             Formulario de Operaciones
           </button>
           <button
-            onClick={() => setActiveView("dashboard")}
+            onClick={() => setActiveView("eventForm")}
             className="text-white hover:bg-[#3A6D8A] px-3 py-2 rounded transition duration-150 ease-in-out"
           >
-            Dashboard
+            Formulario de Eventos
           </button>
+
           <div className="w-10 h-10 bg-white rounded-full overflow-hidden">
             <Image
               src="/avatar.jpg"

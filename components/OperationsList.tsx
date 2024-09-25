@@ -1,35 +1,12 @@
 // components/OperationsList.tsx
+import { OperationsListProps } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
-import { useEffect, useState } from "react";
-
-interface Operacion {
-  id: string;
-  fecha_operacion: string;
-  direccion_reserva: string;
-  tipo_operacion: string;
-  valor_reserva: number;
-  numero_sobre_reserva: number;
-  numero_sobre_refuerzo: number;
-  porcentaje_honorarios_asesor: number;
-  honorarios_brutos: number;
-  referido: string;
-  compartido: string;
-  valor_neto: number;
-  estado: string;
-}
-
-interface OperationsListProps {
-  userID: string;
-}
+import { useEffect } from "react";
+import { useOperationsStore } from "@/stores/operationsStore";
 
 const OperationsList = ({ userID }: OperationsListProps) => {
-  const [operaciones, setOperaciones] = useState<Operacion[]>([]);
-  const [totals, setTotals] = useState({
-    valor_reserva: 0,
-    porcentaje_honorarios_asesor: 0,
-    honorarios_brutos: 0,
-    valor_neto: 0,
-  });
+  const { operations, totals, setOperations, calculateTotals } =
+    useOperationsStore();
 
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
@@ -46,12 +23,12 @@ const OperationsList = ({ userID }: OperationsListProps) => {
         throw new Error("Error updating operation status");
       }
 
-      // Update the local state to reflect the change
-      setOperaciones((prevOperaciones) =>
-        prevOperaciones.map((operacion) =>
+      setOperations(
+        operations.map((operacion) =>
           operacion.id === id ? { ...operacion, estado: newEstado } : operacion
         )
       );
+      calculateTotals();
     } catch (error) {
       console.error("Error updating operation status:", error);
     }
@@ -71,56 +48,31 @@ const OperationsList = ({ userID }: OperationsListProps) => {
         }
 
         const data = await response.json();
-        setOperaciones(data);
-        calculateTotals(data);
+        setOperations(data);
+        calculateTotals();
       } catch (error) {
         console.error("Error fetching operations:", error);
       }
     };
 
     fetchOperaciones();
-  }, [userID]);
-
-  // Calculate totals for each relevant column
-  const calculateTotals = (operations: Operacion[]) => {
-    const totalValorReserva = operations.reduce(
-      (acc, op) => acc + op.valor_reserva,
-      0
-    );
-    const totalPorcentajeHonorariosAsesor =
-      operations.reduce((acc, op) => acc + op.porcentaje_honorarios_asesor, 0) /
-      operations.length;
-
-    const totalHonorariosGDS =
-      operations.reduce((acc, op) => acc + op.honorarios_brutos, 0) /
-      operations.length;
-
-    const totalValorNeto = operations.reduce(
-      (acc, op) => acc + op.valor_neto,
-      0
-    );
-
-    setTotals({
-      valor_reserva: totalValorReserva,
-      porcentaje_honorarios_asesor: totalPorcentajeHonorariosAsesor,
-      honorarios_brutos: totalHonorariosGDS,
-      valor_neto: totalValorNeto,
-    });
-  };
+  }, [userID, setOperations, calculateTotals]);
 
   const COLORS = {
     headerBg: "bg-[#A8E0FF]/20",
     headerText: "text-[#5EAAD7]",
     rowBg: "bg-white",
     rowHover: "hover:bg-[#A8E0FF]/10",
-    buttonBg: "bg-[#5EAAD7]",
-    buttonHover: "hover:bg-[#4D8EB3]",
+    buttonBgEnCurso: "bg-[#7ED994]",
+    buttonHoverEnCurso: "hover:bg-[#34D399]",
+    buttonBgCerrada: "bg-[#4B5563]",
+    buttonHoverCerrada: "hover:bg-[#374151]",
   };
 
   return (
     <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Lista de Operaciones</h2>
-      {operaciones.length === 0 ? (
+      {operations.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (
         <div className="overflow-x-auto">
@@ -155,7 +107,7 @@ const OperationsList = ({ userID }: OperationsListProps) => {
                   Porcentaje Honorarios Asesor
                 </th>
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
-                  Porcentaje Honorarios GDS
+                  Porcentaje Honorarios Agencia
                 </th>
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
                   Honorarios Netos
@@ -166,7 +118,7 @@ const OperationsList = ({ userID }: OperationsListProps) => {
               </tr>
             </thead>
             <tbody>
-              {operaciones.map((operacion) => (
+              {operations.map((operacion) => (
                 <tr
                   key={operacion.id}
                   className={`${COLORS.rowBg} ${COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out`}
@@ -198,7 +150,7 @@ const OperationsList = ({ userID }: OperationsListProps) => {
                   <td className="py-3 px-4 before:content-['% Honorarios Asesor:'] md:before:content-none">
                     {formatNumber(operacion.porcentaje_honorarios_asesor)}%
                   </td>
-                  <td className="py-3 px-4 before:content-['% Honorarios GDS:'] md:before:content-none">
+                  <td className="py-3 px-4 before:content-['% Honorarios Agencia:'] md:before:content-none">
                     {formatNumber(operacion.honorarios_brutos)}%
                   </td>
                   <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
@@ -209,7 +161,14 @@ const OperationsList = ({ userID }: OperationsListProps) => {
                       onClick={() =>
                         handleEstadoChange(operacion.id, operacion.estado)
                       }
-                      className={`${COLORS.buttonBg} ${COLORS.buttonHover} text-white p-2 px-6 rounded transition duration-150 ease-in-out text-sm w-[110px]`}
+                      className={`
+                        ${
+                          operacion.estado === "En Curso"
+                            ? `${COLORS.buttonBgEnCurso} ${COLORS.buttonHoverEnCurso}`
+                            : `${COLORS.buttonBgCerrada} ${COLORS.buttonHoverCerrada}`
+                        } 
+                        text-white p-2 px-6 rounded transition duration-150 ease-in-out text-sm w-[110px]
+                      `}
                     >
                       {operacion.estado}
                     </button>

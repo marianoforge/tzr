@@ -15,6 +15,8 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
       router.push("/reservationInput");
     } else if (view === "dashboard") {
       router.push("/dashboard");
+    } else if (view === "eventForm") {
+      router.push("/eventForm");
     }
   };
 

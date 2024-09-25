@@ -2,26 +2,22 @@
 import CuadroPrincipal from "@/components/CuadroPrincipal";
 import PrivateRoute from "../components/PrivateRoute";
 import PrivateLayout from "@/components/PrivateLayout";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import OperationsList from "@/components/OperationsList";
 import CuadroPrincipalChart from "@/components/CuadroPrincipalChart";
 import MonthlyBarChart from "@/components/MonthlyBarChart";
 import Bubbles from "@/components/Bubbles";
 import EventCalendar from "@/components/EventCalendar";
 import EventsList from "@/components/EventsList";
+import { useUserStore } from "@/stores/authStore";
+import { useEffect } from "react";
 
 const Dashboard = () => {
-  const [userID, setUserID] = useState<string | null>(null);
+  const { userID, initializeAuthListener } = useUserStore();
 
-  // Get the authenticated user's ID
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUserID(user ? user.uid : null);
-    });
+    const unsubscribe = initializeAuthListener();
     return () => unsubscribe();
-  }, []);
+  }, [initializeAuthListener]);
 
   if (!userID) {
     return <p>Loading user information...</p>; // Optional loading state or redirect
