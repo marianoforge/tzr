@@ -9,6 +9,8 @@ interface RegisterRequestBody {
   password: string;
   comision: number;
   numero_telefono: string;
+  firstName: string;
+  lastName: string;
 }
 
 export default async function handler(
@@ -19,10 +21,23 @@ export default async function handler(
     return res.status(405).json({ message: "Método no permitido" });
   }
 
-  const { email, password, comision, numero_telefono }: RegisterRequestBody =
-    req.body;
+  const {
+    email,
+    password,
+    comision,
+    numero_telefono,
+    firstName,
+    lastName,
+  }: RegisterRequestBody = req.body;
 
-  if (!email || !password || comision === undefined || !numero_telefono) {
+  if (
+    !email ||
+    !password ||
+    comision === undefined ||
+    !numero_telefono ||
+    !firstName ||
+    !lastName
+  ) {
     return res.status(400).json({ message: "Todos los campos son requeridos" });
   }
 
@@ -37,6 +52,8 @@ export default async function handler(
 
     // Guardar información del usuario en Firestore
     await setDoc(doc(db, "usuarios", user.uid), {
+      name: firstName,
+      lastName: lastName,
       email: user.email,
       uid: user.uid,
       createdAt: new Date(),

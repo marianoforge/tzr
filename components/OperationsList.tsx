@@ -187,16 +187,16 @@ const OperationsList = ({ userID }: OperationsListProps) => {
                   Total
                 </td>
                 <td className={`py-3 px-4 ${COLORS.headerText}`}>
-                  ${formatNumber(totals.valor_reserva)}
+                  ${formatNumber(Number(totals.valor_reserva))}
                 </td>
                 <td className={`py-3 px-4 ${COLORS.headerText}`}>
-                  {formatNumber(totals.porcentaje_honorarios_asesor)}%
+                  {formatNumber(Number(totals.porcentaje_honorarios_asesor))}%
                 </td>
                 <td className={`py-3 px-4 ${COLORS.headerText}`}>
-                  {formatNumber(totals.honorarios_brutos)}%
+                  {formatNumber(Number(totals.honorarios_brutos))}%
                 </td>
                 <td className={`py-3 px-4 ${COLORS.headerText}`} colSpan={2}>
-                  ${formatNumber(totals.valor_neto)}
+                  ${formatNumber(Number(totals.valor_neto))}
                 </td>
               </tr>
             </tbody>

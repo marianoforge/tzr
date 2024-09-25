@@ -4,12 +4,12 @@ import { create } from "zustand";
 interface OperationsState {
   operations: Operacion[];
   totals: {
-    valor_reserva: number;
-    porcentaje_honorarios_asesor: number;
-    honorarios_brutos: number;
-    valor_neto: number;
-    mayor_venta_efectuada: number;
-    promedio_valor_reserva: number;
+    valor_reserva: number | string;
+    porcentaje_honorarios_asesor: number | string;
+    honorarios_brutos: number | string;
+    valor_neto: number | string;
+    mayor_venta_efectuada: number | string;
+    promedio_valor_reserva: number | string;
   };
   isLoading: boolean;
   setOperations: (operations: Operacion[]) => void;
@@ -31,6 +31,21 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   setOperations: (operations) => set({ operations }),
   calculateTotals: () => {
     const { operations } = get();
+
+    if (operations.length === 0) {
+      set({
+        totals: {
+          valor_reserva: "No Data",
+          porcentaje_honorarios_asesor: "No Data",
+          honorarios_brutos: "No Data",
+          valor_neto: "No Data",
+          mayor_venta_efectuada: "No Data",
+          promedio_valor_reserva: "No Data",
+        },
+      });
+      return;
+    }
+
     const totalValorReserva = operations.reduce(
       (acc, op) => acc + op.valor_reserva,
       0

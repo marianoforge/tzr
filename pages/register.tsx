@@ -9,6 +9,8 @@ const Register = () => {
   const [comision, setComision] = useState(0);
   const [numeroTelefono, setNumeroTelefono] = useState("");
   const [error, setError] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -27,6 +29,8 @@ const Register = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          firstName,
+          lastName,
           email,
           password,
           comision,
@@ -40,6 +44,7 @@ const Register = () => {
         return;
       }
 
+      console.log("Registration successful");
       alert("Registro exitoso. Ahora puedes iniciar sesión.");
       router.push("/login");
     } catch (err: unknown) {
@@ -59,6 +64,23 @@ const Register = () => {
       >
         <h2 className="text-2xl mb-4">Regístrate</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Apellido"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          required
+        />
         <input
           type="email"
           placeholder="Correo electrónico"

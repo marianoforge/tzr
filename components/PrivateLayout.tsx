@@ -11,19 +11,26 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
   const router = useRouter();
 
   const setActiveView = (view: string) => {
-    if (view === "reservationInput") {
-      router.push("/reservationInput");
-    } else if (view === "dashboard") {
-      router.push("/dashboard");
-    } else if (view === "eventForm") {
-      router.push("/eventForm");
+    switch (view) {
+      case "reservationInput":
+        router.push("/reservationInput");
+        break;
+      case "dashboard":
+        router.push("/dashboard");
+        break;
+      case "eventForm":
+        router.push("/eventForm");
+        break;
+      case "calendar":
+        router.push("/calendar");
+        break;
     }
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar setActiveView={setActiveView} />
-      <main className="flex-grow p-6">{children}</main>
+      <main className="flex-grow p-4 sm:p-6 md:p-8">{children}</main>
       <Footer setActiveView={setActiveView} />
     </div>
   );

@@ -26,24 +26,24 @@ const Dashboard = () => {
   return (
     <PrivateRoute>
       <PrivateLayout>
-        <div className="p-2">
-          {/* <h1 className="text-2xl font-bold mb-6">DashBoard</h1> */}
-          <div className="flex gap-6 justify-between">
-            <div className="w-[40%]">
+        <div className="p-2 md:p-4 lg:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
+            <div className="md:col-span-2 lg:col-span-1 2xl:col-span-4">
               <Bubbles />
             </div>
-            <div className="w-[20%]">
+            <div className="lg:col-span-1 2xl:col-span-2">
               <EventCalendar />
             </div>
-            <div className="w-[40%]">
+            <div className="md:col-span-2 lg:col-span-1 2xl:col-span-4">
               <EventsList />
             </div>
           </div>
-          <div className="flex flex-col justify-between gap-6">
+
+          <div className="space-y-6">
             <div className="hidden md:block">
               <OperationsList userID={userID} />
             </div>
-            <div className="flex flex-col md:flex-row justify-evenly gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <CuadroPrincipal userID={userID} />
               <CuadroPrincipalChart userID={userID} />
             </div>

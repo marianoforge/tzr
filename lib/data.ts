@@ -1,140 +1,28 @@
 export const calendarEvents = [
   {
-    title: "Math",
-    allDay: false,
-    start: new Date(2024, 8, 16, 8, 0),
-    end: new Date(2024, 8, 16, 8, 45),
+    title: "Evento 1",
+    start: new Date(2024, 8, 16, 10, 0), // 16 de septiembre de 2024, 10:00 AM
+    end: new Date(2024, 8, 16, 12, 0), // 16 de septiembre de 2024, 12:00 PM
   },
   {
-    title: "English",
-    allDay: false,
-    start: new Date(2024, 8, 16, 9, 0),
-    end: new Date(2024, 8, 16, 9, 45),
+    title: "Evento 2",
+    start: new Date(2024, 8, 25, 14, 0), // 17 de septiembre de 2024, 2:00 PM
+    end: new Date(2024, 8, 25, 16, 0), // 17 de septiembre de 2024, 4:00 PM
   },
   {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2024, 8, 16, 10, 0),
-    end: new Date(2024, 8, 16, 10, 45),
+    title: "Evento 3",
+    start: new Date(2024, 8, 25, 14, 0), // 17 de septiembre de 2024, 2:00 PM
+    end: new Date(2024, 8, 25, 16, 0), // 17 de septiembre de 2024, 4:00 PM
   },
   {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2024, 8, 16, 11, 0),
-    end: new Date(2024, 8, 16, 11, 45),
+    title: "Evento 3",
+    start: new Date(2024, 8, 25, 15, 0), // 17 de septiembre de 2024, 2:00 PM
+    end: new Date(2024, 8, 25, 16, 0), // 17 de septiembre de 2024, 4:00 PM
   },
   {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2024, 8, 16, 13, 0),
-    end: new Date(2024, 8, 16, 13, 45),
+    title: "Evento 3",
+    start: new Date(2024, 8, 25, 14, 0), // 17 de septiembre de 2024, 2:00 PM
+    end: new Date(2024, 8, 25, 16, 0), // 17 de septiembre de 2024, 4:00 PM
   },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2024, 8, 16, 14, 0),
-    end: new Date(2024, 8, 16, 14, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2024, 8, 17, 9, 0),
-    end: new Date(2024, 8, 17, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2024, 8, 17, 10, 0),
-    end: new Date(2024, 8, 17, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2024, 8, 17, 11, 0),
-    end: new Date(2024, 8, 17, 11, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2024, 8, 17, 14, 0),
-    end: new Date(2024, 8, 17, 14, 45),
-  },
-  {
-    title: "Math",
-    allDay: false,
-    start: new Date(2024, 8, 18, 8, 0),
-    end: new Date(2024, 8, 18, 8, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2024, 8, 18, 10, 0),
-    end: new Date(2024, 8, 18, 10, 45),
-  },
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2024, 8, 18, 13, 0),
-    end: new Date(2024, 8, 18, 13, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2024, 8, 18, 14, 0),
-    end: new Date(2024, 8, 18, 14, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2024, 8, 19, 9, 0),
-    end: new Date(2024, 8, 19, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2024, 8, 19, 10, 0),
-    end: new Date(2024, 8, 19, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2024, 8, 19, 11, 0),
-    end: new Date(2024, 8, 19, 11, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2024, 8, 19, 14, 0),
-    end: new Date(2024, 8, 19, 14, 45),
-  },
-  {
-    title: "Math",
-    allDay: false,
-    start: new Date(2024, 8, 20, 8, 0),
-    end: new Date(2024, 8, 20, 8, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2024, 8, 20, 9, 0),
-    end: new Date(2024, 8, 20, 9, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2024, 8, 20, 11, 0),
-    end: new Date(2024, 8, 20, 11, 45),
-  },
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2024, 8, 20, 13, 0),
-    end: new Date(2024, 8, 20, 13, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2024, 8, 20, 14, 0),
-    end: new Date(2024, 8, 20, 14, 45),
-  },
+  // ... más eventos ...
 ];
