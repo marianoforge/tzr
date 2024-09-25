@@ -1,3 +1,4 @@
+import { useOperationsStore } from "@/stores/operationsStore";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -9,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import Loader from "./Loader";
 
 interface MonthlyBarChartProps {
   userID: string;
@@ -21,6 +23,7 @@ interface MonthlyData {
 }
 
 const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
+  const { isLoading } = useOperationsStore();
   const [data, setData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {
@@ -53,6 +56,10 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
     );
+  }
+
+  if (isLoading) {
+    return <Loader />;
   }
 
   return (

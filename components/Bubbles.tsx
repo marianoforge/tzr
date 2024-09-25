@@ -1,9 +1,10 @@
 import { useOperationsStore } from "@/stores/operationsStore";
 import { formatNumber } from "@/utils/formatNumber";
 import React from "react";
+import Loader from "./Loader";
 
 const Bubbles = () => {
-  const { totals } = useOperationsStore();
+  const { totals, isLoading } = useOperationsStore();
 
   const totalValorNeto = totals.valor_neto;
   const totalHonorariosBrutos = totals.honorarios_brutos;
@@ -43,6 +44,10 @@ const Bubbles = () => {
       textColor: "text-[#7EAFD7]",
     },
   ];
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4  bg-white px-5 py-8 rounded-lg">

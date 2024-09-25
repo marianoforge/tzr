@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../lib/firebase";
 import { collection, query, getDocs, orderBy } from "firebase/firestore";
+import { useOperationsStore } from "@/stores/operationsStore";
+import Loader from "./Loader";
 
 interface Event {
   id: string;
@@ -13,7 +15,7 @@ interface Event {
 
 const EventsList = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { isLoading } = useOperationsStore();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -33,16 +35,14 @@ const EventsList = () => {
         setEvents(fetchedEvents);
       } catch (error) {
         console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchEvents();
   }, []);
 
-  if (loading) {
-    return <div className="text-center">Cargando eventos...</div>;
+  if (isLoading) {
+    return <Loader />;
   }
 
   return (
@@ -57,7 +57,7 @@ const EventsList = () => {
           >
             <div className="flex items-center justify-between">
               <h1 className="font-semibold text-gray-600">{event.title}</h1>
-              <span className="text-gray-300 text-xs">
+              <span className="text-gray-400 text-xs">
                 {event.date} | {event.startTime} - {event.endTime}
               </span>
             </div>

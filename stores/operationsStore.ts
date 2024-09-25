@@ -11,8 +11,10 @@ interface OperationsState {
     mayor_venta_efectuada: number;
     promedio_valor_reserva: number;
   };
+  isLoading: boolean;
   setOperations: (operations: Operacion[]) => void;
   calculateTotals: () => void;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 export const useOperationsStore = create<OperationsState>((set, get) => ({
@@ -25,6 +27,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     mayor_venta_efectuada: 0,
     promedio_valor_reserva: 0,
   },
+  isLoading: false,
   setOperations: (operations) => set({ operations }),
   calculateTotals: () => {
     const { operations } = get();
@@ -63,4 +66,5 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
       },
     });
   },
+  setIsLoading: (isLoading) => set({ isLoading }),
 }));

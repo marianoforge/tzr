@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import ModalOK from "./ModalOK";
 
 const FormularioOperacion = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,8 @@ const FormularioOperacion = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
   const [valorNeto, setValorNeto] = useState(0);
   const [comision, setComision] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   // Obtener el UID del usuario autenticado
   useEffect(() => {
@@ -91,7 +94,8 @@ const FormularioOperacion = () => {
     e.preventDefault();
 
     if (!userUID) {
-      alert("Usuario no autenticado. Por favor, inicia sesión.");
+      setModalMessage("Usuario no autenticado. Por favor, inicia sesión.");
+      setShowModal(true);
       return;
     }
 
@@ -121,11 +125,13 @@ const FormularioOperacion = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert(errorData.message || "Error al guardar la operación");
+        setModalMessage(errorData.message || "Error al guardar la operación");
+        setShowModal(true);
         return;
       }
 
-      alert("Operación guardada exitosamente");
+      setModalMessage("Operación guardada exitosamente");
+      setShowModal(true);
       setFormData({
         fecha_operacion: "",
         direccion_reserva: "",
@@ -143,144 +149,153 @@ const FormularioOperacion = () => {
       });
     } catch (error) {
       console.error("Error al guardar la operación:", error);
-      alert("Error al guardar la operación");
+      setModalMessage("Error al guardar la operación");
+      setShowModal(true);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md">
-      <h2 className="text-2xl mb-4">Agregar Operación</h2>
-      <div className="flex flex-wrap -mx-2">
-        <div className="w-full md:w-1/2 px-2">
-          {/* Left column */}
-          <input
-            type="date"
-            name="fecha_operacion"
-            value={formData.fecha_operacion}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <input
-            type="text"
-            name="direccion_reserva"
-            placeholder="Dirección de la Reserva"
-            value={formData.direccion_reserva}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <select
-            name="tipo_operacion"
-            value={formData.tipo_operacion}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
+    <>
+      <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md">
+        <h2 className="text-2xl mb-4">Agregar Operación</h2>
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full md:w-1/2 px-2">
+            {/* Left column */}
+            <input
+              type="date"
+              name="fecha_operacion"
+              value={formData.fecha_operacion}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="text"
+              name="direccion_reserva"
+              placeholder="Dirección de la Reserva"
+              value={formData.direccion_reserva}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              required
+            />
+            <select
+              name="tipo_operacion"
+              value={formData.tipo_operacion}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              required
+            >
+              <option value="">Selecciona el Tipo de Operación</option>
+              <option value="Venta">Venta</option>
+              <option value="Alquiler temporal">Alquiler temporal</option>
+              <option value="Alquiler">Alquiler</option>
+              <option value="Alquiler Comercial">Alquiler Comercial</option>
+              <option value="Fondo de Comercio">Fondo de Comercio</option>
+              <option value="Desarrollo">Desarrollo</option>
+            </select>
+            <div className="flex items-center mb-4">
+              <label className="mr-4">
+                <input
+                  type="checkbox"
+                  name="punta_compradora"
+                  checked={formData.punta_compradora}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                Punta Compradora / Inquilina
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="punta_vendedora"
+                  checked={formData.punta_vendedora}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                Punta Vendedora / Propietario
+              </label>
+            </div>
+            <input
+              type="number"
+              name="valor_reserva"
+              placeholder="Valor de Reserva"
+              value={formData.valor_reserva}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="number"
+              name="numero_sobre_reserva"
+              placeholder="Sobre de Reserva (opcional)"
+              value={formData.numero_sobre_reserva}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-2">
+            {/* Right column */}
+            <input
+              type="number"
+              name="numero_sobre_refuerzo"
+              placeholder="Sobre de Refuerzo (opcional)"
+              value={formData.numero_sobre_refuerzo}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
+            <input
+              type="number"
+              name="honorarios_brutos"
+              placeholder="Honorarios Brutos"
+              value={formData.honorarios_brutos}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="text"
+              name="referido"
+              placeholder="Referido"
+              value={formData.referido}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="text"
+              name="compartido"
+              placeholder="Compartido"
+              value={formData.compartido}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              required
+            />
+            <div className="w-full p-2 mb-4">
+              <p className="p-2 mb-2 border-gray-300 rounded">
+                Porcentaje de Honorarios (Comisión): {comision}%
+              </p>
+              <p className="p-2 mb-2 border-gray-300 rounded">
+                Valor Neto: {valorNeto.toFixed(2)}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className=" bg-[#7ED994] text-white p-2 rounded hover:bg-[#7ED994]/80 transition-all duration-300 font-bold"
           >
-            <option value="">Selecciona el Tipo de Operación</option>
-            <option value="Venta">Venta</option>
-            <option value="Alquiler temporal">Alquiler temporal</option>
-            <option value="Alquiler">Alquiler</option>
-            <option value="Alquiler Comercial">Alquiler Comercial</option>
-            <option value="Fondo de Comercio">Fondo de Comercio</option>
-            <option value="Desarrollo">Desarrollo</option>
-          </select>
-          <div className="flex items-center mb-4">
-            <label className="mr-4">
-              <input
-                type="checkbox"
-                name="punta_compradora"
-                checked={formData.punta_compradora}
-                onChange={handleChange}
-                className="mr-2"
-              />
-              Punta Compradora / Inquilina
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="punta_vendedora"
-                checked={formData.punta_vendedora}
-                onChange={handleChange}
-                className="mr-2"
-              />
-              Punta Vendedora / Propietario
-            </label>
-          </div>
-          <input
-            type="number"
-            name="valor_reserva"
-            placeholder="Valor de Reserva"
-            value={formData.valor_reserva}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <input
-            type="number"
-            name="numero_sobre_reserva"
-            placeholder="Sobre de Reserva (opcional)"
-            value={formData.numero_sobre_reserva}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-          />
+            Guardar Operación
+          </button>
         </div>
-        <div className="w-full md:w-1/2 px-2">
-          {/* Right column */}
-          <input
-            type="number"
-            name="numero_sobre_refuerzo"
-            placeholder="Sobre de Refuerzo (opcional)"
-            value={formData.numero_sobre_refuerzo}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-          />
-          <input
-            type="number"
-            name="honorarios_brutos"
-            placeholder="Honorarios Brutos"
-            value={formData.honorarios_brutos}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <input
-            type="text"
-            name="referido"
-            placeholder="Referido"
-            value={formData.referido}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <input
-            type="text"
-            name="compartido"
-            placeholder="Compartido"
-            value={formData.compartido}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <div className="w-full p-2 mb-4">
-            <p className="p-2 mb-2 border-gray-300 rounded">
-              Porcentaje de Honorarios (Comisión): {comision}%
-            </p>
-            <p className="p-2 mb-2 border-gray-300 rounded">
-              Valor Neto: {valorNeto.toFixed(2)}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className=" bg-[#7ED994] text-white p-2 rounded hover:bg-[#7ED994]/80 transition-all duration-300 font-bold"
-        >
-          Guardar Operación
-        </button>
-      </div>
-    </form>
+      </form>
+
+      <ModalOK
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        message={modalMessage}
+      />
+    </>
   );
 };
 

@@ -8,6 +8,8 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
+import Loader from "./Loader";
+import { useOperationsStore } from "@/stores/operationsStore";
 
 interface Operacion {
   id: string; // assuming each operation has a unique ID
@@ -24,6 +26,7 @@ interface CuadroPrincipalProps {
 }
 
 const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
+  const { isLoading } = useOperationsStore();
   const [tiposOperaciones, setTiposOperaciones] = useState<
     { name: string; value: number }[]
   >([]);
@@ -67,6 +70,10 @@ const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
   };
 
   const COLORS = ["#F9D77E", "#A8E0FF", "#FFB7B2", "#BAFFC9", "#BAE1FF"];
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">

@@ -1,6 +1,8 @@
 // components/CuadroPrincipal.tsx
 import { useEffect, useState } from "react";
 import { formatNumber } from "../utils/formatNumber";
+import Loader from "./Loader";
+import { useOperationsStore } from "@/stores/operationsStore";
 
 interface Operacion {
   id: string; // assuming each operation has a unique ID
@@ -17,6 +19,7 @@ interface CuadroPrincipalProps {
 }
 
 const CuadroPrincipal = ({ userID }: CuadroPrincipalProps) => {
+  const { isLoading } = useOperationsStore();
   const [operaciones, setOperaciones] = useState<Operacion[]>([]);
   const [totals, setTotals] = useState({
     facturacion_bruta: 0,
@@ -71,6 +74,10 @@ const CuadroPrincipal = ({ userID }: CuadroPrincipalProps) => {
       punta_vendedora: totalPuntaVendedora,
     });
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">

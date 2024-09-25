@@ -3,9 +3,10 @@ import { OperationsListProps } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
 import { useEffect } from "react";
 import { useOperationsStore } from "@/stores/operationsStore";
+import Loader from "./Loader";
 
 const OperationsList = ({ userID }: OperationsListProps) => {
-  const { operations, totals, setOperations, calculateTotals } =
+  const { operations, totals, setOperations, calculateTotals, isLoading } =
     useOperationsStore();
 
   const handleEstadoChange = async (id: string, currentEstado: string) => {
@@ -34,7 +35,6 @@ const OperationsList = ({ userID }: OperationsListProps) => {
     }
   };
 
-  // Fetch operations data from API using the userID
   useEffect(() => {
     const fetchOperaciones = async () => {
       if (!userID) return;
@@ -68,6 +68,10 @@ const OperationsList = ({ userID }: OperationsListProps) => {
     buttonBgCerrada: "bg-[#4B5563]",
     buttonHoverCerrada: "hover:bg-[#374151]",
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
