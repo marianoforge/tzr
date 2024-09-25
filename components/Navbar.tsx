@@ -1,4 +1,4 @@
-import { useUserDataStore } from "@/stores/userDataStore";
+import { UserData, useUserDataStore } from "@/stores/userDataStore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
@@ -159,9 +159,9 @@ const UserAvatar = () => (
 );
 
 interface UserInfoProps {
-  userData: any;
+  userData: UserData | null;
   isLoading: boolean;
-  error: any;
+  error: string | null;
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({ userData, isLoading, error }) => (

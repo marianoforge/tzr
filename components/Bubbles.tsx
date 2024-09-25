@@ -61,17 +61,17 @@ const Bubbles = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 gap-4 bg-white p-4 rounded-lg shadow-md 2xl:min-h-[430px]">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-1 2xl:grid-cols-3 gap-4 bg-white p-4 rounded-lg shadow-md lg:min-h-[430px]">
       {bubbleData.map((data, index) => (
         <div
           key={index}
-          className={`${data.bgColor} rounded-lg p-4 text-center shadow-md flex flex-col justify-center items-center 2xl:text-sm`}
+          className={`${data.bgColor} rounded-lg p-4 text-center shadow-md flex flex-col justify-center items-center`}
         >
-          <p className="text-sm sm:text-base lg:text-lg 2xl:text-base font-semibold text-gray-700 mb-2">
+          <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-base font-semibold text-gray-700 mb-2">
             {data.title}
           </p>
           <p
-            className={`text-lg sm:text-xl lg:text-2xl font-bold ${data.textColor}`}
+            className={`text-lg sm:text-xl lg:text-2xl xl:text-2xl 2xl:text-xl font-bold ${data.textColor}`}
           >
             {data.figure}
           </p>

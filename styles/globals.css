@@ -9,6 +9,8 @@
   }
 }
 .react-calendar {
+  width: 100% !important; /* Make the calendar full width */
+  max-width: none !important; /* Remove any max-width limitation */
   border: none !important;
   font-family: "Inter", sans-serif !important;
   min-height: 300px !important;

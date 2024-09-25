@@ -27,14 +27,14 @@ const Dashboard = () => {
     <PrivateRoute>
       <PrivateLayout>
         <div className="p-2 md:p-4 lg:p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
             <div className="md:col-span-2 lg:col-span-1 2xl:col-span-4">
               <Bubbles />
             </div>
-            <div className="lg:col-span-1 2xl:col-span-2">
+            <div className="md:col-span-2 lg:col-span-1 2xl:col-span-3">
               <EventCalendar />
             </div>
-            <div className="md:col-span-2 lg:col-span-1 2xl:col-span-4">
+            <div className="md:col-span-2 lg:col-span-2 2xl:col-span-3">
               <EventsList />
             </div>
           </div>

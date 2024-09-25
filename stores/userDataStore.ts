@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface UserData {
+export interface UserData {
   firstName: string | null;
   lastName: string | null;
   email: string | null;
