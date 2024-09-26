@@ -24,7 +24,7 @@ const Home = () => {
           <div className="flex space-x-4 justify-center">
             <button
               onClick={handleLoginRedirect}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 "
             >
               Iniciar Sesión
             </button>

@@ -49,7 +49,7 @@ const Login = () => {
         onSubmit={handleLogin}
         className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
       >
-        <h2 className="text-2xl mb-4">Iniciar Sesión</h2>
+        <h2 className="text-2xl mb-4 text-center">Iniciar Sesión</h2>
         {error && <p className="text-red-500">{error}</p>}
         <input
           type="email"

@@ -101,12 +101,12 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
             />
             <NavButton
               onClick={() => handleNavClick("reservationInput")}
-              label="Formulario de Operaciones"
+              label="Form de Operaciones"
               fullWidth
             />
             <NavButton
               onClick={() => handleNavClick("eventForm")}
-              label="Formulario de Eventos"
+              label="Form de Eventos"
               fullWidth
             />
             <NavButton

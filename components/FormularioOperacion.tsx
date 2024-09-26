@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import ModalOK from "./ModalOK";
+import { useRouter } from "next/router"; // Import useRouter
 
 const FormularioOperacion = () => {
   const [formData, setFormData] = useState({
@@ -26,6 +27,8 @@ const FormularioOperacion = () => {
   const [comision, setComision] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+
+  const router = useRouter(); // Initialize useRouter
 
   // Obtener el UID del usuario autenticado
   useEffect(() => {
@@ -147,11 +150,16 @@ const FormularioOperacion = () => {
         compartido: "",
         estado: "En Curso", // Reset estado to "En Curso"
       });
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error al guardar la operación:", error);
       setModalMessage("Error al guardar la operación");
       setShowModal(true);
     }
+  };
+
+  const handleModalAccept = () => {
+    router.push("/dashboard"); // Redirect to dashboard
   };
 
   return (
@@ -294,6 +302,7 @@ const FormularioOperacion = () => {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         message={modalMessage}
+        onAccept={handleModalAccept} // Pass the handleModalAccept function
       />
     </div>
   );

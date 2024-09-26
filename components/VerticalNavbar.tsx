@@ -48,7 +48,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
           />
           <VerticalNavButton
             onClick={() => handleNavClick("eventForm")}
-            label="Formulario de Eventos"
+            label="Form de Eventos"
             icon={<TableCellsIcon className="w-5 h-5 mr-2" />}
           />
           <VerticalNavButton

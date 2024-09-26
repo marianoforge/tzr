@@ -7,7 +7,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [comision, setComision] = useState(0);
+  const [comision, setComision] = useState(""); // Inicializar como cadena vacía
   const [numeroTelefono, setNumeroTelefono] = useState("");
   const [error, setError] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -36,7 +36,7 @@ const Register = () => {
           lastName,
           email,
           password,
-          comision,
+          comision: Number(comision), // Convertir a número aquí
           numero_telefono: numeroTelefono,
         }),
       });
@@ -65,7 +65,7 @@ const Register = () => {
         onSubmit={handleRegister}
         className="bg-white p-6 rounded shadow-md  w-11/12 max-w-lg"
       >
-        <h2 className="text-2xl mb-4">Regístrate</h2>
+        <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
 
         <input
@@ -112,7 +112,7 @@ const Register = () => {
           type="number"
           placeholder="Comisión"
           value={comision}
-          onChange={(e) => setComision(Number(e.target.value))}
+          onChange={(e) => setComision(e.target.value)}
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
@@ -135,6 +135,7 @@ const Register = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
+        onAccept={() => router.push("/login")}
       />
     </div>
   );

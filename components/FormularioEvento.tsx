@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import ModalOK from "./ModalOK"; // Import ModalOK
+import { useRouter } from "next/router";
 
 const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false); // Add state for modal
   const [modalMessage, setModalMessage] = useState(""); // Add state for modal message
+  const router = useRouter();
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -135,6 +137,7 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           message={modalMessage}
+          onAccept={() => router.push("/dashboard")}
         />
       </form>
     </div>
