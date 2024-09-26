@@ -29,7 +29,7 @@ const BigCalendar = () => {
         const response = await fetch("/api/events");
         if (response.ok) {
           const data = await response.json();
-          console.log("Datos recibidos del servidor:", data);
+
           setEvents(data);
         } else {
           console.error("Error fetching events:", response.statusText);
@@ -50,8 +50,6 @@ const BigCalendar = () => {
     description: event.description,
     user_uid: event.user_uid,
   }));
-
-  console.log("Eventos procesados:", calendarEvents);
 
   const navigateCalendar = (action: "PREV" | "NEXT" | "TODAY") => {
     switch (action) {

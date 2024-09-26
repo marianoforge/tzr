@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
+import Link from "next/link";
 
 interface NavbarProps {
   setActiveView: (view: string) => void;
@@ -15,7 +16,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log("User authenticated, fetching data for UID:", user.uid);
         fetchUserData(user.uid);
       } else {
         console.log("No authenticated user");
@@ -70,12 +70,14 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
 
         {/* User info and actions */}
         <div className="hidden lg:block text-white text-xl font-bold w-full ml-12">
-          <Image
-            src="/logoRea-NoBGWhite.png"
-            alt="Logo"
-            width={100}
-            height={100}
-          />
+          <Link href="/dashboard">
+            <Image
+              src="/logoRea-NoBGWhite.png"
+              alt="Logo"
+              width={100}
+              height={100}
+            />
+          </Link>
         </div>
         <div className="flex space-x-3 justify-end items-center mr-3 sm:mr-4 md:mr-10">
           <div className="flex flex-col items-center">

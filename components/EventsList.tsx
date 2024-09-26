@@ -27,7 +27,15 @@ const EventsList: React.FC<EventsListProps> = ({ userId }) => {
           throw new Error("Error al obtener eventos");
         }
         const fetchedEvents: Event[] = await response.json();
-        setEvents(fetchedEvents);
+
+        // Filtrar eventos pasados y ordenar por fecha
+        const filteredAndSortedEvents = fetchedEvents
+          .filter((event) => new Date(event.date) >= new Date())
+          .sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+          );
+
+        setEvents(filteredAndSortedEvents);
       } catch (error) {
         console.error("Error al obtener eventos:", error);
       }
@@ -41,6 +49,8 @@ const EventsList: React.FC<EventsListProps> = ({ userId }) => {
   }
 
   const displayedEvents = events.slice(0, 3);
+
+  console.log(events);
 
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md  items-center justify-center min-h-[450px]">

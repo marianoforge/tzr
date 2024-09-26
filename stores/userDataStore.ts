@@ -31,7 +31,6 @@ export const useUserDataStore = create<UserDataState>((set) => ({
         throw new Error("No hay usuario autenticado");
       }
 
-      console.log("Fetching user data for UID:", user_uid);
       const response = await fetch(`/api/userInfo?user_uid=${user_uid}`);
 
       if (!response.ok) {
@@ -43,7 +42,6 @@ export const useUserDataStore = create<UserDataState>((set) => ({
       }
 
       const userData = await response.json();
-      console.log("Raw user data received:", userData);
 
       if (!userData || typeof userData !== "object") {
         throw new Error("Datos de usuario inválidos recibidos del servidor");
@@ -58,7 +56,6 @@ export const useUserDataStore = create<UserDataState>((set) => ({
         comision: userData.comision || null,
       };
 
-      console.log("Validated user data:", validatedUserData);
       set({ userData: validatedUserData, isLoading: false });
     } catch (error) {
       console.error("Error fetching user data:", error);

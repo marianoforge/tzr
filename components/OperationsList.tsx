@@ -65,7 +65,7 @@ const OperationsList = ({ userId }: OperationsListProps) => {
     rowHover: "hover:bg-[#5DADE2]/10",
     buttonBgEnCurso: "bg-[#7ED994]",
     buttonHoverEnCurso: "hover:bg-[#34D399]",
-    buttonBgCerrada: "bg-[#4B5599]",
+    buttonBgCerrada: "bg-[#F9D789]",
     buttonHoverCerrada: "hover:bg-[#374151]",
   };
 

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import ModalOK from "./ModalOK"; // Import ModalOK
 
 const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,9 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
     endTime: "",
     description: "",
   });
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // Add state for modal
+  const [modalMessage, setModalMessage] = useState(""); // Add state for modal message
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -24,7 +28,8 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
     e.preventDefault();
 
     if (!user_uid) {
-      alert("No se proporcionó un ID de usuario válido");
+      setModalMessage("No se proporcionó un ID de usuario válido");
+      setIsModalOpen(true);
       return;
     }
 
@@ -45,7 +50,8 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
       }
 
       const result = await response.json();
-      alert(result.message);
+      setModalMessage(result.message);
+      setIsModalOpen(true);
 
       // Limpiar el formulario
       setFormData({
@@ -57,70 +63,81 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
       });
     } catch (error) {
       console.error("Error al agendar el evento:", error);
-      alert("Error al agendar el evento");
+      setModalMessage("Error al agendar el evento");
+      setIsModalOpen(true);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md">
-      <h2 className="text-2xl mb-4">Agendar Evento</h2>
-      <div className="flex flex-wrap -mx-2">
-        <div className="w-full px-2">
-          <input
-            type="text"
-            name="title"
-            placeholder="Título del evento"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            required
-          />
-          <div className="flex gap-4 mb-4">
+    <div className="flex flex-col justify-center items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="p-6 bg-white rounded shadow-md w-[50%]"
+      >
+        <h2 className="text-2xl mb-4">Agendar Evento</h2>
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full px-2">
             <input
-              type="time"
-              name="startTime"
-              value={formData.startTime}
+              type="text"
+              name="title"
+              placeholder="Título del evento"
+              value={formData.title}
               onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
             <input
-              type="time"
-              name="endTime"
-              value={formData.endTime}
+              type="date"
+              name="date"
+              value={formData.date}
               onChange={handleChange}
-              className="w-1/2 p-2 border border-gray-300 rounded"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
+            <div className="flex gap-4 mb-4">
+              <input
+                type="time"
+                name="startTime"
+                value={formData.startTime}
+                onChange={handleChange}
+                className="w-1/2 p-2 border border-gray-300 rounded"
+                required
+              />
+              <input
+                type="time"
+                name="endTime"
+                value={formData.endTime}
+                onChange={handleChange}
+                className="w-1/2 p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <textarea
+              name="description"
+              placeholder="Descripción del evento"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              rows={4}
+              required
+            ></textarea>
           </div>
-          <textarea
-            name="description"
-            placeholder="Descripción del evento"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full p-2 mb-4 border border-gray-300 rounded"
-            rows={4}
-            required
-          ></textarea>
         </div>
-      </div>
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className="bg-[#7ED994] text-white p-2 rounded hover:bg-[#7ED994]/80 transition-all duration-300 font-bold"
-        >
-          Agendar Evento
-        </button>
-      </div>
-    </form>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="bg-[#7ED994] text-white p-2 rounded hover:bg-[#7ED994]/80 transition-all duration-300 font-bold"
+          >
+            Agendar Evento
+          </button>
+        </div>
+        <ModalOK
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          message={modalMessage}
+        />
+      </form>
+    </div>
   );
 };
 

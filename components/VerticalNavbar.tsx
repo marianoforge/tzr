@@ -19,7 +19,6 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log("User authenticated, fetching data for UID:", user.uid);
         fetchUserData(user.uid);
       } else {
         console.log("No authenticated user");
@@ -36,7 +35,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   return (
     <nav className="bg-[#184d6b] h-[calc(100vh-4rem)]  flex-col w-64 fixed left-0 top-16 shadow-md hidden lg:block overflow-y-auto">
       <div className="flex flex-col">
-        <div className="flex-grow flex flex-col space-y-2 p-4">
+        <div className="flex-grow flex flex-col space-y-2 p-4 font-semibold">
           <VerticalNavButton
             onClick={() => handleNavClick("dashboard")}
             label="Dashboard"

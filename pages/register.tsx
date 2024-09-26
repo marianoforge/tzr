@@ -1,6 +1,7 @@
 // pages/register.tsx
 import { useState } from "react";
 import { useRouter } from "next/router";
+import ModalOK from "../components/ModalOK"; // Import ModalOK
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,8 @@ const Register = () => {
   const [error, setError] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false); // Add state for modal
+  const [modalMessage, setModalMessage] = useState(""); // Add state for modal message
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -44,8 +47,8 @@ const Register = () => {
         return;
       }
 
-      console.log("Registration successful");
-      alert("Registro exitoso. Ahora puedes iniciar sesión.");
+      setModalMessage("Registro exitoso. Ahora puedes iniciar sesión."); // Set modal message
+      setIsModalOpen(true); // Open modal
       router.push("/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -128,6 +131,11 @@ const Register = () => {
           Registrarse
         </button>
       </form>
+      <ModalOK
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        message={modalMessage}
+      />
     </div>
   );
 };

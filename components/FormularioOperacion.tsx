@@ -155,7 +155,7 @@ const FormularioOperacion = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col justify-center items-center">
       <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md">
         <h2 className="text-2xl mb-4">Agregar Operación</h2>
         <div className="flex flex-wrap -mx-2">
@@ -295,7 +295,7 @@ const FormularioOperacion = () => {
         onClose={() => setShowModal(false)}
         message={modalMessage}
       />
-    </>
+    </div>
   );
 };
 
