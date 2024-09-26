@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../lib/firebase";
-import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { useOperationsStore } from "@/stores/operationsStore";
 import Loader from "./Loader";
 import router from "next/router";
@@ -14,34 +12,30 @@ interface Event {
   description: string;
 }
 
-const EventsList = () => {
-  const [events, setEvents] = useState<Event[]>([]);
+interface EventsListProps {
+  userId: string;
+}
 
+const EventsList: React.FC<EventsListProps> = ({ userId }) => {
+  const [events, setEvents] = useState<Event[]>([]);
   const { isLoading } = useOperationsStore();
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const eventsCollection = collection(db, "events");
-        const eventsQuery = query(eventsCollection, orderBy("date", "asc"));
-        const querySnapshot = await getDocs(eventsQuery);
-
-        const fetchedEvents: Event[] = querySnapshot.docs.map(
-          (doc) =>
-            ({
-              id: doc.id,
-              ...doc.data(),
-            } as Event)
-        );
-
+        const response = await fetch(`/api/eventsPerUser?user_uid=${userId}`);
+        if (!response.ok) {
+          throw new Error("Error al obtener eventos");
+        }
+        const fetchedEvents: Event[] = await response.json();
         setEvents(fetchedEvents);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error("Error al obtener eventos:", error);
       }
     };
 
     fetchEvents();
-  }, []);
+  }, [userId]);
 
   if (isLoading) {
     return <Loader />;
@@ -50,13 +44,13 @@ const EventsList = () => {
   const displayedEvents = events.slice(0, 3);
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md min-h-[430px]">
+    <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md min-h-[430px] items-center justify-center">
       {displayedEvents.length === 0 ? (
         <p className="text-center text-gray-500">No hay eventos programados.</p>
       ) : (
         displayedEvents.map((event) => (
           <div
-            className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-[#D98B84] even:border-t-[#5FAAD7]"
+            className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-[#D98B84] even:border-t-[#5FAAD7] w-full"
             key={event.id}
           >
             <div className="flex items-center justify-between">
@@ -72,7 +66,7 @@ const EventsList = () => {
       {events.length > 3 && (
         <button
           onClick={() => router.push("/calendar")}
-          className="text-white bg-[#5FAAD7] hover:bg-[#4888b0] py-2 rounded transition duration-150 ease-in-out"
+          className="text-white bg-[#5FAAD7] hover:bg-[#4888b0] py-2 rounded transition duration-150 ease-in-out w-[320px]"
         >
           Calendario
         </button>

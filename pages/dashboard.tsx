@@ -4,12 +4,13 @@ import PrivateRoute from "../components/PrivateRoute";
 import PrivateLayout from "@/components/PrivateLayout";
 import OperationsList from "@/components/OperationsList";
 import CuadroPrincipalChart from "@/components/CuadroPrincipalChart";
-import MonthlyBarChart from "@/components/MonthlyBarChart";
+// import MonthlyBarChart from "@/components/MonthlyBarChart";
 import Bubbles from "@/components/Bubbles";
 import EventCalendar from "@/components/EventCalendar";
 import EventsList from "@/components/EventsList";
 import { useUserStore } from "@/stores/authStore";
 import { useEffect } from "react";
+import MonthlyMockedBarchart from "@/components/MonthlyMockedBarchart";
 
 const Dashboard = () => {
   const { userID, initializeAuthListener } = useUserStore();
@@ -35,7 +36,7 @@ const Dashboard = () => {
               <EventCalendar />
             </div>
             <div className="md:col-span-2 lg:col-span-2 2xl:col-span-3">
-              <EventsList />
+              <EventsList userId={userID} />
             </div>
           </div>
 
@@ -47,7 +48,8 @@ const Dashboard = () => {
               <CuadroPrincipal userID={userID} />
               <CuadroPrincipalChart userID={userID} />
             </div>
-            <MonthlyBarChart userID={userID} />
+            {/* <MonthlyBarChart userID={userID} /> */}
+            <MonthlyMockedBarchart userID={userID} />
           </div>
         </div>
       </PrivateLayout>

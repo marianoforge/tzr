@@ -27,27 +27,86 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
   const [data, setData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {
-    // Aquí deberías hacer una llamada a tu API para obtener los datos reales
-    // Por ahora, usaremos datos de ejemplo
-    const mockData: MonthlyData[] = [
-      { month: "Ene", currentYear: 4000, previousYear: 2400 },
-      { month: "Feb", currentYear: 3000, previousYear: 1398 },
-      { month: "Mar", currentYear: 2000, previousYear: 9800 },
-      { month: "Abr", currentYear: 2780, previousYear: 3908 },
-      { month: "May", currentYear: 1890, previousYear: 4800 },
-      { month: "Jun", currentYear: 2390, previousYear: 3800 },
-      { month: "Jul", currentYear: 3490, previousYear: 4300 },
-      { month: "Ago", currentYear: 3490, previousYear: 4300 },
-      { month: "Sep", currentYear: 3490, previousYear: 4300 },
-      { month: "Oct", currentYear: 3490, previousYear: 4300 },
-      { month: "Nov", currentYear: 3490, previousYear: 4300 },
-      { month: "Dic", currentYear: 3490, previousYear: 4300 },
-    ];
-    setData(mockData);
+    const fetchOperations = async () => {
+      try {
+        // Llama al endpoint para obtener las operaciones del usuario
+        const response = await fetch(
+          `/api/operationsPerUser?user_uid=${userID}`
+        );
+        if (!response.ok) {
+          throw new Error("Error al obtener los datos de las operaciones");
+        }
+        const operations = await response.json();
+
+        // Procesa los datos para obtener el formato adecuado
+        const formattedData = formatOperationsData(operations);
+        setData(formattedData);
+      } catch (error) {
+        console.error("Error fetching operations:", error);
+      }
+    };
+
+    fetchOperations();
   }, [userID]);
 
-  const COLORS = ["#F9D77E", "#A8E0FF"]; // Updated colors to match the image
-  const MAX_BAR_SIZE = 40; // Reduced bar size for a closer match to the image
+  // Función para formatear los datos a la estructura requerida por el gráfico
+  const formatOperationsData = (
+    operations: {
+      fecha_operacion: string | number | Date;
+      valor_neto: number;
+    }[]
+  ) => {
+    // Aquí debes ajustar la lógica para calcular `currentYear` y `previousYear` según tus datos
+    const months = [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic",
+    ];
+
+    // Generar un objeto base para cada mes con valores iniciales en 0
+    const data = months.map((month) => ({
+      month,
+      currentYear: 0,
+      previousYear: 0,
+    }));
+
+    // Rellenar los datos de currentYear y previousYear
+    operations.forEach(
+      (operation: {
+        fecha_operacion: string | number | Date;
+        valor_neto: number;
+      }) => {
+        const operationDate = new Date(operation.fecha_operacion);
+        const monthIndex = operationDate.getMonth(); // Devuelve un índice de 0 a 11
+
+        // Verifica si la operación es del año actual o del año anterior
+        const currentYear = new Date().getFullYear();
+        if (operationDate.getFullYear() === currentYear) {
+          data[monthIndex].currentYear += operation.valor_neto; // Suma los valores netos del año actual
+        } else if (operationDate.getFullYear() === currentYear - 1) {
+          data[monthIndex].previousYear += operation.valor_neto; // Suma los valores netos del año anterior
+        }
+      }
+    );
+
+    return data;
+  };
+
+  const COLORS = ["#F9D77E", "#A8E0FF"];
+  const MAX_BAR_SIZE = 40;
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   if (data.length === 0) {
     return (
@@ -56,10 +115,6 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
     );
-  }
-
-  if (isLoading) {
-    return <Loader />;
   }
 
   return (

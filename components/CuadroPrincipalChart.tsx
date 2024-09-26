@@ -80,40 +80,44 @@ const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">
         Tipo de Operaciones
       </h2>
-      <div className="h-80 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={tiposOperaciones}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={120}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {tiposOperaciones.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                  stroke="white"
-                  strokeWidth={3}
-                  strokeOpacity={0.7}
-                  strokeLinecap="round"
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend
-              wrapperStyle={{
-                paddingTop: "20px",
-                fontSize: "14px",
-                fontWeight: "bold",
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+      {tiposOperaciones.length === 0 ? (
+        <p className="text-center text-gray-600">No existen operaciones</p>
+      ) : (
+        <div className="h-80 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={tiposOperaciones}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={120}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {tiposOperaciones.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                    stroke="white"
+                    strokeWidth={3}
+                    strokeOpacity={0.7}
+                    strokeLinecap="round"
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend
+                wrapperStyle={{
+                  paddingTop: "20px",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };
