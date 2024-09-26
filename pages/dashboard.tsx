@@ -43,7 +43,7 @@ const Dashboard = () => {
             <div className="hidden md:block">
               <OperationsList userID={userID} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-6">
               <CuadroPrincipal userID={userID} />
               <CuadroPrincipalChart userID={userID} />
             </div>

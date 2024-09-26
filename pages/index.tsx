@@ -1,42 +1,44 @@
 // pages/index.tsx
-import { useRouter } from 'next/router';
-
+import { useRouter } from "next/router";
 
 const Home = () => {
   const router = useRouter();
 
   const handleLoginRedirect = () => {
-    router.push('/login'); // Redirige a la página de inicio de sesión
+    router.push("/login"); // Redirige a la página de inicio de sesión
   };
 
   const handleRegisterRedirect = () => {
-    router.push('/register'); // Redirige a la página de registro
+    router.push("/register"); // Redirige a la página de registro
   };
 
   return (
     <>
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="text-center p-6 bg-white rounded shadow-md">
-        <h1 className="text-4xl font-bold mb-4">Bienvenido a la App de Asesor Inmobiliario</h1>
-        <p className="mb-6 text-gray-700">
-          Administra y gestiona todas tus operaciones inmobiliarias de manera sencilla y eficiente.
-        </p>
-        <div className="flex space-x-4">
-          <button
-            onClick={handleLoginRedirect}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Iniciar Sesión
-          </button>
-          <button
-            onClick={handleRegisterRedirect}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          >
-            Registrarse
-          </button>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="text-center p-6 bg-white rounded shadow-md">
+          <h1 className="text-4xl font-bold mb-4">
+            Bienvenido a la App de Asesor Inmobiliario
+          </h1>
+          <p className="mb-6 text-gray-700">
+            Administra y gestiona todas tus operaciones inmobiliarias de manera
+            sencilla y eficiente.
+          </p>
+          <div className="flex space-x-4 justify-center">
+            <button
+              onClick={handleLoginRedirect}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Iniciar Sesión
+            </button>
+            <button
+              onClick={handleRegisterRedirect}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Registrarse
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

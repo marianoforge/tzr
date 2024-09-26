@@ -2,6 +2,7 @@ import { UserData, useUserDataStore } from "@/stores/userDataStore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
 
 interface NavbarProps {
   setActiveView: (view: string) => void;
@@ -62,7 +63,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
         </button>
 
         {/* Desktop menu */}
-        <div className="hidden lg:flex space-x-4 items-center">
+        <div className="hidden lg:flex space-x-4 items-center justify-center">
           <NavButton
             onClick={() => handleNavClick("dashboard")}
             label="Dashboard"
@@ -93,33 +94,35 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="lg:hidden mt-4">
-          <NavButton
-            onClick={() => handleNavClick("dashboard")}
-            label="Dashboard"
-            fullWidth
-          />
-          <NavButton
-            onClick={() => handleNavClick("reservationInput")}
-            label="Formulario de Operaciones"
-            fullWidth
-          />
-          <NavButton
-            onClick={() => handleNavClick("eventForm")}
-            label="Formulario de Eventos"
-            fullWidth
-          />
-          <NavButton
-            onClick={() => handleNavClick("calendar")}
-            label="Calendario"
-            fullWidth
-          />
-          <div className="mt-4">
+        <>
+          <div className="mt-6 flex flex-col items-center gap-2">
             <UserAvatar />
             <UserInfo userData={userData} isLoading={isLoading} error={error} />
             <UserActions setActiveView={setActiveView} />
           </div>
-        </div>
+          <div className="lg:hidden mt-6 mb-6 flex flex-col items-center">
+            <NavButton
+              onClick={() => handleNavClick("dashboard")}
+              label="Dashboard"
+              fullWidth
+            />
+            <NavButton
+              onClick={() => handleNavClick("reservationInput")}
+              label="Formulario de Operaciones"
+              fullWidth
+            />
+            <NavButton
+              onClick={() => handleNavClick("eventForm")}
+              label="Formulario de Eventos"
+              fullWidth
+            />
+            <NavButton
+              onClick={() => handleNavClick("calendar")}
+              label="Calendario"
+              fullWidth
+            />
+          </div>
+        </>
       )}
     </nav>
   );
@@ -139,7 +142,7 @@ const NavButton: React.FC<NavButtonProps> = ({
   <button
     onClick={onClick}
     className={`text-white hover:bg-[#3A6D8A] px-3 py-2 rounded transition duration-150 ease-in-out ${
-      fullWidth ? "w-full text-left" : ""
+      fullWidth ? "w-full text-center" : ""
     }`}
   >
     {label}
@@ -184,21 +187,32 @@ const UserActions = ({
   setActiveView,
 }: {
   setActiveView: (view: string) => void;
-}) => (
-  <div className="flex justify-around 2xl:items-start 2xl:flex 2xl:justify-around 2xl:space-x-2">
-    <button
-      onClick={() => setActiveView("login")}
-      className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out mr-2 2xl:mr-0 2xl:px-1"
-    >
-      Cerrar Sesión
-    </button>
-    <button
-      onClick={() => setActiveView("login")}
-      className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out "
-    >
-      Settings
-    </button>
-  </div>
-);
+}) => {
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setActiveView("login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  return (
+    <div className="flex justify-around 2xl:items-start 2xl:flex 2xl:justify-around 2xl:space-x-2">
+      <button
+        onClick={handleSignOut}
+        className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out mr-2 2xl:mr-0 2xl:px-1"
+      >
+        Cerrar Sesión
+      </button>
+      <button
+        onClick={() => setActiveView("login")}
+        className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out "
+      >
+        Settings
+      </button>
+    </div>
+  );
+};
 
 export default Navbar;
