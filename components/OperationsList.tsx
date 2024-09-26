@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useOperationsStore } from "@/stores/operationsStore";
 import Loader from "./Loader";
 
-const OperationsList = ({ userID }: OperationsListProps) => {
+const OperationsList = ({ userId }: OperationsListProps) => {
   const { operations, totals, setOperations, calculateTotals, isLoading } =
     useOperationsStore();
 
@@ -37,11 +37,11 @@ const OperationsList = ({ userID }: OperationsListProps) => {
 
   useEffect(() => {
     const fetchOperaciones = async () => {
-      if (!userID) return;
+      if (!userId) return;
 
       try {
         const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userID}`
+          `/api/operationsPerUser?user_uid=${userId}`
         );
         if (!response.ok) {
           throw new Error("Error fetching operations");
@@ -56,7 +56,7 @@ const OperationsList = ({ userID }: OperationsListProps) => {
     };
 
     fetchOperaciones();
-  }, [userID, setOperations, calculateTotals]);
+  }, [userId, setOperations, calculateTotals]);
 
   const COLORS = {
     headerBg: "bg-[#A8E0FF]/20",

@@ -22,10 +22,10 @@ interface Operacion {
 }
 
 interface CuadroPrincipalProps {
-  userID: string;
+  userId: string;
 }
 
-const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
+const CuadroPrincipalChart = ({ userId }: CuadroPrincipalProps) => {
   const { isLoading } = useOperationsStore();
   const [tiposOperaciones, setTiposOperaciones] = useState<
     { name: string; value: number }[]
@@ -34,11 +34,11 @@ const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
   // Fetch the operations data from your API using the userID
   useEffect(() => {
     const fetchOperaciones = async () => {
-      if (!userID) return; // Ensure userID is available before making the request
+      if (!userId) return; // Ensure userID is available before making the request
 
       try {
         const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userID}`
+          `/api/operationsPerUser?user_uid=${userId}`
         );
         if (!response.ok) {
           throw new Error("Error fetching operations");
@@ -53,7 +53,7 @@ const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
     };
 
     fetchOperaciones();
-  }, [userID]);
+  }, [userId]);
 
   const calculateTotals = (operations: Operacion[]) => {
     // Calcular los tipos de operaciones
@@ -76,14 +76,14 @@ const CuadroPrincipalChart = ({ userID }: CuadroPrincipalProps) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full">
+    <div className="bg-white p-3 rounded-lg shadow-md w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">
         Tipo de Operaciones
       </h2>
       {tiposOperaciones.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (
-        <div className="h-80 w-full">
+        <div className="h-[420px] w-full align-middle">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

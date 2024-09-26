@@ -47,7 +47,7 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-6 rounded shadow-md w-1/3"
+        className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
       >
         <h2 className="text-2xl mb-4">Iniciar Sesión</h2>
         {error && <p className="text-red-500">{error}</p>}

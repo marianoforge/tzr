@@ -1,8 +1,9 @@
 // components/PrivateRoute.tsx
-import {  useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../lib/firebase";
+import { useUserStore } from "@/stores/authStore";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -10,21 +11,24 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const { userID, setUserID } = useUserStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push('/login');
+      if (user) {
+        setUserID(user.uid);
       } else {
-        setLoading(false);
+        setUserID(null);
+        router.push("/login");
       }
     });
 
     return () => unsubscribe();
-  }, [router]);
+  }, [router, setUserID]);
 
-  if (loading) return <p>Cargando...</p>;
+  if (!userID) {
+    return;
+  }
 
   return <>{children}</>;
 };

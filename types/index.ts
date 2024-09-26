@@ -15,5 +15,5 @@ export interface Operacion {
 }
 
 export interface OperationsListProps {
-  userID: string;
+  userId: string;
 }

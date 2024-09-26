@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useOperationsStore } from "@/stores/operationsStore";
 import Loader from "./Loader";
-import router from "next/router";
 
 interface Event {
   id: string;
@@ -44,7 +43,7 @@ const EventsList: React.FC<EventsListProps> = ({ userId }) => {
   const displayedEvents = events.slice(0, 3);
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md min-h-[430px] items-center justify-center">
+    <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md  items-center justify-center min-h-[450px]">
       {displayedEvents.length === 0 ? (
         <p className="text-center text-gray-500">No hay eventos programados.</p>
       ) : (
@@ -62,14 +61,6 @@ const EventsList: React.FC<EventsListProps> = ({ userId }) => {
             <p className="mt-2 text-gray-400 text-sm">{event.description}</p>
           </div>
         ))
-      )}
-      {events.length > 3 && (
-        <button
-          onClick={() => router.push("/calendar")}
-          className="text-white bg-[#5FAAD7] hover:bg-[#4888b0] py-2 rounded transition duration-150 ease-in-out w-[320px]"
-        >
-          Calendario
-        </button>
       )}
     </div>
   );

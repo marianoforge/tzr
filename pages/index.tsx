@@ -15,10 +15,8 @@ const Home = () => {
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-center p-6 bg-white rounded shadow-md">
-          <h1 className="text-4xl font-bold mb-4">
-            Bienvenido a la App de Asesor Inmobiliario
-          </h1>
+        <div className="text-center p-6 bg-white rounded shadow-md w-11/12 max-w-lg">
+          <h1 className="text-4xl font-bold mb-4">Bienvenido a TzR</h1>
           <p className="mb-6 text-gray-700">
             Administra y gestiona todas tus operaciones inmobiliarias de manera
             sencilla y eficiente.

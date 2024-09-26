@@ -74,7 +74,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
 
           <div className="sm:flex flex-col hidden items-center">
             <UserInfo userData={userData} isLoading={isLoading} error={error} />
-            <UserActions setActiveView={setActiveView} />
           </div>
         </div>
       </div>
@@ -106,6 +105,9 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
           </div>
         </>
       )}
+      <div className="lg:hidden">
+        <UserActions setActiveView={setActiveView} />
+      </div>
     </nav>
   );
 };
@@ -149,15 +151,9 @@ interface UserInfoProps {
   error: string | null;
 }
 
-export const UserInfo: React.FC<UserInfoProps> = ({
-  userData,
-  isLoading,
-  error,
-}) => (
+export const UserInfo: React.FC<UserInfoProps> = ({ userData, error }) => (
   <div className="flex flex-col text-nowrap">
-    {isLoading ? (
-      <p className="text-white font-bold">Cargando...</p>
-    ) : error ? (
+    {error ? (
       <p className="text-white font-bold">Error: {error}</p>
     ) : userData ? (
       <p className="text-white font-bold capitalize">
@@ -186,16 +182,16 @@ export const UserActions = ({
   return (
     <div className="w-full flex justify-between text-nowrap">
       <button
-        onClick={handleSignOut}
-        className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out mr-2 2xl:mr-0 2xl:px-1"
-      >
-        Cerrar Sesión
-      </button>
-      <button
         onClick={() => setActiveView("login")}
         className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out "
       >
         Settings
+      </button>
+      <button
+        onClick={handleSignOut}
+        className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out mr-2 2xl:mr-0 2xl:px-1"
+      >
+        Cerrar Sesión
       </button>
     </div>
   );

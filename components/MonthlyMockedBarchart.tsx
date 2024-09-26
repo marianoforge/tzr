@@ -11,7 +11,7 @@ import {
 } from "recharts";
 
 interface MonthlyBarChartProps {
-  userID: string;
+  userId: string;
 }
 
 interface MonthlyData {
@@ -20,7 +20,7 @@ interface MonthlyData {
   previousYear: number;
 }
 
-const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
+const MonthlyMockedBarchart = ({ userId }: MonthlyBarChartProps) => {
   const [data, setData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
       { month: "Dic", currentYear: 3490, previousYear: 4300 },
     ];
     setData(mockData);
-  }, [userID]);
+  }, [userId]);
 
   const COLORS = ["#F9D77E", "#A8E0FF"]; // Updated colors to match the image
   const MAX_BAR_SIZE = 40; // Reduced bar size for a closer match to the image
@@ -89,4 +89,4 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
   );
 };
 
-export default MonthlyBarChart;
+export default MonthlyMockedBarchart;

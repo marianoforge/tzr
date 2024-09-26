@@ -60,7 +60,7 @@ const Register = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleRegister}
-        className="bg-white p-6 rounded shadow-md"
+        className="bg-white p-6 rounded shadow-md  w-11/12 max-w-lg"
       >
         <h2 className="text-2xl mb-4">Regístrate</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}

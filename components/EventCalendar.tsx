@@ -19,7 +19,7 @@ const EventCalendar = () => {
   }
 
   return (
-    <div className="bg-white flex p-14 rounded-lg shadow-md">
+    <div className="bg-white flex px-12 py-16 rounded-lg shadow-md min-h-[450px]">
       <Calendar onChange={onChange} value={value} />
     </div>
   );

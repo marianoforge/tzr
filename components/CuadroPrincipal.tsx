@@ -15,10 +15,10 @@ interface Operacion {
 }
 
 interface CuadroPrincipalProps {
-  userID: string;
+  userId: string;
 }
 
-const CuadroPrincipal = ({ userID }: CuadroPrincipalProps) => {
+const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
   const { isLoading } = useOperationsStore();
   const [operaciones, setOperaciones] = useState<Operacion[]>([]);
   const [totals, setTotals] = useState({
@@ -31,11 +31,11 @@ const CuadroPrincipal = ({ userID }: CuadroPrincipalProps) => {
   // Fetch the operations data from your API using the userID
   useEffect(() => {
     const fetchOperaciones = async () => {
-      if (!userID) return; // Ensure userID is available before making the request
+      if (!userId) return; // Ensure userID is available before making the request
 
       try {
         const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userID}`
+          `/api/operationsPerUser?user_uid=${userId}`
         );
         if (!response.ok) {
           throw new Error("Error fetching operations");
@@ -50,7 +50,7 @@ const CuadroPrincipal = ({ userID }: CuadroPrincipalProps) => {
     };
 
     fetchOperaciones();
-  }, [userID]);
+  }, [userId]);
 
   const calculateTotals = (operations: Operacion[]) => {
     const totalFacturacionBruta = operations.reduce(
