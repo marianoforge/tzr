@@ -1,13 +1,17 @@
 // components/OperationsList.tsx
-import { OperationsListProps } from "@/types";
+import { useState, useEffect } from "react";
+import { auth } from "../lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/router";
 import { formatNumber } from "@/utils/formatNumber";
-import { useEffect } from "react";
 import { useOperationsStore } from "@/stores/operationsStore";
 import Loader from "./Loader";
 
-const OperationsList = ({ userId }: OperationsListProps) => {
+const OperationsList = () => {
   const { operations, totals, setOperations, calculateTotals, isLoading } =
     useOperationsStore();
+  const [userUID, setUserUID] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
@@ -36,27 +40,39 @@ const OperationsList = ({ userId }: OperationsListProps) => {
   };
 
   useEffect(() => {
-    const fetchOperaciones = async () => {
-      if (!userId) return;
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserUID(user.uid);
+      } else {
+        setUserUID(null);
+        router.push("/login");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  useEffect(() => {
+    const fetchOperations = async () => {
+      if (!userUID) return;
 
       try {
         const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userId}`
+          `/api/operationsPerUser?user_uid=${userUID}`
         );
         if (!response.ok) {
-          throw new Error("Error fetching operations");
+          throw new Error("Error al obtener las operaciones del usuario");
         }
 
         const data = await response.json();
         setOperations(data);
         calculateTotals();
       } catch (error) {
-        console.error("Error fetching operations:", error);
+        console.error("Error al obtener las operaciones:", error);
       }
     };
 
-    fetchOperaciones();
-  }, [userId, setOperations, calculateTotals]);
+    fetchOperations();
+  }, [userUID, setOperations, calculateTotals]);
 
   const COLORS = {
     headerBg: "bg-[#5DADE2]/10",
@@ -110,6 +126,9 @@ const OperationsList = ({ userId }: OperationsListProps) => {
                   Valor Reserva
                 </th>
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
+                  Puntas
+                </th>
+                <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
                   Porcentaje Honorarios Asesor
                 </th>
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
@@ -127,7 +146,7 @@ const OperationsList = ({ userId }: OperationsListProps) => {
               {operations.map((operacion) => (
                 <tr
                   key={operacion.id}
-                  className={`${COLORS.rowBg} ${COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out`}
+                  className={`${COLORS.rowBg} ${COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
                 >
                   <td className="py-3 px-4 before:content-['Fecha:'] md:before:content-none">
                     {new Date(operacion.fecha_operacion).toLocaleDateString()}
@@ -153,14 +172,19 @@ const OperationsList = ({ userId }: OperationsListProps) => {
                   <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
                     ${formatNumber(operacion.valor_reserva)}
                   </td>
+                  <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
+                    {formatNumber(
+                      operacion.punta_vendedora + operacion.punta_compradora
+                    )}
+                  </td>
                   <td className="py-3 px-4 before:content-['% Honorarios Asesor:'] md:before:content-none">
                     {formatNumber(operacion.porcentaje_honorarios_asesor)}%
                   </td>
                   <td className="py-3 px-4 before:content-['% Honorarios Agencia:'] md:before:content-none">
-                    {formatNumber(operacion.honorarios_brutos)}%
+                    {formatNumber(operacion.porcentaje_honorarios_broker)}%
                   </td>
                   <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
-                    ${formatNumber(operacion.valor_neto)}
+                    ${formatNumber(operacion.honorarios_asesor)}
                   </td>
                   <td className="py-3 px-4 md:before:content-none">
                     <button
@@ -183,23 +207,28 @@ const OperationsList = ({ userId }: OperationsListProps) => {
               ))}
               {/* Total row */}
               <tr
-                className={`font-bold hidden md:table-row ${COLORS.headerBg}`}
+                className={`font-bold hidden md:table-row ${COLORS.headerBg} `}
               >
                 <td className="py-3 px-4" colSpan={7}>
                   Total
                 </td>
-                <td className={`py-3 px-4 ${COLORS.headerText}`}>
+                <td className={`py-3 px-4 ${COLORS.headerText} text-center`}>
                   ${formatNumber(Number(totals.valor_reserva))}
                 </td>
-                <td className={`py-3 px-4 ${COLORS.headerText}`}>
+                <td className={`py-3 px-4 ${COLORS.headerText} text-center`}>
+                  {formatNumber(Number(totals.suma_total_de_puntas))}
+                </td>
+                <td className={`py-3 px-4 ${COLORS.headerText} text-center`}>
                   {formatNumber(Number(totals.porcentaje_honorarios_asesor))}%
                 </td>
-                <td className={`py-3 px-4 ${COLORS.headerText}`}>
-                  {formatNumber(Number(totals.honorarios_brutos))}%
+
+                <td className={`py-3 px-4 ${COLORS.headerText} text-center`}>
+                  {formatNumber(Number(totals.porcentaje_honorarios_broker))}%
                 </td>
-                <td className={`py-3 px-4 ${COLORS.headerText}`} colSpan={2}>
-                  ${formatNumber(Number(totals.valor_neto))}
+                <td className={`py-3 px-4 ${COLORS.headerText} text-center`}>
+                  ${formatNumber(Number(totals.honorarios_asesor))}
                 </td>
+                <td className={`py-3 px-4 ${COLORS.headerText}`}></td>
               </tr>
             </tbody>
           </table>

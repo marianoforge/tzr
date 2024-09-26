@@ -2,7 +2,6 @@ import { useOperationsStore } from "@/stores/operationsStore";
 import { formatNumber } from "@/utils/formatNumber";
 import React from "react";
 import Loader from "./Loader";
-import ObjectiveChart from "./ObjectiveChart";
 
 const Bubbles = () => {
   const { totals, isLoading } = useOperationsStore();
@@ -26,34 +25,40 @@ const Bubbles = () => {
 
   const bubbleData = [
     {
-      title: "Honorarios Totales Netos",
-      figure: formatValue(totals.valor_neto, "currency"),
+      title: "Honorarios Totales Netos (Asesor)",
+      figure: formatValue(totals.honorarios_asesor, "currency"),
       bgColor: "bg-[#F7B89E]/10",
       textColor: "text-[#C25B33]",
     },
     {
-      title: "Porcentaje Prom. Honorarios",
-      figure: formatValue(totals.honorarios_brutos, "percentage"),
+      title: "Honorarios Totales Brutos (Broker)",
+      figure: formatValue(totals.honorarios_broker, "currency"),
       bgColor: "bg-[#5DADE2]/10",
       textColor: "text-[#2E86C1]",
     },
     {
-      title: "Valores Totales de Reservas",
+      title: "Monto Total de Operaciones Efectuadas",
       figure: formatValue(totals.valor_reserva, "currency"),
       bgColor: "bg-[#F7B89E]/10",
       textColor: "text-[#C25B33]",
     },
     {
-      title: "Mayor Venta Efectuada",
-      figure: formatValue(totals.mayor_venta_efectuada, "currency"),
+      title: "Cantidad Total de Puntas",
+      figure: formatValue(totals.suma_total_de_puntas, "none"),
       bgColor: "bg-[#1E8449]/10",
       textColor: "text-[#145A32]",
     },
     {
-      title: "Promedio de Valor de Reserva",
+      title: "Promedio Valor Operación",
       figure: formatValue(totals.promedio_valor_reserva, "currency"),
       bgColor: "bg-[#5DADE2]/10",
       textColor: "text-[#2E86C1]",
+    },
+    {
+      title: "Cantidad de Operaciones Efectuadas",
+      figure: formatValue(totals.cantidad_operaciones, "none"),
+      bgColor: "bg-[#1E8449]/10",
+      textColor: "text-[#145A32]",
     },
   ];
 
@@ -78,7 +83,6 @@ const Bubbles = () => {
           </p>
         </div>
       ))}
-      <ObjectiveChart />
     </div>
   );
 };

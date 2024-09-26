@@ -50,8 +50,6 @@ const EventsList: React.FC<EventsListProps> = ({ userId }) => {
 
   const displayedEvents = events.slice(0, 3);
 
-  console.log(events);
-
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md  items-center justify-center min-h-[450px]">
       {displayedEvents.length === 0 ? (

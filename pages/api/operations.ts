@@ -20,10 +20,11 @@ export default async function handler(
     numero_sobre_reserva,
     numero_sobre_refuerzo,
     porcentaje_honorarios_asesor,
-    honorarios_brutos,
+    porcentaje_honorarios_broker,
+    honorarios_broker,
+    honorarios_asesor,
     referido,
     compartido,
-    valor_neto,
     user_uid,
     estado,
   } = req.body;
@@ -44,8 +45,10 @@ export default async function handler(
       numero_sobre_refuerzo: parseFloat(numero_sobre_refuerzo) || 0,
       porcentaje_honorarios_asesor:
         parseFloat(porcentaje_honorarios_asesor) || 0,
-      honorarios_brutos: parseFloat(honorarios_brutos) || 0,
-      valor_neto: parseFloat(valor_neto) || 0,
+      porcentaje_honorarios_broker:
+        parseFloat(porcentaje_honorarios_broker) || 0, // Added this field
+      honorarios_broker: parseFloat(honorarios_broker) || 0,
+      honorarios_asesor: parseFloat(honorarios_asesor) || 0,
       referido,
       compartido,
       user_uid,

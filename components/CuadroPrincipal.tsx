@@ -3,16 +3,7 @@ import { useEffect, useState } from "react";
 import { formatNumber } from "../utils/formatNumber";
 import Loader from "./Loader";
 import { useOperationsStore } from "@/stores/operationsStore";
-
-interface Operacion {
-  id: string; // assuming each operation has a unique ID
-  tipo_operacion: string; // assuming this field exists for the type of operation
-  punta_compradora: boolean;
-  punta_vendedora: boolean;
-  valor_reserva: number;
-  honorarios_brutos: number;
-  valor_neto: number;
-}
+import { Operacion } from "@/types";
 
 interface CuadroPrincipalProps {
   userId: string;
@@ -54,11 +45,11 @@ const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
 
   const calculateTotals = (operations: Operacion[]) => {
     const totalFacturacionBruta = operations.reduce(
-      (acc, op) => acc + op.honorarios_brutos,
+      (acc, op) => acc + op.honorarios_broker,
       0
     );
     const totalFacturacionNeta = operations.reduce(
-      (acc, op) => acc + op.valor_neto,
+      (acc, op) => acc + op.honorarios_asesor,
       0
     );
     const totalPuntaCompradora = operations.filter(
@@ -99,7 +90,7 @@ const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
               {operaciones.map((operacion) => (
                 <tr
                   key={operacion.id}
-                  className="border-b md:table-row flex flex-col md:flex-row mb-4"
+                  className="border-b md:table-row flex flex-col md:flex-row mb-4 text-center"
                 >
                   <td className="py-2 px-4 before:content-['Tipo_de_Operación:'] md:before:content-none">
                     {operacion.tipo_operacion}
@@ -113,12 +104,12 @@ const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
                   </td>
 
                   <td className="py-2 px-4 before:content-['Facturación_Neta:'] md:before:content-none">
-                    ${formatNumber(operacion.valor_neto)}
+                    ${formatNumber(operacion.honorarios_asesor)}
                   </td>
                 </tr>
               ))}
               {/* Total row */}
-              <tr className="font-bold hidden md:table-row">
+              <tr className="font-bold hidden md:table-row text-center">
                 <td className="py-2 px-4">Total</td>
                 <td className="py-2 px-4">
                   {formatNumber(totals.punta_compradora)}
