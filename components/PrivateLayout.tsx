@@ -1,6 +1,7 @@
 // components/PrivateLayout.tsx
 import { useRouter } from "next/router";
 import Navbar from "./Navbar";
+import VerticalNavbar from "./VerticalNavbar";
 import Footer from "./Footer";
 
 interface PrivateLayoutProps {
@@ -30,7 +31,10 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar setActiveView={setActiveView} />
-      <main className="flex-grow p-4 sm:p-6 md:p-8">{children}</main>
+      <VerticalNavbar setActiveView={setActiveView} />
+      <main className="flex-grow mt-[70px] p-4 sm:p-6 md:p-8 lg:ml-64">
+        {children}
+      </main>
       <Footer setActiveView={setActiveView} />
     </div>
   );

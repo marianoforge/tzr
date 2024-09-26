@@ -35,57 +35,44 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="bg-[#4D8EB3] p-4 shadow-md">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="text-white text-xl font-bold">
-          Realtor Efficiency App
-        </div>
-
+    <nav className="fixed top-0 left-0 right-0 p-4 bg-[#4D8EB3] z-50">
+      <div className="flex items-center justify-between w-full">
         {/* Hamburger menu icon */}
-        <button
-          className="lg:hidden text-white focus:outline-none"
-          onClick={toggleMenu}
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        <div className="lg:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
+          <button
+            className="text-white focus:outline-none"
+            onClick={toggleMenu}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16m-7 6h7"
-            />
-          </svg>
-        </button>
-
-        {/* Desktop menu */}
-        <div className="hidden lg:flex space-x-4 items-center justify-center">
-          <NavButton
-            onClick={() => handleNavClick("dashboard")}
-            label="Dashboard"
-          />
-          <NavButton
-            onClick={() => handleNavClick("reservationInput")}
-            label="Formulario de Operaciones"
-          />
-          <NavButton
-            onClick={() => handleNavClick("eventForm")}
-            label="Formulario de Eventos"
-          />
-          <NavButton
-            onClick={() => handleNavClick("calendar")}
-            label="Calendario"
-          />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
+            </svg>
+          </button>
+          <div className=" text-white text-xl font-bold w-full">
+            Logo TzR App
+          </div>
         </div>
 
         {/* User info and actions */}
-        <div className="hidden lg:flex items-center space-x-2">
-          <UserAvatar />
-          <div className="flex flex-col 2xl:items-start">
+        <div className="hidden lg:block text-white text-xl font-bold w-full ml-12">
+          Logo TzR App
+        </div>
+        <div className="flex space-x-3 justify-end items-center mr-3 sm:mr-4 md:mr-10">
+          <div className="flex flex-col items-center">
+            <UserAvatar />
+          </div>
+
+          <div className="sm:flex flex-col hidden items-center">
             <UserInfo userData={userData} isLoading={isLoading} error={error} />
             <UserActions setActiveView={setActiveView} />
           </div>
@@ -95,11 +82,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
       {/* Mobile menu */}
       {isMenuOpen && (
         <>
-          <div className="mt-6 flex flex-col items-center gap-2">
-            <UserAvatar />
-            <UserInfo userData={userData} isLoading={isLoading} error={error} />
-            <UserActions setActiveView={setActiveView} />
-          </div>
           <div className="lg:hidden mt-6 mb-6 flex flex-col items-center">
             <NavButton
               onClick={() => handleNavClick("dashboard")}
@@ -134,7 +116,7 @@ interface NavButtonProps {
   fullWidth?: boolean;
 }
 
-const NavButton: React.FC<NavButtonProps> = ({
+export const NavButton: React.FC<NavButtonProps> = ({
   onClick,
   label,
   fullWidth = false,
@@ -149,7 +131,7 @@ const NavButton: React.FC<NavButtonProps> = ({
   </button>
 );
 
-const UserAvatar = () => (
+export const UserAvatar = () => (
   <div className="w-10 h-10 bg-white rounded-full overflow-hidden">
     <Image
       src="/avatar.jpg"
@@ -167,8 +149,12 @@ interface UserInfoProps {
   error: string | null;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ userData, isLoading, error }) => (
-  <div className="flex flex-col items-start">
+export const UserInfo: React.FC<UserInfoProps> = ({
+  userData,
+  isLoading,
+  error,
+}) => (
+  <div className="flex flex-col text-nowrap">
     {isLoading ? (
       <p className="text-white font-bold">Cargando...</p>
     ) : error ? (
@@ -183,7 +169,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ userData, isLoading, error }) => (
   </div>
 );
 
-const UserActions = ({
+export const UserActions = ({
   setActiveView,
 }: {
   setActiveView: (view: string) => void;
@@ -198,7 +184,7 @@ const UserActions = ({
   };
 
   return (
-    <div className="flex justify-around 2xl:items-start 2xl:flex 2xl:justify-around 2xl:space-x-2">
+    <div className="w-full flex justify-between text-nowrap">
       <button
         onClick={handleSignOut}
         className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out mr-2 2xl:mr-0 2xl:px-1"
