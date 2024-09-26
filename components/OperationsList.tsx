@@ -59,13 +59,13 @@ const OperationsList = ({ userId }: OperationsListProps) => {
   }, [userId, setOperations, calculateTotals]);
 
   const COLORS = {
-    headerBg: "bg-[#A8E0FF]/20",
-    headerText: "text-[#5EAAD7]",
+    headerBg: "bg-[#5DADE2]/10",
+    headerText: "text-[#2E86C1]",
     rowBg: "bg-white",
-    rowHover: "hover:bg-[#A8E0FF]/10",
+    rowHover: "hover:bg-[#5DADE2]/10",
     buttonBgEnCurso: "bg-[#7ED994]",
     buttonHoverEnCurso: "hover:bg-[#34D399]",
-    buttonBgCerrada: "bg-[#4B5563]",
+    buttonBgCerrada: "bg-[#4B5599]",
     buttonHoverCerrada: "hover:bg-[#374151]",
   };
 

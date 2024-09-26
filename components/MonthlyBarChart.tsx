@@ -101,7 +101,8 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
     return data;
   };
 
-  const COLORS = ["#F9D77E", "#A8E0FF"];
+  const COLORS = ["#F9D77EB3", "#5DADE2B3"];
+
   const MAX_BAR_SIZE = 40;
 
   if (isLoading) {
@@ -111,7 +112,9 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
   if (data.length === 0) {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">
-        <h2 className="text-2xl font-bold mb-4">Honorarios Netos Mensuales</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Honorarios Netos Mensuales
+        </h2>
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
     );
@@ -119,7 +122,7 @@ const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
         Honorarios Netos Mensuales
       </h2>
       <div className="h-80 w-full">

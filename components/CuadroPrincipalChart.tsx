@@ -69,7 +69,13 @@ const CuadroPrincipalChart = ({ userId }: CuadroPrincipalProps) => {
     setTiposOperaciones(tiposData);
   };
 
-  const COLORS = ["#F9D77E", "#A8E0FF", "#FFB7B2", "#BAFFC9", "#BAE1FF"];
+  const COLORS = [
+    "#F9D77EB3",
+    "#5DADE2B3",
+    "#C25B33B3",
+    "#1E8449B3",
+    "#5DADE299",
+  ];
 
   if (isLoading) {
     return <Loader />;

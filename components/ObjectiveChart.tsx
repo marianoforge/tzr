@@ -52,30 +52,31 @@ const needle = (
 export default class Example extends PureComponent {
   render() {
     return (
-      <div className="bg-[#BAFFC9]/10 rounded-lg p-2 text-center shadow-md flex flex-col justify-between items-center h-[200px]">
+      <div className="bg-[#1E8449]/10 rounded-lg p-2 text-center shadow-md flex flex-col justify-between items-center h-[200px]">
         <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-base font-semibold text-gray-700 pt-8">
           Objetivo de Ventas
         </p>
-
-        <PieChart width={120} height={100}>
-          <Pie
-            dataKey="value"
-            startAngle={180}
-            endAngle={0}
-            data={data}
-            cx={60}
-            cy={70}
-            innerRadius={25}
-            outerRadius={50}
-            fill="#8884d8"
-            stroke="none"
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          {needle(value, data, 60, 70, 25, 50, "#7ED994")}
-        </PieChart>
+        <div className="pb-4">
+          <PieChart width={120} height={100}>
+            <Pie
+              dataKey="value"
+              startAngle={180}
+              endAngle={0}
+              data={data}
+              cx={60}
+              cy={70}
+              innerRadius={25}
+              outerRadius={50}
+              fill="#8884d8"
+              stroke="none"
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            {needle(value, data, 60, 70, 25, 50, "#7ED994")}
+          </PieChart>
+        </div>
       </div>
     );
   }

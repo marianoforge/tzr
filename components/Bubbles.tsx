@@ -28,32 +28,32 @@ const Bubbles = () => {
     {
       title: "Honorarios Totales Netos",
       figure: formatValue(totals.valor_neto, "currency"),
-      bgColor: "bg-[#F9D77E]/10",
-      textColor: "text-[#C7A84E]",
+      bgColor: "bg-[#F7B89E]/10",
+      textColor: "text-[#C25B33]",
     },
     {
       title: "Porcentaje Prom. Honorarios",
       figure: formatValue(totals.honorarios_brutos, "percentage"),
-      bgColor: "bg-[#A8E0FF]/10",
-      textColor: "text-[#5EAAD7]",
+      bgColor: "bg-[#5DADE2]/10",
+      textColor: "text-[#2E86C1]",
     },
     {
       title: "Valores Totales de Reservas",
       figure: formatValue(totals.valor_reserva, "currency"),
-      bgColor: "bg-[#FFB7B2]/10",
-      textColor: "text-[#D98B84]",
+      bgColor: "bg-[#F7B89E]/10",
+      textColor: "text-[#C25B33]",
     },
     {
       title: "Mayor Venta Efectuada",
       figure: formatValue(totals.mayor_venta_efectuada, "currency"),
-      bgColor: "bg-[#BAFFC9]/10",
-      textColor: "text-[#7ED994]",
+      bgColor: "bg-[#1E8449]/10",
+      textColor: "text-[#145A32]",
     },
     {
       title: "Promedio de Valor de Reserva",
       figure: formatValue(totals.promedio_valor_reserva, "currency"),
-      bgColor: "bg-[#BAE1FF]/10",
-      textColor: "text-[#7EAFD7]",
+      bgColor: "bg-[#5DADE2]/10",
+      textColor: "text-[#2E86C1]",
     },
   ];
 
@@ -68,11 +68,11 @@ const Bubbles = () => {
           key={index}
           className={`${data.bgColor} rounded-lg py-6 text-center shadow-md flex flex-col justify-around items-center h-[200px]`}
         >
-          <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-base font-semibold text-gray-700 mb-2">
+          <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-base font-semibold text-gray-700  h-1/2 items-center justify-center flex">
             {data.title}
           </p>
           <p
-            className={`text-2xl sm:text-xl lg:text-[22px] xl:text-[22px] font-bold ${data.textColor}`}
+            className={`text-2xl sm:text-xl lg:text-[22px] xl:text-[22px] min-[1700px]:text-[24px] font-bold ${data.textColor} h-1/2 items-center justify-center flex`}
           >
             {data.figure}
           </p>

@@ -49,7 +49,7 @@ const EventsList: React.FC<EventsListProps> = ({ userId }) => {
       ) : (
         displayedEvents.map((event) => (
           <div
-            className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-[#D98B84] even:border-t-[#5FAAD7] w-full"
+            className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-[#C25B33] even:border-t-[#2E86C1] w-full"
             key={event.id}
           >
             <div className="flex items-center justify-between">

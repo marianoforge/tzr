@@ -59,13 +59,23 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
             </svg>
           </button>
           <div className=" text-white text-xl font-bold w-full">
-            Logo TzR App
+            <Image
+              src="/logoRea-NoBGWhite.png"
+              alt="Logo"
+              width={100}
+              height={100}
+            />
           </div>
         </div>
 
         {/* User info and actions */}
         <div className="hidden lg:block text-white text-xl font-bold w-full ml-12">
-          Logo TzR App
+          <Image
+            src="/logoRea-NoBGWhite.png"
+            alt="Logo"
+            width={100}
+            height={100}
+          />
         </div>
         <div className="flex space-x-3 justify-end items-center mr-3 sm:mr-4 md:mr-10">
           <div className="flex flex-col items-center">

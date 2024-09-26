@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 
 interface MonthlyBarChartProps {
@@ -43,13 +44,15 @@ const MonthlyMockedBarchart = ({ userId }: MonthlyBarChartProps) => {
     setData(mockData);
   }, [userId]);
 
-  const COLORS = ["#F9D77E", "#A8E0FF"]; // Updated colors to match the image
+  const COLORS = ["#F9D77EB3", "#5DADE2B3"]; // Updated colors to match the image
   const MAX_BAR_SIZE = 40; // Reduced bar size for a closer match to the image
 
   if (data.length === 0) {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">
-        <h2 className="text-2xl font-bold mb-4">Honorarios Netos Mensuales</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Honorarios Netos Mensuales
+        </h2>
         <p className="text-gray-600">No existen operaciones</p>
       </div>
     );
@@ -82,6 +85,8 @@ const MonthlyMockedBarchart = ({ userId }: MonthlyBarChartProps) => {
               maxBarSize={MAX_BAR_SIZE}
               radius={[4, 4, 0, 0]}
             />
+
+            <ReferenceLine y={0} stroke="#E5E7EB" />
           </BarChart>
         </ResponsiveContainer>
       </div>
