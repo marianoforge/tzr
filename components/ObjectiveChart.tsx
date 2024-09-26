@@ -4,12 +4,12 @@ import { PieChart, Pie, Cell } from "recharts";
 
 const RADIAN = Math.PI / 180;
 const data = [
-  { name: "A", value: 80, color: "#F9D77E" },
-  { name: "B", value: 45, color: "#A8E0FF" },
-  { name: "C", value: 25, color: "#FFB7B2" },
+  { name: "A", value: 25, color: "#FFB7B2" },
+  { name: "B", value: 50, color: "#F9D77E" },
+  { name: "C", value: 25, color: "#7ED994" },
 ];
 
-const value = 50;
+const value = 33;
 
 const needle = (
   value: number,

@@ -35,7 +35,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 p-4 bg-[#4D8EB3] z-50">
+    <nav className="fixed top-0 left-0 right-0 p-4 bg-[#184d6b] z-50">
       <div className="flex items-center justify-between w-full">
         {/* Hamburger menu icon */}
         <div className="lg:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
@@ -180,7 +180,7 @@ export const UserActions = ({
   };
 
   return (
-    <div className="w-full flex justify-between text-nowrap">
+    <div className="w-full flex justify-around text-nowrap">
       <button
         onClick={() => setActiveView("login")}
         className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out "

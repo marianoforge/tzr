@@ -34,7 +34,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   };
 
   return (
-    <nav className="bg-[#4D8EB3] h-[calc(100vh-4rem)]  flex-col w-64 fixed left-0 top-16 shadow-md hidden lg:block overflow-y-auto">
+    <nav className="bg-[#184d6b] h-[calc(100vh-4rem)]  flex-col w-64 fixed left-0 top-16 shadow-md hidden lg:block overflow-y-auto">
       <div className="flex flex-col">
         <div className="flex-grow flex flex-col space-y-2 p-4">
           <VerticalNavButton
@@ -59,7 +59,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
           />
         </div>
       </div>
-      <div className="p-4">
+      <div className="px-8">
         <UserActions setActiveView={setActiveView} />
       </div>
     </nav>

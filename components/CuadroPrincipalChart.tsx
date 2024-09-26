@@ -77,7 +77,7 @@ const CuadroPrincipalChart = ({ userId }: CuadroPrincipalProps) => {
 
   return (
     <div className="bg-white p-3 rounded-lg shadow-md w-full">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+      <h2 className="text-2xl text-center font-semibold mb-6 text-gray-800">
         Tipo de Operaciones
       </h2>
       {tiposOperaciones.length === 0 ? (

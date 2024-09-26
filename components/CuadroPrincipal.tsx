@@ -81,7 +81,7 @@ const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
 
   return (
     <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">
-      <h2 className="text-2xl font-bold mb-4">Cuadro Principal</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Cuadro Principal</h2>
       {operaciones.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (
