@@ -7,7 +7,7 @@ import { formatNumber } from "@/utils/formatNumber";
 import { useOperationsStore } from "@/stores/operationsStore";
 import Loader from "./Loader";
 
-const OperationsList = () => {
+const OperationsList: React.FC = () => {
   const { operations, totals, setOperations, calculateTotals, isLoading } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);

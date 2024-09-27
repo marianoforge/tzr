@@ -17,10 +17,6 @@ export interface Operacion {
   estado: string;
 }
 
-export interface OperationsListProps {
-  userId: string;
-}
-
 export interface OperationsState {
   operations: Operacion[];
   totals: {
