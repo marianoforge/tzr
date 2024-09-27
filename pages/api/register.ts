@@ -7,7 +7,7 @@ import { doc, setDoc } from "firebase/firestore";
 interface RegisterRequestBody {
   email: string;
   password: string;
-  comision: number;
+  agenciaBroker: string;
   numero_telefono: string;
   firstName: string;
   lastName: string;
@@ -24,7 +24,7 @@ export default async function handler(
   const {
     email,
     password,
-    comision,
+    agenciaBroker,
     numero_telefono,
     firstName,
     lastName,
@@ -33,7 +33,7 @@ export default async function handler(
   if (
     !email ||
     !password ||
-    comision === undefined ||
+    agenciaBroker === undefined ||
     !numero_telefono ||
     !firstName ||
     !lastName
@@ -57,8 +57,8 @@ export default async function handler(
       email: user.email,
       uid: user.uid,
       createdAt: new Date(),
-      comision: comision,
-      numero_telefono: numero_telefono,
+      agenciaBroker,
+      numero_telefono,
     });
 
     res.status(201).json({ message: "Usuario registrado exitosamente" });

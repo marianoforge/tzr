@@ -99,7 +99,9 @@ const OperationsList: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className={`${COLORS.headerBg} hidden md:table-row`}>
+              <tr
+                className={`${COLORS.headerBg} hidden md:table-row text-center`}
+              >
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
                   Fecha de Operación
                 </th>
@@ -192,7 +194,7 @@ const OperationsList: React.FC = () => {
                             ? `${COLORS.buttonBgEnCurso} ${COLORS.buttonHoverEnCurso}`
                             : `${COLORS.buttonBgCerrada} ${COLORS.buttonHoverCerrada}`
                         } 
-                        text-white p-2 px-6 rounded transition duration-150 ease-in-out text-sm w-[110px]
+                        text-white p-2 px-6 rounded transition duration-150 ease-in-out text-sm w-[110px] font-semibold
                       `}
                     >
                       {operacion.estado}

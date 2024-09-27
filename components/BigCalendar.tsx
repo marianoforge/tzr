@@ -4,16 +4,20 @@ import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect } from "react";
-import { useEventsStore } from "@/stores/useEventsStore"; // Importa el store
+import { useEventsStore } from "@/stores/useEventsStore";
 import { useAuthStore } from "@/stores/authStore";
+import EventModal from "./EventModal"; // Importa el nuevo componente EventModal
+import { Event } from "@/types";
 
 const localizer = momentLocalizer(moment);
 
 const BigCalendar = () => {
-  const { events, fetchEvents } = useEventsStore(); // Usa el store
+  const { events, fetchEvents } = useEventsStore();
   const { userID } = useAuthStore();
-  const [view, setView] = useState<View>(Views.WORK_WEEK);
-  const [date, setDate] = useState(new Date(2024, 8, 26)); // Cambiado para centrarse en septiembre 2024
+  const [view, setView] = useState<View>(Views.MONTH);
+  const [date, setDate] = useState(new Date(2024, 8, 26));
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); // Estado para el evento seleccionado
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar la visibilidad del modal
 
   useEffect(() => {
     if (userID) {
@@ -24,8 +28,9 @@ const BigCalendar = () => {
   const calendarEvents = events.map((event) => ({
     id: event.id,
     title: event.title,
-    start: new Date(`${event.date}T${event.startTime}`),
-    end: new Date(`${event.date}T${event.endTime}`),
+    date: event.date, // Ensure date is included
+    startTime: new Date(`${event.date}T${event.startTime}`),
+    endTime: new Date(`${event.date}T${event.endTime}`),
     description: event.description,
     user_uid: event.user_uid,
   }));
@@ -59,6 +64,17 @@ const BigCalendar = () => {
     });
   };
 
+  // Update the type definition for handleEventClick
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-2 sm:p-4 md:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
@@ -84,31 +100,46 @@ const BigCalendar = () => {
       <Calendar
         localizer={localizer}
         events={calendarEvents}
-        startAccessor="start"
-        endAccessor="end"
+        startAccessor="startTime" // Map start to startTime
+        endAccessor="endTime" // Map end to endTime
         views={["work_week", "day", "week", "month"]}
         view={view}
         date={date}
         onNavigate={setDate}
         onView={setView}
-        min={new Date(2024, 0, 1, 8, 0, 0)} // Cambiado para permitir eventos en 2024
-        max={new Date(2024, 11, 31, 22, 0, 0)} // Cambiado para permitir eventos en 2024
+        min={new Date(2024, 0, 1, 8, 0, 0)}
+        max={new Date(2024, 11, 31, 22, 0, 0)}
         className="rounded-lg overflow-hidden"
         style={{ height: "calc(100vh - 200px)" }}
         formats={{
           dayFormat: (date, culture, localizer) =>
             localizer?.format(date, "ddd DD", culture) ?? "",
-          eventTimeRangeFormat: () => "", // Esto elimina el rango de tiempo sobre el evento
+          eventTimeRangeFormat: () => "",
         }}
         components={{
           event: (props) => (
-            <div className="bg-[#5EAAD7] text-white p-1 rounded text-xs sm:text-sm">
-              <span>{formatEventTime(props.event.start)}</span>
+            <div
+              className="bg-[#5EAAD7] text-white p-1 rounded text-xs sm:text-sm"
+              onClick={() =>
+                handleEventClick({
+                  ...props.event,
+                  date: props.event.date,
+                  startTime: props.event.startTime.toISOString(),
+                  endTime: props.event.endTime.toISOString(),
+                })
+              }
+            >
+              <span>{formatEventTime(props.event.startTime)}</span>
               {" - "}
               {props.title}
             </div>
           ),
         }}
+      />
+      <EventModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        event={selectedEvent}
       />
     </div>
   );

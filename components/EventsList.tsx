@@ -51,12 +51,12 @@ const EventsList: React.FC = () => {
         ))
       )}
       <button
-        className="bg-[#2E86C1] text-white p-2 rounded-md"
+        className="bg-[#7ED994] text-white p-2 rounded-md font-semibold"
         onClick={() => {
           router.push("/calendar");
         }}
       >
-        Ver más eventos
+        Ver calendario de eventos
       </button>
     </div>
   );
