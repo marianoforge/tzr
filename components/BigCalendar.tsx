@@ -4,43 +4,18 @@ import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect } from "react";
+import { useEventsStore } from "@/stores/useEventsStore"; // Importa el store
 
 const localizer = momentLocalizer(moment);
 
-// Definimos la interfaz para los eventos
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  description: string;
-  user_uid: string;
-}
-
 const BigCalendar = () => {
+  const { events, fetchEvents } = useEventsStore(); // Usa el store
   const [view, setView] = useState<View>(Views.WORK_WEEK);
   const [date, setDate] = useState(new Date(2024, 8, 26)); // Cambiado para centrarse en septiembre 2024
-  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch("/api/events");
-        if (response.ok) {
-          const data = await response.json();
-
-          setEvents(data);
-        } else {
-          console.error("Error fetching events:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    fetchEvents();
-  }, []);
+    fetchEvents("user_id");
+  }, [fetchEvents]);
 
   const calendarEvents = events.map((event) => ({
     id: event.id,

@@ -9,49 +9,29 @@ import {
   Tooltip,
 } from "recharts";
 import Loader from "./Loader";
-import { useOperationsStore } from "@/stores/operationsStore";
-import { useUserStore } from "@/stores/authStore";
-
-interface Operacion {
-  id: string; // assuming each operation has a unique ID
-  tipo_operacion: string; // assuming this field exists for the type of operation
-  punta_compradora: boolean;
-  punta_vendedora: boolean;
-  valor_reserva: number;
-  honorarios_brutos: number;
-  valor_neto: number;
-}
+import { useOperationsStore } from "@/stores/useOperationsStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { Operacion } from "@/types";
 
 const CuadroPrincipalChart = () => {
-  const { userID } = useUserStore();
-  const { isLoading } = useOperationsStore();
+  const { userID } = useAuthStore();
+  const { isLoading, fetchOperations, operations } = useOperationsStore();
   const [tiposOperaciones, setTiposOperaciones] = useState<
     { name: string; value: number }[]
   >([]);
 
-  // Fetch the operations data from your API using the userID
+  // Fetch the operations data using the store
   useEffect(() => {
-    const fetchOperaciones = async () => {
-      if (!userID) return; // Ensure userID is available before making the request
+    if (userID) {
+      fetchOperations(userID);
+    }
+  }, [userID, fetchOperations]);
 
-      try {
-        const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userID}`
-        );
-        if (!response.ok) {
-          throw new Error("Error fetching operations");
-        }
-
-        const data = await response.json();
-
-        calculateTotals(data);
-      } catch (error) {
-        console.error("Error fetching operations:", error);
-      }
-    };
-
-    fetchOperaciones();
-  }, [userID]);
+  useEffect(() => {
+    if (operations.length > 0) {
+      calculateTotals(operations);
+    }
+  }, [operations]);
 
   const calculateTotals = (operations: Operacion[]) => {
     // Calcular los tipos de operaciones

@@ -36,4 +36,16 @@ export interface OperationsState {
   setOperations: (operations: Operacion[]) => void;
   calculateTotals: () => void;
   setIsLoading: (isLoading: boolean) => void;
+  error: string | null;
+  fetchOperations: (userID: string) => Promise<void>;
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+  user_uid: string;
 }

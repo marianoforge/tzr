@@ -1,11 +1,11 @@
 import PrivateRoute from "../components/PrivateRoute";
 import PrivateLayout from "../components/PrivateLayout";
 import FormularioEvento from "../components/FormularioEvento";
-import { useUserStore } from "@/stores/authStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect } from "react";
 
 const ReservationInput = () => {
-  const { userID, initializeAuthListener } = useUserStore();
+  const { userID, initializeAuthListener } = useAuthStore();
 
   useEffect(() => {
     const unsubscribe = initializeAuthListener();

@@ -4,8 +4,9 @@ import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { formatNumber } from "@/utils/formatNumber";
-import { useOperationsStore } from "@/stores/operationsStore";
+import { useOperationsStore } from "@/stores/useOperationsStore";
 import Loader from "./Loader";
+import axios from "axios";
 
 const OperationsList: React.FC = () => {
   const { operations, totals, setOperations, calculateTotals, isLoading } =
@@ -16,15 +17,12 @@ const OperationsList: React.FC = () => {
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
     try {
-      const response = await fetch(`/api/updateOperationStatus`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, estado: newEstado }),
+      const response = await axios.post(`/api/updateOperationStatus`, {
+        id,
+        estado: newEstado,
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error("Error updating operation status");
       }
 
@@ -56,14 +54,15 @@ const OperationsList: React.FC = () => {
       if (!userUID) return;
 
       try {
-        const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userUID}`
-        );
-        if (!response.ok) {
+        const response = await axios.get(`/api/operationsPerUser`, {
+          params: { user_uid: userUID },
+        });
+
+        if (response.status !== 200) {
           throw new Error("Error al obtener las operaciones del usuario");
         }
 
-        const data = await response.json();
+        const data = response.data;
         setOperations(data);
         calculateTotals();
       } catch (error) {

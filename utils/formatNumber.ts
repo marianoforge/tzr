@@ -3,6 +3,9 @@ export const formatNumber = (
   isPercentage?: boolean
 ) => {
   const num = typeof number === "string" ? parseFloat(number) : number;
+  if (isNaN(num)) {
+    return "Error en el calculo"; // or handle the error as needed
+  }
   const parts = num.toFixed(2).split(".");
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   // Only add decimal part if it's not "00"

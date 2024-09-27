@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import axios from "axios"; // Import axios
 import ModalOK from "./ModalOK"; // Import ModalOK
 import { useRouter } from "next/router";
 
@@ -36,26 +37,14 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
     }
 
     try {
-      const response = await fetch("/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          user_uid, // Usa el user_uid proporcionado como prop
-        }),
+      const response = await axios.post("/api/events", {
+        ...formData,
+        user_uid, // Usa el user_uid proporcionado como prop
       });
 
-      if (!response.ok) {
-        throw new Error("Error al agendar el evento");
-      }
-
-      const result = await response.json();
-      setModalMessage(result.message);
+      setModalMessage(response.data.message);
       setIsModalOpen(true);
 
-      // Limpiar el formulario
       setFormData({
         title: "",
         date: "",

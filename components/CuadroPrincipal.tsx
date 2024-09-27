@@ -1,68 +1,20 @@
 // components/CuadroPrincipal.tsx
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { formatNumber } from "../utils/formatNumber";
 import Loader from "./Loader";
-import { useOperationsStore } from "@/stores/operationsStore";
-import { Operacion } from "@/types";
-import { useUserStore } from "@/stores/authStore";
+import { useOperationsStore } from "@/stores/useOperationsStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const CuadroPrincipal: React.FC = () => {
-  const { userID } = useUserStore();
-  const { isLoading } = useOperationsStore();
-  const [operaciones, setOperaciones] = useState<Operacion[]>([]);
-  const [totals, setTotals] = useState({
-    facturacion_bruta: 0,
-    facturacion_neta: 0,
-    punta_compradora: 0,
-    punta_vendedora: 0,
-  });
+  const { userID } = useAuthStore();
+  const { operations, totals, isLoading, fetchOperations } =
+    useOperationsStore();
 
-  // Fetch the operations data from your API using the userID
   useEffect(() => {
-    const fetchOperaciones = async () => {
-      if (!userID) return; // Ensure userID is available before making the request
-
-      try {
-        const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userID}`
-        );
-        if (!response.ok) {
-          throw new Error("Error fetching operations");
-        }
-
-        const data = await response.json();
-        setOperaciones(data);
-        calculateTotals(data);
-      } catch (error) {
-        console.error("Error fetching operations:", error);
-      }
-    };
-
-    fetchOperaciones();
-  }, [userID]);
-
-  const calculateTotals = (operations: Operacion[]) => {
-    const totalFacturacionBruta = operations.reduce(
-      (acc, op) => acc + op.honorarios_broker,
-      0
-    );
-    const totalFacturacionNeta = operations.reduce(
-      (acc, op) => acc + op.honorarios_asesor,
-      0
-    );
-    const totalPuntaCompradora = operations.filter(
-      (op) => op.punta_compradora
-    ).length;
-    const totalPuntaVendedora = operations.filter(
-      (op) => op.punta_vendedora
-    ).length;
-    setTotals({
-      facturacion_bruta: totalFacturacionBruta,
-      facturacion_neta: totalFacturacionNeta,
-      punta_compradora: totalPuntaCompradora,
-      punta_vendedora: totalPuntaVendedora,
-    });
-  };
+    if (userID) {
+      fetchOperations(userID);
+    }
+  }, [userID, fetchOperations]);
 
   if (isLoading) {
     return <Loader />;
@@ -71,7 +23,7 @@ const CuadroPrincipal: React.FC = () => {
   return (
     <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">
       <h2 className="text-2xl font-bold mb-4 text-center">Cuadro Principal</h2>
-      {operaciones.length === 0 ? (
+      {operations.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (
         <div className="overflow-x-auto">
@@ -85,7 +37,7 @@ const CuadroPrincipal: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {operaciones.map((operacion) => (
+              {operations.map((operacion) => (
                 <tr
                   key={operacion.id}
                   className="border-b md:table-row flex flex-col md:flex-row mb-4 text-center"
@@ -93,14 +45,12 @@ const CuadroPrincipal: React.FC = () => {
                   <td className="py-2 px-4 before:content-['Tipo_de_Operación:'] md:before:content-none">
                     {operacion.tipo_operacion}
                   </td>
-
                   <td className="py-2 px-4 before:content-['Punta_Compradora:'] md:before:content-none">
                     {operacion.punta_compradora ? "Si" : "No"}
                   </td>
                   <td className="py-2 px-4 before:content-['Punta_Vendedora:'] md:before:content-none">
                     {operacion.punta_vendedora ? "Si" : "No"}
                   </td>
-
                   <td className="py-2 px-4 before:content-['Facturación_Neta:'] md:before:content-none">
                     ${formatNumber(operacion.honorarios_asesor)}
                   </td>
@@ -116,7 +66,7 @@ const CuadroPrincipal: React.FC = () => {
                   {formatNumber(totals.punta_vendedora)}
                 </td>
                 <td className="py-2 px-4">
-                  ${formatNumber(totals.facturacion_neta)}
+                  ${formatNumber(totals.honorarios_asesor)}
                 </td>
               </tr>
             </tbody>

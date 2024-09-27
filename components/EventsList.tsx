@@ -1,49 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useOperationsStore } from "@/stores/operationsStore";
+import React, { useEffect } from "react";
+import { useOperationsStore } from "@/stores/useOperationsStore";
 import Loader from "./Loader";
-import { useUserStore } from "@/stores/authStore";
-
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  description: string;
-}
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useEventsStore } from "@/stores/useEventsStore";
 
 const EventsList: React.FC = () => {
-  const { userID } = useUserStore();
-  const [events, setEvents] = useState<Event[]>([]);
-  const { isLoading } = useOperationsStore();
+  const { userID } = useAuthStore();
+  const { isLoading: operationsLoading } = useOperationsStore();
+  const { events, isLoading, error, fetchEvents } = useEventsStore();
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch(`/api/eventsPerUser?user_uid=${userID}`);
-        if (!response.ok) {
-          throw new Error("Error al obtener eventos");
-        }
-        const fetchedEvents: Event[] = await response.json();
+    if (userID) {
+      fetchEvents(userID);
+    }
+  }, [userID, fetchEvents]);
 
-        // Filtrar eventos pasados y ordenar por fecha
-        const filteredAndSortedEvents = fetchedEvents
-          .filter((event) => new Date(event.date) >= new Date())
-          .sort(
-            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-          );
-
-        setEvents(filteredAndSortedEvents);
-      } catch (error) {
-        console.error("Error al obtener eventos:", error);
-      }
-    };
-
-    fetchEvents();
-  }, [userID]);
-
-  if (isLoading) {
+  if (operationsLoading || isLoading) {
     return <Loader />;
+  }
+
+  if (error) {
+    return (
+      <p className="text-center text-red-500">
+        Error al obtener eventos: {error}
+      </p>
+    );
   }
 
   const displayedEvents = events.slice(0, 3);

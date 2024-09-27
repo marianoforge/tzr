@@ -1,4 +1,4 @@
-import { useOperationsStore } from "@/stores/operationsStore";
+import { useOperationsStore } from "@/stores/useOperationsStore";
 import { formatNumber } from "@/utils/formatNumber";
 import React from "react";
 import Loader from "./Loader";
@@ -31,7 +31,7 @@ const Bubbles = () => {
       textColor: "text-[#C25B33]",
     },
     {
-      title: "Honorarios Totales Brutos (Broker)",
+      title: "Honorarios Totales Brutos",
       figure: formatValue(totals.honorarios_broker, "currency"),
       bgColor: "bg-[#5DADE2]/10",
       textColor: "text-[#2E86C1]",

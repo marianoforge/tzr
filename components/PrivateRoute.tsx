@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../lib/firebase";
-import { useUserStore } from "@/stores/authStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const router = useRouter();
-  const { userID, setUserID } = useUserStore();
+  const { userID, setUserID } = useAuthStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {

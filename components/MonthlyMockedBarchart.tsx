@@ -1,4 +1,4 @@
-import { useUserStore } from "@/stores/authStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -19,7 +19,7 @@ interface MonthlyData {
 }
 
 const MonthlyMockedBarchart: React.FC = () => {
-  const { userID } = useUserStore();
+  const { userID } = useAuthStore();
   const [data, setData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {

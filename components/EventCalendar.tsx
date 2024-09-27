@@ -1,6 +1,6 @@
 "use client";
 
-import { useOperationsStore } from "@/stores/operationsStore";
+import { useOperationsStore } from "@/stores/useOperationsStore";
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";

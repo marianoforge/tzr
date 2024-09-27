@@ -4,6 +4,7 @@ import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import ModalOK from "./ModalOK";
 import { useRouter } from "next/router"; // Import useRouter
+import axios from "axios"; // Import Axios
 
 const FormularioOperacion = () => {
   const [formData, setFormData] = useState({
@@ -82,8 +83,6 @@ const FormularioOperacion = () => {
     []
   );
 
-  console.log(formData);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -107,26 +106,16 @@ const FormularioOperacion = () => {
         honorarios_broker: honorariosBroker,
         honorarios_asesor: honorariosAsesor,
         user_uid: userUID,
-        estado: formData.estado, // Ensure estado is included in the data to submit
-        punta_compradora: formData.punta_compradora, // No need to check again, already handled in handleChange
-        punta_vendedora: formData.punta_vendedora, // No need to check again, already handled in handleChange
+        estado: formData.estado,
+        punta_compradora: formData.punta_compradora,
+        punta_vendedora: formData.punta_vendedora,
       };
 
-      // Enviar los datos al endpoint de la API
-      const response = await fetch("/api/operations", {
-        method: "POST",
+      await axios.post("/api/operations", dataToSubmit, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(dataToSubmit),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setModalMessage(errorData.message || "Error al guardar la operación");
-        setShowModal(true);
-        return;
-      }
 
       setModalMessage("Operación guardada exitosamente");
       setShowModal(true);
@@ -134,8 +123,8 @@ const FormularioOperacion = () => {
         fecha_operacion: "",
         direccion_reserva: "",
         tipo_operacion: "",
-        punta_compradora: 0, // Reset to 0
-        punta_vendedora: 0, // Reset to 0
+        punta_compradora: 0,
+        punta_vendedora: 0,
         valor_reserva: "",
         numero_sobre_reserva: "",
         numero_sobre_refuerzo: "",
@@ -145,12 +134,18 @@ const FormularioOperacion = () => {
         porcentaje_punta_compradora: "",
         referido: "",
         compartido: "",
-        estado: "En Curso", // Reset estado to "En Curso"
+        estado: "En Curso",
       });
       router.push("/dashboard");
     } catch (error) {
-      console.error("Error al guardar la operación:", error);
-      setModalMessage("Error al guardar la operación");
+      if (error instanceof Error && "response" in error) {
+        setModalMessage(
+          (error as { response?: { data?: { message?: string } } }).response
+            ?.data?.message || "Error al guardar la operación"
+        );
+      } else {
+        setModalMessage("Error al guardar la operación");
+      }
       setShowModal(true);
     }
   };

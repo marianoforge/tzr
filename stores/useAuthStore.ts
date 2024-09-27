@@ -8,7 +8,7 @@ interface UserState {
   initializeAuthListener: () => () => void;
 }
 
-export const useUserStore = create<UserState>((set) => ({
+export const useAuthStore = create<UserState>((set) => ({
   userID: null,
   setUserID: (id) => set({ userID: id }),
   initializeAuthListener: () => {

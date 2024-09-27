@@ -1,5 +1,6 @@
 import { OperationsState } from "@/types";
 import { create } from "zustand";
+import axios from "axios";
 
 export const useOperationsStore = create<OperationsState>((set, get) => ({
   operations: [],
@@ -18,6 +19,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     cantidad_operaciones: 0,
   },
   isLoading: false,
+  error: null,
   setOperations: (operations) => set({ operations }),
   calculateTotals: () => {
     const { operations } = get();
@@ -97,5 +99,21 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
       },
     });
   },
-  setIsLoading: (isLoading) => set({ isLoading }),
+  setIsLoading: (isLoading: boolean) => set({ isLoading }),
+  setError: (error: string | null) => set({ error }),
+  fetchOperations: async (userID: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get(
+        `/api/operationsPerUser?user_uid=${userID}`
+      );
+      const fetchedOperations = response.data;
+      set({ operations: fetchedOperations });
+      get().calculateTotals();
+    } catch (error) {
+      set({ error: (error as Error).message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));

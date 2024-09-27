@@ -1,4 +1,4 @@
-import { useOperationsStore } from "@/stores/operationsStore";
+import { useOperationsStore } from "@/stores/useOperationsStore";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -11,7 +11,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Loader from "./Loader";
-import { useUserStore } from "@/stores/authStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import axios from "axios";
 
 interface MonthlyData {
   month: string;
@@ -20,21 +21,17 @@ interface MonthlyData {
 }
 
 const MonthlyBarChart: React.FC = () => {
-  const { userID } = useUserStore();
+  const { userID } = useAuthStore();
   const { isLoading } = useOperationsStore();
   const [data, setData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {
     const fetchOperations = async () => {
       try {
-        // Llama al endpoint para obtener las operaciones del usuario
-        const response = await fetch(
+        const response = await axios.get(
           `/api/operationsPerUser?user_uid=${userID}`
         );
-        if (!response.ok) {
-          throw new Error("Error al obtener los datos de las operaciones");
-        }
-        const operations = await response.json();
+        const operations = response.data;
 
         // Procesa los datos para obtener el formato adecuado
         const formattedData = formatOperationsData(operations);
