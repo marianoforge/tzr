@@ -4,12 +4,10 @@ import { formatNumber } from "../utils/formatNumber";
 import Loader from "./Loader";
 import { useOperationsStore } from "@/stores/operationsStore";
 import { Operacion } from "@/types";
+import { useUserStore } from "@/stores/authStore";
 
-interface CuadroPrincipalProps {
-  userId: string;
-}
-
-const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
+const CuadroPrincipal: React.FC = () => {
+  const { userID } = useUserStore();
   const { isLoading } = useOperationsStore();
   const [operaciones, setOperaciones] = useState<Operacion[]>([]);
   const [totals, setTotals] = useState({
@@ -22,11 +20,11 @@ const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
   // Fetch the operations data from your API using the userID
   useEffect(() => {
     const fetchOperaciones = async () => {
-      if (!userId) return; // Ensure userID is available before making the request
+      if (!userID) return; // Ensure userID is available before making the request
 
       try {
         const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userId}`
+          `/api/operationsPerUser?user_uid=${userID}`
         );
         if (!response.ok) {
           throw new Error("Error fetching operations");
@@ -41,7 +39,7 @@ const CuadroPrincipal = ({ userId }: CuadroPrincipalProps) => {
     };
 
     fetchOperaciones();
-  }, [userId]);
+  }, [userID]);
 
   const calculateTotals = (operations: Operacion[]) => {
     const totalFacturacionBruta = operations.reduce(

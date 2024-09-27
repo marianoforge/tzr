@@ -11,10 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Loader from "./Loader";
-
-interface MonthlyBarChartProps {
-  userID: string;
-}
+import { useUserStore } from "@/stores/authStore";
 
 interface MonthlyData {
   month: string;
@@ -22,7 +19,8 @@ interface MonthlyData {
   previousYear: number;
 }
 
-const MonthlyBarChart = ({ userID }: MonthlyBarChartProps) => {
+const MonthlyBarChart: React.FC = () => {
+  const { userID } = useUserStore();
   const { isLoading } = useOperationsStore();
   const [data, setData] = useState<MonthlyData[]>([]);
 

@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import Loader from "./Loader";
 import { useOperationsStore } from "@/stores/operationsStore";
+import { useUserStore } from "@/stores/authStore";
 
 interface Operacion {
   id: string; // assuming each operation has a unique ID
@@ -21,11 +22,8 @@ interface Operacion {
   valor_neto: number;
 }
 
-interface CuadroPrincipalProps {
-  userId: string;
-}
-
-const CuadroPrincipalChart = ({ userId }: CuadroPrincipalProps) => {
+const CuadroPrincipalChart = () => {
+  const { userID } = useUserStore();
   const { isLoading } = useOperationsStore();
   const [tiposOperaciones, setTiposOperaciones] = useState<
     { name: string; value: number }[]
@@ -34,11 +32,11 @@ const CuadroPrincipalChart = ({ userId }: CuadroPrincipalProps) => {
   // Fetch the operations data from your API using the userID
   useEffect(() => {
     const fetchOperaciones = async () => {
-      if (!userId) return; // Ensure userID is available before making the request
+      if (!userID) return; // Ensure userID is available before making the request
 
       try {
         const response = await fetch(
-          `/api/operationsPerUser?user_uid=${userId}`
+          `/api/operationsPerUser?user_uid=${userID}`
         );
         if (!response.ok) {
           throw new Error("Error fetching operations");
@@ -53,7 +51,7 @@ const CuadroPrincipalChart = ({ userId }: CuadroPrincipalProps) => {
     };
 
     fetchOperaciones();
-  }, [userId]);
+  }, [userID]);
 
   const calculateTotals = (operations: Operacion[]) => {
     // Calcular los tipos de operaciones

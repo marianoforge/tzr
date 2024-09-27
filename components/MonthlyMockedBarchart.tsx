@@ -1,3 +1,4 @@
+import { useUserStore } from "@/stores/authStore";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -11,22 +12,17 @@ import {
   ReferenceLine,
 } from "recharts";
 
-interface MonthlyBarChartProps {
-  userId: string;
-}
-
 interface MonthlyData {
   month: string;
   currentYear: number;
   previousYear: number;
 }
 
-const MonthlyMockedBarchart = ({ userId }: MonthlyBarChartProps) => {
+const MonthlyMockedBarchart: React.FC = () => {
+  const { userID } = useUserStore();
   const [data, setData] = useState<MonthlyData[]>([]);
 
   useEffect(() => {
-    // Aquí deberías hacer una llamada a tu API para obtener los datos reales
-    // Por ahora, usaremos datos de ejemplo
     const mockData: MonthlyData[] = [
       { month: "Ene", currentYear: 4000, previousYear: 2400 },
       { month: "Feb", currentYear: 3000, previousYear: 1398 },
@@ -42,7 +38,7 @@ const MonthlyMockedBarchart = ({ userId }: MonthlyBarChartProps) => {
       { month: "Dic", currentYear: 3490, previousYear: 4300 },
     ];
     setData(mockData);
-  }, [userId]);
+  }, [userID]);
 
   const COLORS = ["#F9D77EB3", "#5DADE2B3"]; // Updated colors to match the image
   const MAX_BAR_SIZE = 40; // Reduced bar size for a closer match to the image

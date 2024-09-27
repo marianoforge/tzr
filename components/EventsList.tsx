@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useOperationsStore } from "@/stores/operationsStore";
 import Loader from "./Loader";
+import { useUserStore } from "@/stores/authStore";
 
 interface Event {
   id: string;
@@ -11,18 +12,15 @@ interface Event {
   description: string;
 }
 
-interface EventsListProps {
-  userId: string;
-}
-
-const EventsList: React.FC<EventsListProps> = ({ userId }) => {
+const EventsList: React.FC = () => {
+  const { userID } = useUserStore();
   const [events, setEvents] = useState<Event[]>([]);
   const { isLoading } = useOperationsStore();
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`/api/eventsPerUser?user_uid=${userId}`);
+        const response = await fetch(`/api/eventsPerUser?user_uid=${userID}`);
         if (!response.ok) {
           throw new Error("Error al obtener eventos");
         }
@@ -42,7 +40,7 @@ const EventsList: React.FC<EventsListProps> = ({ userId }) => {
     };
 
     fetchEvents();
-  }, [userId]);
+  }, [userID]);
 
   if (isLoading) {
     return <Loader />;
