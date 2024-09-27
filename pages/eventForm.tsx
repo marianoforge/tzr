@@ -1,7 +1,7 @@
 import PrivateRoute from "../components/PrivateRoute";
 import PrivateLayout from "../components/PrivateLayout";
 import FormularioEvento from "../components/FormularioEvento";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 
 const ReservationInput = () => {

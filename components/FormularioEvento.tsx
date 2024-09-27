@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import axios from "axios"; // Import axios
 import ModalOK from "./ModalOK"; // Import ModalOK
 import { useRouter } from "next/router";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 
 const FormularioEvento: React.FC = () => {
   const { userID } = useAuthStore();

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { formatNumber } from "../utils/formatNumber";
 import Loader from "./Loader";
 import { useOperationsStore } from "@/stores/useOperationsStore";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 
 const CuadroPrincipal: React.FC = () => {
   const { userID } = useAuthStore();
@@ -22,7 +22,9 @@ const CuadroPrincipal: React.FC = () => {
 
   return (
     <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">
-      <h2 className="text-2xl font-bold mb-4 text-center">Cuadro Principal</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        Cuadro Tipos de Operaciones
+      </h2>
       {operations.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (

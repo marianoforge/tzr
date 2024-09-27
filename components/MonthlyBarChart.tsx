@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import Loader from "./Loader";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
 
 interface MonthlyData {

@@ -52,29 +52,57 @@ const needle = (
 export default class Example extends PureComponent {
   render() {
     return (
-      <div className="bg-[#1E8449]/10 rounded-lg p-2 text-center shadow-md flex flex-col justify-between items-center h-[200px]">
-        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-base font-semibold text-gray-700 pt-8">
-          Objetivo de Ventas
+      <div className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center h-full w-full">
+        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-2xl font-semibold text-gray-700 pt-8 pb-20">
+          Objetivo Anual de Ventas
         </p>
         <div className="pb-4">
-          <PieChart width={120} height={100}>
+          <PieChart width={320} height={200}>
             <Pie
               dataKey="value"
               startAngle={180}
               endAngle={0}
               data={data}
-              cx={60}
-              cy={70}
-              innerRadius={25}
-              outerRadius={50}
+              cx={150} // Centra la coordenada x del centro
+              cy={150} // Centra la coordenada y del centro
+              innerRadius={75} // Ajusta el radio interno
+              outerRadius={150} // Ajusta el radio externo
               fill="#8884d8"
               stroke="none"
+              paddingAngle={1}
             >
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            {needle(value, data, 60, 70, 25, 50, "#7ED994")}
+            {needle(value, data, 150, 150, 75, 150, "#7ED994")}
+            <text
+              x={150}
+              y={50}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="#000"
+            >
+              75%
+            </text>
+            <text
+              x={150}
+              y={150}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="#000"
+            >
+              50%
+            </text>
+            <text
+              x={150}
+              y={250}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="#000"
+            >
+              25%
+            </text>
           </PieChart>
         </div>
       </div>

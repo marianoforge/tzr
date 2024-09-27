@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../lib/firebase";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 
 interface PrivateRouteProps {
   children: React.ReactNode;

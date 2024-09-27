@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,

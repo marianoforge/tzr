@@ -127,14 +127,12 @@ const OperationsList: React.FC = () => {
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
                   Puntas
                 </th>
+
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
-                  Porcentaje Honorarios Asesor
+                  Honorarios Totales Brutos
                 </th>
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
-                  Porcentaje Honorarios Agencia
-                </th>
-                <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
-                  Honorarios Netos
+                  Honorarios Totales Netos
                 </th>
                 <th className={`py-3 px-4 ${COLORS.headerText} font-semibold`}>
                   Estado
@@ -176,11 +174,9 @@ const OperationsList: React.FC = () => {
                       operacion.punta_vendedora + operacion.punta_compradora
                     )}
                   </td>
-                  <td className="py-3 px-4 before:content-['% Honorarios Asesor:'] md:before:content-none">
-                    {formatNumber(operacion.porcentaje_honorarios_asesor)}%
-                  </td>
+
                   <td className="py-3 px-4 before:content-['% Honorarios Agencia:'] md:before:content-none">
-                    {formatNumber(operacion.porcentaje_honorarios_broker)}%
+                    ${formatNumber(operacion.honorarios_broker)}
                   </td>
                   <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
                     ${formatNumber(operacion.honorarios_asesor)}
@@ -222,7 +218,7 @@ const OperationsList: React.FC = () => {
                 </td>
 
                 <td className={`py-3 px-4 ${COLORS.headerText} text-center`}>
-                  {formatNumber(Number(totals.porcentaje_honorarios_broker))}%
+                  ${formatNumber(Number(totals.honorarios_broker))}
                 </td>
                 <td className={`py-3 px-4 ${COLORS.headerText} text-center`}>
                   ${formatNumber(Number(totals.honorarios_asesor))}

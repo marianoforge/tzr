@@ -8,6 +8,7 @@ import Bubbles from "@/components/Bubbles";
 import EventCalendar from "@/components/EventCalendar";
 import EventsList from "@/components/EventsList";
 import MonthlyMockedBarchart from "@/components/MonthlyMockedBarchart";
+import ObjectiveChart from "./ObjectiveChart";
 
 const DashBoard = () => {
   return (
@@ -19,7 +20,7 @@ const DashBoard = () => {
               <Bubbles />
             </div>
             <div className="md:col-span-2 lg:col-span-1 2xl:col-span-3">
-              <EventCalendar />
+              <ObjectiveChart />
             </div>
             <div className="md:col-span-2 lg:col-span-2 2xl:col-span-3">
               <EventsList />

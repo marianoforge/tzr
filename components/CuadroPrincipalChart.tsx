@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import Loader from "./Loader";
 import { useOperationsStore } from "@/stores/useOperationsStore";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 import { Operacion } from "@/types";
 
 const CuadroPrincipalChart = () => {

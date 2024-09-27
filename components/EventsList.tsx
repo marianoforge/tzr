@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import Loader from "./Loader";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
 
 const EventsList: React.FC = () => {
