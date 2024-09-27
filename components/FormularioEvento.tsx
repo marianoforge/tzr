@@ -69,7 +69,7 @@ const FormularioEvento: React.FC = () => {
     <div className="flex flex-col justify-center items-center">
       <form
         onSubmit={handleSubmit}
-        className="p-6 bg-white rounded shadow-md w-[50%]"
+        className="p-6 bg-white rounded shadow-md w-[100%]"
       >
         <h2 className="text-2xl mb-4">Agendar Evento</h2>
         <div className="flex flex-wrap -mx-2">
@@ -123,7 +123,7 @@ const FormularioEvento: React.FC = () => {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-[#7ED994] text-white p-2 rounded hover:bg-[#7ED994]/80 transition-all duration-300 font-bold"
+            className="bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] transition-all duration-300 font-semibold w-[200px]"
           >
             Agendar Evento
           </button>

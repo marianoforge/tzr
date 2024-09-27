@@ -90,113 +90,116 @@ const Settings = () => {
     <div>
       <PrivateRoute>
         <PrivateLayout>
-          <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <div className="flex items-center justify-center bg-gray-100">
             <form
               onSubmit={handleUpdate}
-              className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
+              className="bg-white p-6 rounded shadow-md w-[100%]"
             >
-              <h2 className="text-2xl mb-4 text-center">Configuración</h2>
+              <h2 className="text-2xl mb-4 text-center">Datos Personales</h2>
               {error && <p className="text-red-500 mb-4">{error}</p>}
               {success && <p className="text-green-500 mb-4">{success}</p>}
+              <div className="flex items-center justify-center gap-10 w-full mt-10">
+                <div className="mb-4 flex w-[50%] gap-2 justify-end">
+                  <input
+                    type="text"
+                    placeholder="Nombre"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    disabled={!editMode.firstName}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      editMode.firstName
+                        ? handleSave("firstName")
+                        : toggleEditMode("firstName")
+                    }
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                  >
+                    {editMode.firstName ? "Guardar" : "Editar"}
+                  </button>
+                </div>
 
-              <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="Nombre"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full p-2 mb-2 border border-gray-300 rounded"
-                  disabled={!editMode.firstName}
-                  required
-                />
+                <div className="mb-4 flex w-[50%] gap-2 justify-start">
+                  <input
+                    type="text"
+                    placeholder="Apellido"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    disabled={!editMode.lastName}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      editMode.lastName
+                        ? handleSave("lastName")
+                        : toggleEditMode("lastName")
+                    }
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                  >
+                    {editMode.lastName ? "Guardar" : "Editar"}
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center justify-center gap-10 w-full">
+                <div className="mb-4 flex w-[50%] gap-2 justify-end">
+                  <input
+                    type="text"
+                    placeholder="Agencia o Broker"
+                    value={agenciaBroker}
+                    onChange={(e) => setAgenciaBroker(e.target.value)}
+                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    disabled={!editMode.agenciaBroker}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      editMode.agenciaBroker
+                        ? handleSave("agenciaBroker")
+                        : toggleEditMode("agenciaBroker")
+                    }
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                  >
+                    {editMode.agenciaBroker ? "Guardar" : "Editar"}
+                  </button>
+                </div>
+
+                <div className="mb-4 flex w-[50%] gap-2 justify-start">
+                  <input
+                    type="tel"
+                    placeholder="Número de Teléfono"
+                    value={numeroTelefono}
+                    onChange={(e) => setNumeroTelefono(e.target.value)}
+                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    disabled={!editMode.numeroTelefono}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      editMode.numeroTelefono
+                        ? handleSave("numeroTelefono")
+                        : toggleEditMode("numeroTelefono")
+                    }
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                  >
+                    {editMode.numeroTelefono ? "Guardar" : "Editar"}
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center w-[80%] justify-end ml-2 mt-6">
                 <button
-                  type="button"
-                  onClick={() =>
-                    editMode.firstName
-                      ? handleSave("firstName")
-                      : toggleEditMode("firstName")
-                  }
-                  className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                  type="submit"
+                  className="w-[200px] bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] font-semibold"
                 >
-                  {editMode.firstName ? "Guardar" : "Editar"}
+                  Actualizar
                 </button>
               </div>
-
-              <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="Apellido"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="w-full p-2 mb-2 border border-gray-300 rounded"
-                  disabled={!editMode.lastName}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    editMode.lastName
-                      ? handleSave("lastName")
-                      : toggleEditMode("lastName")
-                  }
-                  className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                >
-                  {editMode.lastName ? "Guardar" : "Editar"}
-                </button>
-              </div>
-
-              <div className="mb-4">
-                <input
-                  type="text"
-                  placeholder="Agencia o Broker"
-                  value={agenciaBroker}
-                  onChange={(e) => setAgenciaBroker(e.target.value)}
-                  className="w-full p-2 mb-2 border border-gray-300 rounded"
-                  disabled={!editMode.agenciaBroker}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    editMode.agenciaBroker
-                      ? handleSave("agenciaBroker")
-                      : toggleEditMode("agenciaBroker")
-                  }
-                  className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                >
-                  {editMode.agenciaBroker ? "Guardar" : "Editar"}
-                </button>
-              </div>
-
-              <div className="mb-4">
-                <input
-                  type="tel"
-                  placeholder="Número de Teléfono"
-                  value={numeroTelefono}
-                  onChange={(e) => setNumeroTelefono(e.target.value)}
-                  className="w-full p-2 mb-2 border border-gray-300 rounded"
-                  disabled={!editMode.numeroTelefono}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    editMode.numeroTelefono
-                      ? handleSave("numeroTelefono")
-                      : toggleEditMode("numeroTelefono")
-                  }
-                  className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                >
-                  {editMode.numeroTelefono ? "Guardar" : "Editar"}
-                </button>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-              >
-                Actualizar
-              </button>
             </form>
           </div>
         </PrivateLayout>
