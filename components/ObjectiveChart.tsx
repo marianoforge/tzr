@@ -76,33 +76,6 @@ export default class Example extends PureComponent {
               ))}
             </Pie>
             {needle(value, data, 150, 150, 75, 150, "#7ED994")}
-            <text
-              x={150}
-              y={50}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="#000"
-            >
-              75%
-            </text>
-            <text
-              x={150}
-              y={150}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="#000"
-            >
-              50%
-            </text>
-            <text
-              x={150}
-              y={250}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="#000"
-            >
-              25%
-            </text>
           </PieChart>
         </div>
       </div>
