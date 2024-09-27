@@ -1,25 +1,20 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import ModalOK from "../components/ModalOK"; // Import ModalOK
+import { cleanString } from "@/utils/cleanString";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [agenciaBroker, setAgenciaBroker] = useState(""); // Inicializar como cadena vacía
+  const [agenciaBroker, setAgenciaBroker] = useState("");
   const [numeroTelefono, setNumeroTelefono] = useState("");
   const [error, setError] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); // Add state for modal
-  const [modalMessage, setModalMessage] = useState(""); // Add state for modal message
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const router = useRouter();
-
-  const cleanString = (str: string) => {
-    return str
-      .toLowerCase() // Convertir a minúsculas
-      .replace(/[^a-z0-9]/g, ""); // Eliminar caracteres especiales y espacios
-  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +37,7 @@ const RegisterForm = () => {
           email,
           password,
           agenciaBroker: cleanString(agenciaBroker), // Limpiar y convertir a minúsculas
-          numero_telefono: numeroTelefono,
+          numeroTelefono: numeroTelefono,
         }),
       });
 

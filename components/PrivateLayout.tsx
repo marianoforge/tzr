@@ -35,7 +35,7 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar setActiveView={setActiveView} />
       <VerticalNavbar setActiveView={setActiveView} />
-      <main className="flex-grow mt-[70px] p-4 sm:p-6 md:p-8 lg:ml-64">
+      <main className="flex-grow mt-[70px] pt-4 sm:p-6 md:p-8 lg:ml-64">
         {children}
       </main>
       <Footer setActiveView={setActiveView} />

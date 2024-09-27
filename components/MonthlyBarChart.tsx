@@ -13,12 +13,7 @@ import {
 import Loader from "./Loader";
 import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
-
-interface MonthlyData {
-  month: string;
-  currentYear: number;
-  previousYear: number;
-}
+import { MonthlyData } from "@/types";
 
 const MonthlyBarChart: React.FC = () => {
   const { userID } = useAuthStore();

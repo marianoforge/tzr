@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserDataStore } from "@/stores/userDataStore";
+import { cleanString } from "@/utils/cleanString";
 
 const Settings = () => {
   const { userID } = useAuthStore();
@@ -49,7 +50,7 @@ const Settings = () => {
         userID,
         firstName,
         lastName,
-        agenciaBroker,
+        agenciaBroker: cleanString(agenciaBroker),
         numeroTelefono,
       });
 
@@ -98,14 +99,15 @@ const Settings = () => {
               <h2 className="text-2xl mb-4 text-center">Datos Personales</h2>
               {error && <p className="text-red-500 mb-4">{error}</p>}
               {success && <p className="text-green-500 mb-4">{success}</p>}
-              <div className="flex items-center justify-center gap-10 w-full mt-10">
-                <div className="mb-4 flex w-[50%] gap-2 justify-end">
+              <div className="flex lg:flex-row flex-col items-center justify-center lg:gap-10 w-full mt-10">
+                <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-end">
                   <input
                     type="text"
                     placeholder="Nombre"
+                    name="firstName"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
                     disabled={!editMode.firstName}
                     required
                   />
@@ -116,19 +118,20 @@ const Settings = () => {
                         ? handleSave("firstName")
                         : toggleEditMode("firstName")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                    className=" bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
                   >
                     {editMode.firstName ? "Guardar" : "Editar"}
                   </button>
                 </div>
 
-                <div className="mb-4 flex w-[50%] gap-2 justify-start">
+                <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-start">
                   <input
                     type="text"
                     placeholder="Apellido"
+                    name="lastName"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
                     disabled={!editMode.lastName}
                     required
                   />
@@ -145,14 +148,15 @@ const Settings = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex items-center justify-center gap-10 w-full">
-                <div className="mb-4 flex w-[50%] gap-2 justify-end">
+              <div className="flex lg:flex-row flex-col items-center justify-center lg:gap-10 w-full">
+                <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-end">
                   <input
                     type="text"
                     placeholder="Agencia o Broker"
+                    name="agenciaBroker"
                     value={agenciaBroker}
                     onChange={(e) => setAgenciaBroker(e.target.value)}
-                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
                     disabled={!editMode.agenciaBroker}
                     required
                   />
@@ -169,13 +173,14 @@ const Settings = () => {
                   </button>
                 </div>
 
-                <div className="mb-4 flex w-[50%] gap-2 justify-start">
+                <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-start">
                   <input
                     type="tel"
                     placeholder="Número de Teléfono"
+                    name="numeroTelefono"
                     value={numeroTelefono}
                     onChange={(e) => setNumeroTelefono(e.target.value)}
-                    className="w-full p-2 mb-2 border border-gray-300 rounded max-w-[50%]"
+                    className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
                     disabled={!editMode.numeroTelefono}
                     required
                   />

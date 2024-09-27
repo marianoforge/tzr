@@ -49,3 +49,9 @@ export interface Event {
   description: string;
   user_uid: string;
 }
+
+export interface MonthlyData {
+  month: string;
+  currentYear: number;
+  previousYear: number;
+}
