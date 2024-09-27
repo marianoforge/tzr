@@ -8,7 +8,7 @@ interface RegisterRequestBody {
   email: string;
   password: string;
   agenciaBroker: string;
-  numero_telefono: string;
+  numeroTelefono: string;
   firstName: string;
   lastName: string;
 }
@@ -25,7 +25,7 @@ export default async function handler(
     email,
     password,
     agenciaBroker,
-    numero_telefono,
+    numeroTelefono,
     firstName,
     lastName,
   }: RegisterRequestBody = req.body;
@@ -34,7 +34,7 @@ export default async function handler(
     !email ||
     !password ||
     agenciaBroker === undefined ||
-    !numero_telefono ||
+    !numeroTelefono ||
     !firstName ||
     !lastName
   ) {
@@ -58,7 +58,7 @@ export default async function handler(
       uid: user.uid,
       createdAt: new Date(),
       agenciaBroker,
-      numero_telefono,
+      numeroTelefono,
     });
 
     res.status(201).json({ message: "Usuario registrado exitosamente" });

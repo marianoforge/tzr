@@ -194,7 +194,7 @@ export const UserActions = ({
   return (
     <div className="w-full flex justify-around text-nowrap">
       <button
-        onClick={() => setActiveView("login")}
+        onClick={() => setActiveView("settings")}
         className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out "
       >
         Settings

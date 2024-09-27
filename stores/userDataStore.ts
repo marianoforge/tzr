@@ -5,7 +5,7 @@ export interface UserData {
   lastName: string | null;
   email: string | null;
   numeroTelefono: string | null;
-  comision: number | null;
+  agenciaBroker: string | null;
 }
 
 interface UserDataState {
@@ -47,13 +47,12 @@ export const useUserDataStore = create<UserDataState>((set) => ({
         throw new Error("Datos de usuario inválidos recibidos del servidor");
       }
 
-      // Ensure all expected fields are present
       const validatedUserData = {
         firstName: userData.firstName || null,
         lastName: userData.lastName || null,
         email: userData.email || null,
         numeroTelefono: userData.numeroTelefono || null,
-        comision: userData.comision || null,
+        agenciaBroker: userData.agenciaBroker || null,
       };
 
       set({ userData: validatedUserData, isLoading: false });

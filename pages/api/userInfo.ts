@@ -25,7 +25,8 @@ export default async function handler(
 
       const responseData = {
         email: userData.email || null,
-        numeroTelefono: userData.numero_telefono || null,
+        numeroTelefono: userData.numeroTelefono || null,
+        agenciaBroker: userData.agenciaBroker || null,
         comision: userData.comision || null,
         firstName: userData.name || null, // Cambiado de userData.firstName a userData.name
         lastName: userData.lastName || null,
