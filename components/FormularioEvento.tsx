@@ -2,8 +2,10 @@ import React, { useState, useCallback } from "react";
 import axios from "axios"; // Import axios
 import ModalOK from "./ModalOK"; // Import ModalOK
 import { useRouter } from "next/router";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
+const FormularioEvento: React.FC = () => {
+  const { userID } = useAuthStore();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -30,7 +32,7 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user_uid) {
+    if (!userID) {
       setModalMessage("No se proporcionó un ID de usuario válido");
       setIsModalOpen(true);
       return;
@@ -39,7 +41,7 @@ const FormularioEvento = ({ user_uid }: { user_uid: string }) => {
     try {
       const response = await axios.post("/api/events", {
         ...formData,
-        user_uid, // Usa el user_uid proporcionado como prop
+        user_uid: userID,
       });
 
       setModalMessage(response.data.message);

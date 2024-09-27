@@ -19,7 +19,7 @@ const ReservationInput = () => {
   return (
     <PrivateRoute>
       <PrivateLayout>
-        <FormularioEvento user_uid={userID} />
+        <FormularioEvento />
       </PrivateLayout>
     </PrivateRoute>
   );
