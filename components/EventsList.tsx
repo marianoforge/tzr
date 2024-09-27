@@ -3,6 +3,7 @@ import { useOperationsStore } from "@/stores/useOperationsStore";
 import Loader from "./Loader";
 import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
+import router from "next/router";
 
 const EventsList: React.FC = () => {
   const { userID } = useAuthStore();
@@ -49,6 +50,14 @@ const EventsList: React.FC = () => {
           </div>
         ))
       )}
+      <button
+        className="bg-[#2E86C1] text-white p-2 rounded-md"
+        onClick={() => {
+          router.push("/calendar");
+        }}
+      >
+        Ver más eventos
+      </button>
     </div>
   );
 };

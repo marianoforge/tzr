@@ -3,9 +3,11 @@ import axios from "axios"; // Import axios
 import ModalOK from "./ModalOK"; // Import ModalOK
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
+import { useEventsStore } from "@/stores/useEventsStore";
 
 const FormularioEvento: React.FC = () => {
   const { userID } = useAuthStore();
+  const { fetchEvents } = useEventsStore();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -54,6 +56,8 @@ const FormularioEvento: React.FC = () => {
         endTime: "",
         description: "",
       });
+
+      await fetchEvents("user_id"); // Llama a fetchEvents después de publicar el evento
     } catch (error) {
       console.error("Error al agendar el evento:", error);
       setModalMessage("Error al agendar el evento");

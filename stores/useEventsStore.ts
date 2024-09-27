@@ -26,6 +26,7 @@ export const useEventsStore = create<EventsState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await axios.get(`/api/eventsPerUser?user_uid=${userID}`);
+
       const fetchedEvents: Event[] = response.data;
 
       // Filtrar eventos pasados y ordenar por fecha

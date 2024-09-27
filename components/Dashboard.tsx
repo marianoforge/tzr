@@ -5,7 +5,6 @@ import PrivateLayout from "@/components/PrivateLayout";
 import OperationsList from "@/components/OperationsList";
 import CuadroPrincipalChart from "@/components/CuadroPrincipalChart";
 import Bubbles from "@/components/Bubbles";
-import EventCalendar from "@/components/EventCalendar";
 import EventsList from "@/components/EventsList";
 import MonthlyMockedBarchart from "@/components/MonthlyMockedBarchart";
 import ObjectiveChart from "./ObjectiveChart";

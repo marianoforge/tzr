@@ -5,17 +5,21 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect } from "react";
 import { useEventsStore } from "@/stores/useEventsStore"; // Importa el store
+import { useAuthStore } from "@/stores/authStore";
 
 const localizer = momentLocalizer(moment);
 
 const BigCalendar = () => {
   const { events, fetchEvents } = useEventsStore(); // Usa el store
+  const { userID } = useAuthStore();
   const [view, setView] = useState<View>(Views.WORK_WEEK);
   const [date, setDate] = useState(new Date(2024, 8, 26)); // Cambiado para centrarse en septiembre 2024
 
   useEffect(() => {
-    fetchEvents("user_id");
-  }, [fetchEvents]);
+    if (userID) {
+      fetchEvents(userID);
+    }
+  }, [userID, fetchEvents]);
 
   const calendarEvents = events.map((event) => ({
     id: event.id,
