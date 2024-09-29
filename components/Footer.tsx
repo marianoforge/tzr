@@ -14,13 +14,13 @@ const Footer = ({ setActiveView }: FooterProps) => {
             onClick={() => setActiveView("about")}
             className="text-white hover:bg-[#3A6D8A] px-3 py-2 rounded text-sm transition duration-150 ease-in-out"
           >
-            Acerca de
+            Acerca de Reef
           </button>
           <button
             onClick={() => setActiveView("contact")}
             className="text-white hover:bg-[#3A6D8A] px-3 py-2 rounded text-sm transition duration-150 ease-in-out"
           >
-            Contacto
+            Contact
           </button>
         </div>
       </div>

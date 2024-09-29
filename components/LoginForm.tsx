@@ -7,6 +7,8 @@ import {
 import { auth } from "../lib/firebase";
 import { useRouter } from "next/router";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import Input from "./FormComponents/Input";
+import Button from "./FormComponents/Button";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -43,16 +45,17 @@ const LoginForm = () => {
       >
         <h2 className="text-2xl mb-4 text-center">Iniciar Sesión</h2>
         {error && <p className="text-red-500">{error}</p>}
-        <input
+        <Input
+          name="email"
           type="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
         <div className="relative">
-          <input
+          <Input
+            name="password"
             type={showPassword ? "text" : "password"}
             placeholder="Contraseña"
             value={password}
@@ -72,12 +75,7 @@ const LoginForm = () => {
             )}
           </button>
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-        >
-          Iniciar Sesión
-        </button>
+        <Button type="submit">Iniciar Sesión</Button>
       </form>
     </div>
   );

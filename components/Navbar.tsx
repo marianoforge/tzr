@@ -1,9 +1,12 @@
-import { UserData, useUserDataStore } from "@/stores/userDataStore";
+import { useUserDataStore } from "@/stores/userDataStore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
 import Link from "next/link";
+import { NavButton } from "./NavComponents/NavButton";
+import { UserAvatar } from "./NavComponents/UserAvatar";
+import { UserInfo } from "./NavComponents/UserInfo";
+import { UserActions } from "./NavComponents/UserActions";
 
 interface NavbarProps {
   setActiveView: (view: string) => void;
@@ -121,91 +124,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
         <UserActions setActiveView={setActiveView} />
       </div>
     </nav>
-  );
-};
-
-interface NavButtonProps {
-  onClick: () => void;
-  label: string;
-  fullWidth?: boolean;
-}
-
-export const NavButton: React.FC<NavButtonProps> = ({
-  onClick,
-  label,
-  fullWidth = false,
-}) => (
-  <button
-    onClick={onClick}
-    className={`text-white hover:bg-[#3A6D8A] px-3 py-2 rounded transition duration-150 ease-in-out ${
-      fullWidth ? "w-full text-center" : ""
-    }`}
-  >
-    {label}
-  </button>
-);
-
-export const UserAvatar = () => (
-  <div className="w-10 h-10 bg-white rounded-full overflow-hidden">
-    <Image
-      src="/avatar.jpg"
-      alt="User Avatar"
-      width={40}
-      height={40}
-      className="object-cover"
-    />
-  </div>
-);
-
-interface UserInfoProps {
-  userData: UserData | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export const UserInfo: React.FC<UserInfoProps> = ({ userData, error }) => (
-  <div className="flex flex-col text-nowrap">
-    {error ? (
-      <p className="text-white font-bold">Error: {error}</p>
-    ) : userData ? (
-      <p className="text-white font-bold capitalize">
-        {userData.firstName} {userData.lastName}
-      </p>
-    ) : (
-      <p className="text-white font-bold">Usuario no encontrado</p>
-    )}
-  </div>
-);
-
-export const UserActions = ({
-  setActiveView,
-}: {
-  setActiveView: (view: string) => void;
-}) => {
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setActiveView("login");
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
-  return (
-    <div className="w-full flex justify-around text-nowrap">
-      <button
-        onClick={() => setActiveView("settings")}
-        className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out "
-      >
-        Settings
-      </button>
-      <button
-        onClick={handleSignOut}
-        className="text-white text-xs hover:font-semibold rounded cursor-pointer transition duration-150 ease-in-out mr-2 2xl:mr-0 2xl:px-1"
-      >
-        Cerrar Sesión
-      </button>
-    </div>
   );
 };
 

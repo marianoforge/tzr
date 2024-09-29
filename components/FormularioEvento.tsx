@@ -4,6 +4,9 @@ import ModalOK from "./ModalOK"; // Import ModalOK
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
+import Input from "./FormComponents/Input";
+import TextArea from "./FormComponents/TextArea";
+import Button from "./FormComponents/Button";
 
 const FormularioEvento: React.FC = () => {
   const { userID } = useAuthStore();
@@ -74,59 +77,48 @@ const FormularioEvento: React.FC = () => {
         <h2 className="text-2xl mb-4">Agendar Evento</h2>
         <div className="flex flex-wrap -mx-2">
           <div className="w-full px-2">
-            <input
+            <Input
               type="text"
               name="title"
               placeholder="Título del evento"
               value={formData.title}
               onChange={handleChange}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
-            <input
+            <Input
               type="date"
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
             <div className="flex gap-4 mb-4">
-              <input
+              <Input
                 type="time"
                 name="startTime"
                 value={formData.startTime}
                 onChange={handleChange}
-                className="w-1/2 p-2 border border-gray-300 rounded"
                 required
               />
-              <input
+              <Input
                 type="time"
                 name="endTime"
                 value={formData.endTime}
                 onChange={handleChange}
-                className="w-1/2 p-2 border border-gray-300 rounded"
                 required
               />
             </div>
-            <textarea
+            <TextArea
               name="description"
               placeholder="Descripción del evento"
               value={formData.description}
               onChange={handleChange}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-              rows={4}
               required
-            ></textarea>
+            />
           </div>
         </div>
         <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] transition-all duration-300 font-semibold w-[200px]"
-          >
-            Agendar Evento
-          </button>
+          <Button type="submit">Agendar Evento</Button>
         </div>
         <ModalOK
           isOpen={isModalOpen}

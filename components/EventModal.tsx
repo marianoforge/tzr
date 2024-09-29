@@ -1,25 +1,9 @@
 import React from "react";
-import { Event } from "@/types"; // Import Event type
-
-interface EventModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  event: Event | null; // Use Event type
-}
+import { EventModalProps } from "@/types"; // Import Event type
+import { formatEventDateTime } from "@/utils/formatEvent.DateTime";
 
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   if (!isOpen || !event) return null;
-
-  const formatEventDateTime = (date: Date) => {
-    return date.toLocaleString("es-ES", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

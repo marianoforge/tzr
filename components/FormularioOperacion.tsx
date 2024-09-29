@@ -3,8 +3,10 @@ import { useState, useEffect, useCallback } from "react";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import ModalOK from "./ModalOK";
-import { useRouter } from "next/router"; // Import useRouter
-import axios from "axios"; // Import Axios
+import { useRouter } from "next/router";
+import axios from "axios";
+import Input from "./FormComponents/Input";
+import Button from "./FormComponents/Button";
 
 const FormularioOperacion = () => {
   const [formData, setFormData] = useState({
@@ -31,9 +33,8 @@ const FormularioOperacion = () => {
   const [honorariosBroker, setHonorariosBroker] = useState(0);
   const [honorariosAsesor, setHonorariosAsesor] = useState(0);
 
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
-  // Obtener el UID del usuario autenticado
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUserUID(user ? user.uid : null);
@@ -68,7 +69,11 @@ const FormularioOperacion = () => {
   ]);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >
+    ) => {
       const { name, value, type } = e.target;
       setFormData((prevData) => ({
         ...prevData,
@@ -164,7 +169,7 @@ const FormularioOperacion = () => {
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2">
             {/* Left column */}
-            <input
+            <Input
               type="date"
               name="fecha_operacion"
               value={formData.fecha_operacion}
@@ -172,7 +177,7 @@ const FormularioOperacion = () => {
               className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
-            <input
+            <Input
               type="text"
               name="direccion_reserva"
               placeholder="Dirección de la Reserva"
@@ -196,7 +201,7 @@ const FormularioOperacion = () => {
               <option value="Fondo de Comercio">Fondo de Comercio</option>
               <option value="Desarrollo">Desarrollo Inmobiliario</option>
             </select>
-            <input
+            <Input
               type="number"
               name="valor_reserva"
               placeholder="Valor de Reserva"
@@ -206,7 +211,8 @@ const FormularioOperacion = () => {
               required
             />
             <div className="flex items-center justify-between">
-              <input
+              <Input
+                value={formData.porcentaje_punta_compradora}
                 placeholder="Porcentaje Punta Compradora"
                 type="text"
                 name="porcentaje_punta_compradora"
@@ -215,7 +221,8 @@ const FormularioOperacion = () => {
                 required
               />
 
-              <input
+              <Input
+                value={formData.porcentaje_punta_vendedora}
                 placeholder="Porcentaje Punta Vendedora"
                 type="text"
                 name="porcentaje_punta_vendedora"
@@ -225,7 +232,7 @@ const FormularioOperacion = () => {
               />
             </div>
             <div className="flex items-center justify-between">
-              <input
+              <Input
                 type="text"
                 name="porcentaje_honorarios_asesor"
                 placeholder="Porcentaje Honorarios Asesor"
@@ -234,7 +241,7 @@ const FormularioOperacion = () => {
                 className="w-[45%]  p-2 mb-4 border border-gray-300 rounded"
                 required
               />
-              <input
+              <Input
                 type="text"
                 name="porcentaje_honorarios_broker"
                 placeholder="Porcentaje Honorarios Broker"
@@ -248,7 +255,7 @@ const FormularioOperacion = () => {
 
           <div className="w-full md:w-1/2 px-2">
             {/* Right column */}
-            <input
+            <Input
               type="text"
               name="numero_sobre_reserva"
               placeholder="Sobre de Reserva (opcional)"
@@ -256,7 +263,7 @@ const FormularioOperacion = () => {
               onChange={handleChange}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
-            <input
+            <Input
               type="text"
               name="numero_sobre_refuerzo"
               placeholder="Sobre de Refuerzo (opcional)"
@@ -265,7 +272,7 @@ const FormularioOperacion = () => {
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
 
-            <input
+            <Input
               type="text"
               name="referido"
               placeholder="Datos Referido"
@@ -273,7 +280,7 @@ const FormularioOperacion = () => {
               onChange={handleChange}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
-            <input
+            <Input
               type="text"
               name="compartido"
               placeholder="Datos Compartido"
@@ -304,12 +311,12 @@ const FormularioOperacion = () => {
           </div>
         </div>
         <div className="flex justify-end">
-          <button
+          <Button
             type="submit"
             className=" bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] transition-all duration-300 font-semibold w-[200px]"
           >
             Guardar Operación
-          </button>
+          </Button>
         </div>
       </form>
 

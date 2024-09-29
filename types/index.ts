@@ -1,3 +1,5 @@
+import { UserData } from "@/stores/userDataStore";
+
 export interface Operacion {
   punta_compradora: number;
   punta_vendedora: number;
@@ -54,4 +56,29 @@ export interface MonthlyData {
   month: string;
   currentYear: number;
   previousYear: number;
+}
+
+export interface EventModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  event: Event | null; // Use Event type
+}
+
+export interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  message: string;
+  onAccept: () => void; // Add this prop
+}
+
+export interface NavButtonProps {
+  onClick: () => void;
+  label: string;
+  fullWidth?: boolean;
+}
+
+export interface UserInfoProps {
+  userData: UserData | null;
+  isLoading: boolean;
+  error: string | null;
 }

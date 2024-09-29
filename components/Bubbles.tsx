@@ -1,27 +1,10 @@
 import { useOperationsStore } from "@/stores/useOperationsStore";
-import { formatNumber } from "@/utils/formatNumber";
 import React from "react";
 import Loader from "./Loader";
+import { formatValue } from "@/utils/formatValue";
 
 const Bubbles = () => {
   const { totals, isLoading } = useOperationsStore();
-
-  const formatValue = (
-    value: number | string,
-    format: "percentage" | "currency" | "none" = "none"
-  ) => {
-    if (value === "No Data") return "No Data";
-
-    const numValue = Number(value);
-    switch (format) {
-      case "percentage":
-        return formatNumber(numValue, true);
-      case "currency":
-        return `$${formatNumber(numValue)}`;
-      default:
-        return formatNumber(numValue);
-    }
-  };
 
   const bubbleData = [
     {

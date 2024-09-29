@@ -1,11 +1,5 @@
+import { ModalProps } from "@/types";
 import React from "react";
-
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  message: string;
-  onAccept: () => void; // Add this prop
-}
 
 const Modal: React.FC<ModalProps> = ({
   isOpen,

@@ -14,6 +14,8 @@ import Loader from "./Loader";
 import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
 import { MonthlyData } from "@/types";
+import { COLORS, MAX_BAR_SIZE } from "@/lib/constants";
+import { formatOperationsData } from "@/utils/formatOperationsData";
 
 const MonthlyBarChart: React.FC = () => {
   const { userID } = useAuthStore();
@@ -40,60 +42,6 @@ const MonthlyBarChart: React.FC = () => {
   }, [userID]);
 
   // Función para formatear los datos a la estructura requerida por el gráfico
-  const formatOperationsData = (
-    operations: {
-      fecha_operacion: string | number | Date;
-      valor_neto: number;
-    }[]
-  ) => {
-    // Aquí debes ajustar la lógica para calcular `currentYear` y `previousYear` según tus datos
-    const months = [
-      "Ene",
-      "Feb",
-      "Mar",
-      "Abr",
-      "May",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dic",
-    ];
-
-    // Generar un objeto base para cada mes con valores iniciales en 0
-    const data = months.map((month) => ({
-      month,
-      currentYear: 0,
-      previousYear: 0,
-    }));
-
-    // Rellenar los datos de currentYear y previousYear
-    operations.forEach(
-      (operation: {
-        fecha_operacion: string | number | Date;
-        valor_neto: number;
-      }) => {
-        const operationDate = new Date(operation.fecha_operacion);
-        const monthIndex = operationDate.getMonth(); // Devuelve un índice de 0 a 11
-
-        // Verifica si la operación es del año actual o del año anterior
-        const currentYear = new Date().getFullYear();
-        if (operationDate.getFullYear() === currentYear) {
-          data[monthIndex].currentYear += operation.valor_neto; // Suma los valores netos del año actual
-        } else if (operationDate.getFullYear() === currentYear - 1) {
-          data[monthIndex].previousYear += operation.valor_neto; // Suma los valores netos del año anterior
-        }
-      }
-    );
-
-    return data;
-  };
-
-  const COLORS = ["#F9D77EB3", "#5DADE2B3"];
-
-  const MAX_BAR_SIZE = 40;
 
   if (isLoading) {
     return <Loader />;

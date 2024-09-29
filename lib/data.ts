@@ -24,5 +24,19 @@ export const calendarEvents = [
     start: new Date(2024, 8, 25, 14, 0), // 17 de septiembre de 2024, 2:00 PM
     end: new Date(2024, 8, 25, 16, 0), // 17 de septiembre de 2024, 4:00 PM
   },
-  // ... más eventos ...
+];
+
+export const months = [
+  "Ene",
+  "Feb",
+  "Mar",
+  "Abr",
+  "May",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dic",
 ];

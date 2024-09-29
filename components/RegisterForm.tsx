@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import ModalOK from "../components/ModalOK"; // Import ModalOK
+import ModalOK from "../components/ModalOK";
 import { cleanString } from "@/utils/cleanString";
+import Input from "./FormComponents/Input";
+import Button from "./FormComponents/Button";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
@@ -36,7 +38,7 @@ const RegisterForm = () => {
           lastName,
           email,
           password,
-          agenciaBroker: cleanString(agenciaBroker), // Limpiar y convertir a minúsculas
+          agenciaBroker: cleanString(agenciaBroker),
           numeroTelefono: numeroTelefono,
         }),
       });
@@ -47,8 +49,8 @@ const RegisterForm = () => {
         return;
       }
 
-      setModalMessage("Registro exitoso. Ahora puedes iniciar sesión."); // Set modal message
-      setIsModalOpen(true); // Open modal
+      setModalMessage("Registro exitoso. Ahora puedes iniciar sesión.");
+      setIsModalOpen(true);
       router.push("/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -68,68 +70,63 @@ const RegisterForm = () => {
         <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}
 
-        <input
+        <Input
+          name="firstName"
           type="text"
           placeholder="Nombre"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
-        <input
+        <Input
+          name="lastName"
           type="text"
           placeholder="Apellido"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
-        <input
+        <Input
+          name="email"
           type="email"
           placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
-        <input
+        <Input
+          name="password"
           type="password"
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
-        <input
+        <Input
+          name="confirmPassword"
           type="password"
           placeholder="Repite la contraseña"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
-        <input
+        <Input
+          name="agenciaBroker"
           type="text"
           placeholder="Agencia o Broker"
           value={agenciaBroker}
           onChange={(e) => setAgenciaBroker(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
-        <input
+        <Input
+          name="numeroTelefono"
           type="tel"
           placeholder="Número de Teléfono"
           value={numeroTelefono}
           onChange={(e) => setNumeroTelefono(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
           required
         />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-        >
-          Registrarse
-        </button>
+        <Button type="submit">Registrarse</Button>
       </form>
       <ModalOK
         isOpen={isModalOpen}

@@ -12,6 +12,7 @@ import Loader from "./Loader";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useAuthStore } from "@/stores/authStore";
 import { Operacion } from "@/types";
+import { COLORS } from "@/lib/constants";
 
 const CuadroPrincipalChart = () => {
   const { userID } = useAuthStore();
@@ -46,14 +47,6 @@ const CuadroPrincipalChart = () => {
     }));
     setTiposOperaciones(tiposData);
   };
-
-  const COLORS = [
-    "#F9D77EB3",
-    "#5DADE2B3",
-    "#C25B33B3",
-    "#1E8449B3",
-    "#5DADE299",
-  ];
 
   if (isLoading) {
     return <Loader />;

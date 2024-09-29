@@ -1,7 +1,7 @@
 import { useUserDataStore } from "@/stores/userDataStore";
 import { useEffect } from "react";
 import { auth } from "@/lib/firebase";
-import { UserActions } from "./Navbar";
+import { UserActions } from "./NavComponents/UserActions";
 import {
   HomeIcon,
   ClipboardDocumentListIcon,
