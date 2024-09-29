@@ -7,7 +7,9 @@ import {
   ClipboardDocumentListIcon,
   CalendarIcon,
   TableCellsIcon,
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
+import { VerticalNavButton } from "./NavComponents/VerticalNavButton";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
@@ -42,9 +44,14 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
             icon={<HomeIcon className="w-5 h-5 mr-2" />}
           />
           <VerticalNavButton
+            onClick={() => handleNavClick("operationsList")}
+            label="Operaciones"
+            icon={<ClipboardDocumentListIcon className="w-5 h-5 mr-2" />} // Cambiado el icono
+          />
+          <VerticalNavButton
             onClick={() => handleNavClick("reservationInput")}
             label="Form de Operaciones"
-            icon={<ClipboardDocumentListIcon className="w-5 h-5 mr-2" />}
+            icon={<ClipboardDocumentCheckIcon className="w-5 h-5 mr-2" />}
           />
           <VerticalNavButton
             onClick={() => handleNavClick("eventForm")}
@@ -66,24 +73,5 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
 };
 
 // Definir la interfaz VerticalNavButtonProps y el componente VerticalNavButton
-interface VerticalNavButtonProps {
-  onClick: () => void;
-  label: string;
-  icon?: React.ReactNode;
-}
-
-const VerticalNavButton: React.FC<VerticalNavButtonProps> = ({
-  onClick,
-  label,
-  icon,
-}) => (
-  <button
-    onClick={onClick}
-    className="text-white hover:bg-[#3A6D8A] px-3 py-2 rounded transition duration-150 ease-in-out w-full flex items-center justify-start"
-  >
-    {icon}
-    {label}
-  </button>
-);
 
 export default VerticalNavbar;

@@ -103,6 +103,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
               fullWidth
             />
             <NavButton
+              onClick={() => handleNavClick("operationsList")}
+              label="Operaciones"
+              fullWidth
+            />
+            <NavButton
               onClick={() => handleNavClick("reservationInput")}
               label="Form de Operaciones"
               fullWidth

@@ -1,8 +1,4 @@
-interface NavButtonProps {
-  onClick: () => void;
-  label: string;
-  fullWidth?: boolean;
-}
+import { NavButtonProps } from "@/types";
 
 export const NavButton: React.FC<NavButtonProps> = ({
   onClick,

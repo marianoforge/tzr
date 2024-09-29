@@ -56,9 +56,10 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
       operations.reduce((acc, op) => acc + op.porcentaje_honorarios_broker, 0) /
       operations.length;
 
-    const totalHonorariosGDS =
-      operations.reduce((acc, op) => acc + op.honorarios_broker, 0) /
-      operations.length;
+    const totalHonorariosGDS = operations.reduce(
+      (acc, op) => acc + op.honorarios_broker,
+      0
+    );
 
     const totalHonorariosNetos = operations.reduce(
       (acc, op) => acc + op.honorarios_asesor,

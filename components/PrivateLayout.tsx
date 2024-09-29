@@ -28,6 +28,9 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
       case "settings":
         router.push("/settings");
         break;
+      case "operationsList":
+        router.push("/operationsList");
+        break;
     }
   };
 

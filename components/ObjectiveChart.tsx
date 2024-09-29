@@ -1,13 +1,9 @@
 /* eslint-disable no-shadow */
+import { OBJECTIVE_CHART_COLORS } from "@/lib/constants";
 import React, { PureComponent } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 
 const RADIAN = Math.PI / 180;
-const data = [
-  { name: "A", value: 25, color: "#FFB7B2" },
-  { name: "B", value: 50, color: "#F9D77E" },
-  { name: "C", value: 25, color: "#7ED994" },
-];
 
 const value = 33;
 
@@ -52,30 +48,41 @@ const needle = (
 export default class Example extends PureComponent {
   render() {
     return (
-      <div className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center h-full w-full">
-        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-2xl font-semibold text-gray-700 pt-8 pb-20">
+      <div
+        className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center h-full w-full"
+        style={{ maxHeight: "225px" }}
+      >
+        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold text-gray-700 pt-2 pb-2">
           Objetivo Anual de Ventas
         </p>
         <div className="pb-4">
-          <PieChart width={320} height={200}>
+          <PieChart width={240} height={170}>
             <Pie
               dataKey="value"
               startAngle={180}
               endAngle={0}
-              data={data}
-              cx={150} // Centra la coordenada x del centro
-              cy={150} // Centra la coordenada y del centro
-              innerRadius={75} // Ajusta el radio interno
-              outerRadius={150} // Ajusta el radio externo
+              data={OBJECTIVE_CHART_COLORS}
+              cx={120} // Ajusta la coordenada x del centro
+              cy={85} // Ajusta la coordenada y del centro para que esté dentro del contenedor
+              innerRadius={55} // Ajusta el radio interno
+              outerRadius={75} // Ajusta el radio externo para que quepa en el contenedor
               fill="#8884d8"
               stroke="none"
               paddingAngle={1}
             >
-              {data.map((entry, index) => (
+              {OBJECTIVE_CHART_COLORS.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            {needle(value, data, 150, 150, 75, 150, "#7ED994")}
+            {needle(
+              value,
+              OBJECTIVE_CHART_COLORS,
+              120, // Ajusta la coordenada x del centro
+              85, // Ajusta la coordenada y del centro para que esté dentro del contenedor
+              55, // Ajusta el radio interno
+              75, // Ajusta el radio externo
+              "#7ED994"
+            )}
           </PieChart>
         </div>
       </div>

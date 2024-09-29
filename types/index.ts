@@ -82,3 +82,9 @@ export interface UserInfoProps {
   isLoading: boolean;
   error: string | null;
 }
+
+export interface VerticalNavButtonProps {
+  onClick: () => void;
+  label: string;
+  icon?: React.ReactNode;
+}

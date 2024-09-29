@@ -9,7 +9,7 @@ import Loader from "./Loader";
 import axios from "axios";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 
-const OperationsList: React.FC = () => {
+const OperationsListDash: React.FC = () => {
   const { operations, totals, setOperations, calculateTotals, isLoading } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -107,26 +107,7 @@ const OperationsList: React.FC = () => {
                 >
                   Tipo de Operación
                 </th>
-                <th
-                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-                >
-                  Referido
-                </th>
-                <th
-                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-                >
-                  Compartido
-                </th>
-                <th
-                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-                >
-                  Sobre de Reserva
-                </th>
-                <th
-                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-                >
-                  Sobre de Refuerzo
-                </th>
+
                 <th
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                 >
@@ -170,18 +151,7 @@ const OperationsList: React.FC = () => {
                   <td className="py-3 px-4 before:content-['Tipo:'] md:before:content-none">
                     {operacion.tipo_operacion}
                   </td>
-                  <td className="py-3 px-4 before:content-['Referido:'] md:before:content-none">
-                    {operacion.referido}
-                  </td>
-                  <td className="py-3 px-4 before:content-['Compartido:'] md:before:content-none">
-                    {operacion.compartido}
-                  </td>
-                  <td className="py-3 px-4 before:content-['Sobre Reserva:'] md:before:content-none">
-                    {operacion.numero_sobre_reserva}
-                  </td>
-                  <td className="py-3 px-4 before:content-['Sobre Refuerzo:'] md:before:content-none">
-                    {operacion.numero_sobre_refuerzo}
-                  </td>
+
                   <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
                     ${formatNumber(operacion.valor_reserva)}
                   </td>
@@ -205,10 +175,10 @@ const OperationsList: React.FC = () => {
                       className={`
                         ${
                           operacion.estado === "En Curso"
-                            ? `${OPERATIONS_LIST_COLORS.buttonBgEnCurso} ${OPERATIONS_LIST_COLORS.buttonHoverEnCurso}`
-                            : `${OPERATIONS_LIST_COLORS.buttonBgCerrada} ${OPERATIONS_LIST_COLORS.buttonHoverCerrada}`
+                            ? `text-[#6ab57d]`
+                            : `text-[#c4a96b]`
                         } 
-                        text-white p-2 px-6 rounded transition duration-150 ease-in-out text-sm w-[110px] font-semibold
+                        text-black transition duration-150 ease-in-out text-sm w-[110px] font-semibold
                       `}
                     >
                       {operacion.estado}
@@ -220,7 +190,7 @@ const OperationsList: React.FC = () => {
               <tr
                 className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg} `}
               >
-                <td className="py-3 px-4" colSpan={7}>
+                <td className="py-3 px-20" colSpan={3}>
                   Total
                 </td>
                 <td
@@ -232,11 +202,6 @@ const OperationsList: React.FC = () => {
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
                   {formatNumber(Number(totals.suma_total_de_puntas))}
-                </td>
-                <td
-                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
-                >
-                  {formatNumber(Number(totals.porcentaje_honorarios_asesor))}%
                 </td>
 
                 <td
@@ -261,4 +226,4 @@ const OperationsList: React.FC = () => {
   );
 };
 
-export default OperationsList;
+export default OperationsListDash;
