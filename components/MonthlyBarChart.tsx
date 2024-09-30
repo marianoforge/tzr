@@ -25,9 +25,7 @@ const MonthlyBarChart: React.FC = () => {
   useEffect(() => {
     const fetchOperations = async () => {
       try {
-        const response = await axios.get(
-          `/api/operationsPerUser?user_uid=${userID}`
-        );
+        const response = await axios.get(`/api/operations/user/${userID}`);
         const operations = response.data;
 
         // Procesa los datos para obtener el formato adecuado

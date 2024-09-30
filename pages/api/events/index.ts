@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../lib/firebase";
+import { db } from "@/lib/firebase";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 
 export default async function handler(
@@ -23,7 +23,7 @@ export default async function handler(
     const { title, date, startTime, endTime, description, user_uid } = req.body;
 
     if (!user_uid) {
-      return res.status(401).json({ message: "Usuario no autenticado" });
+      return res.status(401).json({ message: "User not authenticated" });
     }
 
     try {
@@ -38,15 +38,14 @@ export default async function handler(
         updatedAt: new Date(),
       };
 
-      // Guardar el evento en Firestore
       await addDoc(collection(db, "events"), dataToSubmit);
 
-      res.status(201).json({ message: "Evento guardado exitosamente" });
+      res.status(201).json({ message: "Event successfully saved" });
     } catch (error) {
-      console.error("Error al guardar el evento:", error);
-      res.status(500).json({ message: "Error al guardar el evento" });
+      console.error("Error saving event:", error);
+      res.status(500).json({ message: "Error saving event" });
     }
   } else {
-    return res.status(405).json({ message: "Método no permitido" });
+    res.status(405).json({ message: "Method not allowed" });
   }
 }

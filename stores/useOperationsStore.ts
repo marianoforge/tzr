@@ -105,9 +105,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   fetchOperations: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get(
-        `/api/operationsPerUser?user_uid=${userID}`
-      );
+      const response = await axios.get(`/api/operations/user/${userID}`);
       const fetchedOperations = response.data;
       set({ operations: fetchedOperations });
       get().calculateTotals();

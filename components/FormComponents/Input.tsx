@@ -1,37 +1,23 @@
 import React from "react";
 
-interface InputProps {
-  type: string;
-  name: string;
-  placeholder?: string;
-  value: string | number;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
-  required?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({
-  type,
-  name,
-  placeholder,
-  value,
-  onChange,
-  className,
-  required,
-}) => {
-  return (
-    <input
-      type={type}
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      className={className || "w-full p-2 mb-4 border border-gray-300 rounded"}
-      required={required}
-    />
-  );
-};
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <input
+        ref={ref}
+        className={
+          className || "w-full p-2 mb-4 border border-gray-300 rounded"
+        }
+        {...props}
+      />
+    );
+  }
+);
+
+Input.displayName = "Input"; // Add this line
 
 export default Input;

@@ -6,24 +6,41 @@ import {
 } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Input from "./FormComponents/Input";
 import Button from "./FormComponents/Button";
 
+const schema = yup.object().shape({
+  email: yup.string().email("Correo inválido").required("Correo es requerido"),
+  password: yup
+    .string()
+    .min(6, "Contraseña debe tener al menos 6 caracteres")
+    .required("Contraseña es requerida"),
+});
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
 const LoginForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
+  const [formError, setFormError] = useState("");
+  const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
       await setPersistence(auth, browserSessionPersistence);
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, data.email, data.password);
 
       setTimeout(() => {
         auth.signOut();
@@ -33,36 +50,36 @@ const LoginForm = () => {
 
       router.push("/dashboard");
     } catch {
-      setError("Error al iniciar sesión, verifica tus credenciales.");
+      setFormError("Error al iniciar sesión, verifica tus credenciales.");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
-        onSubmit={handleLogin}
+        onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
       >
         <h2 className="text-2xl mb-4 text-center">Iniciar Sesión</h2>
-        {error && <p className="text-red-500">{error}</p>}
+        {formError && <p className="text-red-500">{formError}</p>}
         <Input
-          name="email"
           type="email"
           placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          {...register("email")}
           required
         />
+        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         <div className="relative">
           <Input
-            name="password"
             type={showPassword ? "text" : "password"}
             placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password")}
             className="w-full p-2 mb-4 border border-gray-300 rounded pr-10"
             required
           />
+          {errors.password && (
+            <p className="text-red-500">{errors.password.message}</p>
+          )}
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
