@@ -4,11 +4,11 @@ import PrivateRoute from "../components/PrivateRoute";
 import PrivateLayout from "@/components/PrivateLayout";
 import CuadroPrincipalChart from "@/components/CuadroPrincipalChart";
 import Bubbles from "@/components/Bubbles";
-import EventsList from "@/components/EventsList";
+import EventsList from "@/components/Events/EventsList";
 import MonthlyMockedBarchart from "@/components/MonthlyMockedBarchart";
 import ObjectiveChart from "./ObjectiveChart";
-import OperationsListDash from "./OperationsListDash";
-import OperationsCarouselDash from "./OperationsCarouselDash"; // Import the new component
+import OperationsListDash from "./Operations/OperationsListDash";
+import OperationsCarouselDash from "./Operations/OperationsCarouselDash"; // Import the new component
 import Profitability from "./Profitability";
 
 const DashBoard = () => {

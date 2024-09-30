@@ -47,6 +47,22 @@ export interface OperationsState {
   updateOperationEstado: (id: string, newEstado: string) => void;
 }
 
+export interface OperationsComponentsProps {
+  handleEstadoChange: (id: string, currentEstado: string) => Promise<void>;
+  handleEditClick: (operation: Operation, id: string) => Promise<void>;
+  handleDeleteClick: (id: string) => Promise<void>;
+  operations: Operation[];
+}
+
+export interface Totals {
+  valor_reserva: string | number;
+  suma_total_de_puntas: string | number;
+  honorarios_broker: string | number;
+  honorarios_asesor: string | number;
+  punta_compradora: string | number;
+  punta_vendedora: string | number;
+  cantidad_operaciones: string | number;
+}
 export interface Event {
   id: string;
   title: string;

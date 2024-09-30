@@ -1,19 +1,90 @@
 // components/OperationsList.tsx
 import { useState, useEffect } from "react";
-import { auth } from "../lib/firebase";
+import { auth } from "../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { formatNumber } from "@/utils/formatNumber";
 import { useOperationsStore } from "@/stores/useOperationsStore";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import axios from "axios";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
+import OperationsModal from "./OperationsModal";
+import { Operation } from "@/types";
+import {
+  PencilIcon,
+  TrashIcon,
+  CheckIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
-const OperationsListDash: React.FC = () => {
+const OperationsList: React.FC = () => {
   const { operations, totals, setOperations, calculateTotals, isLoading } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
+  const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
+    null
+  );
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEstadoChange = async (id: string, currentEstado: string) => {
+    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
+    try {
+      const response = await axios.put(`/api/operations/${id}`, {
+        estado: newEstado,
+      });
+
+      if (response.status !== 200) {
+        throw new Error("Error updating operation status");
+      }
+
+      setOperations(
+        operations.map((operacion) =>
+          operacion.id === id ? { ...operacion, estado: newEstado } : operacion
+        )
+      );
+      calculateTotals();
+    } catch (error) {
+      console.error("Error updating operation status:", error);
+    }
+  };
+
+  const handleEditClick = async (operation: Operation, id: string) => {
+    setSelectedOperation(operation);
+    setIsEditModalOpen(true);
+
+    try {
+      const response = await fetch(`/api/operations/${id}`, {
+        // Usar id aquí
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(operation),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Handle successful response
+    } catch (error) {
+      console.error("Error updating operation:", error);
+    }
+  };
+
+  const handleDeleteClick = async (id: string) => {
+    try {
+      const response = await axios.delete(`/api/operations/${id}`);
+      if (response.status !== 200) {
+        throw new Error("Error deleting operation");
+      }
+      setOperations(operations.filter((operacion) => operacion.id !== id));
+      calculateTotals();
+    } catch (error) {
+      console.error("Error deleting operation:", error);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -52,7 +123,6 @@ const OperationsListDash: React.FC = () => {
   if (isLoading) {
     return <Loader />;
   }
-
   return (
     <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
@@ -82,7 +152,26 @@ const OperationsListDash: React.FC = () => {
                 >
                   Tipo de Operación
                 </th>
-
+                <th
+                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                >
+                  Referido
+                </th>
+                <th
+                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                >
+                  Compartido
+                </th>
+                <th
+                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                >
+                  Sobre de Reserva
+                </th>
+                <th
+                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                >
+                  Sobre de Refuerzo
+                </th>
                 <th
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                 >
@@ -109,6 +198,12 @@ const OperationsListDash: React.FC = () => {
                 >
                   Estado
                 </th>
+                <th
+                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                  colSpan={2}
+                >
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -126,7 +221,18 @@ const OperationsListDash: React.FC = () => {
                   <td className="py-3 px-4 before:content-['Tipo:'] md:before:content-none">
                     {operacion.tipo_operacion}
                   </td>
-
+                  <td className="py-3 px-4 before:content-['Referido:'] md:before:content-none">
+                    {operacion.referido}
+                  </td>
+                  <td className="py-3 px-4 before:content-['Compartido:'] md:before:content-none">
+                    {operacion.compartido}
+                  </td>
+                  <td className="py-3 px-4 before:content-['Sobre Reserva:'] md:before:content-none">
+                    {operacion.numero_sobre_reserva}
+                  </td>
+                  <td className="py-3 px-4 before:content-['Sobre Refuerzo:'] md:before:content-none">
+                    {operacion.numero_sobre_refuerzo}
+                  </td>
                   <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
                     ${formatNumber(operacion.valor_reserva)}
                   </td>
@@ -143,19 +249,47 @@ const OperationsListDash: React.FC = () => {
                   <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
                     ${formatNumber(operacion.honorarios_asesor)}
                   </td>
-                  <td className="py-3 px-4 md:before:content-none text-center">
-                    <p
-                      className={`
-                        ${
-                          operacion.estado === "En Curso"
-                            ? `text-[#6ab57d]`
-                            : `text-[#c4a96b]`
-                        } 
-                        transition duration-150 ease-in-out text-sm text-center w-[110px] font-semibold
-                      `}
+                  <td className="py-3 px-4 md:before:content-none">
+                    <button
+                      onClick={() =>
+                        handleEstadoChange(operacion.id, operacion.estado)
+                      }
+                      className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
+                        operacion.estado === "En Curso"
+                          ? `${OPERATIONS_LIST_COLORS.buttonBgEnCurso}`
+                          : `bg-[#C25B33B3]`
+                      }`}
                     >
-                      {operacion.estado}
-                    </p>
+                      <span
+                        className={`${
+                          operacion.estado === "En Curso"
+                            ? "translate-x-6"
+                            : "translate-x-1"
+                        } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
+                      >
+                        {operacion.estado === "En Curso" ? (
+                          <CheckIcon className="h-4 w-4 text-[#7ED994]" />
+                        ) : (
+                          <XMarkIcon className="h-4 w-4 text-[#C25B33B3]" />
+                        )}
+                      </span>
+                    </button>
+                  </td>
+                  <td className="md:before:content-none">
+                    <button
+                      onClick={() => handleEditClick(operacion, operacion.id)}
+                      className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm  font-semibold "
+                    >
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+                  </td>
+                  <td className="md:before:content-none">
+                    <button
+                      onClick={() => handleDeleteClick(operacion.id)}
+                      className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
+                    >
+                      <TrashIcon className="text-[#C25B33B3] h-5 w-5" />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -163,7 +297,7 @@ const OperationsListDash: React.FC = () => {
               <tr
                 className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg} `}
               >
-                <td className="py-3 px-20" colSpan={3}>
+                <td className="py-3 px-4" colSpan={7}>
                   Total
                 </td>
                 <td
@@ -176,27 +310,36 @@ const OperationsListDash: React.FC = () => {
                 >
                   {formatNumber(Number(totals.suma_total_de_puntas))}
                 </td>
-
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  ${formatNumber(Number(totals.honorarios_broker))}
+                  {formatNumber(Number(totals.honorarios_broker))}%
                 </td>
+
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
                   ${formatNumber(Number(totals.honorarios_asesor))}
                 </td>
+
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText}`}
+                  colSpan={3}
                 ></td>
               </tr>
             </tbody>
           </table>
         </div>
       )}
+      {isEditModalOpen && (
+        <OperationsModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          operation={selectedOperation} // Ensure operation is either the expected object or null
+        />
+      )}
     </div>
   );
 };
 
-export default OperationsListDash;
+export default OperationsList;

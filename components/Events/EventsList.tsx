@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useOperationsStore } from "@/stores/useOperationsStore";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
 import router from "next/router";

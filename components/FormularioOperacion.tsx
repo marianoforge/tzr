@@ -162,7 +162,7 @@ const FormularioOperacion = () => {
     <div className="flex justify-center items-center w-full">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded shadow-md w-[100%]"
+        className="p-6 bg-white rounded shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
       >
         <h2 className="text-2xl mb-4">Agregar Operación</h2>
         <div className="flex flex-wrap -mx-2">
@@ -345,7 +345,7 @@ const FormularioOperacion = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-center lg:justify-end items-center mt-8">
           <Button
             type="submit"
             className=" bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] transition-all duration-300 font-semibold w-[200px]"

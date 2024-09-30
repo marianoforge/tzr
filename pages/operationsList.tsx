@@ -1,8 +1,8 @@
 import PrivateLayout from "@/components/PrivateLayout";
 import PrivateRoute from "@/components/PrivateRoute";
 import React from "react";
-import OperationsList from "@/components/OperationsList";
-import OperationsCarouselDash from "@/components/OperationsCarouselDash";
+import OperationsList from "@/components/Operations/OperationsList";
+import OperationsCarouselDash from "@/components/Operations/OperationsCarouselDash";
 const operationsList = () => {
   return (
     <PrivateRoute>

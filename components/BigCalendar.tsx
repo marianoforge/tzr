@@ -6,7 +6,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect } from "react";
 import { useEventsStore } from "@/stores/useEventsStore";
 import { useAuthStore } from "@/stores/authStore";
-import EventModal from "./EventModal"; // Importa el nuevo componente EventModal
+import EventModal from "./Events/EventModal"; // Importa el nuevo componente EventModal
 import { Event } from "@/types";
 
 const localizer = momentLocalizer(moment);
