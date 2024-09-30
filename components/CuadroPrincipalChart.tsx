@@ -11,7 +11,7 @@ import {
 import Loader from "./Loader";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useAuthStore } from "@/stores/authStore";
-import { Operacion } from "@/types";
+import { Operation } from "@/types";
 import { COLORS } from "@/lib/constants";
 
 const CuadroPrincipalChart = () => {
@@ -34,7 +34,7 @@ const CuadroPrincipalChart = () => {
     }
   }, [operations]);
 
-  const calculateTotals = (operations: Operacion[]) => {
+  const calculateTotals = (operations: Operation[]) => {
     // Calcular los tipos de operaciones
     const tiposCount = operations.reduce((acc, op) => {
       acc[op.tipo_operacion] = (acc[op.tipo_operacion] || 0) + 1;
