@@ -96,7 +96,8 @@ const OperationsCarouselDash: React.FC = () => {
                   <p>
                     <strong>Puntas:</strong>{" "}
                     {formatNumber(
-                      operacion.punta_vendedora + operacion.punta_compradora
+                      Number(operacion.punta_vendedora) +
+                        Number(operacion.punta_compradora)
                     )}
                   </p>
                   <p>

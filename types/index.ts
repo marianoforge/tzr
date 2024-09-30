@@ -1,30 +1,32 @@
 import { UserData } from "@/stores/userDataStore";
 
-export interface Operacion {
-  punta_compradora: number;
-  punta_vendedora: number;
+export interface Operation {
+  punta_compradora: boolean;
+  punta_vendedora: boolean;
   id: string;
   fecha_operacion: string;
   direccion_reserva: string;
   tipo_operacion: string;
   valor_reserva: number;
-  numero_sobre_reserva: number;
-  numero_sobre_refuerzo: number;
+  numero_sobre_reserva?: number | null;
+  numero_sobre_refuerzo?: number | null;
   porcentaje_honorarios_asesor: number;
   porcentaje_honorarios_broker: number;
+  porcentaje_punta_compradora?: number;
+  porcentaje_punta_vendedora?: number;
   honorarios_broker: number;
   honorarios_asesor: number;
-  referido: string;
-  compartido: string;
+  referido?: string | null;
+  compartido?: string | null;
   estado: string;
 }
 
 export interface OperationsState {
-  operations: Operacion[];
+  operations: Operation[];
   totals: {
     valor_reserva: number | string;
     porcentaje_honorarios_asesor: number | string;
-    porcentaje_honorarios_broker: number | string; // Added this field
+    porcentaje_honorarios_broker: number | string;
     honorarios_broker: number | string;
     honorarios_asesor: number | string;
     mayor_venta_efectuada: number | string;
@@ -35,11 +37,14 @@ export interface OperationsState {
     cantidad_operaciones: number | string;
   };
   isLoading: boolean;
-  setOperations: (operations: Operacion[]) => void;
+  error: string | null;
+  setOperations: (operations: Operation[]) => void;
   calculateTotals: () => void;
   setIsLoading: (isLoading: boolean) => void;
-  error: string | null;
   fetchOperations: (userID: string) => Promise<void>;
+
+  // Aquí asegúrate de que updateOperationEstado esté correctamente declarado:
+  updateOperationEstado: (id: string, newEstado: string) => void;
 }
 
 export interface Event {

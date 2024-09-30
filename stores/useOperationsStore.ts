@@ -10,7 +10,6 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     porcentaje_honorarios_broker: 0,
     honorarios_broker: 0,
     honorarios_asesor: 0,
-    valor_neto: 0,
     mayor_venta_efectuada: 0,
     promedio_valor_reserva: 0,
     punta_compradora: 0,
@@ -73,12 +72,15 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     const promedioValorReserva = totalValorReserva / operations.length;
 
     const puntaCompradora = operations.reduce(
-      (acc, op) => acc + op.punta_compradora,
+      (acc, op) =>
+        acc +
+        (typeof op.punta_compradora === "number" ? op.punta_compradora : 0),
       0
     );
 
     const puntaVendedora = operations.reduce(
-      (acc, op) => acc + op.punta_vendedora,
+      (acc, op) =>
+        acc + (typeof op.punta_vendedora === "number" ? op.punta_vendedora : 0),
       0
     );
 
@@ -88,7 +90,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
       totals: {
         valor_reserva: totalValorReserva,
         porcentaje_honorarios_asesor: totalPorcentajeHonorariosAsesor,
-        porcentaje_honorarios_broker: totalPorcentajeHonorariosBroker, // Added this field
+        porcentaje_honorarios_broker: totalPorcentajeHonorariosBroker,
         honorarios_broker: totalHonorariosGDS,
         honorarios_asesor: totalHonorariosNetos,
         mayor_venta_efectuada: mayorVentaEfectuada,
@@ -114,5 +116,12 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     } finally {
       set({ isLoading: false });
     }
+  },
+  updateOperationEstado: (id: string, newEstado: string) => {
+    const { operations } = get();
+    const updatedOperations = operations.map((op) =>
+      op.id === id ? { ...op, estado: newEstado } : op
+    );
+    set({ operations: updatedOperations });
   },
 }));

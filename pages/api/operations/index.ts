@@ -31,6 +31,8 @@ export default async function handler(
       numero_sobre_refuerzo,
       porcentaje_honorarios_asesor,
       porcentaje_honorarios_broker,
+      porcentaje_punta_compradora,
+      porcentaje_punta_vendedora,
       honorarios_broker,
       honorarios_asesor,
       referido,
@@ -59,6 +61,9 @@ export default async function handler(
           parseFloat(porcentaje_honorarios_broker) || 0,
         honorarios_broker: parseFloat(honorarios_broker) || 0,
         honorarios_asesor: parseFloat(honorarios_asesor) || 0,
+        porcentaje_punta_compradora:
+          parseFloat(porcentaje_punta_compradora) || 0,
+        porcentaje_punta_vendedora: parseFloat(porcentaje_punta_vendedora) || 0,
         referido,
         compartido,
         user_uid,

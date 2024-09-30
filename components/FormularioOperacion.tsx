@@ -127,6 +127,9 @@ const FormularioOperacion = () => {
         user_uid: userUID,
         punta_compradora: data.punta_compradora ? 1 : 0,
         punta_vendedora: data.punta_vendedora ? 1 : 0,
+        estado: "En Curso",
+        porcentaje_punta_compradora: data.porcentaje_punta_compradora || 0,
+        porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
       };
 
       await axios.post("/api/operations", dataToSubmit, {

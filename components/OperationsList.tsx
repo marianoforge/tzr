@@ -8,18 +8,29 @@ import { useOperationsStore } from "@/stores/useOperationsStore";
 import Loader from "./Loader";
 import axios from "axios";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
+import OperationsModal from "./OperationsModal";
+import { Operation } from "@/types";
+import {
+  PencilIcon,
+  TrashIcon,
+  CheckIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 const OperationsList: React.FC = () => {
   const { operations, totals, setOperations, calculateTotals, isLoading } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
+  const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
+    null
+  );
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
     try {
-      const response = await axios.post(`/api/updateOperationStatus`, {
-        id,
+      const response = await axios.put(`/api/operations/${id}`, {
         estado: newEstado,
       });
 
@@ -35,6 +46,43 @@ const OperationsList: React.FC = () => {
       calculateTotals();
     } catch (error) {
       console.error("Error updating operation status:", error);
+    }
+  };
+
+  const handleEditClick = async (operation: Operation, id: string) => {
+    setSelectedOperation(operation);
+    setIsEditModalOpen(true);
+
+    try {
+      const response = await fetch(`/api/operations/${id}`, {
+        // Usar id aquí
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(operation),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Handle successful response
+    } catch (error) {
+      console.error("Error updating operation:", error);
+    }
+  };
+
+  const handleDeleteClick = async (id: string) => {
+    try {
+      const response = await axios.delete(`/api/operations/${id}`);
+      if (response.status !== 200) {
+        throw new Error("Error deleting operation");
+      }
+      setOperations(operations.filter((operacion) => operacion.id !== id));
+      calculateTotals();
+    } catch (error) {
+      console.error("Error deleting operation:", error);
     }
   };
 
@@ -75,7 +123,6 @@ const OperationsList: React.FC = () => {
   if (isLoading) {
     return <Loader />;
   }
-
   return (
     <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
@@ -151,6 +198,12 @@ const OperationsList: React.FC = () => {
                 >
                   Estado
                 </th>
+                <th
+                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                  colSpan={2}
+                >
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -185,7 +238,8 @@ const OperationsList: React.FC = () => {
                   </td>
                   <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
                     {formatNumber(
-                      operacion.punta_vendedora + operacion.punta_compradora
+                      Number(operacion.punta_vendedora) +
+                        Number(operacion.punta_compradora)
                     )}
                   </td>
 
@@ -200,16 +254,41 @@ const OperationsList: React.FC = () => {
                       onClick={() =>
                         handleEstadoChange(operacion.id, operacion.estado)
                       }
-                      className={`
-                        ${
-                          operacion.estado === "En Curso"
-                            ? `${OPERATIONS_LIST_COLORS.buttonBgEnCurso} ${OPERATIONS_LIST_COLORS.buttonHoverEnCurso}`
-                            : `${OPERATIONS_LIST_COLORS.buttonBgCerrada} ${OPERATIONS_LIST_COLORS.buttonHoverCerrada}`
-                        } 
-                        text-white p-2 px-6 rounded transition duration-150 ease-in-out text-sm w-[110px] font-semibold
-                      `}
+                      className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
+                        operacion.estado === "En Curso"
+                          ? `${OPERATIONS_LIST_COLORS.buttonBgEnCurso}`
+                          : `bg-[#C25B33B3]`
+                      }`}
                     >
-                      {operacion.estado}
+                      <span
+                        className={`${
+                          operacion.estado === "En Curso"
+                            ? "translate-x-6"
+                            : "translate-x-1"
+                        } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
+                      >
+                        {operacion.estado === "En Curso" ? (
+                          <CheckIcon className="h-4 w-4 text-[#7ED994]" />
+                        ) : (
+                          <XMarkIcon className="h-4 w-4 text-[#C25B33B3]" />
+                        )}
+                      </span>
+                    </button>
+                  </td>
+                  <td className="md:before:content-none">
+                    <button
+                      onClick={() => handleEditClick(operacion, operacion.id)}
+                      className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm  font-semibold "
+                    >
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+                  </td>
+                  <td className="md:before:content-none">
+                    <button
+                      onClick={() => handleDeleteClick(operacion.id)}
+                      className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
+                    >
+                      <TrashIcon className="h-5 w-5" />
                     </button>
                   </td>
                 </tr>
@@ -234,26 +313,30 @@ const OperationsList: React.FC = () => {
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  {formatNumber(Number(totals.porcentaje_honorarios_asesor))}%
+                  {formatNumber(Number(totals.honorarios_broker))}%
                 </td>
 
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  ${formatNumber(Number(totals.honorarios_broker))}
-                </td>
-                <td
-                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
-                >
                   ${formatNumber(Number(totals.honorarios_asesor))}
                 </td>
+
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText}`}
+                  colSpan={3}
                 ></td>
               </tr>
             </tbody>
           </table>
         </div>
+      )}
+      {isEditModalOpen && (
+        <OperationsModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          operation={selectedOperation} // Ensure operation is either the expected object or null
+        />
       )}
     </div>
   );

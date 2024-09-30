@@ -15,28 +15,6 @@ const OperationsListDash: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleEstadoChange = async (id: string, currentEstado: string) => {
-    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
-    try {
-      const response = await axios.put(`/api/operations/${id}`, {
-        estado: newEstado,
-      });
-
-      if (response.status !== 200) {
-        throw new Error("Error updating operation status");
-      }
-
-      setOperations(
-        operations.map((operacion) =>
-          operacion.id === id ? { ...operacion, estado: newEstado } : operacion
-        )
-      );
-      calculateTotals();
-    } catch (error) {
-      console.error("Error updating operation status:", error);
-    }
-  };
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -154,7 +132,8 @@ const OperationsListDash: React.FC = () => {
                   </td>
                   <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
                     {formatNumber(
-                      operacion.punta_vendedora + operacion.punta_compradora
+                      Number(operacion.punta_vendedora) +
+                        Number(operacion.punta_compradora)
                     )}
                   </td>
 
@@ -164,22 +143,19 @@ const OperationsListDash: React.FC = () => {
                   <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
                     ${formatNumber(operacion.honorarios_asesor)}
                   </td>
-                  <td className="py-3 px-4 md:before:content-none">
-                    <button
-                      onClick={() =>
-                        handleEstadoChange(operacion.id, operacion.estado)
-                      }
+                  <td className="py-3 px-4 md:before:content-none text-center">
+                    <p
                       className={`
                         ${
                           operacion.estado === "En Curso"
                             ? `text-[#6ab57d]`
                             : `text-[#c4a96b]`
                         } 
-                        text-black transition duration-150 ease-in-out text-sm w-[110px] font-semibold
+                        transition duration-150 ease-in-out text-sm text-center w-[110px] font-semibold
                       `}
                     >
                       {operacion.estado}
-                    </button>
+                    </p>
                   </td>
                 </tr>
               ))}

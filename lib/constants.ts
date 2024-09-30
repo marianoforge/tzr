@@ -22,5 +22,5 @@ export const OPERATIONS_LIST_COLORS = {
   buttonBgEnCurso: "bg-[#7ED994]",
   buttonHoverEnCurso: "hover:bg-[#34D399]",
   buttonBgCerrada: "bg-[#F9D789]",
-  buttonHoverCerrada: "hover:bg-[#374151]",
+  buttonHoverCerrada: "hover:bg-[#F9D77EB3]",
 };

@@ -13,8 +13,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const router = useRouter();
   const { userID, setUserID } = useAuthStore();
 
-  console.log(userID);
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {

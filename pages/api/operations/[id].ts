@@ -26,12 +26,25 @@ export default async function handler(
       res.status(500).json({ message: "Error fetching operation", error });
     }
   } else if (req.method === "PUT") {
+    console.log(req.body);
     const {
       fecha_operacion,
       direccion_reserva,
       tipo_operacion,
       estado,
       valor_reserva,
+      punta_compradora,
+      punta_vendedora,
+      numero_sobre_reserva,
+      numero_sobre_refuerzo,
+      porcentaje_honorarios_asesor,
+      porcentaje_honorarios_broker,
+      honorarios_broker,
+      honorarios_asesor,
+      porcentaje_punta_compradora,
+      porcentaje_punta_vendedora,
+      referido,
+      compartido,
     } = req.body;
 
     if (
@@ -39,7 +52,19 @@ export default async function handler(
       !direccion_reserva &&
       !tipo_operacion &&
       !estado &&
-      !valor_reserva
+      !valor_reserva &&
+      !punta_compradora &&
+      !punta_vendedora &&
+      !numero_sobre_reserva &&
+      !numero_sobre_refuerzo &&
+      !porcentaje_honorarios_asesor &&
+      !porcentaje_honorarios_broker &&
+      !porcentaje_punta_compradora &&
+      !porcentaje_punta_vendedora &&
+      !honorarios_broker &&
+      !honorarios_asesor &&
+      !referido &&
+      !compartido
     ) {
       return res.status(400).json({ message: "No fields to update" });
     }
@@ -52,6 +77,26 @@ export default async function handler(
         ...(tipo_operacion && { tipo_operacion }),
         ...(estado && { estado }),
         ...(valor_reserva && { valor_reserva }),
+        ...(punta_compradora !== undefined && { punta_compradora }),
+        ...(punta_vendedora !== undefined && { punta_vendedora }),
+        ...(numero_sobre_reserva !== undefined && { numero_sobre_reserva }),
+        ...(numero_sobre_refuerzo !== undefined && { numero_sobre_refuerzo }),
+        ...(porcentaje_honorarios_asesor !== undefined && {
+          porcentaje_honorarios_asesor,
+        }),
+        ...(porcentaje_honorarios_broker !== undefined && {
+          porcentaje_honorarios_broker,
+        }),
+        ...(porcentaje_punta_compradora !== undefined && {
+          porcentaje_punta_compradora,
+        }),
+        ...(porcentaje_punta_vendedora !== undefined && {
+          porcentaje_punta_vendedora,
+        }),
+        ...(honorarios_broker !== undefined && { honorarios_broker }),
+        ...(honorarios_asesor !== undefined && { honorarios_asesor }),
+        ...(referido && { referido }),
+        ...(compartido && { compartido }),
         updatedAt: new Date(),
       };
       await updateDoc(operationRef, updates);
