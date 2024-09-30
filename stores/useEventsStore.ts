@@ -25,7 +25,7 @@ export const useEventsStore = create<EventsState>((set) => ({
   fetchEvents: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get(`/api/eventsPerUser?user_uid=${userID}`);
+      const response = await axios.get(`/api/events/user/${userID}`);
 
       const fetchedEvents: Event[] = response.data;
 

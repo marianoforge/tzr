@@ -24,14 +24,14 @@ export const useUserDataStore = create<UserDataState>((set) => ({
   isLoading: false,
   error: null,
   setUserData: (userData) => set({ userData }),
-  fetchUserData: async (user_uid: string) => {
+  fetchUserData: async (uid: string) => {
     set({ isLoading: true, error: null });
     try {
-      if (!user_uid) {
+      if (!uid) {
         throw new Error("No hay usuario autenticado");
       }
 
-      const response = await fetch(`/api/userInfo?user_uid=${user_uid}`);
+      const response = await fetch(`/api/users/${uid}`); // Cambiado de /api/userInfo a /api/users/${user_uid}
 
       if (!response.ok) {
         const errorText = await response.text();

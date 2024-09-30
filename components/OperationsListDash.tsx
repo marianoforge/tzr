@@ -18,8 +18,7 @@ const OperationsListDash: React.FC = () => {
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
     try {
-      const response = await axios.post(`/api/updateOperationStatus`, {
-        id,
+      const response = await axios.put(`/api/operations/${id}`, {
         estado: newEstado,
       });
 
@@ -55,9 +54,7 @@ const OperationsListDash: React.FC = () => {
       if (!userUID) return;
 
       try {
-        const response = await axios.get(`/api/operationsPerUser`, {
-          params: { user_uid: userUID },
-        });
+        const response = await axios.get(`/api/operations/user/${userUID}`);
 
         if (response.status !== 200) {
           throw new Error("Error al obtener las operaciones del usuario");

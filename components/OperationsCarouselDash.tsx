@@ -33,9 +33,7 @@ const OperationsCarouselDash: React.FC = () => {
       if (!userUID) return;
 
       try {
-        const response = await axios.get(`/api/operationsPerUser`, {
-          params: { user_uid: userUID },
-        });
+        const response = await axios.get(`/api/operations/user/${userUID}`);
 
         if (response.status !== 200) {
           throw new Error("Error al obtener las operaciones del usuario");

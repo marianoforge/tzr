@@ -29,9 +29,6 @@ const Settings = () => {
     }
   }, [userID, fetchUserData]);
 
-  console.log(userData?.agenciaBroker);
-  console.log(userID);
-
   useEffect(() => {
     if (userData) {
       setFirstName(userData.firstName || "");
@@ -46,7 +43,7 @@ const Settings = () => {
     setSuccess("");
 
     try {
-      await axios.post("/api/updateUserInfo", {
+      await axios.put(`/api/users/${userID}`, {
         userID,
         firstName,
         lastName,
