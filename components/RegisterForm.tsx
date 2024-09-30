@@ -1,32 +1,52 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import ModalOK from "../components/ModalOK";
 import { cleanString } from "@/utils/cleanString";
 import Input from "./FormComponents/Input";
 import Button from "./FormComponents/Button";
 
+const schema = yup.object().shape({
+  firstName: yup.string().required("Nombre es requerido"),
+  lastName: yup.string().required("Apellido es requerido"),
+  email: yup.string().email("Correo inválido").required("Correo es requerido"),
+  password: yup
+    .string()
+    .min(8, "Contraseña debe tener al menos 6 caracteres")
+    .required("Contraseña es requerida"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), undefined], "Las contraseñas no coinciden")
+    .required("Confirmar contraseña es requerido"),
+  agenciaBroker: yup.string().required("Agencia o Broker es requerido"),
+  numeroTelefono: yup.string().required("Número de Teléfono es requerido"),
+});
+
+interface RegisterData {
+  password: string;
+  agenciaBroker: string;
+  numeroTelefono: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 const RegisterForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [agenciaBroker, setAgenciaBroker] = useState("");
-  const [numeroTelefono, setNumeroTelefono] = useState("");
-  const [error, setError] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [formError, setFormError] = useState(""); // Agregar estado para errores del formulario
   const router = useRouter();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden.");
-      return;
-    }
-
+  const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     try {
       const response = await fetch("/api/register", {
         method: "POST",
@@ -34,19 +54,14 @@ const RegisterForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-          agenciaBroker: cleanString(agenciaBroker),
-          numeroTelefono: numeroTelefono,
+          ...data,
+          agenciaBroker: cleanString(data.agenciaBroker),
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        setError(errorData.message || "Error al registrar usuario");
-        return;
+        throw new Error(errorData.message || "Error al registrar usuario");
       }
 
       setModalMessage("Registro exitoso. Ahora puedes iniciar sesión.");
@@ -54,9 +69,9 @@ const RegisterForm = () => {
       router.push("/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message);
+        setFormError(err.message); // Usar setFormError para manejar errores
       } else {
-        setError("Error desconocido al registrar usuario");
+        setFormError("Error desconocido al registrar usuario");
       }
     }
   };
@@ -64,68 +79,73 @@ const RegisterForm = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
-        onSubmit={handleRegister}
+        onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-6 rounded shadow-md  w-11/12 max-w-lg"
       >
         <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-
+        {formError && <p className="text-red-500 mb-4">{formError}</p>}{" "}
+        {/* Mostrar errores del formulario */}
         <Input
-          name="firstName"
           type="text"
           placeholder="Nombre"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          {...register("firstName")}
           required
         />
+        {errors.firstName && (
+          <p className="text-red-500">{errors.firstName.message}</p>
+        )}
         <Input
-          name="lastName"
           type="text"
           placeholder="Apellido"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          {...register("lastName")}
           required
         />
+        {errors.lastName && (
+          <p className="text-red-500">{errors.lastName.message}</p>
+        )}
         <Input
-          name="email"
           type="email"
           placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          {...register("email")}
           required
         />
+        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         <Input
-          name="password"
           type="password"
           placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          {...register("password")}
           required
         />
+        {errors.password && (
+          <p className="text-red-500">{errors.password.message}</p>
+        )}
         <Input
-          name="confirmPassword"
           type="password"
           placeholder="Repite la contraseña"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          {...register("confirmPassword")}
           required
         />
+        {errors.confirmPassword && (
+          <p className="text-red-500">{errors.confirmPassword.message}</p>
+        )}
         <Input
-          name="agenciaBroker"
           type="text"
           placeholder="Agencia o Broker"
-          value={agenciaBroker}
-          onChange={(e) => setAgenciaBroker(e.target.value)}
+          {...register("agenciaBroker")}
           required
         />
+        {errors.agenciaBroker && (
+          <p className="text-red-500">{errors.agenciaBroker.message}</p>
+        )}
         <Input
-          name="numeroTelefono"
           type="tel"
           placeholder="Número de Teléfono"
-          value={numeroTelefono}
-          onChange={(e) => setNumeroTelefono(e.target.value)}
+          {...register("numeroTelefono")}
           required
         />
+        {errors.numeroTelefono && (
+          <p className="text-red-500">{errors.numeroTelefono.message}</p>
+        )}
         <Button type="submit">Registrarse</Button>
       </form>
       <ModalOK

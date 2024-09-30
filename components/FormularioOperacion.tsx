@@ -1,5 +1,4 @@
-// components/FormularioOperacion.tsx
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { auth } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import ModalOK from "./ModalOK";
@@ -7,26 +6,70 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import Input from "./FormComponents/Input";
 import Button from "./FormComponents/Button";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { InferType } from "yup";
+
+const schema = yup.object().shape({
+  fecha_operacion: yup.string().required("La fecha de operación es requerida"),
+  direccion_reserva: yup
+    .string()
+    .required("La dirección de reserva es requerida"),
+  tipo_operacion: yup.string().required("El tipo de operación es requerido"),
+  valor_reserva: yup
+    .number()
+    .typeError("El valor de reserva debe ser un número")
+    .positive("El valor de reserva debe ser positivo")
+    .required("El valor de reserva es requerido"),
+  porcentaje_honorarios_asesor: yup
+    .number()
+    .typeError("Debe ser un número")
+    .min(0, "No puede ser negativo")
+    .required("Porcentaje de honorarios asesor es requerido"),
+  porcentaje_honorarios_broker: yup
+    .number()
+    .typeError("Debe ser un número")
+    .min(0, "No puede ser negativo")
+    .required("Porcentaje de honorarios broker es requerido"),
+  porcentaje_punta_compradora: yup
+    .number()
+    .typeError("Debe ser un número")
+    .min(0, "No puede ser negativo"),
+  porcentaje_punta_vendedora: yup
+    .number()
+    .typeError("Debe ser un número")
+    .min(0, "No puede ser negativo"),
+  punta_compradora: yup.boolean().required(),
+  punta_vendedora: yup.boolean().required(),
+  numero_sobre_reserva: yup.number().typeError("Debe ser un número").nullable(),
+  numero_sobre_refuerzo: yup
+    .number()
+    .typeError("Debe ser un número")
+    .nullable(),
+  referido: yup.string().nullable(),
+  compartido: yup.string().nullable(),
+  estado: yup.string().required("El estado es requerido"),
+});
+
+type FormData = InferType<typeof schema>;
 
 const FormularioOperacion = () => {
-  const [formData, setFormData] = useState({
-    fecha_operacion: "",
-    direccion_reserva: "",
-    tipo_operacion: "",
-    punta_compradora: 0,
-    punta_vendedora: 0,
-    valor_reserva: "",
-    numero_sobre_reserva: "",
-    numero_sobre_refuerzo: "",
-    porcentaje_honorarios_asesor: "",
-    porcentaje_honorarios_broker: "",
-    porcentaje_punta_vendedora: "",
-    porcentaje_punta_compradora: "",
-    referido: "",
-    compartido: "",
-    estado: "En Curso",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+  } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      estado: "En Curso",
+      punta_compradora: false,
+      punta_vendedora: false,
+      // Set other default values if needed
+    },
   });
-
   const [userUID, setUserUID] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -42,12 +85,14 @@ const FormularioOperacion = () => {
     return () => unsubscribe();
   }, []);
 
+  const watchAllFields = watch();
+
   useEffect(() => {
-    const valor_reserva = parseFloat(formData.valor_reserva) || 0;
+    const valor_reserva = parseFloat(String(watchAllFields.valor_reserva)) || 0;
     const porcentaje_honorarios_asesor =
-      parseFloat(formData.porcentaje_honorarios_asesor) || 0;
+      parseFloat(String(watchAllFields.porcentaje_honorarios_asesor)) || 0;
     const porcentaje_honorarios_broker =
-      parseFloat(formData.porcentaje_honorarios_broker) || 0;
+      parseFloat(String(watchAllFields.porcentaje_honorarios_broker)) || 0;
 
     const calculatedHonorariosBroker =
       (valor_reserva * porcentaje_honorarios_broker) / 100;
@@ -61,36 +106,12 @@ const FormularioOperacion = () => {
     setHonorariosBroker(calculatedHonorariosBroker);
     setHonorariosAsesor(calculatedHonorariosAsesor);
   }, [
-    formData.valor_reserva,
-    formData.porcentaje_honorarios_asesor,
-    formData.porcentaje_punta_compradora,
-    formData.porcentaje_punta_vendedora,
-    formData.porcentaje_honorarios_broker,
+    watchAllFields.valor_reserva,
+    watchAllFields.porcentaje_honorarios_asesor,
+    watchAllFields.porcentaje_honorarios_broker,
   ]);
 
-  const handleChange = useCallback(
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-      >
-    ) => {
-      const { name, value, type } = e.target;
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]:
-          type === "checkbox"
-            ? (e.target as HTMLInputElement).checked
-              ? 1
-              : 0
-            : value,
-      }));
-    },
-    []
-  );
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (!userUID) {
       setModalMessage("Usuario no autenticado. Por favor, inicia sesión.");
       setShowModal(true);
@@ -99,21 +120,13 @@ const FormularioOperacion = () => {
 
     try {
       const dataToSubmit = {
-        ...formData,
-        fecha_operacion: new Date(formData.fecha_operacion).toISOString(),
-        valor_reserva: parseFloat(formData.valor_reserva) || 0,
-        numero_sobre_reserva: parseFloat(formData.numero_sobre_reserva) || 0,
-        numero_sobre_refuerzo: parseFloat(formData.numero_sobre_refuerzo) || 0,
-        porcentaje_honorarios_asesor:
-          parseFloat(formData.porcentaje_honorarios_asesor) || 0,
-        porcentaje_honorarios_broker:
-          parseFloat(formData.porcentaje_honorarios_broker) || 0,
+        ...data,
+        fecha_operacion: new Date(data.fecha_operacion).toISOString(),
         honorarios_broker: honorariosBroker,
         honorarios_asesor: honorariosAsesor,
         user_uid: userUID,
-        estado: formData.estado,
-        punta_compradora: formData.punta_compradora,
-        punta_vendedora: formData.punta_vendedora,
+        punta_compradora: data.punta_compradora ? 1 : 0,
+        punta_vendedora: data.punta_vendedora ? 1 : 0,
       };
 
       await axios.post("/api/operations", dataToSubmit, {
@@ -124,29 +137,12 @@ const FormularioOperacion = () => {
 
       setModalMessage("Operación guardada exitosamente");
       setShowModal(true);
-      setFormData({
-        fecha_operacion: "",
-        direccion_reserva: "",
-        tipo_operacion: "",
-        punta_compradora: 0,
-        punta_vendedora: 0,
-        valor_reserva: "",
-        numero_sobre_reserva: "",
-        numero_sobre_refuerzo: "",
-        porcentaje_honorarios_asesor: "",
-        porcentaje_honorarios_broker: "",
-        porcentaje_punta_vendedora: "",
-        porcentaje_punta_compradora: "",
-        referido: "",
-        compartido: "",
-        estado: "En Curso",
-      });
+      reset(); // Reset the form after successful submission
       router.push("/dashboard");
     } catch (error) {
-      if (error instanceof Error && "response" in error) {
+      if (axios.isAxiosError(error) && error.response) {
         setModalMessage(
-          (error as { response?: { data?: { message?: string } } }).response
-            ?.data?.message || "Error al guardar la operación"
+          error.response.data.message || "Error al guardar la operación"
         );
       } else {
         setModalMessage("Error al guardar la operación");
@@ -162,7 +158,7 @@ const FormularioOperacion = () => {
   return (
     <div className="flex justify-center items-center w-full">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded shadow-md w-[100%]"
       >
         <h2 className="text-2xl mb-4">Agregar Operación</h2>
@@ -171,25 +167,27 @@ const FormularioOperacion = () => {
             {/* Left column */}
             <Input
               type="date"
-              name="fecha_operacion"
-              value={formData.fecha_operacion}
-              onChange={handleChange}
+              {...register("fecha_operacion")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
+            {errors.fecha_operacion && (
+              <p className="text-red-500">{errors.fecha_operacion.message}</p>
+            )}
+
             <Input
               type="text"
-              name="direccion_reserva"
               placeholder="Dirección de la Reserva"
-              value={formData.direccion_reserva}
-              onChange={handleChange}
+              {...register("direccion_reserva")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
+            {errors.direccion_reserva && (
+              <p className="text-red-500">{errors.direccion_reserva.message}</p>
+            )}
+
             <select
-              name="tipo_operacion"
-              value={formData.tipo_operacion}
-              onChange={handleChange}
+              {...register("tipo_operacion")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             >
@@ -201,112 +199,146 @@ const FormularioOperacion = () => {
               <option value="Fondo de Comercio">Fondo de Comercio</option>
               <option value="Desarrollo">Desarrollo Inmobiliario</option>
             </select>
+            {errors.tipo_operacion && (
+              <p className="text-red-500">{errors.tipo_operacion.message}</p>
+            )}
+
             <Input
               type="number"
-              name="valor_reserva"
               placeholder="Valor de Reserva"
-              value={formData.valor_reserva}
-              onChange={handleChange}
+              {...register("valor_reserva")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
+            {errors.valor_reserva && (
+              <p className="text-red-500">{errors.valor_reserva.message}</p>
+            )}
+
             <div className="flex items-center justify-between">
               <Input
-                value={formData.porcentaje_punta_compradora}
                 placeholder="Porcentaje Punta Compradora"
-                type="text"
-                name="porcentaje_punta_compradora"
-                onChange={handleChange}
+                type="number"
+                step="any"
+                {...register("porcentaje_punta_compradora")}
                 className="w-[45%] p-2 mb-4 border border-gray-300 rounded"
                 required
               />
+              {errors.porcentaje_punta_compradora && (
+                <p className="text-red-500">
+                  {errors.porcentaje_punta_compradora.message}
+                </p>
+              )}
 
               <Input
-                value={formData.porcentaje_punta_vendedora}
                 placeholder="Porcentaje Punta Vendedora"
-                type="text"
-                name="porcentaje_punta_vendedora"
-                onChange={handleChange}
+                type="number"
+                step="any"
+                {...register("porcentaje_punta_vendedora")}
                 className="w-[45%] p-2 mb-4 border border-gray-300 rounded"
                 required
               />
+              {errors.porcentaje_punta_vendedora && (
+                <p className="text-red-500">
+                  {errors.porcentaje_punta_vendedora.message}
+                </p>
+              )}
             </div>
+
             <div className="flex items-center justify-between">
               <Input
-                type="text"
-                name="porcentaje_honorarios_asesor"
+                type="number"
+                step="any"
                 placeholder="Porcentaje Honorarios Asesor"
-                value={formData.porcentaje_honorarios_asesor}
-                onChange={handleChange}
+                {...register("porcentaje_honorarios_asesor")}
                 className="w-[45%]  p-2 mb-4 border border-gray-300 rounded"
                 required
               />
+              {errors.porcentaje_honorarios_asesor && (
+                <p className="text-red-500">
+                  {errors.porcentaje_honorarios_asesor.message}
+                </p>
+              )}
+
               <Input
-                type="text"
-                name="porcentaje_honorarios_broker"
+                type="number"
+                step="any"
                 placeholder="Porcentaje Honorarios Broker"
-                value={formData.porcentaje_honorarios_broker}
-                onChange={handleChange}
+                {...register("porcentaje_honorarios_broker")}
                 className="w-[45%] p-2 mb-4 border border-gray-300 rounded"
                 required
               />
+              {errors.porcentaje_honorarios_broker && (
+                <p className="text-red-500">
+                  {errors.porcentaje_honorarios_broker.message}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="w-full md:w-1/2 px-2">
             {/* Right column */}
             <Input
-              type="text"
-              name="numero_sobre_reserva"
+              type="number"
               placeholder="Sobre de Reserva (opcional)"
-              value={formData.numero_sobre_reserva}
-              onChange={handleChange}
+              {...register("numero_sobre_reserva")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
+            {errors.numero_sobre_reserva && (
+              <p className="text-red-500">
+                {errors.numero_sobre_reserva.message}
+              </p>
+            )}
+
             <Input
-              type="text"
-              name="numero_sobre_refuerzo"
+              type="number"
               placeholder="Sobre de Refuerzo (opcional)"
-              value={formData.numero_sobre_refuerzo}
-              onChange={handleChange}
+              {...register("numero_sobre_refuerzo")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
+            {errors.numero_sobre_refuerzo && (
+              <p className="text-red-500">
+                {errors.numero_sobre_refuerzo.message}
+              </p>
+            )}
 
             <Input
               type="text"
-              name="referido"
-              placeholder="Datos Referido"
-              value={formData.referido}
-              onChange={handleChange}
+              placeholder="Datos Referido (opcional)"
+              {...register("referido")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
+            {errors.referido && (
+              <p className="text-red-500">{errors.referido.message}</p>
+            )}
+
             <Input
               type="text"
-              name="compartido"
-              placeholder="Datos Compartido"
-              value={formData.compartido}
-              onChange={handleChange}
+              placeholder="Datos Compartido (opcional)"
+              {...register("compartido")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
+            {errors.compartido && (
+              <p className="text-red-500">{errors.compartido.message}</p>
+            )}
+
             <div className="flex justify-center items-center gap-10">
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="punta_vendedora"
-                  checked={formData.punta_vendedora === 1}
-                  onChange={handleChange}
-                />
+                <input type="checkbox" {...register("punta_vendedora")} />
                 <label>Punta Vendedora</label>
               </div>
+              {errors.punta_vendedora && (
+                <p className="text-red-500">{errors.punta_vendedora.message}</p>
+              )}
+
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="punta_compradora"
-                  checked={formData.punta_compradora === 1}
-                  onChange={handleChange}
-                />
+                <input type="checkbox" {...register("punta_compradora")} />
                 <label>Punta Compradora</label>
               </div>
+              {errors.punta_compradora && (
+                <p className="text-red-500">
+                  {errors.punta_compradora.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -324,7 +356,7 @@ const FormularioOperacion = () => {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         message={modalMessage}
-        onAccept={handleModalAccept} // Pass the handleModalAccept function
+        onAccept={handleModalAccept}
       />
     </div>
   );

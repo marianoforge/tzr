@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from "react";
-import axios from "axios"; // Import axios
-import ModalOK from "./ModalOK"; // Import ModalOK
+import React, { useState } from "react";
+import axios from "axios";
+import ModalOK from "./ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
@@ -8,35 +8,44 @@ import Input from "./FormComponents/Input";
 import TextArea from "./FormComponents/TextArea";
 import Button from "./FormComponents/Button";
 
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup.object().shape({
+  title: yup.string().required("El título es requerido"),
+  date: yup.string().required("La fecha es requerida"),
+  startTime: yup.string().required("La hora de inicio es requerida"),
+  endTime: yup.string().required("La hora de fin es requerida"),
+  description: yup.string().required("La descripción es requerida"),
+});
+
+interface EventFormData {
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+}
+
 const FormularioEvento: React.FC = () => {
   const { userID } = useAuthStore();
   const { fetchEvents } = useEventsStore();
-  const [formData, setFormData] = useState({
-    title: "",
-    date: "",
-    startTime: "",
-    endTime: "",
-    description: "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<EventFormData>({
+    resolver: yupResolver(schema),
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // Add state for modal
-  const [modalMessage, setModalMessage] = useState(""); // Add state for modal message
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const router = useRouter();
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    },
-    []
-  );
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit: SubmitHandler<EventFormData> = async (data) => {
     if (!userID) {
       setModalMessage("No se proporcionó un ID de usuario válido");
       setIsModalOpen(true);
@@ -45,22 +54,16 @@ const FormularioEvento: React.FC = () => {
 
     try {
       const response = await axios.post("/api/events", {
-        ...formData,
+        ...data,
         user_uid: userID,
       });
 
       setModalMessage(response.data.message);
       setIsModalOpen(true);
 
-      setFormData({
-        title: "",
-        date: "",
-        startTime: "",
-        endTime: "",
-        description: "",
-      });
+      reset(); // Reset the form after successful submission
 
-      await fetchEvents("user_id"); // Llama a fetchEvents después de publicar el evento
+      await fetchEvents("user_id"); // Fetch events after submission
     } catch (error) {
       console.error("Error al agendar el evento:", error);
       setModalMessage("Error al agendar el evento");
@@ -71,7 +74,7 @@ const FormularioEvento: React.FC = () => {
   return (
     <div className="flex flex-col justify-center items-center">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded shadow-md w-[100%]"
       >
         <h2 className="text-2xl mb-4">Agendar Evento</h2>
@@ -79,42 +82,42 @@ const FormularioEvento: React.FC = () => {
           <div className="w-full px-2">
             <Input
               type="text"
-              name="title"
               placeholder="Título del evento"
-              value={formData.title}
-              onChange={handleChange}
+              {...register("title")}
               required
             />
-            <Input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              required
-            />
+            {errors.title && (
+              <p className="text-red-500">{errors.title.message}</p>
+            )}
+
+            <Input type="date" {...register("date")} required />
+            {errors.date && (
+              <p className="text-red-500">{errors.date.message}</p>
+            )}
+
             <div className="flex gap-4 mb-4">
-              <Input
-                type="time"
-                name="startTime"
-                value={formData.startTime}
-                onChange={handleChange}
-                required
-              />
-              <Input
-                type="time"
-                name="endTime"
-                value={formData.endTime}
-                onChange={handleChange}
-                required
-              />
+              <div className="w-1/2">
+                <Input type="time" {...register("startTime")} required />
+                {errors.startTime && (
+                  <p className="text-red-500">{errors.startTime.message}</p>
+                )}
+              </div>
+              <div className="w-1/2">
+                <Input type="time" {...register("endTime")} required />
+                {errors.endTime && (
+                  <p className="text-red-500">{errors.endTime.message}</p>
+                )}
+              </div>
             </div>
+
             <TextArea
-              name="description"
               placeholder="Descripción del evento"
-              value={formData.description}
-              onChange={handleChange}
+              {...register("description")}
               required
             />
+            {errors.description && (
+              <p className="text-red-500">{errors.description.message}</p>
+            )}
           </div>
         </div>
         <div className="flex justify-end">
