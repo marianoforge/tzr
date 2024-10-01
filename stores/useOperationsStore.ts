@@ -86,6 +86,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
 
     const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
     const cantidadOperaciones = operations.length;
+
     set({
       totals: {
         valor_reserva: totalValorReserva,
@@ -109,6 +110,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     try {
       const response = await axios.get(`/api/operations/user/${userID}`);
       const fetchedOperations = response.data;
+      console.log("Fetched Operations:", fetchedOperations); // Log fetched operations
       set({ operations: fetchedOperations });
       get().calculateTotals();
     } catch (error) {

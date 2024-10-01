@@ -32,7 +32,6 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
   fetchUserData: async (user_uid: string) => {
     const { isLoading, userData } = get();
 
-    // Si ya se están cargando los datos o los datos ya están disponibles, no hacemos nada
     if (isLoading || userData) return;
 
     set({ isLoading: true, error: null });

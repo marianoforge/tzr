@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserDataStore } from "@/stores/userDataStore"; // Import the userDataStore
+import Loader from "./Loader";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -17,14 +18,14 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 }) => {
   const router = useRouter();
   const { userID, setUserID, setUserRole } = useAuthStore();
-  const { fetchUserData, userData } = useUserDataStore();
+  const { fetchUserData, userData, isLoading } = useUserDataStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserID(user.uid);
-        await fetchUserData(user.uid); // Fetch user data
-        setUserRole(userData?.role || null); // Set user role
+        await fetchUserData(user.uid); // Espera a que los datos del usuario se carguen.
+        setUserRole(userData?.role || null);
       } else {
         setUserID(null);
         setUserRole(null);
@@ -36,13 +37,19 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   }, [router, setUserID, setUserRole, fetchUserData, userData]);
 
   useEffect(() => {
-    if (userID && requiredRole && userData?.role !== requiredRole) {
-      router.push("/not-authorized");
+    if (userID && requiredRole && userData && !isLoading) {
+      if (userData?.role !== requiredRole) {
+        router.push("/not-authorized");
+      }
     }
-  }, [userID, userData, requiredRole, router]);
+  }, [userID, userData, requiredRole, isLoading, router]);
 
   if (!userID || (requiredRole && userData?.role !== requiredRole)) {
-    return null;
+    return isLoading ? (
+      <div>
+        <Loader />
+      </div>
+    ) : null;
   }
 
   return <>{children}</>;
