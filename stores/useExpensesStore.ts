@@ -38,6 +38,7 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
   // Calcular totales
   calculateTotals: () => {
     const { expenses } = get();
+    console.log("Calculating totals for expenses:", expenses); // Verificar los datos antes de calcular
 
     if (expenses.length === 0) {
       set({
@@ -60,6 +61,8 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
     );
     const totalExpenses = expenses.length;
 
+    console.log("Total Amount in Dollars:", totalAmountInDollars); // Verificar el resultado del cálculo
+
     set({
       totals: {
         totalAmount,
@@ -81,6 +84,7 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
     try {
       const response = await axios.get(`/api/expenses/user/${userID}`);
       const fetchedExpenses = response.data;
+      console.log("Fetched Expenses:", fetchedExpenses); // Verificar los datos recibidos
       set({ expenses: fetchedExpenses });
       get().calculateTotals();
     } catch (error) {
