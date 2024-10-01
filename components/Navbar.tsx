@@ -102,11 +102,22 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
               label="Dashboard"
               fullWidth
             />
+            <div className="text-white text-lg lg:hidden mt-8 mb-3 flex flex-col items-center">
+              <p>Informes</p>
+            </div>
             <NavButton
               onClick={() => handleNavClick("operationsList")}
               label="Operaciones"
               fullWidth
             />
+            <NavButton
+              onClick={() => handleNavClick("calendar")}
+              label="Calendario"
+              fullWidth
+            />
+            <div className="text-white text-lg lg:hidden mt-8 mb-3 flex flex-col items-center">
+              <p>Formularios</p>
+            </div>
             <NavButton
               onClick={() => handleNavClick("reservationInput")}
               label="Form de Operaciones"
@@ -118,8 +129,8 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
               fullWidth
             />
             <NavButton
-              onClick={() => handleNavClick("calendar")}
-              label="Calendario"
+              onClick={() => handleNavClick("expenses")}
+              label="Form de Gastos"
               fullWidth
             />
           </div>

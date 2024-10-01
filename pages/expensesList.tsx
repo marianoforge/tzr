@@ -1,15 +1,15 @@
-import Dashboard from "@/components/Dashboard";
+import ExpensesList from "@/components/Expenses/ExpensesList";
 import PrivateLayout from "@/components/PrivateLayout";
 import PrivateRoute from "@/components/PrivateRoute";
 
-const DashboardPage = () => {
+const ExpensesFormPage = () => {
   return (
     <PrivateRoute>
       <PrivateLayout>
-        <Dashboard />
+        <ExpensesList />
       </PrivateLayout>
     </PrivateRoute>
   );
 };
 
-export default DashboardPage;
+export default ExpensesFormPage;

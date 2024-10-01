@@ -8,6 +8,7 @@ import {
   CalendarIcon,
   TableCellsIcon,
   ClipboardDocumentCheckIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
 import { VerticalNavButton } from "./NavComponents/VerticalNavButton";
 
@@ -43,11 +44,27 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
             label="Dashboard"
             icon={<HomeIcon className="w-5 h-5 mr-2" />}
           />
+          <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
+            <p>Informes</p>
+          </div>
           <VerticalNavButton
             onClick={() => handleNavClick("operationsList")}
             label="Operaciones"
             icon={<ClipboardDocumentListIcon className="w-5 h-5 mr-2" />} // Cambiado el icono
           />
+          <VerticalNavButton
+            onClick={() => handleNavClick("expensesList")}
+            label="Gastos"
+            icon={<CurrencyDollarIcon className="w-5 h-5 mr-2" />} // Cambiado el icono
+          />
+          <VerticalNavButton
+            onClick={() => handleNavClick("calendar")}
+            label="Calendario de Eventos"
+            icon={<CalendarIcon className="w-5 h-5 mr-2" />}
+          />
+          <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
+            <p>Formularios</p>
+          </div>
           <VerticalNavButton
             onClick={() => handleNavClick("reservationInput")}
             label="Form de Operaciones"
@@ -59,9 +76,9 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
             icon={<TableCellsIcon className="w-5 h-5 mr-2" />}
           />
           <VerticalNavButton
-            onClick={() => handleNavClick("calendar")}
-            label="Calendario"
-            icon={<CalendarIcon className="w-5 h-5 mr-2" />}
+            onClick={() => handleNavClick("expenses")}
+            label="Form de Gastos"
+            icon={<CurrencyDollarIcon className="w-5 h-5 mr-2" />}
           />
         </div>
       </div>

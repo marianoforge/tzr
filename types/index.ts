@@ -109,3 +109,26 @@ export interface VerticalNavButtonProps {
   label: string;
   icon?: React.ReactNode;
 }
+
+// Define the interface for expense data
+export interface Expense {
+  id?: string; // Opcional si no se necesita cuando es nuevo
+  date: string;
+  amount: number;
+  amountInDollars: number;
+  expenseType: string;
+  description: string;
+  dollarRate: number;
+  user_uid: string; // Siempre requerido al enviar a la base de datos
+  otherType?: string;
+}
+
+export interface ExpenseFormData {
+  amountInDollars?: number;
+  otherType?: string;
+  date: string;
+  amount: number;
+  expenseType: string;
+  description: string;
+  dollarRate: number;
+}
