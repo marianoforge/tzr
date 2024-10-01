@@ -17,7 +17,7 @@ interface VerticalNavbarProps {
 }
 
 const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
-  const { fetchUserData } = useUserDataStore();
+  const { userData, isLoading, fetchUserData } = useUserDataStore();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -35,51 +35,90 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     setActiveView(view);
   };
 
-  return (
-    <nav className="bg-[#184d6b] h-[calc(100vh-4rem)]  flex-col w-64 fixed left-0 top-16 shadow-md hidden lg:block overflow-y-auto">
-      <div className="flex flex-col">
-        <div className="flex-grow flex flex-col space-y-2 p-4 font-semibold">
+  const renderNavButtons = (handleNavClick: (view: string) => void) => (
+    <>
+      <VerticalNavButton
+        onClick={() => handleNavClick("dashboard")}
+        label="Dashboard"
+        icon={<HomeIcon className="w-5 h-5 mr-2" />}
+      />
+      <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
+        <p>Informes</p>
+      </div>
+      <VerticalNavButton
+        onClick={() => handleNavClick("operationsList")}
+        label="Operaciones"
+        icon={<ClipboardDocumentListIcon className="w-5 h-5 mr-2" />}
+      />
+      <VerticalNavButton
+        onClick={() => handleNavClick("expensesList")}
+        label="Gastos"
+        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2" />}
+      />
+      <VerticalNavButton
+        onClick={() => handleNavClick("calendar")}
+        label="Calendario de Eventos"
+        icon={<CalendarIcon className="w-5 h-5 mr-2" />}
+      />
+      <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
+        <p>Formularios</p>
+      </div>
+      <VerticalNavButton
+        onClick={() => handleNavClick("reservationInput")}
+        label="Form de Operaciones"
+        icon={<ClipboardDocumentCheckIcon className="w-5 h-5 mr-2" />}
+      />
+      <VerticalNavButton
+        onClick={() => handleNavClick("eventForm")}
+        label="Form de Eventos"
+        icon={<TableCellsIcon className="w-5 h-5 mr-2" />}
+      />
+      <VerticalNavButton
+        onClick={() => handleNavClick("expenses")}
+        label="Form de Gastos"
+        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2" />}
+      />
+    </>
+  );
+
+  const renderAdminNavButtons = (handleNavClick: (view: string) => void) => (
+    <>
+      {renderNavButtons(handleNavClick)}
+      <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
+        <p>Informes Agencia</p>
+      </div>
+      <VerticalNavButton
+        onClick={() => handleNavClick("agents")}
+        label="Reporte de Asesores"
+        icon={<ClipboardDocumentCheckIcon className="w-5 h-5 mr-2" />}
+      />
+    </>
+  );
+
+  const renderNavLinksBasedOnRole = () => {
+    if (isLoading || !userData) return null; // Avoid rendering until data is available
+
+    switch (userData.role) {
+      case "admin":
+        return renderAdminNavButtons(handleNavClick);
+      case "user":
+        return renderNavButtons(handleNavClick);
+      default:
+        return (
           <VerticalNavButton
             onClick={() => handleNavClick("dashboard")}
             label="Dashboard"
             icon={<HomeIcon className="w-5 h-5 mr-2" />}
           />
-          <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
-            <p>Informes</p>
-          </div>
-          <VerticalNavButton
-            onClick={() => handleNavClick("operationsList")}
-            label="Operaciones"
-            icon={<ClipboardDocumentListIcon className="w-5 h-5 mr-2" />} // Cambiado el icono
-          />
-          <VerticalNavButton
-            onClick={() => handleNavClick("expensesList")}
-            label="Gastos"
-            icon={<CurrencyDollarIcon className="w-5 h-5 mr-2" />} // Cambiado el icono
-          />
-          <VerticalNavButton
-            onClick={() => handleNavClick("calendar")}
-            label="Calendario de Eventos"
-            icon={<CalendarIcon className="w-5 h-5 mr-2" />}
-          />
-          <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
-            <p>Formularios</p>
-          </div>
-          <VerticalNavButton
-            onClick={() => handleNavClick("reservationInput")}
-            label="Form de Operaciones"
-            icon={<ClipboardDocumentCheckIcon className="w-5 h-5 mr-2" />}
-          />
-          <VerticalNavButton
-            onClick={() => handleNavClick("eventForm")}
-            label="Form de Eventos"
-            icon={<TableCellsIcon className="w-5 h-5 mr-2" />}
-          />
-          <VerticalNavButton
-            onClick={() => handleNavClick("expenses")}
-            label="Form de Gastos"
-            icon={<CurrencyDollarIcon className="w-5 h-5 mr-2" />}
-          />
+        );
+    }
+  };
+
+  return (
+    <nav className="bg-[#184d6b] h-[calc(100vh-4rem)]  flex-col w-64 fixed left-0 top-16 shadow-md hidden lg:block overflow-y-auto">
+      <div className="flex flex-col">
+        <div className="flex-grow flex flex-col space-y-2 p-4 font-semibold">
+          {renderNavLinksBasedOnRole()}
         </div>
       </div>
       <div className="px-8">
@@ -88,7 +127,5 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     </nav>
   );
 };
-
-// Definir la interfaz VerticalNavButtonProps y el componente VerticalNavButton
 
 export default VerticalNavbar;

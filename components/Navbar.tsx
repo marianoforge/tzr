@@ -1,8 +1,8 @@
-import { useUserDataStore } from "@/stores/userDataStore";
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
+import Image from "next/image";
 import { NavButton } from "./NavComponents/NavButton";
 import { UserAvatar } from "./NavComponents/UserAvatar";
 import { UserInfo } from "./NavComponents/UserInfo";
@@ -35,6 +35,71 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   const handleNavClick = (view: string) => {
     setActiveView(view);
     setIsMenuOpen(false);
+  };
+
+  const renderNavButtons = (handleNavClick: (view: string) => void) => (
+    <>
+      <NavButton
+        onClick={() => handleNavClick("dashboard")}
+        label="Dashboard"
+        fullWidth
+      />
+      <NavButton
+        onClick={() => handleNavClick("calendar")}
+        label="Calendario"
+        fullWidth
+      />
+      <NavButton
+        onClick={() => handleNavClick("operationsList")}
+        label="Operaciones"
+        fullWidth
+      />
+      <NavButton
+        onClick={() => handleNavClick("reservationInput")}
+        label="Form de Operaciones"
+        fullWidth
+      />
+      <NavButton
+        onClick={() => handleNavClick("eventForm")}
+        label="Form de Eventos"
+        fullWidth
+      />
+      <NavButton
+        onClick={() => handleNavClick("expenses")}
+        label="Form de Gastos"
+        fullWidth
+      />
+    </>
+  );
+
+  const renderAdminNavButtons = (handleNavClick: (view: string) => void) => (
+    <>
+      {renderNavButtons(handleNavClick)}
+      <NavButton
+        onClick={() => handleNavClick("agents")}
+        label="Informe Asesores"
+        fullWidth
+      />
+    </>
+  );
+
+  const renderNavLinksBasedOnRole = () => {
+    if (isLoading || !userData) return null; // Avoid rendering links until data is available
+
+    switch (userData.role) {
+      case "admin":
+        return renderAdminNavButtons(handleNavClick);
+      case "user":
+        return renderNavButtons(handleNavClick);
+      default:
+        return (
+          <NavButton
+            onClick={() => handleNavClick("dashboard")}
+            label="Dashboard"
+            fullWidth
+          />
+        );
+    }
   };
 
   return (
@@ -71,7 +136,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
           </div>
         </div>
 
-        {/* User info and actions */}
+        {/* Desktop user info */}
         <div className="hidden lg:block text-white text-xl font-bold w-full ml-12">
           <Link href="/dashboard">
             <Image
@@ -82,11 +147,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
             />
           </Link>
         </div>
+
         <div className="flex space-x-3 justify-end items-center mr-3 sm:mr-4 md:mr-10">
           <div className="flex flex-col items-center">
             <UserAvatar />
           </div>
-
           <div className="sm:flex flex-col hidden items-center">
             <UserInfo userData={userData} isLoading={isLoading} error={error} />
           </div>
@@ -95,47 +160,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <>
-          <div className="lg:hidden mt-6 mb-6 flex flex-col items-center">
-            <NavButton
-              onClick={() => handleNavClick("dashboard")}
-              label="Dashboard"
-              fullWidth
-            />
-            <div className="text-white text-lg lg:hidden mt-8 mb-3 flex flex-col items-center">
-              <p>Informes</p>
-            </div>
-            <NavButton
-              onClick={() => handleNavClick("operationsList")}
-              label="Operaciones"
-              fullWidth
-            />
-            <NavButton
-              onClick={() => handleNavClick("calendar")}
-              label="Calendario"
-              fullWidth
-            />
-            <div className="text-white text-lg lg:hidden mt-8 mb-3 flex flex-col items-center">
-              <p>Formularios</p>
-            </div>
-            <NavButton
-              onClick={() => handleNavClick("reservationInput")}
-              label="Form de Operaciones"
-              fullWidth
-            />
-            <NavButton
-              onClick={() => handleNavClick("eventForm")}
-              label="Form de Eventos"
-              fullWidth
-            />
-            <NavButton
-              onClick={() => handleNavClick("expenses")}
-              label="Form de Gastos"
-              fullWidth
-            />
-          </div>
-        </>
+        <div className="lg:hidden mt-6 mb-6 flex flex-col items-center">
+          {renderNavLinksBasedOnRole()}
+        </div>
       )}
+
       <div className="lg:hidden">
         <UserActions setActiveView={setActiveView} />
       </div>

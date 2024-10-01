@@ -24,7 +24,6 @@ const Profitability = () => {
   const totalHonorariosNetosNumber = Number(totalHonorariosNetos);
   const totalAmountInDollarsNumber = Number(totalAmountInDollars);
 
-  console.log(totalAmountInDollarsNumber);
   const profitability = totalHonorariosNetosNumber - totalAmountInDollarsNumber;
 
   return (
@@ -33,7 +32,7 @@ const Profitability = () => {
         Rentabilidad
       </p>
       <p
-        className={`text-2xl text-[48px] sm:text-2xl md:text-[48px]  xl:text-[48px] min-[1700px] font-bold pt-4 text-[#47d783] h-1/2 items-center justify-center flex`}
+        className={`text-2xl text-[48px] sm:text-2xl :text-[48px]  xl:text-[48px] min-[1700px] font-bold pt-4 text-[#47d783] h-1/2 items-center justify-center flex`}
       >
         ${formatNumber(profitability)}
       </p>

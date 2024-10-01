@@ -1,3 +1,4 @@
+import axios from "axios";
 import { create } from "zustand";
 
 export interface UserData {
@@ -6,12 +7,14 @@ export interface UserData {
   email: string | null;
   numeroTelefono: string | null;
   agenciaBroker: string | null;
+  role: string | null;
 }
 
 interface UserDataState {
   userData: UserData | null;
   isLoading: boolean;
   error: string | null;
+  role: string | null;
   setUserData: (userData: UserData | null) => void;
   fetchUserData: (user_uid: string) => Promise<void>;
   clearUserData: () => void;
@@ -19,29 +22,37 @@ interface UserDataState {
   setError: (error: string | null) => void;
 }
 
-export const useUserDataStore = create<UserDataState>((set) => ({
+export const useUserDataStore = create<UserDataState>((set, get) => ({
   userData: null,
   isLoading: false,
   error: null,
+  role: null,
   setUserData: (userData) => set({ userData }),
-  fetchUserData: async (uid: string) => {
+  setRole: (role: string | null) => set({ role }),
+  fetchUserData: async (user_uid: string) => {
+    const { isLoading, userData } = get();
+
+    // Si ya se están cargando los datos o los datos ya están disponibles, no hacemos nada
+    if (isLoading || userData) return;
+
     set({ isLoading: true, error: null });
+
     try {
-      if (!uid) {
+      if (!user_uid) {
         throw new Error("No hay usuario autenticado");
       }
 
-      const response = await fetch(`/api/users/${uid}`); // Cambiado de /api/userInfo a /api/users/${user_uid}
+      const response = await axios(`/api/users/${user_uid}`);
 
-      if (!response.ok) {
-        const errorText = await response.text();
+      if (response.status !== 200) {
+        const errorText = await response.data;
         console.error("Error response:", errorText);
         throw new Error(
           `Error al obtener los datos del usuario: ${response.status} ${response.statusText}`
         );
       }
 
-      const userData = await response.json();
+      const userData = response.data;
 
       if (!userData || typeof userData !== "object") {
         throw new Error("Datos de usuario inválidos recibidos del servidor");
@@ -53,6 +64,7 @@ export const useUserDataStore = create<UserDataState>((set) => ({
         email: userData.email || null,
         numeroTelefono: userData.numeroTelefono || null,
         agenciaBroker: userData.agenciaBroker || null,
+        role: userData.role || null, // Ensure 'role' is included
       };
 
       set({ userData: validatedUserData, isLoading: false });
@@ -61,6 +73,7 @@ export const useUserDataStore = create<UserDataState>((set) => ({
       set({ error: (error as Error).message, isLoading: false });
     }
   },
+
   clearUserData: () => set({ userData: null, error: null }),
   setIsLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
