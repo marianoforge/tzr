@@ -1,7 +1,7 @@
 import React from "react";
 import useUsersWithOperations from "@/hooks/useUserWithOperations";
 import Loader from "../Loader"; // Asegúrate de importar el Loader si no está ya importado
-import { UserData } from "@/stores/userDataStore";
+import { UserData } from "@/types";
 
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);

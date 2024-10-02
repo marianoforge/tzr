@@ -1,5 +1,24 @@
-import { UserData } from "@/stores/userDataStore";
+// Common interfaces for state
+interface BaseState<T> {
+  isLoading: boolean;
+  error: string | null;
+  setIsLoading: (isLoading: boolean) => void;
+  setError: (error: string | null) => void;
+  fetchItems: (userID: string) => Promise<void>;
+  setItems: (items: T[]) => void;
+}
 
+export interface Totals {
+  totalAmount: number;
+  totalAmountInDollars: number;
+  totalExpenses: number;
+  valor_reserva?: number;
+  suma_total_de_puntas?: number;
+  honorarios_broker?: number;
+  honorarios_asesor?: number;
+}
+
+// Operation related interfaces
 export interface Operation {
   punta_compradora: boolean;
   punta_vendedora: boolean;
@@ -21,9 +40,9 @@ export interface Operation {
   estado: string;
 }
 
-export interface OperationsState {
+export interface OperationsState extends BaseState<Operation> {
   operations: Operation[];
-  totals: {
+  totals: Totals & {
     valor_reserva: number | string;
     porcentaje_honorarios_asesor: number | string;
     porcentaje_honorarios_broker: number | string;
@@ -36,14 +55,7 @@ export interface OperationsState {
     suma_total_de_puntas: number | string;
     cantidad_operaciones: number | string;
   };
-  isLoading: boolean;
-  error: string | null;
-  setOperations: (operations: Operation[]) => void;
   calculateTotals: () => void;
-  setIsLoading: (isLoading: boolean) => void;
-  fetchOperations: (userID: string) => Promise<void>;
-
-  // Aquí asegúrate de que updateOperationEstado esté correctamente declarado:
   updateOperationEstado: (id: string, newEstado: string) => void;
 }
 
@@ -54,15 +66,7 @@ export interface OperationsComponentsProps {
   operations: Operation[];
 }
 
-export interface Totals {
-  valor_reserva: string | number;
-  suma_total_de_puntas: string | number;
-  honorarios_broker: string | number;
-  honorarios_asesor: string | number;
-  punta_compradora: string | number;
-  punta_vendedora: string | number;
-  cantidad_operaciones: string | number;
-}
+// Event related interfaces
 export interface Event {
   id: string;
   title: string;
@@ -73,23 +77,95 @@ export interface Event {
   user_uid: string;
 }
 
-export interface MonthlyData {
-  month: string;
-  currentYear: number;
-  previousYear: number;
+export interface EventsState extends BaseState<Event> {
+  events: Event[];
+  fetchEvents: (userID: string) => Promise<void>;
 }
 
+// Expense related interfaces
+export interface Expense {
+  id?: string;
+  date: string;
+  amount: number;
+  amountInDollars: number;
+  expenseType: string;
+  description: string;
+  dollarRate: number;
+  user_uid: string;
+  otherType?: string;
+}
+
+export interface ExpenseFormData {
+  amountInDollars?: number;
+  otherType?: string;
+  date: string;
+  amount: number;
+  expenseType: string;
+  description: string;
+  dollarRate: number;
+}
+
+export interface ExpensesState extends BaseState<Expense> {
+  expenses: Expense[];
+  items: Expense[]; // Add this line
+  totals: {
+    totalAmount: number;
+    totalAmountInDollars: number;
+    totalExpenses: number;
+    valor_reserva: number;
+    suma_total_de_puntas: number;
+    honorarios_broker: number;
+    honorarios_asesor: number;
+  };
+  setExpenses: (expenses: Expense[]) => void;
+  calculateTotals: () => void;
+  updateExpense: (id: string, newData: Partial<Expense>) => void;
+  deleteExpense: (id: string) => void;
+  fetchExpenses: (userID: string) => Promise<void>;
+  setItems: (items: Expense[]) => void;
+  fetchItems: (userID: string) => Promise<void>;
+}
+
+// User related interfaces
+export interface UserData {
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  numeroTelefono: string | null;
+  agenciaBroker: string | null;
+  role: string | null;
+}
+
+export interface UserDataState extends BaseState<UserData> {
+  userData: UserData | null;
+  role: string | null;
+  items: UserData[]; // Ensure this line is present
+  setUserData: (userData: UserData | null) => void;
+  setUserRole: (role: string | null) => void;
+  clearUserData: () => void;
+  fetchUserData: (userID: string) => Promise<void>;
+}
+
+export interface UserState {
+  userID: string | null;
+  role: string | null;
+  setUserID: (id: string | null) => void;
+  setUserRole: (role: string | null) => void;
+  initializeAuthListener: () => () => void;
+}
+
+// Component props interfaces
 export interface EventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  event: Event | null; // Use Event type
+  event: Event | null;
 }
 
 export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   message: string;
-  onAccept: () => void; // Add this prop
+  onAccept: () => void;
 }
 
 export interface NavButtonProps {
@@ -108,27 +184,4 @@ export interface VerticalNavButtonProps {
   onClick: () => void;
   label: string;
   icon?: React.ReactNode;
-}
-
-// Define the interface for expense data
-export interface Expense {
-  id?: string; // Opcional si no se necesita cuando es nuevo
-  date: string;
-  amount: number;
-  amountInDollars: number;
-  expenseType: string;
-  description: string;
-  dollarRate: number;
-  user_uid: string; // Siempre requerido al enviar a la base de datos
-  otherType?: string;
-}
-
-export interface ExpenseFormData {
-  amountInDollars?: number;
-  otherType?: string;
-  date: string;
-  amount: number;
-  expenseType: string;
-  description: string;
-  dollarRate: number;
 }

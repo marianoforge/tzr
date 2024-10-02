@@ -16,7 +16,11 @@ import { COLORS } from "@/lib/constants";
 
 const CuadroPrincipalChart = () => {
   const { userID } = useAuthStore();
-  const { isLoading, fetchOperations, operations } = useOperationsStore();
+  const {
+    isLoading,
+    fetchItems: fetchOperations,
+    operations,
+  } = useOperationsStore();
   const [tiposOperaciones, setTiposOperaciones] = useState<
     { name: string; value: number }[]
   >([]);

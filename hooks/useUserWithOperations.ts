@@ -1,5 +1,4 @@
-import { UserData } from "@/stores/userDataStore";
-import { Operation } from "@/types";
+import { Operation, UserData } from "@/types";
 import { useState, useEffect } from "react";
 
 interface UserWithOperations {

@@ -8,7 +8,7 @@ import axios from "axios";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import ExpensesModal from "./ExpensesModal";
 import { formatNumber } from "@/utils/formatNumber";
-import { Expense } from "@/types/index";
+import { Expense } from "@/types";
 
 const ExpensesList: React.FC = () => {
   const { expenses, setExpenses, isLoading, totals, calculateTotals } =
@@ -27,7 +27,7 @@ const ExpensesList: React.FC = () => {
     setExpenses(
       expenses.map((expense) =>
         expense.id === updatedExpense.id ? updatedExpense : expense
-      )
+      ) as Expense[] // Forzar el tipo como Expense[]
     );
     calculateTotals();
   };

@@ -1,26 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
-import { Expense } from "@/types";
+import { Expense, ExpensesState } from "@/types";
 
-interface Totals {
-  totalAmount: number;
-  totalAmountInDollars: number;
-  totalExpenses: number;
-}
-
-interface ExpensesState {
-  expenses: Expense[];
-  totals: Totals;
-  isLoading: boolean;
-  error: string | null;
-  setExpenses: (expenses: Expense[]) => void;
-  calculateTotals: () => void;
-  setIsLoading: (isLoading: boolean) => void;
-  setError: (error: string | null) => void;
-  fetchExpenses: (userID: string) => Promise<void>;
-  updateExpense: (id: string, newData: Partial<Expense>) => void;
-  deleteExpense: (id: string) => void;
-}
+// Definir el estado y las funciones de la tienda de gastos
 
 export const useExpensesStore = create<ExpensesState>((set, get) => ({
   expenses: [],
@@ -28,17 +10,28 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
     totalAmount: 0,
     totalAmountInDollars: 0,
     totalExpenses: 0,
+    valor_reserva: 0,
+    suma_total_de_puntas: 0,
+    honorarios_broker: 0,
+    honorarios_asesor: 0,
   },
+  items: [], // Add this line to initialize items
   isLoading: false,
   error: null,
 
   // Establecer los gastos
   setExpenses: (expenses) => set({ expenses }),
 
+  // Agregar los métodos faltantes
+  setItems: (items) => set({ items: items }),
+  fetchItems: async (userID: string) => {
+    const response = await axios.get(`/api/expenses/user/${userID}`);
+    set({ items: response.data });
+  },
+
   // Calcular totales
   calculateTotals: () => {
     const { expenses } = get();
-    console.log("Calculating totals for expenses:", expenses); // Verificar los datos antes de calcular
 
     if (expenses.length === 0) {
       set({
@@ -46,6 +39,10 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
           totalAmount: 0,
           totalAmountInDollars: 0,
           totalExpenses: 0,
+          valor_reserva: 0,
+          suma_total_de_puntas: 0,
+          honorarios_broker: 0,
+          honorarios_asesor: 0,
         },
       });
       return;
@@ -61,13 +58,15 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
     );
     const totalExpenses = expenses.length;
 
-    console.log("Total Amount in Dollars:", totalAmountInDollars); // Verificar el resultado del cálculo
-
     set({
       totals: {
         totalAmount,
         totalAmountInDollars,
         totalExpenses,
+        valor_reserva: 0,
+        suma_total_de_puntas: 0,
+        honorarios_broker: 0,
+        honorarios_asesor: 0,
       },
     });
   },
@@ -84,7 +83,6 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
     try {
       const response = await axios.get(`/api/expenses/user/${userID}`);
       const fetchedExpenses = response.data;
-      console.log("Fetched Expenses:", fetchedExpenses); // Verificar los datos recibidos
       set({ expenses: fetchedExpenses });
       get().calculateTotals();
     } catch (error) {

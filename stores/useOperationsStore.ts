@@ -1,4 +1,4 @@
-import { OperationsState } from "@/types";
+import { OperationsState, Operation } from "@/types";
 import { create } from "zustand";
 import axios from "axios";
 
@@ -16,27 +16,37 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     punta_vendedora: 0,
     suma_total_de_puntas: 0,
     cantidad_operaciones: 0,
+    totalAmount: 0,
+    totalAmountInDollars: 0,
+    totalExpenses: 0,
   },
   isLoading: false,
   error: null,
-  setOperations: (operations) => set({ operations }),
+
+  // Establecer operaciones
+  setItems: (operations: Operation[]) => set({ operations }),
+
+  // Calcular totales
   calculateTotals: () => {
     const { operations } = get();
 
     if (operations.length === 0) {
       set({
         totals: {
-          valor_reserva: "No Data",
-          porcentaje_honorarios_asesor: "No Data",
-          porcentaje_honorarios_broker: "No Data",
-          honorarios_broker: "No Data",
-          honorarios_asesor: "No Data",
-          mayor_venta_efectuada: "No Data",
-          promedio_valor_reserva: "No Data",
-          punta_compradora: "No Data",
-          punta_vendedora: "No Data",
-          suma_total_de_puntas: "No Data",
-          cantidad_operaciones: "No Data",
+          valor_reserva: 0,
+          porcentaje_honorarios_asesor: 0,
+          porcentaje_honorarios_broker: 0,
+          honorarios_broker: 0,
+          honorarios_asesor: 0,
+          mayor_venta_efectuada: 0,
+          promedio_valor_reserva: 0,
+          punta_compradora: 0,
+          punta_vendedora: 0,
+          suma_total_de_puntas: 0,
+          cantidad_operaciones: 0,
+          totalAmount: 0,
+          totalAmountInDollars: 0,
+          totalExpenses: 0,
         },
       });
       return;
@@ -100,12 +110,21 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
         punta_vendedora: puntaVendedora,
         suma_total_de_puntas: sumaTotalDePuntas,
         cantidad_operaciones: cantidadOperaciones,
+        totalAmount: 0,
+        totalAmountInDollars: 0,
+        totalExpenses: 0,
       },
     });
   },
+
+  // Controlar el estado de carga
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
+
+  // Controlar el error
   setError: (error: string | null) => set({ error }),
-  fetchOperations: async (userID: string) => {
+
+  // Obtener operaciones del servidor
+  fetchItems: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
       const response = await axios.get(`/api/operations/user/${userID}`);
@@ -119,6 +138,8 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
       set({ isLoading: false });
     }
   },
+
+  // Actualizar el estado de una operación
   updateOperationEstado: (id: string, newEstado: string) => {
     const { operations } = get();
     const updatedOperations = operations.map((op) =>

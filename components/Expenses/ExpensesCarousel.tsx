@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { formatNumber } from "@/utils/formatNumber";
-import { Expense } from "@/types";
+import { Expense } from "@/types"; // Asegúrate de que la ruta sea correcta
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
@@ -40,7 +40,6 @@ const ExpensesCarousel: React.FC<{ expenses: Expense[] }> = ({ expenses }) => {
         expense.id === updatedExpense.id ? updatedExpense : expense
       )
     );
-    calculateTotals();
   };
 
   const handleDeleteClick = async (id: string | undefined) => {

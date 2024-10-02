@@ -1,35 +1,26 @@
+import { UserDataState, UserData } from "@/types";
 import axios from "axios";
 import { create } from "zustand";
 
-export interface UserData {
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-  numeroTelefono: string | null;
-  agenciaBroker: string | null;
-  role: string | null;
-}
-
-interface UserDataState {
-  userData: UserData | null;
-  isLoading: boolean;
-  error: string | null;
-  role: string | null;
-  setUserData: (userData: UserData | null) => void;
-  fetchUserData: (user_uid: string) => Promise<void>;
-  clearUserData: () => void;
-  setIsLoading: (isLoading: boolean) => void;
-  setError: (error: string | null) => void;
-}
-
+// Ahora la propiedad 'items' está definida en la interfaz UserDataState
 export const useUserDataStore = create<UserDataState>((set, get) => ({
+  items: [], // Inicializa items como un array vacío
   userData: null,
   isLoading: false,
   error: null,
   role: null,
-  setUserData: (userData) => set({ userData }),
-  setRole: (role: string | null) => set({ role }),
-  fetchUserData: async (user_uid: string) => {
+
+  // Establecer los items
+  setItems: (items: UserData[]) => set({ items }),
+
+  // Establecer los datos de usuario
+  setUserData: (userData: UserData | null) => set({ userData }),
+
+  // Establecer el rol del usuario
+  setUserRole: (role: string | null) => set({ role }),
+
+  // Fetch items desde el servidor
+  fetchItems: async (user_uid: string) => {
     const { isLoading, userData } = get();
 
     if (isLoading || userData) return;
@@ -57,13 +48,13 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
         throw new Error("Datos de usuario inválidos recibidos del servidor");
       }
 
-      const validatedUserData = {
+      const validatedUserData: UserData = {
         firstName: userData.firstName || null,
         lastName: userData.lastName || null,
         email: userData.email || null,
         numeroTelefono: userData.numeroTelefono || null,
         agenciaBroker: userData.agenciaBroker || null,
-        role: userData.role || null, // Ensure 'role' is included
+        role: userData.role || null, // Incluimos el 'role' del usuario
       };
 
       set({ userData: validatedUserData, isLoading: false });
@@ -73,7 +64,46 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
     }
   },
 
+  // Limpiar datos del usuario
   clearUserData: () => set({ userData: null, error: null }),
-  setIsLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
+
+  // Establecer estado de carga
+  setIsLoading: (isLoading: boolean) => set({ isLoading }),
+
+  // Establecer error
+  setError: (error: string | null) => set({ error }),
+  fetchUserData: async (userID: string) => {
+    const { isLoading, userData } = get();
+
+    if (isLoading || userData) return;
+
+    set({ isLoading: true, error: null });
+
+    try {
+      if (!userID) {
+        throw new Error("No hay usuario autenticado");
+      }
+
+      const response = await axios(`/api/users/${userID}`);
+
+      if (response.status !== 200) {
+        const errorText = await response.data;
+        console.error("Error response:", errorText);
+        throw new Error(
+          `Error al obtener los datos del usuario: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const userData = response.data;
+
+      if (!userData || typeof userData !== "object") {
+        throw new Error("Datos de usuario inválidos recibidos del servidor");
+      }
+
+      set({ userData: userData, isLoading: false });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      set({ error: (error as Error).message, isLoading: false });
+    }
+  },
 }));

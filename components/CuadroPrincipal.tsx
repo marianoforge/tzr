@@ -7,14 +7,13 @@ import { useAuthStore } from "@/stores/authStore";
 
 const CuadroPrincipal: React.FC = () => {
   const { userID } = useAuthStore();
-  const { operations, totals, isLoading, fetchOperations } =
-    useOperationsStore();
+  const { operations, totals, isLoading, fetchItems } = useOperationsStore(); // Cambiar fetchOperations a fetchItems
 
   useEffect(() => {
     if (userID) {
-      fetchOperations(userID);
+      fetchItems(userID); // Cambiar aquí también
     }
-  }, [userID, fetchOperations]);
+  }, [userID, fetchItems]);
 
   if (isLoading) {
     return <Loader />;

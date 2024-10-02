@@ -34,7 +34,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
     slidesToScroll: 1,
   };
 
-  const { setOperations, calculateTotals, isLoading } = useOperationsStore();
+  const { setItems, calculateTotals, isLoading } = useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -53,7 +53,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
         throw new Error("Error updating operation status");
       }
 
-      setOperations(
+      setItems(
         operations.map((operacion) =>
           operacion.id === id ? { ...operacion, estado: newEstado } : operacion
         )
@@ -94,7 +94,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
       if (response.status !== 200) {
         throw new Error("Error deleting operation");
       }
-      setOperations(operations.filter((operacion) => operacion.id !== id));
+      setItems(operations.filter((operacion) => operacion.id !== id));
       calculateTotals();
     } catch (error) {
       console.error("Error deleting operation:", error);
@@ -125,7 +125,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
         }
 
         const data = response.data;
-        setOperations(data);
+        setItems(data);
         calculateTotals();
       } catch (error) {
         console.error("Error al obtener las operaciones:", error);
@@ -133,7 +133,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
     };
 
     fetchOperations();
-  }, [userUID, setOperations, calculateTotals]);
+  }, [userUID, setItems, calculateTotals]);
 
   if (isLoading) {
     return <Loader />;

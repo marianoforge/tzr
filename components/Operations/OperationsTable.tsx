@@ -22,7 +22,7 @@ interface OperationsTableProps {
 }
 
 const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
-  const { operations, totals, setOperations, calculateTotals, isLoading } =
+  const { operations, totals, setItems, calculateTotals, isLoading } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
@@ -42,7 +42,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
         throw new Error("Error updating operation status");
       }
 
-      setOperations(
+      setItems(
         operations.map((operacion) =>
           operacion.id === id ? { ...operacion, estado: newEstado } : operacion
         )
@@ -83,7 +83,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
       if (response.status !== 200) {
         throw new Error("Error deleting operation");
       }
-      setOperations(operations.filter((operacion) => operacion.id !== id));
+      setItems(operations.filter((operacion) => operacion.id !== id));
       calculateTotals();
     } catch (error) {
       console.error("Error deleting operation:", error);
@@ -114,7 +114,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
         }
 
         const data = response.data;
-        setOperations(data);
+        setItems(data);
         calculateTotals();
       } catch (error) {
         console.error("Error al obtener las operaciones:", error);
@@ -122,7 +122,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
     };
 
     fetchOperations();
-  }, [userUID, setOperations, calculateTotals]);
+  }, [userUID, setItems, calculateTotals]);
 
   if (isLoading) {
     return <Loader />;

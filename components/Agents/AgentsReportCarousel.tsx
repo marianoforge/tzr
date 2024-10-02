@@ -5,7 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useUsersWithOperations from "@/hooks/useUserWithOperations";
 import Loader from "../Loader";
-import { UserData } from "@/stores/userDataStore";
+import { UserData } from "@/types";
 
 const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const settings = {

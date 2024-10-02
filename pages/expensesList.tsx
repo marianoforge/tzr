@@ -7,14 +7,14 @@ import { useAuthStore } from "@/stores/authStore";
 import ExpensesCarouselDash from "@/components/Expenses/ExpensesCarouselDash";
 
 const ExpensesFormPage = () => {
-  const fetchExpenses = useExpensesStore((state) => state.fetchExpenses);
+  const fetchItems = useExpensesStore((state) => state.fetchItems); // Cambiado de fetchExpenses a fetchItems
   const { userID } = useAuthStore();
 
   useEffect(() => {
     if (userID) {
-      fetchExpenses(userID);
+      fetchItems(userID); // También se cambia aquí
     }
-  }, [fetchExpenses, userID]);
+  }, [fetchItems, userID]);
 
   return (
     <PrivateRoute>

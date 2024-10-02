@@ -17,19 +17,19 @@ interface VerticalNavbarProps {
 }
 
 const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
-  const { userData, isLoading, fetchUserData } = useUserDataStore();
+  const { userData, isLoading, fetchItems } = useUserDataStore(); // Cambiar fetchUserData a fetchItems
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        fetchUserData(user.uid);
+        fetchItems(user.uid); // Cambiar fetchUserData a fetchItems
       } else {
         console.log("No authenticated user");
       }
     });
 
     return () => unsubscribe();
-  }, [fetchUserData]);
+  }, [fetchItems]);
 
   const handleNavClick = (view: string) => {
     setActiveView(view);
@@ -96,7 +96,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   );
 
   const renderNavLinksBasedOnRole = () => {
-    if (isLoading || !userData) return null; // Avoid rendering until data is available
+    if (isLoading || !userData) return null; // Evita el renderizado hasta que los datos estén disponibles
 
     switch (userData.role) {
       case "admin":

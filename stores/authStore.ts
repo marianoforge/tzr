@@ -2,14 +2,7 @@ import { create } from "zustand";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore"; // Firestore v9 functions
-
-interface UserState {
-  userID: string | null;
-  role: string | null;
-  setUserID: (id: string | null) => void;
-  setUserRole: (role: string | null) => void;
-  initializeAuthListener: () => () => void;
-}
+import { UserState } from "@/types";
 
 export const useAuthStore = create<UserState>((set) => ({
   userID: null,

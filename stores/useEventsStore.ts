@@ -1,28 +1,20 @@
 import { create } from "zustand";
 import axios from "axios";
-
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  description: string;
-  user_uid: string;
-}
-
-interface EventsState {
-  events: Event[];
-  isLoading: boolean;
-  error: string | null;
-  fetchEvents: (userID: string) => Promise<void>;
-}
+import { EventsState, Event } from "@/types";
 
 export const useEventsStore = create<EventsState>((set) => ({
-  events: [],
+  events: [], // Inicializar la lista de eventos como un array vacío
   isLoading: false,
   error: null,
   fetchEvents: async (userID: string) => {
+    // Use userID in the implementation
+    const response = await fetch(`/api/events?userID=${userID}`);
+    const events = await response.json();
+    set({ events });
+  },
+
+  // Función para obtener eventos
+  fetchItems: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
       const response = await axios.get(`/api/events/user/${userID}`);
@@ -41,4 +33,9 @@ export const useEventsStore = create<EventsState>((set) => ({
       set({ error: (error as Error).message, isLoading: false });
     }
   },
+
+  // Add missing methods
+  setIsLoading: (isLoading: boolean) => set({ isLoading }),
+  setError: (error: string | null) => set({ error }),
+  setItems: (items: Event[]) => set({ events: items }),
 }));
