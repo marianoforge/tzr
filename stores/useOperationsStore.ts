@@ -1,6 +1,7 @@
-import { OperationsState, Operation } from "@/types";
 import { create } from "zustand";
-import axios from "axios";
+import { OperationsState, Operation } from "@/types";
+import { calculateTotals } from "@/utils/calculations"; // Lógica de cálculos
+import { fetchOperations, updateOperationStatus } from "@/utils/operationsApi"; // API externa
 
 export const useOperationsStore = create<OperationsState>((set, get) => ({
   operations: [],
@@ -24,97 +25,16 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   error: null,
 
   // Establecer operaciones
-  setItems: (operations: Operation[]) => set({ operations }),
+  setItems: (operations: Operation[]) => {
+    set({ operations });
+    get().calculateTotals(); // Calcular totales cuando se establezcan nuevas operaciones
+  },
 
   // Calcular totales
   calculateTotals: () => {
     const { operations } = get();
-
-    if (operations.length === 0) {
-      set({
-        totals: {
-          valor_reserva: 0,
-          porcentaje_honorarios_asesor: 0,
-          porcentaje_honorarios_broker: 0,
-          honorarios_broker: 0,
-          honorarios_asesor: 0,
-          mayor_venta_efectuada: 0,
-          promedio_valor_reserva: 0,
-          punta_compradora: 0,
-          punta_vendedora: 0,
-          suma_total_de_puntas: 0,
-          cantidad_operaciones: 0,
-          totalAmount: 0,
-          totalAmountInDollars: 0,
-          totalExpenses: 0,
-        },
-      });
-      return;
-    }
-
-    const totalValorReserva = operations.reduce(
-      (acc, op) => acc + op.valor_reserva,
-      0
-    );
-
-    const totalPorcentajeHonorariosAsesor =
-      operations.reduce((acc, op) => acc + op.porcentaje_honorarios_asesor, 0) /
-      operations.length;
-
-    const totalPorcentajeHonorariosBroker =
-      operations.reduce((acc, op) => acc + op.porcentaje_honorarios_broker, 0) /
-      operations.length;
-
-    const totalHonorariosGDS = operations.reduce(
-      (acc, op) => acc + op.honorarios_broker,
-      0
-    );
-
-    const totalHonorariosNetos = operations.reduce(
-      (acc, op) => acc + op.honorarios_asesor,
-      0
-    );
-
-    const mayorVentaEfectuada = Math.max(
-      ...operations.map((op) => op.valor_reserva)
-    );
-
-    const promedioValorReserva = totalValorReserva / operations.length;
-
-    const puntaCompradora = operations.reduce(
-      (acc, op) =>
-        acc +
-        (typeof op.punta_compradora === "number" ? op.punta_compradora : 0),
-      0
-    );
-
-    const puntaVendedora = operations.reduce(
-      (acc, op) =>
-        acc + (typeof op.punta_vendedora === "number" ? op.punta_vendedora : 0),
-      0
-    );
-
-    const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
-    const cantidadOperaciones = operations.length;
-
-    set({
-      totals: {
-        valor_reserva: totalValorReserva,
-        porcentaje_honorarios_asesor: totalPorcentajeHonorariosAsesor,
-        porcentaje_honorarios_broker: totalPorcentajeHonorariosBroker,
-        honorarios_broker: totalHonorariosGDS,
-        honorarios_asesor: totalHonorariosNetos,
-        mayor_venta_efectuada: mayorVentaEfectuada,
-        promedio_valor_reserva: promedioValorReserva,
-        punta_compradora: puntaCompradora,
-        punta_vendedora: puntaVendedora,
-        suma_total_de_puntas: sumaTotalDePuntas,
-        cantidad_operaciones: cantidadOperaciones,
-        totalAmount: 0,
-        totalAmountInDollars: 0,
-        totalExpenses: 0,
-      },
-    });
+    const totals = calculateTotals(operations); // Usamos la lógica externa para calcular totales
+    set({ totals });
   },
 
   // Controlar el estado de carga
@@ -127,9 +47,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   fetchItems: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get(`/api/operations/user/${userID}`);
-      const fetchedOperations = response.data;
-      console.log("Fetched Operations:", fetchedOperations); // Log fetched operations
+      const fetchedOperations = await fetchOperations(userID); // Lógica API externa
       set({ operations: fetchedOperations });
       get().calculateTotals();
     } catch (error) {
@@ -142,9 +60,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   // Actualizar el estado de una operación
   updateOperationEstado: (id: string, newEstado: string) => {
     const { operations } = get();
-    const updatedOperations = operations.map((op) =>
-      op.id === id ? { ...op, estado: newEstado } : op
-    );
+    const updatedOperations = updateOperationStatus(operations, id, newEstado); // Lógica API externa
     set({ operations: updatedOperations });
   },
 }));
