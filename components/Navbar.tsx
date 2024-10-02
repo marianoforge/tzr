@@ -55,6 +55,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
         fullWidth
       />
       <NavButton
+        onClick={() => handleNavClick("expensesList")}
+        label="Gastos"
+        fullWidth
+      />
+      <NavButton
         onClick={() => handleNavClick("reservationInput")}
         label="Form de Operaciones"
         fullWidth

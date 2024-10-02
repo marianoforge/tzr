@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 
 interface UserWithOperations {
   uid: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   agenciaBroker?: string;
   operaciones: Operation[];

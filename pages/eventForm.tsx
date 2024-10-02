@@ -1,6 +1,6 @@
 import PrivateRoute from "../components/PrivateRoute";
 import PrivateLayout from "../components/PrivateLayout";
-import FormularioEvento from "../components/FormularioEvento";
+import FormularioEvento from "../components/Events/FormularioEvento";
 import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 

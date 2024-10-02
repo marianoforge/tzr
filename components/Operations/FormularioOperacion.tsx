@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { auth } from "../lib/firebase";
+import { auth } from "../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import ModalOK from "./ModalOK";
+import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
 import axios from "axios";
-import Input from "./FormComponents/Input";
-import Button from "./FormComponents/Button";
+import Input from "../FormComponents/Input";
+import Button from "../FormComponents/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";

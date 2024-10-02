@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import ModalOK from "./ModalOK";
+import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
-import Input from "./FormComponents/Input";
-import TextArea from "./FormComponents/TextArea";
-import Button from "./FormComponents/Button";
+import Input from "../FormComponents/Input";
+import TextArea from "../FormComponents/TextArea";
+import Button from "../FormComponents/Button";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

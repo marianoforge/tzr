@@ -1,6 +1,6 @@
-import PrivateRoute from '../components/PrivateRoute';
-import PrivateLayout from '../components/PrivateLayout';
-import FormularioOperacion from '../components/FormularioOperacion';
+import PrivateRoute from "../components/PrivateRoute";
+import PrivateLayout from "../components/PrivateLayout";
+import FormularioOperacion from "../components/Operations/FormularioOperacion";
 
 const ReservationInput = () => {
   return (

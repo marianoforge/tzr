@@ -42,7 +42,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
         label="Dashboard"
         icon={<HomeIcon className="w-5 h-5 mr-2" />}
       />
-      <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
+      <div className="text-white text-lg flex flex-col pt-4 pl-4 pb-2">
         <p>Informes</p>
       </div>
       <VerticalNavButton

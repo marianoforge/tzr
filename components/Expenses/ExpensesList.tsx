@@ -11,7 +11,8 @@ import { formatNumber } from "@/utils/formatNumber";
 import { Expense } from "@/types/index";
 
 const ExpensesList: React.FC = () => {
-  const { expenses, setExpenses, isLoading } = useExpensesStore();
+  const { expenses, setExpenses, isLoading, totals, calculateTotals } =
+    useExpensesStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
@@ -28,6 +29,7 @@ const ExpensesList: React.FC = () => {
         expense.id === updatedExpense.id ? updatedExpense : expense
       )
     );
+    calculateTotals();
   };
 
   const handleDeleteClick = async (id: string | undefined) => {
@@ -44,6 +46,7 @@ const ExpensesList: React.FC = () => {
       setExpenses(
         expenses.filter((expense: { id?: string }) => expense.id !== id)
       );
+      calculateTotals();
     } catch (error) {
       console.error("Error deleting expense:", error);
     }
@@ -74,13 +77,14 @@ const ExpensesList: React.FC = () => {
 
         const data = response.data;
         setExpenses(data);
+        calculateTotals();
       } catch (error) {
         console.error("Error fetching expenses:", error);
       }
     };
 
     fetchExpenses();
-  }, [userUID, setExpenses]);
+  }, [userUID, setExpenses, calculateTotals]);
 
   if (isLoading) {
     return <Loader />;
@@ -97,14 +101,17 @@ const ExpensesList: React.FC = () => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="py-3 px-4 font-semibold text-center">Fecha</th>
-                <th className="py-3 px-4 font-semibold text-center">Monto</th>
-                <th className="py-3 px-4 font-semibold text-center">Tipo</th>
                 <th className="py-3 px-4 font-semibold text-center">
-                  Descripción
+                  Monto en ARS
                 </th>
                 <th className="py-3 px-4 font-semibold text-center">
                   Monto en Dólares
                 </th>
+                <th className="py-3 px-4 font-semibold text-center">Tipo</th>
+                <th className="py-3 px-4 font-semibold text-center">
+                  Descripción
+                </th>
+
                 <th className="py-3 px-4 font-semibold text-center">
                   Acciones
                 </th>
@@ -120,11 +127,12 @@ const ExpensesList: React.FC = () => {
                     {new Date(expense.date).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-4">${formatNumber(expense.amount)}</td>
-                  <td className="py-3 px-4">{expense.expenseType}</td>
-                  <td className="py-3 px-4">{expense.description}</td>
                   <td className="py-3 px-4">
                     ${formatNumber(expense.amountInDollars)}
                   </td>
+                  <td className="py-3 px-4">{expense.expenseType}</td>
+                  <td className="py-3 px-4">{expense.description}</td>
+
                   <td className="py-3 px-4">
                     <button
                       onClick={() => handleEditClick(expense)}
@@ -141,6 +149,19 @@ const ExpensesList: React.FC = () => {
                   </td>
                 </tr>
               ))}
+              {/* Total row */}
+              <tr className="font-bold bg-gray-100">
+                <td className="py-3 px-4 text-center" colSpan={1}>
+                  Total
+                </td>
+                <td className="py-3 px-4 text-center">
+                  ${formatNumber(totals.totalAmount)}
+                </td>
+                <td className="py-3 px-4 text-center">
+                  ${formatNumber(totals.totalAmountInDollars)}
+                </td>
+                <td className="py-3 px-4" colSpan={3}></td>
+              </tr>
             </tbody>
           </table>
         </div>
