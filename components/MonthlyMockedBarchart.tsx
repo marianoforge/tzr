@@ -1,5 +1,4 @@
 import { useAuthStore } from "@/stores/authStore";
-import { MonthlyData } from "@/types";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -15,10 +14,16 @@ import {
 
 const MonthlyMockedBarchart: React.FC = () => {
   const { userID } = useAuthStore();
-  const [data, setData] = useState<MonthlyData[]>([]);
+  const [data, setData] = useState<
+    { month: string; currentYear: number; previousYear: number }[]
+  >([]);
 
   useEffect(() => {
-    const mockData: MonthlyData[] = [
+    const mockData: {
+      month: string;
+      currentYear: number;
+      previousYear: number;
+    }[] = [
       { month: "Ene", currentYear: 4000, previousYear: 2400 },
       { month: "Feb", currentYear: 3000, previousYear: 1398 },
       { month: "Mar", currentYear: 2000, previousYear: 9800 },
