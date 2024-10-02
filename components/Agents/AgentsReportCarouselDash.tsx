@@ -1,7 +1,7 @@
 import React from "react";
 
 import AgentsReportCarousel from "./AgentsReportCarousel";
-import { UserData } from "@/stores/userDataStore";
+import { UserData } from "@/types";
 
 const AgentsReportCarouselDash = ({
   currentUser,
