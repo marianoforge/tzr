@@ -75,6 +75,23 @@ const BigCalendar = () => {
     setSelectedEvent(null);
   };
 
+  useEffect(() => {
+    const updateView = () => {
+      if (window.innerWidth < 640) {
+        setView(Views.DAY);
+      } else if (window.innerWidth < 768) {
+        setView(Views.WEEK);
+      } else {
+        setView(Views.MONTH);
+      }
+    };
+
+    updateView(); // Set initial view
+    window.addEventListener("resize", updateView);
+
+    return () => window.removeEventListener("resize", updateView);
+  }, []);
+
   return (
     <div className="bg-white rounded-lg shadow-md p-2 sm:p-4 md:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
@@ -87,7 +104,7 @@ const BigCalendar = () => {
           {moment(date).format("MMMM YYYY")}
         </div>
         <div className="flex flex-wrap justify-center sm:justify-end space-x-2">
-          {["work_week", "day", "week", "month"].map((viewOption) => (
+          {["día", "semana", "mes"].map((viewOption) => (
             <ViewButton
               key={viewOption}
               view={viewOption as View}
@@ -102,7 +119,7 @@ const BigCalendar = () => {
         events={calendarEvents}
         startAccessor="startTime" // Map start to startTime
         endAccessor="endTime" // Map end to endTime
-        views={["work_week", "day", "week", "month"]}
+        views={["day", "week", "month"]}
         view={view}
         date={date}
         onNavigate={setDate}

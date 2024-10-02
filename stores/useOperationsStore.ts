@@ -47,7 +47,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   fetchItems: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
-      const fetchedOperations = await fetchOperations(userID); // Lógica API externa
+      const fetchedOperations = await fetchOperations(userID);
       set({ operations: fetchedOperations });
       get().calculateTotals();
     } catch (error) {
@@ -60,7 +60,7 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   // Actualizar el estado de una operación
   updateOperationEstado: (id: string, newEstado: string) => {
     const { operations } = get();
-    const updatedOperations = updateOperationStatus(operations, id, newEstado); // Lógica API externa
+    const updatedOperations = updateOperationStatus(operations, id, newEstado);
     set({ operations: updatedOperations });
   },
 }));

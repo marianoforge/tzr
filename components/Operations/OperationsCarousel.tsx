@@ -144,7 +144,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
       <Slider {...settings}>
         {operations.map((operacion) => (
           <div key={operacion.id} className="p-4">
-            <div className="bg-[#5DADE2]/10 text-[#2E86C1] p-4 rounded-lg shadow-md flex justify-center space-x-4 h-[300px] min-h-[300px] max-h-[300px]">
+            <div className="bg-[#5DADE2]/10 text-[#2E86C1] p-4 rounded-lg shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
               <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
                 <p>
                   <strong>Fecha de Operación:</strong>{" "}

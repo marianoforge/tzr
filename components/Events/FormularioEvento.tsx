@@ -53,15 +53,14 @@ const FormularioEvento: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("/api/events", {
+      await axios.post("/api/events", {
         ...data,
         user_uid: userID,
       });
 
-      setModalMessage(response.data.message);
+      setModalMessage("Evento guardado exitosamente");
       setIsModalOpen(true);
-
-      reset(); // Reset the form after successful submission
+      reset();
 
       await fetchEvents("user_id"); // Fetch events after submission
     } catch (error) {

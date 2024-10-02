@@ -7,7 +7,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center font-bold w-[30%] h-[30%] flex flex-col justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg text-center font-bold md:w-[50%] lg:w-[40%] h-[30%] flex flex-col justify-center w-[90%]">
         <div className="flex flex-col gap-1 h-[30%]">
           <p>
             Comienzo:{" "}
