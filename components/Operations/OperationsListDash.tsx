@@ -19,7 +19,7 @@ const OperationsListDash: React.FC = () => {
       {operations.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (
-        <OperationsTable operations={operations} totals={totals} />
+        <OperationsTable filter="all" operations={operations} totals={totals} />
       )}
     </div>
   );

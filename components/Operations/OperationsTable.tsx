@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { formatNumber } from "@/utils/formatNumber";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import { Operation, Totals } from "@/types";
+import { Operation } from "@/types";
 import {
   CheckIcon,
   XMarkIcon,
@@ -17,11 +17,17 @@ import { useRouter } from "next/router";
 import Loader from "../Loader";
 
 interface OperationsTableProps {
+  filter: "all" | "open" | "closed";
   operations: Operation[];
-  totals: Totals;
+  totals: {
+    valor_reserva: number;
+    suma_total_de_puntas: number;
+    honorarios_broker: number;
+    honorarios_asesor: number;
+  };
 }
 
-const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
+const OperationsTable: React.FC<OperationsTableProps> = ({ filter }) => {
   const { operations, totals, setItems, calculateTotals, isLoading } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -59,7 +65,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
 
     try {
       const response = await fetch(`/api/operations/${id}`, {
-        // Usar id aquí
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -70,8 +75,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // Handle successful response
     } catch (error) {
       console.error("Error updating operation:", error);
     }
@@ -124,9 +127,17 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
     fetchOperations();
   }, [userUID, setItems, calculateTotals]);
 
+  const filteredOperations = operations.filter((operation) => {
+    if (filter === "all") return true;
+    if (filter === "open") return operation.estado === "En Curso";
+    if (filter === "closed") return operation.estado === "Cerrada";
+    return true;
+  });
+
   if (isLoading) {
     return <Loader />;
   }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
@@ -148,6 +159,26 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
               Tipo de Operación
+            </th>
+            <th
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+            >
+              Referido
+            </th>
+            <th
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+            >
+              Compartido
+            </th>
+            <th
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+            >
+              Sobre de Reserva
+            </th>
+            <th
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+            >
+              Sobre de Refuerzo
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -183,7 +214,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
           </tr>
         </thead>
         <tbody>
-          {operations.map((operacion) => (
+          {filteredOperations.map((operacion) => (
             <tr
               key={operacion.id}
               className={`${OPERATIONS_LIST_COLORS.rowBg} ${OPERATIONS_LIST_COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
@@ -197,6 +228,18 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
               <td className="py-3 px-4 before:content-['Tipo:'] md:before:content-none">
                 {operacion.tipo_operacion}
               </td>
+              <td className="py-3 px-4 before:content-['Referido:'] md:before:content-none">
+                {operacion.referido}
+              </td>
+              <td className="py-3 px-4 before:content-['Compartido:'] md:before:content-none">
+                {operacion.compartido}
+              </td>
+              <td className="py-3 px-4 before:content-['Sobre Reserva:'] md:before:content-none">
+                {operacion.numero_sobre_reserva}
+              </td>
+              <td className="py-3 px-4 before:content-['Sobre Refuerzo:'] md:before:content-none">
+                {operacion.numero_sobre_refuerzo}
+              </td>
               <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
                 ${formatNumber(operacion.valor_reserva)}
               </td>
@@ -206,7 +249,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
                     Number(operacion.punta_compradora)
                 )}
               </td>
-              <td className="py-3 px-4 before:content-['% Honorarios Agencia:'] md:before:content-none">
+              <td className="py-3 px-4 before:content-['Honorarios Agencia:'] md:before:content-none">
                 ${formatNumber(operacion.honorarios_broker)}
               </td>
               <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
@@ -256,10 +299,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({}) => {
               </td>
             </tr>
           ))}
+          {/* Total row */}
           <tr
-            className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg}`}
+            className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg} `}
           >
-            <td className="py-3 px-20" colSpan={3}>
+            <td className="py-3 px-4" colSpan={7}>
               Total
             </td>
             <td

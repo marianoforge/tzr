@@ -20,12 +20,10 @@ import {
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 
 interface OperationsCarouselProps {
-  operations: Operation[];
+  filter: "all" | "open" | "closed";
 }
 
-const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
-  operations,
-}) => {
+const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
   const settings = {
     dots: true,
     infinite: true,
@@ -34,7 +32,8 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
     slidesToScroll: 1,
   };
 
-  const { setItems, calculateTotals, isLoading } = useOperationsStore();
+  const { operations, setItems, calculateTotals, isLoading } =
+    useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -70,7 +69,6 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
 
     try {
       const response = await fetch(`/api/operations/${id}`, {
-        // Usar id aquí
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -81,8 +79,6 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // Handle successful response
     } catch (error) {
       console.error("Error updating operation:", error);
     }
@@ -135,6 +131,13 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
     fetchOperations();
   }, [userUID, setItems, calculateTotals]);
 
+  const filteredOperations = operations.filter((operation) => {
+    if (filter === "all") return true;
+    if (filter === "open") return operation.estado === "En Curso";
+    if (filter === "closed") return operation.estado === "Cerrada";
+    return true;
+  });
+
   if (isLoading) {
     return <Loader />;
   }
@@ -142,7 +145,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
   return (
     <>
       <Slider {...settings}>
-        {operations.map((operacion) => (
+        {filteredOperations.map((operacion) => (
           <div key={operacion.id} className="p-4">
             <div className="bg-[#5DADE2]/10 text-[#2E86C1] p-4 rounded-lg shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
               <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">

@@ -17,9 +17,16 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 
-const OperationsList: React.FC = () => {
-  const { operations, totals, setItems, calculateTotals, isLoading } =
-    useOperationsStore();
+interface OperationsCarouselDashProps {
+  filter: "all" | "open" | "closed";
+  setFilter: React.Dispatch<React.SetStateAction<"all" | "open" | "closed">>;
+}
+
+const OperationsList: React.FC<OperationsCarouselDashProps> = ({
+  filter,
+  setFilter,
+}) => {
+  const { operations, setItems, isLoading } = useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -43,7 +50,6 @@ const OperationsList: React.FC = () => {
           operacion.id === id ? { ...operacion, estado: newEstado } : operacion
         )
       );
-      calculateTotals();
     } catch (error) {
       console.error("Error updating operation status:", error);
     }
@@ -55,7 +61,6 @@ const OperationsList: React.FC = () => {
 
     try {
       const response = await fetch(`/api/operations/${id}`, {
-        // Usar id aquí
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -66,8 +71,6 @@ const OperationsList: React.FC = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      // Handle successful response
     } catch (error) {
       console.error("Error updating operation:", error);
     }
@@ -80,7 +83,6 @@ const OperationsList: React.FC = () => {
         throw new Error("Error deleting operation");
       }
       setItems(operations.filter((operacion) => operacion.id !== id));
-      calculateTotals();
     } catch (error) {
       console.error("Error deleting operation:", error);
     }
@@ -111,24 +113,79 @@ const OperationsList: React.FC = () => {
 
         const data = response.data;
         setItems(data);
-        calculateTotals();
       } catch (error) {
         console.error("Error al obtener las operaciones:", error);
       }
     };
 
     fetchOperations();
-  }, [userUID, setItems, calculateTotals]);
+  }, [userUID, setItems]);
+
+  const filteredOperations = operations.filter((operation) => {
+    if (filter === "all") return true;
+    if (filter === "open") return operation.estado === "En Curso";
+    if (filter === "closed") return operation.estado === "Cerrada";
+    return true;
+  });
+
+  const calculateFilteredTotals = () => {
+    return filteredOperations.reduce(
+      (totals, operation) => {
+        totals.valor_reserva += Number(operation.valor_reserva);
+        totals.suma_total_de_puntas +=
+          Number(operation.punta_vendedora) +
+          Number(operation.punta_compradora);
+        totals.honorarios_broker += Number(operation.honorarios_broker);
+        totals.honorarios_asesor += Number(operation.honorarios_asesor);
+        return totals;
+      },
+      {
+        valor_reserva: 0,
+        suma_total_de_puntas: 0,
+        honorarios_broker: 0,
+        honorarios_asesor: 0,
+      }
+    );
+  };
+
+  const filteredTotals = calculateFilteredTotals();
 
   if (isLoading) {
     return <Loader />;
   }
+
   return (
     <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
         Lista de Operaciones
       </h2>
-      {operations.length === 0 ? (
+      <div className="flex justify-center mb-6 mt-6">
+        <button
+          onClick={() => setFilter("all")}
+          className={`px-4 py-2 mx-2 ${
+            filter === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
+          } rounded`}
+        >
+          Todas las Operaciones
+        </button>
+        <button
+          onClick={() => setFilter("open")}
+          className={`px-4 py-2 mx-2 ${
+            filter === "open" ? "bg-blue-500 text-white" : "bg-gray-200"
+          } rounded`}
+        >
+          Operaciones Abiertas
+        </button>
+        <button
+          onClick={() => setFilter("closed")}
+          className={`px-4 py-2 mx-2 ${
+            filter === "closed" ? "bg-blue-500 text-white" : "bg-gray-200"
+          } rounded`}
+        >
+          Operaciones Cerradas
+        </button>
+      </div>
+      {filteredOperations.length === 0 ? (
         <p className="text-center text-gray-600">No existen operaciones</p>
       ) : (
         <div className="overflow-x-auto">
@@ -207,7 +264,7 @@ const OperationsList: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {operations.map((operacion) => (
+              {filteredOperations.map((operacion) => (
                 <tr
                   key={operacion.id}
                   className={`${OPERATIONS_LIST_COLORS.rowBg} ${OPERATIONS_LIST_COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
@@ -303,23 +360,23 @@ const OperationsList: React.FC = () => {
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  ${formatNumber(Number(totals.valor_reserva))}
+                  ${formatNumber(Number(filteredTotals.valor_reserva))}
                 </td>
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  {formatNumber(Number(totals.suma_total_de_puntas))}
+                  {formatNumber(Number(filteredTotals.suma_total_de_puntas))}
                 </td>
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  {formatNumber(Number(totals.honorarios_broker))}%
+                  {formatNumber(Number(filteredTotals.honorarios_broker))}%
                 </td>
 
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  ${formatNumber(Number(totals.honorarios_asesor))}
+                  ${formatNumber(Number(filteredTotals.honorarios_asesor))}
                 </td>
 
                 <td
