@@ -13,14 +13,15 @@ import {
 import Loader from "./Loader";
 import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
-import { MonthlyData } from "@/types";
 import { COLORS, MAX_BAR_SIZE } from "@/lib/constants";
 import { formatOperationsData } from "@/utils/formatOperationsData";
 
 const MonthlyBarChart: React.FC = () => {
   const { userID } = useAuthStore();
   const { isLoading } = useOperationsStore();
-  const [data, setData] = useState<MonthlyData[]>([]);
+  const [data, setData] = useState<
+    { month: string; currentYear: number; previousYear: number }[]
+  >([]);
 
   useEffect(() => {
     const fetchOperations = async () => {
