@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import Loader from "../../Loader";
 import ExpensesModal from "./ExpensesModal"; // Adjust the path as necessary
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 
 const ExpensesCarousel: React.FC<{ expenses: Expense[] }> = ({ expenses }) => {
   const settings = {
@@ -24,6 +25,8 @@ const ExpensesCarousel: React.FC<{ expenses: Expense[] }> = ({ expenses }) => {
   };
 
   const { setExpenses, calculateTotals, isLoading } = useExpensesStore();
+  const { teamBrokerExpenses, nonTeamBrokerExpenses } =
+    useFilteredExpenses(expenses);
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
@@ -99,6 +102,10 @@ const ExpensesCarousel: React.FC<{ expenses: Expense[] }> = ({ expenses }) => {
     fetchExpenses();
   }, [userUID, setExpenses, calculateTotals]);
 
+  const filteredExpenses = router.pathname.includes("expensesBroker")
+    ? teamBrokerExpenses
+    : nonTeamBrokerExpenses;
+
   if (isLoading) {
     return <Loader />;
   }
@@ -106,7 +113,7 @@ const ExpensesCarousel: React.FC<{ expenses: Expense[] }> = ({ expenses }) => {
   return (
     <>
       <Slider {...settings}>
-        {expenses.map((expense) => (
+        {filteredExpenses.map((expense) => (
           <div key={expense.id} className="p-4 expense-card">
             <div className="bg-[#5DADE2]/10 text-[#2E86C1] p-4 rounded-lg shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px]   md:max-h-[300px]">
               <p>

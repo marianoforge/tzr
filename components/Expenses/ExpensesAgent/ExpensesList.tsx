@@ -8,11 +8,11 @@ import axios from "axios";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 import { formatNumber } from "@/utils/formatNumber";
-import { Expense, UserData } from "@/types";
+import { Expense } from "@/types";
 import ExpensesModal from "./ExpensesModal";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 
-const ExpensesList = ({ currentUser }: { currentUser: UserData }) => {
+const ExpensesList = () => {
   const { expenses, setExpenses, isLoading, calculateTotals } =
     useExpensesStore();
   const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
@@ -21,7 +21,6 @@ const ExpensesList = ({ currentUser }: { currentUser: UserData }) => {
   const router = useRouter();
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  console.log(currentUser.role);
   const handleEditClick = (expense: Expense) => {
     setSelectedExpense(expense);
     setIsEditModalOpen(true);
@@ -97,8 +96,6 @@ const ExpensesList = ({ currentUser }: { currentUser: UserData }) => {
   const filteredTotals = router.pathname.includes("expensesBroker")
     ? totals.teamBrokerTotal
     : totals.nonTeamBrokerTotal;
-
-  console.log(totals.teamBrokerTotal);
 
   if (isLoading) {
     return <Loader />;

@@ -82,12 +82,12 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
       {renderNavButtons(handleNavClick)}
       <NavButton
         onClick={() => handleNavClick("agents")}
-        label="Informe Asesores"
+        label="Informe Agentes / Asesores"
         fullWidth
       />
       <NavButton
         onClick={() => handleNavClick("expensesBroker")}
-        label="Gastos"
+        label="Gastos Team / Broker"
         fullWidth
       />
     </>
