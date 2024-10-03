@@ -11,7 +11,7 @@ const OperationsCarouselDash: React.FC<OperationsCarouselDashProps> = ({
   setFilter,
 }) => {
   return (
-    <div className="bg-white p-6 mt-6 rounded-xl shadow-md pb-10">
+    <div className="bg-white p-6 mt-12 rounded-xl shadow-md pb-10">
       <div className="flex justify-center mb-4">
         <button
           onClick={() => setFilter("all")}

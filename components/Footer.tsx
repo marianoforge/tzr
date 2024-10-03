@@ -6,7 +6,7 @@ interface FooterProps {
 
 const Footer = ({ setActiveView }: FooterProps) => {
   return (
-    <footer className="bg-[#184d6b] p-4">
+    <footer className="bg-[#184d6b] p-4 fixed bottom-0 w-full">
       <div className="container mx-auto flex justify-center items-center">
         <div className="text-white text-sm">© 2023 App de Asesor</div>
         <div className="flex space-x-4">

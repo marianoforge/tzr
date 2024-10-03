@@ -11,11 +11,11 @@ import Profitability from "./Profitability";
 const DashBoard = () => {
   return (
     <>
-      <div className="text-[32px] font-bold h-[64px] flex flex-col justify-center pl-4">
+      <div className="text-[32px] font-bold hidden h-[64px] lg:flex md:flex-col justify-center pl-4">
         Main Dashboard
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
+      <div className="grid grid-cols-1 mt-10 lg:mt-0 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
         <div className="md:col-span-2 lg:col-span-1 2xl:col-span-4">
           <Bubbles />
         </div>

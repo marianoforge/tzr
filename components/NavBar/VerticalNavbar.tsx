@@ -12,6 +12,7 @@ import {
 import { VerticalNavButton } from "../NavComponents/VerticalNavButton";
 import { UserAvatar } from "../NavComponents/UserAvatar";
 import { UserInfo } from "../NavComponents/UserInfo";
+import Image from "next/image";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
@@ -127,9 +128,12 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   };
 
   return (
-    <nav className="h-[calc(100vh-4rem)] text-sm flex-col w-64 fixed left-0 top-16 hidden lg:block">
+    <nav className="h-[calc(100vh-4rem)] text-sm flex-col w-64 fixed left-0 top-16 hidden xl:block">
       <div className="flex items-center justify-center h-16 pl-4">
-        <h1 className="text-[24px] font-bold flex justify-center ">TRACKPRO</h1>
+        <h1 className="text-[24px] font-bold flex justify-center ">
+          {" "}
+          <Image src="/trackProLogo.png" alt="Logo" width={200} height={200} />
+        </h1>
       </div>
       <div className="ml-6 h-[1px] w-64 bg-gray-300"></div>
       <div className="flex flex-col h-[80%]">

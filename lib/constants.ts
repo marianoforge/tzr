@@ -1,17 +1,11 @@
-export const COLORS = [
-  "#F9D77EB3",
-  "#5DADE2B3",
-  "#C25B33B3",
-  "#1E8449B3",
-  "#5DADE299",
-];
+export const COLORS = ["#3f37c9", "#0077b6", "#00b4d8", "#48cae4", "#5DADE299"];
 
 export const MAX_BAR_SIZE = 40;
 
 export const OBJECTIVE_CHART_COLORS = [
-  { name: "A", value: 25, color: "#FFB7B2" },
-  { name: "B", value: 50, color: "#F9D77E" },
-  { name: "C", value: 25, color: "#7ED994" },
+  { name: "A", value: 25, color: "#0096c7" },
+  { name: "B", value: 50, color: "#0077b6" },
+  { name: "C", value: 25, color: "#1C00CD" },
 ];
 
 export const OPERATIONS_LIST_COLORS = {

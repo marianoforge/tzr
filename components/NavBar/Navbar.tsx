@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
-import Image from "next/image";
 import { NavButton } from "../NavComponents/NavButton";
 import { UserActions } from "../NavComponents/UserActions";
 
@@ -110,7 +109,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 p-4 bg-[mediumBlue] z-50">
+    <nav className="fixed top-0 left-0 right-0 p-4 bg-darkBlue z-50">
       <div className="flex items-center justify-between w-full">
         {/* Hamburger menu icon */}
         <div className="lg:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
@@ -133,18 +132,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
               />
             </svg>
           </button>
-          <div className=" text-white text-xl font-bold w-full">
-            <Image
-              src="/logoRea-NoBGWhite.png"
-              alt="Logo"
-              width={100}
-              height={100}
-            />
-          </div>
+          <div className=" text-white text-xl font-bold w-full">TRACKPRO</div>
         </div>
 
         {/* Desktop user info */}
-        <div className="hidden lg:block text-xl font-bold w-full h-3 ml-12"></div>
+        <div className="hidden lg:block text-xl font-bold w-full h-3 ml-12 bg-darkBlue"></div>
       </div>
 
       {/* Mobile menu */}

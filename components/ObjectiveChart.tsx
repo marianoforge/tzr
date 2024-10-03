@@ -66,7 +66,7 @@ export default class Example extends PureComponent {
               cy={85} // Ajusta la coordenada y del centro para que esté dentro del contenedor
               innerRadius={55} // Ajusta el radio interno
               outerRadius={75} // Ajusta el radio externo para que quepa en el contenedor
-              fill="#8884d8"
+              fill="#3f37c9"
               stroke="none"
               paddingAngle={1}
             >
@@ -81,7 +81,7 @@ export default class Example extends PureComponent {
               85, // Ajusta la coordenada y del centro para que esté dentro del contenedor
               55, // Ajusta el radio interno
               75, // Ajusta el radio externo
-              "#7ED994"
+              "#3f37c9"
             )}
           </PieChart>
         </div>

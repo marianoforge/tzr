@@ -157,7 +157,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="bg-white p-6 mt-6 rounded-xl shadow-md">
+    <div className="bg-white p-6 mt-14 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
         Lista de Operaciones
       </h2>
@@ -316,7 +316,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                       className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
                         operacion.estado === "En Curso"
                           ? `${OPERATIONS_LIST_COLORS.buttonBgEnCurso}`
-                          : `bg-[#C25B33B3]`
+                          : `bg-redAccent`
                       }`}
                     >
                       <span
@@ -327,9 +327,9 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                         } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
                       >
                         {operacion.estado === "En Curso" ? (
-                          <CheckIcon className="h-4 w-4 text-[#7ED994]" />
+                          <CheckIcon className="h-4 w-4 text-greenAccent" />
                         ) : (
-                          <XMarkIcon className="h-4 w-4 text-[#C25B33B3]" />
+                          <XMarkIcon className="h-4 w-4 text-redAccent" />
                         )}
                       </span>
                     </button>
@@ -345,9 +345,9 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                   <td className="md:before:content-none">
                     <button
                       onClick={() => handleDeleteClick(operacion.id)}
-                      className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
+                      className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
                     >
-                      <TrashIcon className="text-[#C25B33B3] h-5 w-5" />
+                      <TrashIcon className="text-redAccent h-5 w-5" />
                     </button>
                   </td>
                 </tr>

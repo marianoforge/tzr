@@ -40,7 +40,7 @@ const MonthlyMockedBarchart: React.FC = () => {
     setData(mockData);
   }, [userID]);
 
-  const COLORS = ["#F9D77EB3", "#5DADE2B3"]; // Updated colors to match the image
+  const COLORS = ["#00b4d8", "#0077b6"]; // Updated colors to match the image
   const MAX_BAR_SIZE = 40; // Reduced bar size for a closer match to the image
 
   if (data.length === 0) {

@@ -169,14 +169,14 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
           <div className="flex gap-4 justify-center items-center">
             <Button
               type="submit"
-              className="bg-[#7ed995e4] text-white p-2 rounded hover:bg-[#7ed995] transition-all duration-300 font-semibold w-[30%]"
+              className="bg-greenAccent text-white p-2 rounded hover:bg-greenAccent transition-all duration-300 font-semibold w-[30%]"
             >
               Guardar
             </Button>
             <Button
               type="button"
               onClick={onClose}
-              className="bg-[#c25c33e4] text-white p-2 rounded hover:bg-[#c25c33] transition-all duration-300 font-semibold w-[30%]"
+              className="bg-redAccent text-white p-2 rounded hover:bg-red-700 transition-all duration-300 font-semibold w-[30%]"
             >
               Cerrar
             </Button>

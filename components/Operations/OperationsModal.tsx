@@ -117,7 +117,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             required
           />
           {errors.fecha_operacion && (
-            <p className="text-red-500">{errors.fecha_operacion.message}</p>
+            <p className="text-redAccent">{errors.fecha_operacion.message}</p>
           )}
 
           <Input
@@ -156,7 +156,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             required
           />
           {errors.valor_reserva && (
-            <p className="text-red-500">{errors.valor_reserva.message}</p>
+            <p className="text-redAccent">{errors.valor_reserva.message}</p>
           )}
 
           <div className="flex space-x-4">
@@ -169,7 +169,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               required
             />
             {errors.porcentaje_punta_compradora && (
-              <p className="text-red-500">
+              <p className="text-redAccent">
                 {errors.porcentaje_punta_compradora.message}
               </p>
             )}
@@ -183,7 +183,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               required
             />
             {errors.porcentaje_punta_vendedora && (
-              <p className="text-red-500">
+              <p className="text-redAccent">
                 {errors.porcentaje_punta_vendedora.message}
               </p>
             )}
@@ -199,7 +199,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               required
             />
             {errors.porcentaje_honorarios_asesor && (
-              <p className="text-red-500">
+              <p className="text-redAccent">
                 {errors.porcentaje_honorarios_asesor.message}
               </p>
             )}
@@ -213,7 +213,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               required
             />
             {errors.porcentaje_honorarios_broker && (
-              <p className="text-red-500">
+              <p className="text-redAccent">
                 {errors.porcentaje_honorarios_broker.message}
               </p>
             )}
@@ -226,7 +226,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             className="w-full p-2 border border-gray-300 rounded"
           />
           {errors.numero_sobre_reserva && (
-            <p className="text-red-500">
+            <p className="text-redAccent">
               {errors.numero_sobre_reserva.message}
             </p>
           )}
@@ -238,7 +238,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             className="w-full p-2 border border-gray-300 rounded"
           />
           {errors.numero_sobre_refuerzo && (
-            <p className="text-red-500">
+            <p className="text-redAccent">
               {errors.numero_sobre_refuerzo.message}
             </p>
           )}
@@ -250,7 +250,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             className="w-full p-2 border border-gray-300 rounded"
           />
           {errors.referido && (
-            <p className="text-red-500">{errors.referido.message}</p>
+            <p className="text-redAccent">{errors.referido.message}</p>
           )}
 
           <Input
@@ -260,7 +260,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             className="w-full p-2 border border-gray-300 rounded"
           />
           {errors.compartido && (
-            <p className="text-red-500">{errors.compartido.message}</p>
+            <p className="text-redAccent">{errors.compartido.message}</p>
           )}
 
           <div className="flex justify-around items-center">
@@ -269,7 +269,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               <label>Punta Vendedora</label>
             </div>
             {errors.punta_vendedora && (
-              <p className="text-red-500">{errors.punta_vendedora.message}</p>
+              <p className="text-redAccent">{errors.punta_vendedora.message}</p>
             )}
 
             <div className="flex items-center gap-2 mb-8">
@@ -277,20 +277,22 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               <label>Punta Compradora</label>
             </div>
             {errors.punta_compradora && (
-              <p className="text-red-500">{errors.punta_compradora.message}</p>
+              <p className="text-redAccent">
+                {errors.punta_compradora.message}
+              </p>
             )}
           </div>
           <div className="flex gap-4 justify-center items-center">
             <Button
               type="submit"
-              className="bg-[#7ed995e4] text-white p-2 rounded hover:bg-[#7ed995] transition-all duration-300 font-semibold w-[30%]"
+              className="bg-greenAccent text-white p-2 rounded hover:bg-green-700 transition-all duration-300 font-semibold w-[30%]"
             >
               Guardar
             </Button>
             <Button
               type="button" // Added type property
               onClick={onClose}
-              className="bg-[#c25c33e4] text-white p-2 rounded hover:bg-[#c25c33] transition-all duration-300 font-semibold w-[30%]"
+              className="bg-redAccent text-white p-2 rounded hover:bg-red-700 transition-all duration-300 font-semibold w-[30%]"
             >
               Cerrar
             </Button>

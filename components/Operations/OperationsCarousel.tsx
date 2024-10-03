@@ -17,7 +17,6 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 
 interface OperationsCarouselProps {
   filter: "all" | "open" | "closed";
@@ -184,15 +183,15 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
                 <div className="flex justify-around">
                   <button
                     onClick={() => handleEditClick(operacion, operacion.id)}
-                    className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm  font-semibold "
+                    className="text-darkBlue hover:text-blue-700 transition duration-150 ease-in-out text-sm  font-semibold "
                   >
                     <PencilIcon className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => handleDeleteClick(operacion.id)}
-                    className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
+                    className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
                   >
-                    <TrashIcon className="text-[#C25B33B3] h-5 w-5" />
+                    <TrashIcon className="text-redAccent h-5 w-5" />
                   </button>
                   <button
                     onClick={() =>
@@ -200,8 +199,8 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
                     }
                     className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
                       operacion.estado === "En Curso"
-                        ? `${OPERATIONS_LIST_COLORS.buttonBgEnCurso}`
-                        : `bg-[#C25B33B3]`
+                        ? `greenAccent`
+                        : `redAccent`
                     }`}
                   >
                     <span
@@ -212,9 +211,9 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
                       } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
                     >
                       {operacion.estado === "En Curso" ? (
-                        <CheckIcon className="h-4 w-4 text-[#7ED994]" />
+                        <CheckIcon className="h-4 w-4 text-greenAccent" />
                       ) : (
-                        <XMarkIcon className="h-4 w-4 text-[#C25B33B3]" />
+                        <XMarkIcon className="h-4 w-4 text-redAccent" />
                       )}
                     </span>
                   </button>
