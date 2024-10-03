@@ -93,7 +93,7 @@ const BigCalendar = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-2 sm:p-4 md:p-6">
+    <div className="bg-white rounded-xl shadow-md p-2 sm:p-4 md:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
         <div className="flex space-x-2 sm:space-x-4 mb-2 sm:mb-0">
           <NavButton onClick={() => navigateCalendar("PREV")} label="<" />
@@ -126,7 +126,7 @@ const BigCalendar = () => {
         onView={setView}
         min={new Date(2024, 0, 1, 8, 0, 0)}
         max={new Date(2024, 11, 31, 22, 0, 0)}
-        className="rounded-lg overflow-hidden"
+        className="rounded-xl overflow-hidden"
         style={{ height: "calc(100vh - 200px)" }}
         formats={{
           dayFormat: (date, culture, localizer) =>
@@ -171,7 +171,7 @@ const NavButton = ({
 }) => (
   <button
     onClick={onClick}
-    className="bg-[#A8E0FF]/10 text-[#5EAAD7] px-2 sm:px-4 py-1 sm:py-2 rounded-lg shadow-md hover:bg-[#A8E0FF]/20 transition-all duration-300 font-semibold text-sm sm:text-base"
+    className="bg-[#A8E0FF]/10 text-[#5EAAD7] px-2 sm:px-4 py-1 sm:py-2 rounded-xl shadow-md hover:bg-[#A8E0FF]/20 transition-all duration-300 font-semibold text-sm sm:text-base"
   >
     {label}
   </button>

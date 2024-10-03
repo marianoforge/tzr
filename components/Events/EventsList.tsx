@@ -7,8 +7,8 @@ import router from "next/router";
 
 const EventsList: React.FC = () => {
   const { userID } = useAuthStore();
-  const { isLoading: operationsLoading } = useOperationsStore();
-  const { events, isLoading, error, fetchEvents } = useEventsStore();
+  const { isLoading } = useOperationsStore();
+  const { events, error, fetchEvents } = useEventsStore();
 
   useEffect(() => {
     if (userID) {
@@ -26,16 +26,16 @@ const EventsList: React.FC = () => {
 
   const displayedEvents = events.slice(0, 3);
 
-  return isLoading || operationsLoading ? (
+  return isLoading ? (
     <Loader />
   ) : (
-    <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md items-center justify-center lg:text-sm lg:max-h-[450px] min-h-[450px] min-w-[340px]">
+    <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center lg:text-sm lg:max-h-[450px] min-h-[450px] min-w-[340px]">
       {displayedEvents.length === 0 ? (
         <p className="text-center text-gray-500">No hay eventos programados.</p>
       ) : (
         displayedEvents.map((event) => (
           <div
-            className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-[#C25B33] even:border-t-[#2E86C1] w-full min-w-[340px]"
+            className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-lightBlue even:border-t-darkBlue w-full min-w-[340px]"
             key={event.id}
           >
             <div className="flex items-center justify-between">
@@ -53,7 +53,7 @@ const EventsList: React.FC = () => {
         ))
       )}
       <button
-        className="bg-[#7ED994] text-white p-2 rounded-md font-semibold"
+        className="bg-darkBlue text-white p-2 rounded-md font-semibold"
         onClick={() => {
           router.push("/calendar");
         }}

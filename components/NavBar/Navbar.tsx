@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
-import Link from "next/link";
 import Image from "next/image";
 import { NavButton } from "../NavComponents/NavButton";
-import { UserAvatar } from "../NavComponents/UserAvatar";
-import { UserInfo } from "../NavComponents/UserInfo";
 import { UserActions } from "../NavComponents/UserActions";
 
 interface NavbarProps {
@@ -13,7 +10,7 @@ interface NavbarProps {
 }
 
 const Navbar = ({ setActiveView }: NavbarProps) => {
-  const { userData, isLoading, error, fetchUserData } = useUserDataStore();
+  const { userData, isLoading, fetchUserData } = useUserDataStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -113,7 +110,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 p-4 bg-[#184d6b] z-50">
+    <nav className="fixed top-0 left-0 right-0 p-4 bg-[mediumBlue] z-50">
       <div className="flex items-center justify-between w-full">
         {/* Hamburger menu icon */}
         <div className="lg:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
@@ -147,25 +144,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
         </div>
 
         {/* Desktop user info */}
-        <div className="hidden lg:block text-white text-xl font-bold w-full ml-12">
-          <Link href="/dashboard">
-            <Image
-              src="/logoRea-NoBGWhite.png"
-              alt="Logo"
-              width={100}
-              height={100}
-            />
-          </Link>
-        </div>
-
-        <div className="flex space-x-3 justify-end items-center mr-3 sm:mr-4 md:mr-10">
-          <div className="flex flex-col items-center">
-            <UserAvatar />
-          </div>
-          <div className="sm:flex flex-col hidden items-center">
-            <UserInfo userData={userData} isLoading={isLoading} error={error} />
-          </div>
-        </div>
+        <div className="hidden lg:block text-xl font-bold w-full h-3 ml-12"></div>
       </div>
 
       {/* Mobile menu */}

@@ -55,7 +55,7 @@ const MonthlyMockedBarchart: React.FC = () => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full">
+    <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
         Honorarios Netos Mensuales
       </h2>

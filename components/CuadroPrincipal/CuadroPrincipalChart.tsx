@@ -55,7 +55,7 @@ const CuadroPrincipalChart = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="bg-white p-3 rounded-lg shadow-md w-full">
+    <div className="bg-white p-3 rounded-xl shadow-md w-full">
       <h2 className="text-2xl text-center font-semibold mb-6 text-gray-800">
         Tipo de Operaciones
       </h2>

@@ -136,7 +136,7 @@ const FormularioExpenses: React.FC = () => {
 
         {userData?.role === "team_leader_broker" && (
           <div className="mb-4">
-            <label className="block text-gray-700">Tipo de Gasto</label>
+            <label className="block ">Tipo de Gasto</label>
             <select
               value={expenseAssociationType}
               onChange={handleExpenseAssociationTypeChange} // Use the new handler
@@ -152,13 +152,13 @@ const FormularioExpenses: React.FC = () => {
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-700">Fecha del Gasto</label>
+          <label className="block ">Fecha del Gasto</label>
           <Input type="date" {...register("date")} required />
           {errors.date && <p className="text-red-500">{errors.date.message}</p>}
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Monto</label>
+          <label className="block ">Monto</label>
           <Input type="number" step="0.01" {...register("amount")} required />
           {errors.amount && (
             <p className="text-red-500">{errors.amount.message}</p>
@@ -167,7 +167,7 @@ const FormularioExpenses: React.FC = () => {
 
         <div className="mb-4 flex gap-4 items-center">
           <div className="w-1/2">
-            <label className="block text-gray-700">Cotización del Dólar</label>
+            <label className="block ">Cotización del Dólar</label>
             <Input
               type="number"
               step="0.01"
@@ -179,7 +179,7 @@ const FormularioExpenses: React.FC = () => {
             )}
           </div>
           <div className="w-1/2">
-            <label className="block text-gray-700">Monto en Dólares</label>
+            <label className="block ">Monto en Dólares</label>
             <Input
               type="text"
               value={amountInDollars}
@@ -190,7 +190,7 @@ const FormularioExpenses: React.FC = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Tipo de Gasto</label>
+          <label className="block ">Tipo de Gasto</label>
           <select {...register("expenseType")} className="w-full p-2 border">
             {expenseTypes.map((type) => (
               <option key={type} value={type}>
@@ -205,9 +205,7 @@ const FormularioExpenses: React.FC = () => {
 
         {selectedExpenseType === "Otros" && (
           <div className="mb-4">
-            <label className="block text-gray-700">
-              Especifica el tipo de gasto
-            </label>
+            <label className="block ">Especifica el tipo de gasto</label>
             <Input type="text" {...register("otherType")} />
             {errors.otherType && (
               <p className="text-red-500">{errors.otherType.message}</p>
@@ -216,7 +214,7 @@ const FormularioExpenses: React.FC = () => {
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-700">Descripción</label>
+          <label className="block ">Descripción</label>
           <TextArea {...register("description")} />
           {errors.description && (
             <p className="text-red-500">{errors.description.message}</p>

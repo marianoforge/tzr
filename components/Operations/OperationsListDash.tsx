@@ -7,12 +7,10 @@ import OperationsTable from "./OperationsTable";
 const OperationsListDash: React.FC = () => {
   const { operations, totals, isLoading } = useOperationsStore();
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  return (
-    <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <div className="bg-white p-6 mt-6 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
         Lista de Operaciones
       </h2>

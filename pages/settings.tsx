@@ -88,7 +88,7 @@ const Settings = () => {
     <div>
       <PrivateRoute>
         <PrivateLayout>
-          <div className="flex items-center justify-center bg-gray-100">
+          <div className="flex items-center justify-center bg-white">
             <form
               onSubmit={handleUpdate}
               className="bg-white p-6 rounded shadow-md w-[100%]"

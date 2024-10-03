@@ -49,10 +49,10 @@ export default class Example extends PureComponent {
   render() {
     return (
       <div
-        className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center h-full w-full"
+        className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center h-full w-full"
         style={{ maxHeight: "225px" }}
       >
-        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold text-gray-700 pt-2 pb-2">
+        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold pt-2 pb-2">
           Objetivo Anual de Ventas
         </p>
         <div className="pb-4">

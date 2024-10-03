@@ -102,7 +102,7 @@ const ExpensesList = () => {
   }
 
   return (
-    <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 mt-6 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Lista de Gastos</h2>
 
       {filteredExpenses.length === 0 ? (

@@ -15,10 +15,6 @@ const CuadroPrincipal: React.FC = () => {
     }
   }, [userID, fetchItems]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return isLoading ? (
     <Loader />
   ) : (

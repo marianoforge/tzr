@@ -107,7 +107,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center font-bold w-[50%] h-[70%] flex flex-col justify-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[50%] h-[70%] flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4">Editar Operación</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input

@@ -2,15 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+
+html,
+body,
+:root {
+  font-family: "DM Sans", sans-serif;
+  color: #2d3748;
+}
+
 @layer base {
   html {
-    color: #3f3f3f; /* A dark gray, near-black color for main text */
-    background-color: #f6f8fa;
+    background-color: #fafcfe;
+    font-family: "DM Sans", sans-serif;
+    color: #2d3748;
   }
 }
 .react-calendar {
-  width: 100% !important; /* Make the calendar full width */
-  max-width: none !important; /* Remove any max-width limitation */
+  max-width: none !important;
   border: none !important;
   font-family: "Inter", sans-serif !important;
   min-height: 300px !important;
