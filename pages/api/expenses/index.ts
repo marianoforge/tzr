@@ -29,6 +29,7 @@ export default async function handler(
       dollarRate,
       user_uid,
       otherType,
+      expenseAssociationType,
     } = req.body;
 
     if (!user_uid) {
@@ -47,6 +48,7 @@ export default async function handler(
         otherType,
         createdAt: new Date(),
         updatedAt: new Date(),
+        expenseAssociationType,
       };
 
       await addDoc(collection(db, "expenses"), dataToSubmit);

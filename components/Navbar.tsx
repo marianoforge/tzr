@@ -16,6 +16,8 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   const { userData, isLoading, error, fetchUserData } = useUserDataStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  console.log(userData);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -85,6 +87,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
         label="Informe Asesores"
         fullWidth
       />
+      <NavButton
+        onClick={() => handleNavClick("expensesBroker")}
+        label="Gastos"
+        fullWidth
+      />
     </>
   );
 
@@ -92,9 +99,9 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     if (isLoading || !userData) return null; // Avoid rendering links until data is available
 
     switch (userData.role) {
-      case "admin":
+      case "team_leader_broker":
         return renderAdminNavButtons(handleNavClick);
-      case "user":
+      case "agente_asesor":
         return renderNavButtons(handleNavClick);
       default:
         return (

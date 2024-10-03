@@ -1,5 +1,5 @@
 import React from "react";
-import Loader from "../Loader";
+import Loader from "../../Loader";
 import ExpensesCarousel from "./ExpensesCarousel";
 import { useExpensesStore } from "@/stores/useExpensesStore";
 

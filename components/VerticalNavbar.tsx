@@ -85,12 +85,17 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     <>
       {renderNavButtons(handleNavClick)}
       <div className="text-white text-lg flex flex-col pt-10 pl-4 pb-2">
-        <p>Informes Agencia</p>
+        <p>Reportes Team / Broker</p>
       </div>
       <VerticalNavButton
         onClick={() => handleNavClick("agents")}
-        label="Reporte de Asesores"
+        label="Asesores"
         icon={<ClipboardDocumentCheckIcon className="w-5 h-5 mr-2" />}
+      />
+      <VerticalNavButton
+        onClick={() => handleNavClick("expensesBroker")}
+        label="Gastos"
+        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2" />}
       />
     </>
   );
@@ -99,9 +104,9 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     if (isLoading || !userData) return null; // Evita el renderizado hasta que los datos estén disponibles
 
     switch (userData.role) {
-      case "admin":
+      case "team_leader_broker":
         return renderAdminNavButtons(handleNavClick);
-      case "user":
+      case "agente_asesor":
         return renderNavButtons(handleNavClick);
       default:
         return (

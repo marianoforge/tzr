@@ -93,16 +93,18 @@ export interface Expense {
   dollarRate: number;
   user_uid: string;
   otherType?: string;
+  expenseAssociationType: string;
 }
 
 export interface ExpenseFormData {
-  amountInDollars?: number;
-  otherType?: string;
   date: string;
   amount: number;
+  amountInDollars?: number; // Opcional
   expenseType: string;
   description: string;
   dollarRate: number;
+  otherType?: string; // Opcional
+  expenseAssociationType: string;
 }
 
 export interface ExpensesState extends BaseState<Expense> {

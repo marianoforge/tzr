@@ -30,7 +30,7 @@ const useUsersWithOperations = (
 
         console.log(data);
 
-        if (user.role === "admin") {
+        if (user.role === "team_leader_broker") {
           const filteredData = result.filter(
             (usuario) => usuario.agenciaBroker === user.agenciaBroker
           );

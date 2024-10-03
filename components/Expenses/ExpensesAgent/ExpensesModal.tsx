@@ -3,9 +3,10 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
-import Input from "../FormComponents/Input";
-import Button from "../FormComponents/Button";
+import Input from "../../FormComponents/Input";
+import Button from "../../FormComponents/Button";
 import { Expense } from "@/types";
+import { expenseTypes } from "./FormExpenses";
 
 const schema = yup.object().shape({
   date: yup.string().required("La fecha es requerida"),
@@ -144,11 +145,11 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
             className="w-full p-2 border border-gray-300 rounded"
             required
           >
-            <option value="">Selecciona el tipo de gasto</option>
-            <option value="Fee (Franquicia)">Fee (Franquicia)</option>
-            <option value="Carteleria">Carteleria</option>
-            <option value="Marketing">Marketing</option>
-            {/* Resto de las opciones */}
+            {expenseTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
           </select>
           {errors.expenseType && (
             <p className="text-red-500">{errors.expenseType.message}</p>

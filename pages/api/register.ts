@@ -11,6 +11,7 @@ interface RegisterRequestBody {
   numeroTelefono: string;
   firstName: string;
   lastName: string;
+  role: string;
 }
 
 export default async function handler(
@@ -28,6 +29,7 @@ export default async function handler(
     numeroTelefono,
     firstName,
     lastName,
+    role,
   }: RegisterRequestBody = req.body;
 
   if (
@@ -59,6 +61,7 @@ export default async function handler(
       createdAt: new Date(),
       agenciaBroker,
       numeroTelefono,
+      role,
     });
 
     res.status(201).json({ message: "Usuario registrado exitosamente" });

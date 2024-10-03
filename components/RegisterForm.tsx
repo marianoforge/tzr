@@ -22,6 +22,7 @@ const schema = yup.object().shape({
     .required("Confirmar contraseña es requerido"),
   agenciaBroker: yup.string().required("Agencia o Broker es requerido"),
   numeroTelefono: yup.string().required("Número de Teléfono es requerido"),
+  role: yup.string().required("Rol es requerido"),
 });
 
 interface RegisterData {
@@ -130,7 +131,7 @@ const RegisterForm = () => {
         )}
         <Input
           type="text"
-          placeholder="Agencia o Broker"
+          placeholder="Agencia / Broker"
           {...register("agenciaBroker")}
           required
         />
@@ -146,6 +147,18 @@ const RegisterForm = () => {
         {errors.numeroTelefono && (
           <p className="text-red-500">{errors.numeroTelefono.message}</p>
         )}
+        {/* Nuevo select agregado */}
+        <select
+          {...register("role")}
+          className="block w-full mt-2 mb-4 p-2 border border-gray-300 rounded"
+          required
+        >
+          <option value="" disabled selected>
+            ¿Sos Team Leader / Broker o Agente / Asesor?
+          </option>
+          <option value="agente_asesor">Agente / Asesor</option>
+          <option value="team_leader_broker">Team Leader / Broker</option>
+        </select>
         <Button type="submit">Registrarse</Button>
       </form>
       <ModalOK

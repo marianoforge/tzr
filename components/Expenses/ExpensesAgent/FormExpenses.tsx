@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
-import ModalOK from "../ModalOK";
+import ModalOK from "@/components/ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import Input from "../FormComponents/Input";
-import TextArea from "../FormComponents/TextArea";
-import Button from "../FormComponents/Button";
+import Input from "@/components/FormComponents/Input";
+import TextArea from "@/components/FormComponents/TextArea";
+import Button from "@/components/FormComponents/Button";
 import { Expense, ExpenseFormData } from "@/types";
+import { useUserDataStore } from "@/stores/userDataStore";
 
-const expenseTypes = [
+export const expenseTypes = [
   "Fee (Franquicia)",
   "Carteleria",
   "Marketing",
@@ -28,6 +29,9 @@ const expenseTypes = [
 ];
 
 const schema = yup.object().shape({
+  expenseAssociationType: yup
+    .string()
+    .required("El tipo de gasto es requerido"),
   date: yup.string().required("La fecha es requerida"),
   amount: yup.number().required("El monto es requerido").positive(),
   amountInDollars: yup.number(),
@@ -48,24 +52,34 @@ const schema = yup.object().shape({
 });
 
 const FormularioExpenses: React.FC = () => {
-  const { userID } = useAuthStore(); // Obtiene el ID del usuario desde el estado de autenticación
+  const { userID } = useAuthStore();
+  const { userData } = useUserDataStore();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-
+  const [expenseAssociationType, setExpenseAssociationType] = useState("");
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
     reset,
+    setValue, // Add setValue to update form values programmatically
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
   });
-
+  console.log(userData?.role);
   const selectedExpenseType = watch("expenseType");
   const amount = watch("amount");
   const dollarRate = watch("dollarRate");
+
+  // Update the form value when expenseAssociationType changes
+  const handleExpenseAssociationTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setExpenseAssociationType(e.target.value);
+    setValue("expenseAssociationType", e.target.value); // Update form value
+  };
 
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
     if (!userID) {
@@ -87,6 +101,7 @@ const FormularioExpenses: React.FC = () => {
       description: data.description,
       dollarRate: data.dollarRate,
       user_uid: userID,
+      expenseAssociationType: data.expenseAssociationType,
     };
 
     // Si 'expenseType' es 'Otros', incluir 'otherType'; si no, asignar un valor vacío o eliminarlo
@@ -118,6 +133,23 @@ const FormularioExpenses: React.FC = () => {
         className="p-6 bg-white rounded shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
       >
         <h2 className="text-2xl mb-4">Registrar Gasto</h2>
+
+        {userData?.role === "team_leader_broker" && (
+          <div className="mb-4">
+            <label className="block text-gray-700">Tipo de Gasto</label>
+            <select
+              value={expenseAssociationType}
+              onChange={handleExpenseAssociationTypeChange} // Use the new handler
+              className="w-full p-2 border"
+            >
+              <option value="">Seleccione una opción</option>
+              <option value="team_broker">
+                Gasto Asociado al Team / Broker
+              </option>
+              <option value="agent">Gasto Asociado como Asesor</option>
+            </select>
+          </div>
+        )}
 
         <div className="mb-4">
           <label className="block text-gray-700">Fecha del Gasto</label>

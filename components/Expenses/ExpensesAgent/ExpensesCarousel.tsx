@@ -9,8 +9,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useExpensesStore } from "@/stores/useExpensesStore";
 import { useRouter } from "next/router";
-import Loader from "../Loader";
-import ExpensesModal from "./ExpensesModal";
+import Loader from "../../Loader";
+import ExpensesModal from "./ExpensesModal"; // Adjust the path as necessary
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const ExpensesCarousel: React.FC<{ expenses: Expense[] }> = ({ expenses }) => {

@@ -1,4 +1,4 @@
-import FormularioExpenses from "@/components/Expenses/FormExpenses";
+import FormularioExpenses from "@/components/Expenses/ExpensesAgent/FormExpenses";
 import PrivateLayout from "@/components/PrivateLayout";
 import PrivateRoute from "@/components/PrivateRoute";
 

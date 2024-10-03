@@ -1,23 +1,27 @@
 import { useState, useEffect } from "react";
-import { auth } from "../../lib/firebase";
+import { auth } from "../../../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useExpensesStore } from "@/stores/useExpensesStore";
-import Loader from "../Loader";
+import Loader from "../../Loader";
 import axios from "axios";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import ExpensesModal from "./ExpensesModal";
-import { formatNumber } from "@/utils/formatNumber";
-import { Expense } from "@/types";
 
-const ExpensesList: React.FC = () => {
-  const { expenses, setExpenses, isLoading, totals, calculateTotals } =
+import { formatNumber } from "@/utils/formatNumber";
+import { Expense, UserData } from "@/types";
+import ExpensesModal from "./ExpensesModal";
+import useFilteredExpenses from "@/hooks/useFilteredExpenses";
+
+const ExpensesList = ({ currentUser }: { currentUser: UserData }) => {
+  const { expenses, setExpenses, isLoading, calculateTotals } =
     useExpensesStore();
+  const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
+    useFilteredExpenses(expenses);
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
+  console.log(currentUser.role);
   const handleEditClick = (expense: Expense) => {
     setSelectedExpense(expense);
     setIsEditModalOpen(true);
@@ -86,6 +90,16 @@ const ExpensesList: React.FC = () => {
     fetchExpenses();
   }, [userUID, setExpenses, calculateTotals]);
 
+  const filteredExpenses = router.pathname.includes("expensesBroker")
+    ? teamBrokerExpenses
+    : nonTeamBrokerExpenses;
+
+  const filteredTotals = router.pathname.includes("expensesBroker")
+    ? totals.teamBrokerTotal
+    : totals.nonTeamBrokerTotal;
+
+  console.log(totals.teamBrokerTotal);
+
   if (isLoading) {
     return <Loader />;
   }
@@ -93,7 +107,8 @@ const ExpensesList: React.FC = () => {
   return (
     <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Lista de Gastos</h2>
-      {expenses.length === 0 ? (
+
+      {filteredExpenses.length === 0 ? (
         <p className="text-center text-gray-600">No existen gastos</p>
       ) : (
         <div className="overflow-x-auto">
@@ -118,7 +133,7 @@ const ExpensesList: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {expenses.map((expense) => (
+              {filteredExpenses.map((expense) => (
                 <tr
                   key={expense.id}
                   className="border-b transition duration-150 ease-in-out text-center"
@@ -155,10 +170,10 @@ const ExpensesList: React.FC = () => {
                   Total
                 </td>
                 <td className="py-3 px-4 text-center">
-                  ${formatNumber(totals.totalAmount)}
+                  ${formatNumber(filteredTotals.totalAmount)}
                 </td>
                 <td className="py-3 px-4 text-center">
-                  ${formatNumber(totals.totalAmountInDollars)}
+                  ${formatNumber(filteredTotals.totalAmountInDollars)}
                 </td>
                 <td className="py-3 px-4" colSpan={3}></td>
               </tr>
