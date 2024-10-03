@@ -28,8 +28,6 @@ const useUsersWithOperations = (
         }
         const result: UserWithOperations[] = await response.json();
 
-        console.log(data);
-
         if (user.role === "team_leader_broker") {
           const filteredData = result.filter(
             (usuario) => usuario.agenciaBroker === user.agenciaBroker
@@ -47,7 +45,7 @@ const useUsersWithOperations = (
     };
 
     fetchData();
-  }, [user]); // El hook se ejecutará cuando cambie el `user`
+  }, [user]);
 
   return { data, loading, error };
 };

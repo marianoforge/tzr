@@ -16,8 +16,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   const { userData, isLoading, error, fetchUserData } = useUserDataStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  console.log(userData);
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
