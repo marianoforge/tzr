@@ -29,6 +29,7 @@ export default async function handler(
 
       for (const doc of usuariosSnapshot.docs) {
         const usuarioData = doc.data();
+
         const operationsSnapshot = await db
           .collection("operations")
           .where("user_uid", "==", usuarioData.uid)
@@ -55,11 +56,9 @@ export default async function handler(
     } else {
       console.error("Unexpected error:", error);
     }
-    return res
-      .status(500)
-      .json({
-        message: "Internal Server Error",
-        error: (error as Error).message,
-      });
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: (error as Error).message,
+    });
   }
 }

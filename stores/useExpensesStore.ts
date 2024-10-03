@@ -25,8 +25,15 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
   // Agregar los métodos faltantes
   setItems: (items) => set({ items: items }),
   fetchItems: async (userID: string) => {
-    const response = await axios.get(`/api/expenses/user/${userID}`);
-    set({ items: response.data });
+    set({ isLoading: true }); // Set isLoading to true
+    try {
+      const response = await axios.get(`/api/expenses/user/${userID}`);
+      set({ items: response.data });
+    } catch (error) {
+      set({ error: (error as Error).message });
+    } finally {
+      set({ isLoading: false }); // Set isLoading to false
+    }
   },
 
   // Calcular totales

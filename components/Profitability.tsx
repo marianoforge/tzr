@@ -3,27 +3,38 @@ import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useExpensesStore } from "@/stores/useExpensesStore";
 import { useAuthStore } from "@/stores/authStore";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
+import Loader from "./Loader";
 
 const Profitability = () => {
   const fetchExpenses = useExpensesStore((state) => state.fetchExpenses);
   const expenses = useExpensesStore((state) => state.expenses);
   const { totals } = useFilteredExpenses(expenses);
   const { userID } = useAuthStore();
-  console.log(totals.teamBrokerTotal);
+  const isLoadingExpenses = useExpensesStore((state) => state.isLoading);
+
   useEffect(() => {
     if (userID) {
       fetchExpenses(userID);
     }
   }, [fetchExpenses, userID]);
+
   const {
     totals: {
       honorarios_asesor: totalHonorariosNetosAsesor,
       honorarios_broker: totalHonorariosBroker,
     },
+    isLoading: isLoadingOperations,
   } = useOperationsStore();
+
   const {
     totals: { totalAmountInDollars: totalAmountInDollarsExpenses },
   } = useExpensesStore();
+
+  const loaderFn = () => {
+    if (isLoadingExpenses || isLoadingOperations) {
+      return <Loader />;
+    }
+  };
 
   // Ensure both variables are numbers
   const totalHonorariosNetosNumber = Number(totalHonorariosNetosAsesor);
@@ -34,14 +45,18 @@ const Profitability = () => {
   const totalExpensesTeamBroker = totals.teamBrokerTotal.totalAmountInDollars;
 
   const profitability =
-    ((totalHonorariosNetosNumber - totalAmountExpensesInDollarsNumber) /
-      totalHonorariosNetosNumber) *
-    100;
+    totalHonorariosNetosNumber > 0
+      ? ((totalHonorariosNetosNumber - totalAmountExpensesInDollarsNumber) /
+          totalHonorariosNetosNumber) *
+        100
+      : 0;
 
   const profitabilityBroker =
-    ((totalHonorariosBroker - totalExpensesTeamBroker) /
-      totalHonorariosBroker) *
-    100;
+    totalHonorariosBroker > 0
+      ? ((totalHonorariosBroker - totalExpensesTeamBroker) /
+          totalHonorariosBroker) *
+        100
+      : 0;
 
   return (
     <div className="flex gap-4">
@@ -52,7 +67,7 @@ const Profitability = () => {
         <p
           className={`text-2xl text-[48px] sm:text-2xl lg:text-[48px] xl:text-[40px] min-[1700px] font-bold pt-4 text-[#47d783] h-1/2 items-center justify-center flex`}
         >
-          {profitability.toFixed(2)}%
+          {loaderFn() ? <Loader /> : `${profitability.toFixed(2)}%`}
         </p>
       </div>
       <div className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center h-[208px] w-full">
@@ -62,7 +77,7 @@ const Profitability = () => {
         <p
           className={`text-2xl text-[48px] sm:text-2xl :text-[48px]  xl:text-[40px] min-[1700px] font-bold pt-4 text-[#47d783] h-1/2 items-center justify-center flex`}
         >
-          {profitabilityBroker.toFixed(2)}%
+          {loaderFn() ? <Loader /> : `${profitabilityBroker.toFixed(2)}%`}
         </p>
       </div>
     </div>
