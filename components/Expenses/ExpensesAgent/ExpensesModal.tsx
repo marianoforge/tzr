@@ -23,6 +23,7 @@ const schema = yup.object().shape({
   expenseType: yup.string().required("El tipo de gasto es requerido"),
   description: yup.string().required("La descripción es requerida"),
   otherType: yup.string().nullable(),
+  expenseAssociationType: yup.string().nullable(),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -80,7 +81,8 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
         id: expense.id,
         amountInDollars: data.amount / data.dollarRate,
         user_uid: expense.user_uid,
-        otherType: data.otherType ?? "", // Ensure otherType is string or undefined
+        otherType: data.otherType ?? "",
+        expenseAssociationType: data.expenseAssociationType ?? "",
       });
 
       onClose(); // Cerrar el modal después de la edición exitosa
