@@ -1,7 +1,7 @@
 // components/CuadroPrincipal.tsx
 import { useEffect } from "react";
-import { formatNumber } from "../utils/formatNumber";
-import Loader from "./Loader";
+import { formatNumber } from "../../utils/formatNumber";
+import Loader from "../Loader";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -19,7 +19,9 @@ const CuadroPrincipal: React.FC = () => {
     return <Loader />;
   }
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">
       <h2 className="text-2xl font-bold mb-4 text-center">
         Cuadro Tipos de Operaciones

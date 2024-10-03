@@ -16,10 +16,6 @@ const EventsList: React.FC = () => {
     }
   }, [userID, fetchEvents]);
 
-  if (operationsLoading || isLoading) {
-    return <Loader />;
-  }
-
   if (error) {
     return (
       <p className="text-center text-red-500">
@@ -30,7 +26,9 @@ const EventsList: React.FC = () => {
 
   const displayedEvents = events.slice(0, 3);
 
-  return (
+  return isLoading || operationsLoading ? (
+    <Loader />
+  ) : (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-lg shadow-md items-center justify-center lg:text-sm lg:max-h-[450px] min-h-[450px] min-w-[340px]">
       {displayedEvents.length === 0 ? (
         <p className="text-center text-gray-500">No hay eventos programados.</p>

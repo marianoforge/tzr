@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import { useAuthStore } from "@/stores/authStore";
 import axios from "axios";
 import { COLORS, MAX_BAR_SIZE } from "@/lib/constants";
@@ -40,12 +40,6 @@ const MonthlyBarChart: React.FC = () => {
     fetchOperations();
   }, [userID]);
 
-  // Función para formatear los datos a la estructura requerida por el gráfico
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
   if (data.length === 0) {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">
@@ -57,7 +51,9 @@ const MonthlyBarChart: React.FC = () => {
     );
   }
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="bg-white p-6 rounded-lg shadow-md w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
         Honorarios Netos Mensuales

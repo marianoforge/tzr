@@ -154,7 +154,9 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
     return <Loader />;
   }
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="bg-white p-6 mt-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
         Lista de Operaciones
@@ -388,6 +390,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
           </table>
         </div>
       )}
+
       {isEditModalOpen && (
         <OperationsModal
           isOpen={isEditModalOpen}

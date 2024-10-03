@@ -1,8 +1,8 @@
-import CuadroPrincipal from "@/components/CuadroPrincipal";
-import CuadroPrincipalChart from "@/components/CuadroPrincipalChart";
+import CuadroPrincipal from "@/components/CuadroPrincipal/CuadroPrincipal";
+import CuadroPrincipalChart from "@/components/CuadroPrincipal/CuadroPrincipalChart";
 import Bubbles from "@/components/Bubbles";
 import EventsList from "@/components/Events/EventsList";
-import MonthlyMockedBarchart from "@/components/MonthlyMockedBarchart";
+import MonthlyMockedBarchart from "@/components/MonthlyBarChart/MonthlyMockedBarchart";
 import ObjectiveChart from "./ObjectiveChart";
 import OperationsListDash from "./Operations/OperationsListDash";
 import OperationsCarouselDash from "./Operations/OperationsCarouselDash"; // Import the new component

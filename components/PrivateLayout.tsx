@@ -1,7 +1,7 @@
 // components/PrivateLayout.tsx
 import { useRouter } from "next/router";
-import Navbar from "./Navbar";
-import VerticalNavbar from "./VerticalNavbar";
+import Navbar from "./NavBar/Navbar";
+import VerticalNavbar from "./NavBar/VerticalNavbar";
 import Footer from "./Footer";
 
 interface PrivateLayoutProps {

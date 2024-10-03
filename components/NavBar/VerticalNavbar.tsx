@@ -1,7 +1,7 @@
 import { useUserDataStore } from "@/stores/userDataStore";
 import { useEffect } from "react";
 import { auth } from "@/lib/firebase";
-import { UserActions } from "./NavComponents/UserActions";
+import { UserActions } from "../NavComponents/UserActions";
 import {
   HomeIcon,
   ClipboardDocumentListIcon,
@@ -10,7 +10,7 @@ import {
   ClipboardDocumentCheckIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
-import { VerticalNavButton } from "./NavComponents/VerticalNavButton";
+import { VerticalNavButton } from "../NavComponents/VerticalNavButton";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;

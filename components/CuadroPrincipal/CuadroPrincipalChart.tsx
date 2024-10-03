@@ -8,7 +8,7 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useAuthStore } from "@/stores/authStore";
 import { Operation } from "@/types";
@@ -52,11 +52,9 @@ const CuadroPrincipalChart = () => {
     setTiposOperaciones(tiposData);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className="bg-white p-3 rounded-lg shadow-md w-full">
       <h2 className="text-2xl text-center font-semibold mb-6 text-gray-800">
         Tipo de Operaciones

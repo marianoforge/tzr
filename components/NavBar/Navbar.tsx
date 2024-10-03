@@ -3,10 +3,10 @@ import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
 import Image from "next/image";
-import { NavButton } from "./NavComponents/NavButton";
-import { UserAvatar } from "./NavComponents/UserAvatar";
-import { UserInfo } from "./NavComponents/UserInfo";
-import { UserActions } from "./NavComponents/UserActions";
+import { NavButton } from "../NavComponents/NavButton";
+import { UserAvatar } from "../NavComponents/UserAvatar";
+import { UserInfo } from "../NavComponents/UserInfo";
+import { UserActions } from "../NavComponents/UserActions";
 
 interface NavbarProps {
   setActiveView: (view: string) => void;
