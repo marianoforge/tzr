@@ -51,7 +51,7 @@ const LoginForm = () => {
       const token = await userCredential.user.getIdToken();
       localStorage.setItem("authToken", token);
 
-      router.push("/dashboard");
+      router.push("/tracker/dashboard");
     } catch {
       setFormError("Error al iniciar sesión, verifica tus credenciales.");
     }
