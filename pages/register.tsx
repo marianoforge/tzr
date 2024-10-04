@@ -1,4 +1,4 @@
-import RegisterForm from "../components/RegisterForm"; // Import RegisterForm
+import RegisterForm from "../components/TrackeComponents/RegisterForm"; // Import RegisterForm
 
 const Register = () => {
   return (
