@@ -14,7 +14,7 @@ import { schema } from "./Schemas/OperationsFormSchema";
 
 type FormData = InferType<typeof schema>;
 
-const FormularioOperacion = () => {
+const OperationsForm = () => {
   const {
     register,
     handleSubmit,
@@ -321,4 +321,4 @@ const FormularioOperacion = () => {
   );
 };
 
-export default FormularioOperacion;
+export default OperationsForm;

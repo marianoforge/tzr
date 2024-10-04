@@ -6,7 +6,7 @@ interface FooterProps {
 
 const Footer = ({ setActiveView }: FooterProps) => {
   return (
-    <footer className="bg-[#3f37c9] p-4 fixed bottom-0 w-full ">
+    <footer className="bg-[#3f37c9] p-4 fixed bottom-0 w-full">
       <div className="container mx-auto flex justify-around items-center">
         <div className="text-white text-sm">
           © 2024 Realtor Track Profit - All Rights Reserved

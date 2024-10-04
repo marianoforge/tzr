@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { formatNumber } from "@/utils/formatNumber";
-import { Operation } from "@/types";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import axios from "axios";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useOperationsStore } from "@/stores/useOperationsStore";
-import { useRouter } from "next/router";
 import Loader from "../Loader";
 import OperationsModal from "./OperationsModal";
+import { useOperations } from "../../../hooks/useOperations";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import {
-  CheckIcon,
   PencilIcon,
   TrashIcon,
+  CheckIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useAuthStore } from "@/stores/authStore";
 
 interface OperationsCarouselProps {
   filter: "all" | "open" | "closed";
@@ -30,116 +25,25 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-  const { operations, setItems, calculateTotals, isLoading, fetchItems } =
-    useOperationsStore();
-  const [userUID, setUserUID] = useState<string | null>(null);
-  const router = useRouter();
-  const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
-    null
-  );
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const {
+    operations,
+    isLoading,
+    handleEstadoChange,
+    handleEditClick,
+    handleDeleteClick,
+    isEditModalOpen,
+    selectedOperation,
+    setIsEditModalOpen,
+    fetchItems,
+  } = useOperations();
 
-  const handleUpdate = () => {
-    if (userUID) {
-      fetchItems(userUID);
-    }
-  };
-
-  const handleEstadoChange = async (id: string, currentEstado: string) => {
-    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
-    try {
-      const response = await axios.put(`/api/operations/${id}`, {
-        estado: newEstado,
-      });
-
-      if (response.status !== 200) {
-        throw new Error("Error updating operation status");
-      }
-
-      setItems(
-        operations.map((operacion) =>
-          operacion.id === id ? { ...operacion, estado: newEstado } : operacion
-        )
-      );
-      calculateTotals();
-    } catch (error) {
-      console.error("Error updating operation status:", error);
-    }
-  };
-
-  const handleEditClick = async (operation: Operation, id: string) => {
-    setSelectedOperation(operation);
-    setIsEditModalOpen(true);
-
-    try {
-      const response = await fetch(`/api/operations/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(operation),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Error updating operation:", error);
-    }
-  };
-
-  const handleDeleteClick = async (id: string) => {
-    try {
-      const response = await axios.delete(`/api/operations/${id}`);
-      if (response.status !== 200) {
-        throw new Error("Error deleting operation");
-      }
-      setItems(operations.filter((operacion) => operacion.id !== id));
-      calculateTotals();
-    } catch (error) {
-      console.error("Error deleting operation:", error);
-    }
-  };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserUID(user.uid);
-      } else {
-        setUserUID(null);
-        router.push("/login");
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
-
-  useEffect(() => {
-    const fetchOperations = async () => {
-      if (!userUID) return;
-
-      try {
-        const response = await axios.get(`/api/operations/user/${userUID}`);
-
-        if (response.status !== 200) {
-          throw new Error("Error al obtener las operaciones del usuario");
-        }
-
-        const data = response.data;
-        setItems(data);
-        calculateTotals();
-      } catch (error) {
-        console.error("Error al obtener las operaciones:", error);
-      }
-    };
-
-    fetchOperations();
-  }, [userUID, setItems, calculateTotals]);
+  const { userID } = useAuthStore();
 
   const filteredOperations = operations.filter((operation) => {
     if (filter === "all") return true;
-    if (filter === "open") return operation.estado === "En Curso";
-    if (filter === "closed") return operation.estado === "Cerrada";
-    return true;
+    return filter === "open"
+      ? operation.estado === "En Curso"
+      : operation.estado === "Cerrada";
   });
 
   if (isLoading) {
@@ -187,14 +91,14 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
                 </p>
                 <div className="flex justify-around">
                   <button
-                    onClick={() => handleEditClick(operacion, operacion.id)}
-                    className="text-darkBlue hover:text-blue-700 transition duration-150 ease-in-out text-sm  font-semibold "
+                    onClick={() => handleEditClick(operacion)}
+                    className="text-darkBlue hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
                   >
                     <PencilIcon className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => handleDeleteClick(operacion.id)}
-                    className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
+                    className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
                   >
                     <TrashIcon className="text-redAccent h-5 w-5" />
                   </button>
@@ -233,7 +137,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           operation={selectedOperation}
-          onUpdate={handleUpdate}
+          onUpdate={() => fetchItems(userID!)} // fetchItems se invoca correctamente aquí
         />
       )}
     </>

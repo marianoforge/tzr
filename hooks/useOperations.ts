@@ -1,45 +1,102 @@
-import { useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/router";
 import { Operation } from "@/types";
-interface UseOperationsReturn {
-  operations: Operation[];
-  isLoading: boolean;
-  error: string | null;
-  fetchOperations: (userID: string) => Promise<void>;
-  updateOperationStatus: (id: string, newEstado: string) => void;
-}
+import { useOperationsStore } from "@/stores/useOperationsStore";
 
-export const useOperations = (): UseOperationsReturn => {
-  const [operations, setOperations] = useState<Operation[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+export const useOperations = () => {
+  const { operations, setItems, calculateTotals, isLoading, fetchItems } =
+    useOperationsStore();
+  const [userUID, setUserUID] = useState<string | null>(null);
+  const router = useRouter();
+  const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
+    null
+  );
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const fetchOperations = useCallback(async (userID: string) => {
-    setIsLoading(true);
-    setError(null);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserUID(user.uid);
+      } else {
+        setUserUID(null);
+        router.push("/login");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  useEffect(() => {
+    const fetchOperations = async () => {
+      if (!userUID) return;
+
+      try {
+        const response = await axios.get(`/api/operations/user/${userUID}`);
+        if (response.status !== 200) {
+          throw new Error("Error al obtener las operaciones del usuario");
+        }
+        setItems(response.data);
+        calculateTotals();
+      } catch (error) {
+        console.error("Error al obtener las operaciones:", error);
+      }
+    };
+
+    fetchOperations();
+  }, [userUID, setItems, calculateTotals]);
+
+  const handleEstadoChange = async (id: string, currentEstado: string) => {
+    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
     try {
-      const response = await axios.get(`/api/operations/user/${userID}`);
-      setOperations(response.data);
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      const response = await axios.put(`/api/operations/${id}`, {
+        estado: newEstado,
+      });
 
-  const updateOperationStatus = useCallback((id: string, newEstado: string) => {
-    setOperations((prevOperations) =>
-      prevOperations.map((op) =>
-        op.id === id ? { ...op, estado: newEstado } : op
-      )
-    );
-  }, []);
+      if (response.status !== 200) {
+        throw new Error("Error actualizando estado");
+      }
+
+      setItems(
+        operations.map((op) =>
+          op.id === id ? { ...op, estado: newEstado } : op
+        )
+      );
+      calculateTotals();
+    } catch (error) {
+      console.error("Error actualizando estado:", error);
+    }
+  };
+
+  const handleEditClick = (operation: Operation) => {
+    setSelectedOperation(operation);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteClick = async (id: string) => {
+    try {
+      const response = await axios.delete(`/api/operations/${id}`);
+      if (response.status !== 200) {
+        throw new Error("Error eliminando operación");
+      }
+      setItems(operations.filter((op) => op.id !== id));
+      calculateTotals();
+    } catch (error) {
+      console.error("Error eliminando operación:", error);
+    }
+  };
 
   return {
     operations,
+    userUID,
     isLoading,
-    error,
-    fetchOperations,
-    updateOperationStatus,
+    selectedOperation,
+    isEditModalOpen,
+    handleEstadoChange,
+    handleEditClick,
+    handleDeleteClick,
+    setIsEditModalOpen,
+    fetchItems,
   };
 };
