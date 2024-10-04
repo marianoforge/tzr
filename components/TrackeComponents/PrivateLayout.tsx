@@ -1,4 +1,3 @@
-// components/PrivateLayout.tsx
 import { useRouter } from "next/router";
 import Navbar from "./NavBar/Navbar";
 import VerticalNavbar from "./NavBar/VerticalNavbar";
@@ -14,34 +13,34 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
   const setActiveView = (view: string) => {
     switch (view) {
       case "reservationInput":
-        router.push("/tracker/reservationInput");
+        router.push("/reservationInput");
         break;
       case "dashboard":
-        router.push("/tracker/dashboard");
+        router.push("/dashboard");
         break;
       case "eventForm":
-        router.push("/tracker/eventForm");
+        router.push("/eventForm");
         break;
       case "calendar":
-        router.push("/tracker/calendar");
+        router.push("/calendar");
         break;
       case "settings":
-        router.push("/tracker/settings");
+        router.push("/settings");
         break;
       case "operationsList":
-        router.push("/tracker/operationsList");
+        router.push("/operationsList");
         break;
       case "expenses":
-        router.push("/tracker/expenses");
+        router.push("/expenses");
         break;
       case "expensesList":
-        router.push("/tracker/expensesList");
+        router.push("/expensesList");
         break;
       case "agents":
-        router.push("/tracker/agents");
+        router.push("/agents");
         break;
       case "expensesBroker":
-        router.push("/tracker/expensesBroker");
+        router.push("/expensesBroker");
         break;
     }
   };

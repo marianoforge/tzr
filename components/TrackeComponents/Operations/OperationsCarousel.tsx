@@ -30,8 +30,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-
-  const { operations, setItems, calculateTotals, isLoading } =
+  const { operations, setItems, calculateTotals, isLoading, fetchItems } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
@@ -39,6 +38,12 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
     null
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleUpdate = () => {
+    if (userUID) {
+      fetchItems(userUID);
+    }
+  };
 
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
@@ -146,7 +151,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
       <Slider {...settings}>
         {filteredOperations.map((operacion) => (
           <div key={operacion.id} className="p-4">
-            <div className="bg-[#5DADE2]/10 text-[#2E86C1] p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
+            <div className="bg-[#5DADE2]/10 text-darkBlue p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
               <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
                 <p>
                   <strong>Fecha de Operación:</strong>{" "}
@@ -199,8 +204,8 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
                     }
                     className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
                       operacion.estado === "En Curso"
-                        ? `greenAccent`
-                        : `redAccent`
+                        ? `bg-greenAccent`
+                        : `bg-redAccent`
                     }`}
                   >
                     <span
@@ -227,7 +232,8 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({ filter }) => {
         <OperationsModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          operation={selectedOperation} // Ensure operation is either the expected object or null
+          operation={selectedOperation}
+          onUpdate={handleUpdate}
         />
       )}
     </>

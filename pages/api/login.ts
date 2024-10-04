@@ -1,4 +1,3 @@
-// pages/api/login.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../lib/firebase";
@@ -25,7 +24,6 @@ export default async function handler(
   }
 
   try {
-    // Intentar iniciar sesión con Firebase Authentication
     await signInWithEmailAndPassword(auth, email, password);
     res.status(200).json({ message: "Inicio de sesión exitoso" });
   } catch {

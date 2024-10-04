@@ -2,24 +2,19 @@ import { UserDataState, UserData } from "@/types";
 import axios from "axios";
 import { create } from "zustand";
 
-// Ahora la propiedad 'items' está definida en la interfaz UserDataState
 export const useUserDataStore = create<UserDataState>((set, get) => ({
-  items: [], // Inicializa items como un array vacío
+  items: [],
   userData: null,
   isLoading: false,
   error: null,
   role: null,
 
-  // Establecer los items
   setItems: (items: UserData[]) => set({ items }),
 
-  // Establecer los datos de usuario
   setUserData: (userData: UserData | null) => set({ userData }),
 
-  // Establecer el rol del usuario
   setUserRole: (role: string | null) => set({ role }),
 
-  // Fetch items desde el servidor
   fetchItems: async (user_uid: string) => {
     const { isLoading, userData } = get();
 
@@ -54,7 +49,7 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
         email: userData.email || null,
         numeroTelefono: userData.numeroTelefono || null,
         agenciaBroker: userData.agenciaBroker || null,
-        role: userData.role || null, // Incluimos el 'role' del usuario
+        role: userData.role || null,
       };
 
       set({ userData: validatedUserData, isLoading: false });
@@ -64,13 +59,10 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
     }
   },
 
-  // Limpiar datos del usuario
   clearUserData: () => set({ userData: null, error: null }),
 
-  // Establecer estado de carga
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
 
-  // Establecer error
   setError: (error: string | null) => set({ error }),
   fetchUserData: async (userID: string) => {
     const { isLoading, userData } = get();

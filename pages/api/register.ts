@@ -1,4 +1,3 @@
-// pages/api/register.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { auth, db } from "../../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -44,7 +43,6 @@ export default async function handler(
   }
 
   try {
-    // Crear usuario con Firebase Authentication
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -52,7 +50,6 @@ export default async function handler(
     );
     const user = userCredential.user;
 
-    // Guardar información del usuario en Firestore
     await setDoc(doc(db, "usuarios", user.uid), {
       name: firstName,
       lastName: lastName,

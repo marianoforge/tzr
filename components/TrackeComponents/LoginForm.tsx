@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   signInWithEmailAndPassword,
   setPersistence,
-  browserLocalPersistence, // Cambiar a browserLocalPersistence
+  browserLocalPersistence,
 } from "firebase/auth";
 import { auth } from "../../lib/firebase";
 import { useRouter } from "next/router";
@@ -40,14 +40,13 @@ const LoginForm = () => {
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
-      await setPersistence(auth, browserLocalPersistence); // Cambiar a browserLocalPersistence
+      await setPersistence(auth, browserLocalPersistence);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
 
-      // Almacenar el token en localStorage
       const token = await userCredential.user.getIdToken();
       localStorage.setItem("authToken", token);
 

@@ -13,7 +13,7 @@ const ReservationInput = () => {
   }, [initializeAuthListener]);
 
   if (!userID) {
-    return <p>Loading user information...</p>; // Optional loading state or redirect
+    return <p>Loading user information...</p>;
   }
 
   return (

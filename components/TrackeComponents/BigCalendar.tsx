@@ -6,7 +6,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect } from "react";
 import { useEventsStore } from "@/stores/useEventsStore";
 import { useAuthStore } from "@/stores/authStore";
-import EventModal from "./Events/EventModal"; // Importa el nuevo componente EventModal
+import EventModal from "./Events/EventModal";
 import { Event } from "@/types";
 
 const localizer = momentLocalizer(moment);
@@ -16,8 +16,8 @@ const BigCalendar = () => {
   const { userID } = useAuthStore();
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState(new Date(2024, 8, 26));
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); // Estado para el evento seleccionado
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar la visibilidad del modal
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (userID) {
@@ -28,7 +28,7 @@ const BigCalendar = () => {
   const calendarEvents = events.map((event) => ({
     id: event.id,
     title: event.title,
-    date: event.date, // Ensure date is included
+    date: event.date,
     startTime: new Date(`${event.date}T${event.startTime}`),
     endTime: new Date(`${event.date}T${event.endTime}`),
     description: event.description,
@@ -64,7 +64,6 @@ const BigCalendar = () => {
     });
   };
 
-  // Update the type definition for handleEventClick
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
@@ -86,7 +85,7 @@ const BigCalendar = () => {
       }
     };
 
-    updateView(); // Set initial view
+    updateView();
     window.addEventListener("resize", updateView);
 
     return () => window.removeEventListener("resize", updateView);
@@ -117,8 +116,8 @@ const BigCalendar = () => {
       <Calendar
         localizer={localizer}
         events={calendarEvents}
-        startAccessor="startTime" // Map start to startTime
-        endAccessor="endTime" // Map end to endTime
+        startAccessor="startTime"
+        endAccessor="endTime"
         views={["day", "week", "month"]}
         view={view}
         date={date}
@@ -136,7 +135,7 @@ const BigCalendar = () => {
         components={{
           event: (props) => (
             <div
-              className="bg-[#5EAAD7] text-white p-1 rounded text-xs sm:text-sm"
+              className="bg-lightBlue text-white p-1 rounded text-xs sm:text-sm"
               onClick={() =>
                 handleEventClick({
                   ...props.event,
@@ -190,7 +189,7 @@ const ViewButton = ({
     onClick={onClick}
     className={`px-2 sm:px-3 py-1 rounded-md transition-all duration-300 text-xs sm:text-sm ${
       currentView === view
-        ? "bg-[#7ed994] text-white font-semibold hover:bg-[#7ED994]/80"
+        ? "bg-greenAccent text-white font-semibold hover:bg-green-600"
         : "bg-gray-200 text-gray-600 hover:bg-gray-300 font-semibold"
     }`}
   >

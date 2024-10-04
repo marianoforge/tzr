@@ -3,17 +3,15 @@ import axios from "axios";
 import { EventsState, Event } from "@/types";
 
 export const useEventsStore = create<EventsState>((set) => ({
-  events: [], // Inicializar la lista de eventos como un array vacío
+  events: [],
   isLoading: false,
   error: null,
   fetchEvents: async (userID: string) => {
-    // Use userID in the implementation
     const response = await fetch(`/api/events?userID=${userID}`);
     const events = await response.json();
     set({ events });
   },
 
-  // Función para obtener eventos
   fetchItems: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
@@ -21,7 +19,6 @@ export const useEventsStore = create<EventsState>((set) => ({
 
       const fetchedEvents: Event[] = response.data;
 
-      // Filtrar eventos pasados y ordenar por fecha
       const filteredAndSortedEvents = fetchedEvents
         .filter((event) => new Date(event.date) >= new Date())
         .sort(
@@ -34,7 +31,6 @@ export const useEventsStore = create<EventsState>((set) => ({
     }
   },
 
-  // Add missing methods
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   setError: (error: string | null) => set({ error }),
   setItems: (items: Event[]) => set({ events: items }),

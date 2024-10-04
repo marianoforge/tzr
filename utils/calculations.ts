@@ -1,4 +1,3 @@
-// calculations.ts
 import { Operation } from "@/types";
 
 export const calculateTotals = (operations: Operation[]) => {
@@ -81,4 +80,18 @@ export const calculateTotals = (operations: Operation[]) => {
     totalAmountInDollars: 0,
     totalExpenses: 0,
   };
+};
+
+export const calculateHonorarios = (
+  valor_reserva: number,
+  porcentaje_honorarios_asesor: number,
+  porcentaje_honorarios_broker: number
+) => {
+  const honorariosBroker = (valor_reserva * porcentaje_honorarios_broker) / 100;
+  const honorariosAsesor =
+    (valor_reserva *
+      (porcentaje_honorarios_broker / 100) *
+      porcentaje_honorarios_asesor) /
+    100;
+  return { honorariosBroker, honorariosAsesor };
 };

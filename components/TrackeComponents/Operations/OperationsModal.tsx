@@ -6,6 +6,8 @@ import axios from "axios";
 import { InferType } from "yup";
 import Input from "@/components/TrackeComponents/FormComponents/Input";
 import Button from "@/components/TrackeComponents/FormComponents/Button";
+import { useOperationsStore } from "@/stores/useOperationsStore";
+import { calculateHonorarios } from "@/utils/calculations";
 
 const schema = yup.object().shape({
   fecha_operacion: yup.string().required("La fecha de operación es requerida"),
@@ -53,13 +55,15 @@ type FormData = InferType<typeof schema>;
 interface OperationsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  operation: (FormData & { id: string }) | null; // Agrega 'id' al tipo de operación
+  operation: (FormData & { id: string }) | null;
+  onUpdate: () => void;
 }
 
 const OperationsModal: React.FC<OperationsModalProps> = ({
   isOpen,
   onClose,
   operation,
+  onUpdate,
 }) => {
   const {
     register,
@@ -68,8 +72,10 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     reset,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
-    defaultValues: operation || {}, // Ensure defaultValues is not null
+    defaultValues: operation || {},
   });
+
+  const { calculateTotals } = useOperationsStore();
 
   useEffect(() => {
     if (operation) {
@@ -90,13 +96,30 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       console.error("Operation ID is missing");
       return;
     }
-    console.log("Payload:", data); // Log del payload antes de enviarlo
 
     try {
-      const response = await axios.put(`/api/operations/${operation.id}`, data); // Usar operation.id
+      const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
+        data.valor_reserva,
+        data.porcentaje_honorarios_asesor,
+        data.porcentaje_honorarios_broker
+      );
+
+      const payload = {
+        ...data,
+        honorarios_broker: honorariosBroker,
+        honorarios_asesor: honorariosAsesor,
+      };
+
+      const response = await axios.put(
+        `/api/operations/${operation.id}`,
+        payload
+      );
       if (response.status !== 200) {
         throw new Error("Error updating operation");
       }
+
+      calculateTotals();
+      onUpdate();
       onClose();
     } catch (error) {
       console.error("Error updating operation:", error);
@@ -104,10 +127,9 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   };
 
   if (!isOpen || !operation) return null;
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[50%] h-[70%] flex flex-col justify-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[100%] md:w-[50%] lg:w-[40%] h-[75%] flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4">Editar Operación</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
@@ -290,7 +312,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               Guardar
             </Button>
             <Button
-              type="button" // Added type property
+              type="button"
               onClick={onClose}
               className="bg-redAccent text-white p-2 rounded hover:bg-red-700 transition-all duration-300 font-semibold w-[30%]"
             >

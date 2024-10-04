@@ -2,7 +2,6 @@ import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { NextApiRequest, NextApiResponse } from "next";
 
-// Inicializar Firebase solo si no está inicializado
 if (!getApps().length) {
   initializeApp({
     credential: cert({
@@ -52,7 +51,7 @@ export default async function handler(
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error fetching data:", error.message);
-      console.error("Stack trace:", error.stack); // Muestra la traza del error
+      console.error("Stack trace:", error.stack);
     } else {
       console.error("Unexpected error:", error);
     }

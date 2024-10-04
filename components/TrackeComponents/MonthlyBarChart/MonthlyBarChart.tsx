@@ -29,7 +29,6 @@ const MonthlyBarChart: React.FC = () => {
         const response = await axios.get(`/api/operations/user/${userID}`);
         const operations = response.data;
 
-        // Procesa los datos para obtener el formato adecuado
         const formattedData = formatOperationsData(operations);
         setData(formattedData);
       } catch (error) {

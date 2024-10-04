@@ -90,7 +90,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   );
 
   const renderNavLinksBasedOnRole = () => {
-    if (isLoading || !userData) return null; // Avoid rendering links until data is available
+    if (isLoading || !userData) return null;
 
     switch (userData.role) {
       case "team_leader_broker":

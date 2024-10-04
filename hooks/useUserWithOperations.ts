@@ -21,7 +21,6 @@ const useUsersWithOperations = (
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Llamar al endpoint de usuarios con operaciones
         const response = await fetch("/api/usersWithOps");
         if (!response.ok) {
           throw new Error("Failed to fetch users and operations");
@@ -34,7 +33,6 @@ const useUsersWithOperations = (
           );
           setData(filteredData);
         } else {
-          // Si no es admin, probablemente no necesites hacer nada o devolver datos sin filtrar
           setData(result);
         }
       } catch (err) {

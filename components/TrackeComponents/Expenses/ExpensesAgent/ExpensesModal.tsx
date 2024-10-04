@@ -32,14 +32,14 @@ interface ExpensesModalProps {
   isOpen: boolean;
   onClose: () => void;
   expense: (Expense & { id?: string }) | null;
-  onExpenseUpdate: (updatedExpense: Expense & { id: string }) => void; // Nueva prop para actualizar el gasto en la lista
+  onExpenseUpdate: (updatedExpense: Expense & { id: string }) => void;
 }
 
 const ExpensesModal: React.FC<ExpensesModalProps> = ({
   isOpen,
   onClose,
   expense,
-  onExpenseUpdate, // Nueva prop para manejar la actualización
+  onExpenseUpdate,
 }) => {
   const {
     register,
@@ -75,7 +75,6 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
         throw new Error("Error updating expense");
       }
 
-      // Llamar a onExpenseUpdate para actualizar la lista en la interfaz
       onExpenseUpdate({
         ...data,
         id: expense.id,
@@ -85,7 +84,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
         expenseAssociationType: data.expenseAssociationType ?? "",
       });
 
-      onClose(); // Cerrar el modal después de la edición exitosa
+      onClose();
     } catch (error) {
       console.error("Error updating expense:", error);
     }

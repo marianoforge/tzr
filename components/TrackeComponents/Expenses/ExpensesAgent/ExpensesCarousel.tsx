@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { formatNumber } from "@/utils/formatNumber";
-import { Expense } from "@/types"; // Asegúrate de que la ruta sea correcta
+import { Expense } from "@/types";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "axios";
@@ -10,7 +10,7 @@ import { auth } from "@/lib/firebase";
 import { useExpensesStore } from "@/stores/useExpensesStore";
 import { useRouter } from "next/router";
 import Loader from "../../Loader";
-import ExpensesModal from "./ExpensesModal"; // Adjust the path as necessary
+import ExpensesModal from "./ExpensesModal";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 

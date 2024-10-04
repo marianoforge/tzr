@@ -10,6 +10,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { InferType } from "yup";
+import { calculateHonorarios } from "@/utils/calculations";
 
 const schema = yup.object().shape({
   fecha_operacion: yup.string().required("La fecha de operación es requerida"),
@@ -67,7 +68,6 @@ const FormularioOperacion = () => {
       estado: "En Curso",
       punta_compradora: false,
       punta_vendedora: false,
-      // Set other default values if needed
     },
   });
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -94,17 +94,14 @@ const FormularioOperacion = () => {
     const porcentaje_honorarios_broker =
       parseFloat(String(watchAllFields.porcentaje_honorarios_broker)) || 0;
 
-    const calculatedHonorariosBroker =
-      (valor_reserva * porcentaje_honorarios_broker) / 100;
+    const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
+      valor_reserva,
+      porcentaje_honorarios_asesor,
+      porcentaje_honorarios_broker
+    );
 
-    const calculatedHonorariosAsesor =
-      (valor_reserva *
-        (porcentaje_honorarios_broker / 100) *
-        porcentaje_honorarios_asesor) /
-      100;
-
-    setHonorariosBroker(calculatedHonorariosBroker);
-    setHonorariosAsesor(calculatedHonorariosAsesor);
+    setHonorariosBroker(honorariosBroker);
+    setHonorariosAsesor(honorariosAsesor);
   }, [
     watchAllFields.valor_reserva,
     watchAllFields.porcentaje_honorarios_asesor,
@@ -140,7 +137,7 @@ const FormularioOperacion = () => {
 
       setModalMessage("Operación guardada exitosamente");
       setShowModal(true);
-      reset(); // Reset the form after successful submission
+      reset();
       router.push("/dashboard");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -155,7 +152,7 @@ const FormularioOperacion = () => {
   };
 
   const handleModalAccept = () => {
-    router.push("/dashboard"); // Redirect to dashboard
+    router.push("/dashboard");
   };
 
   return (

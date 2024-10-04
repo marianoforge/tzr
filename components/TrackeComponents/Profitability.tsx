@@ -38,7 +38,6 @@ const Profitability = () => {
     }
   };
 
-  // Ensure both variables are numbers
   const totalHonorariosNetosNumber = Number(totalHonorariosNetosAsesor);
   const totalAmountExpensesInDollarsNumber = Number(
     totalAmountInDollarsExpenses

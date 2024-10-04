@@ -30,7 +30,7 @@ const ExpensesList = () => {
     setExpenses(
       expenses.map((expense) =>
         expense.id === updatedExpense.id ? updatedExpense : expense
-      ) as Expense[] // Forzar el tipo como Expense[]
+      ) as Expense[]
     );
     calculateTotals();
   };
@@ -183,7 +183,7 @@ const ExpensesList = () => {
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           expense={selectedExpense}
-          onExpenseUpdate={handleExpenseUpdate} // Pasar la función para actualizar el estado
+          onExpenseUpdate={handleExpenseUpdate}
         />
       )}
     </div>

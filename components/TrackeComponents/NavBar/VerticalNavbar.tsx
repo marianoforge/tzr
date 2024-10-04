@@ -108,7 +108,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   );
 
   const renderNavLinksBasedOnRole = () => {
-    if (isLoading || !userData) return null; // Evita el renderizado hasta que los datos estén disponibles
+    if (isLoading || !userData) return null;
 
     switch (userData.role) {
       case "team_leader_broker":

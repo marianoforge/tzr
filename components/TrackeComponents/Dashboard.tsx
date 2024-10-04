@@ -5,7 +5,7 @@ import EventsList from "@/components/TrackeComponents/Events/EventsList";
 import MonthlyMockedBarchart from "@/components/TrackeComponents/MonthlyBarChart/MonthlyMockedBarchart";
 import ObjectiveChart from "@/components/TrackeComponents/ObjectiveChart";
 import OperationsListDash from "@/components/TrackeComponents/Operations/OperationsListDash";
-import OperationsCarouselDash from "./Operations/OperationsCarouselDash"; // Import the new component
+import OperationsCarouselDash from "./Operations/OperationsCarouselDash";
 import Profitability from "@/components/TrackeComponents/Profitability";
 import { UserInfo } from "@/components/TrackeComponents/NavComponents/UserInfo";
 import { useUserDataStore } from "@/stores/userDataStore";

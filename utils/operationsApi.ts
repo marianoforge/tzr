@@ -1,4 +1,3 @@
-// operationsAPI.ts
 import axios from "axios";
 import { Operation } from "@/types";
 

@@ -44,7 +44,7 @@ const RegisterForm = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [formError, setFormError] = useState(""); // Agregar estado para errores del formulario
+  const [formError, setFormError] = useState("");
   const router = useRouter();
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
@@ -70,7 +70,7 @@ const RegisterForm = () => {
       router.push("/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setFormError(err.message); // Usar setFormError para manejar errores
+        setFormError(err.message);
       } else {
         setFormError("Error desconocido al registrar usuario");
       }
@@ -85,7 +85,6 @@ const RegisterForm = () => {
       >
         <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
         {formError && <p className="text-red-500 mb-4">{formError}</p>}{" "}
-        {/* Mostrar errores del formulario */}
         <Input
           type="text"
           placeholder="Nombre"

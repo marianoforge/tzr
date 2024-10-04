@@ -7,12 +7,12 @@ import { useAuthStore } from "@/stores/authStore";
 import ExpensesCarouselDash from "@/components/TrackeComponents/Expenses/ExpensesAgent/ExpensesCarouselDash";
 
 const ExpensesFormPage = () => {
-  const fetchItems = useExpensesStore((state) => state.fetchItems); // Cambiado de fetchExpenses a fetchItems
+  const fetchItems = useExpensesStore((state) => state.fetchItems);
   const { userID } = useAuthStore();
 
   useEffect(() => {
     if (userID) {
-      fetchItems(userID); // También se cambia aquí
+      fetchItems(userID);
     }
   }, [fetchItems, userID]);
 

@@ -1,4 +1,3 @@
-// Common interfaces for state
 interface BaseState<T> {
   isLoading: boolean;
   error: string | null;
@@ -18,7 +17,6 @@ export interface Totals {
   honorarios_asesor?: number;
 }
 
-// Operation related interfaces
 export interface Operation {
   punta_compradora: boolean;
   punta_vendedora: boolean;
@@ -66,7 +64,6 @@ export interface OperationsComponentsProps {
   operations: Operation[];
 }
 
-// Event related interfaces
 export interface Event {
   id: string;
   title: string;
@@ -82,7 +79,6 @@ export interface EventsState extends BaseState<Event> {
   fetchEvents: (userID: string) => Promise<void>;
 }
 
-// Expense related interfaces
 export interface Expense {
   id?: string;
   date: string;
@@ -99,17 +95,17 @@ export interface Expense {
 export interface ExpenseFormData {
   date: string;
   amount: number;
-  amountInDollars?: number; // Opcional
+  amountInDollars?: number;
   expenseType: string;
   description: string;
   dollarRate: number;
-  otherType?: string; // Opcional
+  otherType?: string;
   expenseAssociationType: string;
 }
 
 export interface ExpensesState extends BaseState<Expense> {
   expenses: Expense[];
-  items: Expense[]; // Add this line
+  items: Expense[];
   totals: {
     totalAmount: number;
     totalAmountInDollars: number;
@@ -128,7 +124,6 @@ export interface ExpensesState extends BaseState<Expense> {
   fetchItems: (userID: string) => Promise<void>;
 }
 
-// User related interfaces
 export interface UserData {
   firstName: string | null;
   lastName: string | null;
@@ -141,7 +136,7 @@ export interface UserData {
 export interface UserDataState extends BaseState<UserData> {
   userData: UserData | null;
   role: string | null;
-  items: UserData[]; // Ensure this line is present
+  items: UserData[];
   setUserData: (userData: UserData | null) => void;
   setUserRole: (role: string | null) => void;
   clearUserData: () => void;
@@ -156,7 +151,6 @@ export interface UserState {
   initializeAuthListener: () => () => void;
 }
 
-// Component props interfaces
 export interface EventModalProps {
   isOpen: boolean;
   onClose: () => void;

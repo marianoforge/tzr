@@ -27,8 +27,12 @@ interface OperationsTableProps {
   };
 }
 
-const OperationsTable: React.FC<OperationsTableProps> = ({ filter }) => {
-  const { operations, totals, setItems, calculateTotals, isLoading } =
+const OperationsTable: React.FC<OperationsTableProps> = ({
+  filter,
+  operations,
+  totals,
+}) => {
+  const { setItems, calculateTotals, isLoading, fetchItems } =
     useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
@@ -58,7 +62,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({ filter }) => {
       console.error("Error updating operation status:", error);
     }
   };
-
+  console.log("OPerationsTable", operations);
   const handleEditClick = async (operation: Operation, id: string) => {
     setSelectedOperation(operation);
     setIsEditModalOpen(true);
@@ -90,6 +94,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({ filter }) => {
       calculateTotals();
     } catch (error) {
       console.error("Error deleting operation:", error);
+    }
+  };
+
+  const handleUpdate = () => {
+    if (userUID) {
+      fetchItems(userUID);
     }
   };
 
@@ -337,7 +347,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({ filter }) => {
         <OperationsModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          operation={selectedOperation} // Ensure operation is either the expected object or null
+          operation={selectedOperation}
+          onUpdate={handleUpdate}
         />
       )}
     </div>

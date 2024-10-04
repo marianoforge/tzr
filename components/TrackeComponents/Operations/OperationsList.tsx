@@ -1,4 +1,3 @@
-// components/OperationsList.tsx
 import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -26,13 +25,19 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
   filter,
   setFilter,
 }) => {
-  const { operations, setItems, isLoading } = useOperationsStore();
+  const { operations, setItems, isLoading, fetchItems } = useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleUpdate = () => {
+    if (userUID) {
+      fetchItems(userUID);
+    }
+  };
 
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
@@ -54,7 +59,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
       console.error("Error updating operation status:", error);
     }
   };
-
+  console.log("OPerationsList", operations);
   const handleEditClick = async (operation: Operation, id: string) => {
     setSelectedOperation(operation);
     setIsEditModalOpen(true);
@@ -315,7 +320,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                       }
                       className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
                         operacion.estado === "En Curso"
-                          ? `${OPERATIONS_LIST_COLORS.buttonBgEnCurso}`
+                          ? `bg-greenAccent`
                           : `bg-redAccent`
                       }`}
                     >
@@ -372,7 +377,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                 <td
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} text-center`}
                 >
-                  {formatNumber(Number(filteredTotals.honorarios_broker))}%
+                  ${formatNumber(Number(filteredTotals.honorarios_broker))}
                 </td>
 
                 <td
@@ -395,7 +400,8 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
         <OperationsModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          operation={selectedOperation} // Ensure operation is either the expected object or null
+          operation={selectedOperation}
+          onUpdate={handleUpdate}
         />
       )}
     </div>

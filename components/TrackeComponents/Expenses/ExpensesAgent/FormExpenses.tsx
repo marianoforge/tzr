@@ -64,7 +64,7 @@ const FormularioExpenses: React.FC = () => {
     formState: { errors },
     watch,
     reset,
-    setValue, // Add setValue to update form values programmatically
+    setValue,
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
   });
@@ -73,12 +73,11 @@ const FormularioExpenses: React.FC = () => {
   const amount = watch("amount");
   const dollarRate = watch("dollarRate");
 
-  // Update the form value when expenseAssociationType changes
   const handleExpenseAssociationTypeChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setExpenseAssociationType(e.target.value);
-    setValue("expenseAssociationType", e.target.value); // Update form value
+    setValue("expenseAssociationType", e.target.value);
   };
 
   const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
@@ -88,7 +87,6 @@ const FormularioExpenses: React.FC = () => {
       return;
     }
 
-    // Calculamos 'amountInDollars' basado en 'amount' y 'dollarRate'
     const amountInDollars =
       data.amount && data.dollarRate ? data.amount / data.dollarRate : 0;
 
@@ -104,18 +102,16 @@ const FormularioExpenses: React.FC = () => {
       expenseAssociationType: data.expenseAssociationType,
     };
 
-    // Si 'expenseType' es 'Otros', incluir 'otherType'; si no, asignar un valor vacío o eliminarlo
     if (data.expenseType === "Otros") {
       expenseData.otherType = data.otherType || "";
     }
 
     try {
-      // Llamada a la API para guardar los datos en la DB
       await axios.post("/api/expenses", expenseData);
 
       setModalMessage("Gasto guardado exitosamente");
       setIsModalOpen(true);
-      reset(); // Resetea el formulario tras enviar los datos correctamente
+      reset();
     } catch (error) {
       console.error("Error al registrar el gasto:", error);
       setModalMessage("Error al registrar el gasto");
@@ -139,7 +135,7 @@ const FormularioExpenses: React.FC = () => {
             <label className="block ">Tipo de Gasto</label>
             <select
               value={expenseAssociationType}
-              onChange={handleExpenseAssociationTypeChange} // Use the new handler
+              onChange={handleExpenseAssociationTypeChange}
               className="w-full p-2 border"
             >
               <option value="">Seleccione una opción</option>

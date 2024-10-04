@@ -1,10 +1,9 @@
-// components/PrivateRoute.tsx
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../lib/firebase";
 import { useAuthStore } from "@/stores/authStore";
-import { useUserDataStore } from "@/stores/userDataStore"; // Import the userDataStore
+import { useUserDataStore } from "@/stores/userDataStore";
 import Loader from "./Loader";
 
 interface PrivateRouteProps {
@@ -24,7 +23,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserID(user.uid);
-        await fetchUserData(user.uid); // Espera a que los datos del usuario se carguen.
+        await fetchUserData(user.uid);
         setUserRole(userData?.role || null);
       } else {
         setUserID(null);

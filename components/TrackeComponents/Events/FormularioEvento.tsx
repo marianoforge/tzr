@@ -4,9 +4,9 @@ import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
-import Input from "../FormComponents/Input";
-import TextArea from "../FormComponents/TextArea";
-import Button from "../FormComponents/Button";
+import Input from "@/components/TrackeComponents/FormComponents/Input";
+import TextArea from "@/components/TrackeComponents/FormComponents/TextArea";
+import Button from "@/components/TrackeComponents/FormComponents/Button";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -62,7 +62,7 @@ const FormularioEvento: React.FC = () => {
       setIsModalOpen(true);
       reset();
 
-      await fetchEvents("user_id"); // Fetch events after submission
+      await fetchEvents("user_id");
     } catch (error) {
       console.error("Error al agendar el evento:", error);
       setModalMessage("Error al agendar el evento");
@@ -122,7 +122,8 @@ const FormularioEvento: React.FC = () => {
         <div className="flex justify-center lg:justify-end items-center mt-8">
           <Button
             type="submit"
-            className=" bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] transition-all duration-300 font-semibold w-[200px]"
+            className=" bg-greenAccent text-white p-2 rounded hover:bg-green-600
+             transition-all duration-300 font-semibold w-[200px]"
           >
             Guardar Operación
           </Button>

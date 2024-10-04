@@ -1,4 +1,3 @@
-// components/CuadroPrincipal.tsx
 import { useEffect } from "react";
 import { formatNumber } from "@/utils/formatNumber";
 import Loader from "@/components/TrackeComponents/Loader";
@@ -7,11 +6,11 @@ import { useAuthStore } from "@/stores/authStore";
 
 const CuadroPrincipal = () => {
   const { userID } = useAuthStore();
-  const { operations, totals, isLoading, fetchItems } = useOperationsStore(); // Cambiar fetchOperations a fetchItems
+  const { operations, totals, isLoading, fetchItems } = useOperationsStore();
 
   useEffect(() => {
     if (userID) {
-      fetchItems(userID); // Cambiar aquí también
+      fetchItems(userID);
     }
   }, [userID, fetchItems]);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { EventModalProps } from "@/types"; // Import Event type
+import { EventModalProps } from "@/types";
 import { formatEventDateTime } from "@/utils/formatEvent.DateTime";
 
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
@@ -31,7 +31,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
         <button
           onClick={onClose}
-          className="bg-[#7ED994] text-white p-2 rounded hover:bg-[#7ED994]/80 transition-all duration-300 font-bold w-full"
+          className="bg-greenAccent text-white p-2 rounded hover:bg-green-600 transition-all duration-300 font-bold w-full"
         >
           Cerrar
         </button>

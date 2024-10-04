@@ -19,7 +19,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
 
   if (loading) {
-    return <Loader />; // Usar el componente Loader
+    return <Loader />;
   }
 
   if (error) {

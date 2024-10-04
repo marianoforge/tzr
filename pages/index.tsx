@@ -1,15 +1,14 @@
-// pages/index.tsx
 import { useRouter } from "next/router";
 
 const Home = () => {
   const router = useRouter();
 
   const handleLoginRedirect = () => {
-    router.push("/login"); // Redirige a la página de inicio de sesión
+    router.push("/login");
   };
 
   const handleRegisterRedirect = () => {
-    router.push("/register"); // Redirige a la página de registro
+    router.push("/register");
   };
 
   return (
@@ -30,7 +29,7 @@ const Home = () => {
             </button>
             <button
               onClick={handleRegisterRedirect}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-600"
             >
               Registrarse
             </button>

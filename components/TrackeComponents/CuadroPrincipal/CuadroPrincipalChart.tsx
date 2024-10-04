@@ -1,4 +1,3 @@
-// components/CuadroPrincipal.tsx
 import { useEffect, useState } from "react";
 import {
   PieChart,
@@ -25,7 +24,6 @@ const CuadroPrincipalChart = () => {
     { name: string; value: number }[]
   >([]);
 
-  // Fetch the operations data using the store
   useEffect(() => {
     if (userID) {
       fetchOperations(userID);
@@ -39,7 +37,6 @@ const CuadroPrincipalChart = () => {
   }, [operations]);
 
   const calculateTotals = (operations: Operation[]) => {
-    // Calcular los tipos de operaciones
     const tiposCount = operations.reduce((acc, op) => {
       acc[op.tipo_operacion] = (acc[op.tipo_operacion] || 0) + 1;
       return acc;

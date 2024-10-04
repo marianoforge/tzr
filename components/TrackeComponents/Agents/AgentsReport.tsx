@@ -1,13 +1,13 @@
 import React from "react";
 import useUsersWithOperations from "@/hooks/useUserWithOperations";
-import Loader from "@/components/TrackeComponents/Loader"; // Asegúrate de importar el Loader si no está ya importado
+import Loader from "@/components/TrackeComponents/Loader";
 import { UserData } from "@/types";
 
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
 
   if (loading) {
-    return <Loader />; // Usar el componente Loader
+    return <Loader />;
   }
 
   if (error) {

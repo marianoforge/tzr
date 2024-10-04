@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { OperationsState, Operation } from "@/types";
-import { calculateTotals } from "@/utils/calculations"; // Lógica de cálculos
-import { fetchOperations, updateOperationStatus } from "@/utils/operationsApi"; // API externa
+import { calculateTotals } from "@/utils/calculations";
+import { fetchOperations, updateOperationStatus } from "@/utils/operationsApi";
 
 export const useOperationsStore = create<OperationsState>((set, get) => ({
   operations: [],
@@ -24,26 +24,21 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
   isLoading: false,
   error: null,
 
-  // Establecer operaciones
   setItems: (operations: Operation[]) => {
     set({ operations });
-    get().calculateTotals(); // Calcular totales cuando se establezcan nuevas operaciones
+    get().calculateTotals();
   },
 
-  // Calcular totales
   calculateTotals: () => {
     const { operations } = get();
-    const totals = calculateTotals(operations); // Usamos la lógica externa para calcular totales
+    const totals = calculateTotals(operations);
     set({ totals });
   },
 
-  // Controlar el estado de carga
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
 
-  // Controlar el error
   setError: (error: string | null) => set({ error }),
 
-  // Obtener operaciones del servidor
   fetchItems: async (userID: string) => {
     set({ isLoading: true, error: null });
     try {
@@ -57,7 +52,6 @@ export const useOperationsStore = create<OperationsState>((set, get) => ({
     }
   },
 
-  // Actualizar el estado de una operación
   updateOperationEstado: (id: string, newEstado: string) => {
     const { operations } = get();
     const updatedOperations = updateOperationStatus(operations, id, newEstado);

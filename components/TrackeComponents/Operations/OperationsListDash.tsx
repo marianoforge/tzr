@@ -1,5 +1,3 @@
-// components/OperationsList.tsx
-
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import Loader from "../Loader";
 import OperationsTable from "./OperationsTable";
