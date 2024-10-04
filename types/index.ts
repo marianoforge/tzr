@@ -122,6 +122,8 @@ export interface ExpensesState extends BaseState<Expense> {
   fetchExpenses: (userID: string) => Promise<void>;
   setItems: (items: Expense[]) => void;
   fetchItems: (userID: string) => Promise<void>;
+  setIsLoading: (isLoading: boolean) => void;
+  setError: (error: string | null) => void;
 }
 
 export interface UserData {

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import ModalOK from "@/components/TrackerComponents/ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
@@ -11,7 +10,10 @@ import TextArea from "@/components/TrackerComponents/FormComponents/TextArea";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { Expense, ExpenseFormData } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
+import { useMutation, useQueryClient } from "@tanstack/react-query"; // Importar useMutation
+import { createExpense } from "@/lib/api/expensesApi"; // Función para crear gasto
 
+// Tipos de gastos
 export const expenseTypes = [
   "Fee (Franquicia)",
   "Carteleria",
@@ -28,6 +30,7 @@ export const expenseTypes = [
   "Otros",
 ];
 
+// Validación del formulario con Yup
 const schema = yup.object().shape({
   expenseAssociationType: yup
     .string()
@@ -44,7 +47,6 @@ const schema = yup.object().shape({
         ? schema.required("Debes especificar el tipo de gasto")
         : schema;
     }),
-
   dollarRate: yup
     .number()
     .positive()
@@ -58,6 +60,10 @@ const FormularioExpenses: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [expenseAssociationType, setExpenseAssociationType] = useState("");
+
+  const queryClient = useQueryClient(); // Instancia de QueryClient para manejar la caché
+
+  // Formulario con react-hook-form
   const {
     register,
     handleSubmit,
@@ -68,7 +74,8 @@ const FormularioExpenses: React.FC = () => {
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
   });
-  console.log(userData?.role);
+
+  // Obtener el valor de los campos del formulario
   const selectedExpenseType = watch("expenseType");
   const amount = watch("amount");
   const dollarRate = watch("dollarRate");
@@ -80,7 +87,24 @@ const FormularioExpenses: React.FC = () => {
     setValue("expenseAssociationType", e.target.value);
   };
 
-  const onSubmit: SubmitHandler<ExpenseFormData> = async (data) => {
+  // Mutación para crear un nuevo gasto
+  const mutation = useMutation({
+    mutationFn: (expenseData: Expense) => createExpense(expenseData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] }); // Pass an object with queryKey
+      setModalMessage("Gasto guardado exitosamente");
+      setIsModalOpen(true);
+      reset(); // Reiniciar el formulario después de éxito
+    },
+    onError: (error) => {
+      console.error("Error al registrar el gasto:", error);
+      setModalMessage("Error al registrar el gasto");
+      setIsModalOpen(true);
+    },
+  });
+
+  // Manejo del envío del formulario
+  const onSubmit: SubmitHandler<ExpenseFormData> = (data) => {
     if (!userID) {
       setModalMessage("No se proporcionó un ID de usuario válido");
       setIsModalOpen(true);
@@ -102,21 +126,7 @@ const FormularioExpenses: React.FC = () => {
       expenseAssociationType: data.expenseAssociationType,
     };
 
-    if (data.expenseType === "Otros") {
-      expenseData.otherType = data.otherType || "";
-    }
-
-    try {
-      await axios.post("/api/expenses", expenseData);
-
-      setModalMessage("Gasto guardado exitosamente");
-      setIsModalOpen(true);
-      reset();
-    } catch (error) {
-      console.error("Error al registrar el gasto:", error);
-      setModalMessage("Error al registrar el gasto");
-      setIsModalOpen(true);
-    }
+    mutation.mutate(expenseData); // Usar la mutación para crear el gasto
   };
 
   const amountInDollars =

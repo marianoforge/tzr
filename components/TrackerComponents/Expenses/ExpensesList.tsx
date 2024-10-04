@@ -1,60 +1,30 @@
-import { useState, useEffect } from "react";
-import { auth } from "@/lib/firebase";
+import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import { useExpensesStore } from "@/stores/useExpensesStore";
-import Loader from "../../Loader";
-import axios from "axios";
+import Loader from "../Loader";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchUserExpenses,
+  deleteExpense,
+  updateExpense,
+} from "@/lib/api/expensesApi";
 import { formatNumber } from "@/utils/formatNumber";
 import { Expense } from "@/types";
 import ExpensesModal from "./ExpensesModal";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 
 const ExpensesList = () => {
-  const { expenses, setExpenses, isLoading, calculateTotals } =
-    useExpensesStore();
-  const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
-    useFilteredExpenses(expenses);
+  const { calculateTotals } = useExpensesStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const handleEditClick = (expense: Expense) => {
-    setSelectedExpense(expense);
-    setIsEditModalOpen(true);
-  };
+  const queryClient = useQueryClient();
 
-  const handleExpenseUpdate = (updatedExpense: Expense) => {
-    setExpenses(
-      expenses.map((expense) =>
-        expense.id === updatedExpense.id ? updatedExpense : expense
-      ) as Expense[]
-    );
-    calculateTotals();
-  };
-
-  const handleDeleteClick = async (id: string | undefined) => {
-    if (!id) {
-      console.error("Error: El gasto no tiene un ID");
-      return;
-    }
-
-    try {
-      const response = await axios.delete(`/api/expenses/${id}`);
-      if (response.status !== 200) {
-        throw new Error("Error deleting expense");
-      }
-      setExpenses(
-        expenses.filter((expense: { id?: string }) => expense.id !== id)
-      );
-      calculateTotals();
-    } catch (error) {
-      console.error("Error deleting expense:", error);
-    }
-  };
-
+  // Manejar la autenticación del usuario
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -67,27 +37,54 @@ const ExpensesList = () => {
     return () => unsubscribe();
   }, [router]);
 
+  // Solo ejecutar la consulta si userUID está definido
+  const { data: expenses, isLoading } = useQuery({
+    queryKey: ["expenses", userUID], // Query key
+    queryFn: () => fetchUserExpenses(userUID as string), // Query function
+    enabled: !!userUID, // Solo habilitar la consulta si userUID no es null
+  });
+
+  // Recalcular los totales cuando los datos sean cargados
   useEffect(() => {
-    const fetchExpenses = async () => {
-      if (!userUID) return;
+    if (expenses) {
+      calculateTotals();
+    }
+  }, [expenses, calculateTotals]);
 
-      try {
-        const response = await axios.get(`/api/expenses/user/${userUID}`);
+  // Mutation para eliminar un gasto
+  const mutationDelete = useMutation({
+    mutationFn: (id: string) => deleteExpense(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] }); // Correctly pass the query key
+      calculateTotals(); // Recalcular los totales
+    },
+  });
 
-        if (response.status !== 200) {
-          throw new Error("Error fetching user expenses");
-        }
+  // Mutation para actualizar un gasto
+  const mutationUpdate = useMutation({
+    mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] }); // Correctly pass the query key
+      calculateTotals(); // Recalcular los totales
+    },
+  });
 
-        const data = response.data;
-        setExpenses(data);
-        calculateTotals();
-      } catch (error) {
-        console.error("Error fetching expenses:", error);
-      }
-    };
+  const handleDeleteClick = (id: string | undefined) => {
+    if (id) mutationDelete.mutate(id);
+  };
 
-    fetchExpenses();
-  }, [userUID, setExpenses, calculateTotals]);
+  const handleEditClick = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsEditModalOpen(true);
+  };
+
+  const handleExpenseUpdate = (updatedExpense: Expense) => {
+    mutationUpdate.mutate(updatedExpense);
+  };
+
+  // Filtrar gastos basados en la ruta
+  const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
+    useFilteredExpenses(expenses || []);
 
   const filteredExpenses = router.pathname.includes("expensesBroker")
     ? teamBrokerExpenses
@@ -123,7 +120,6 @@ const ExpensesList = () => {
                 <th className="py-3 px-4 font-semibold text-center">
                   Descripción
                 </th>
-
                 <th className="py-3 px-4 font-semibold text-center">
                   Acciones
                 </th>

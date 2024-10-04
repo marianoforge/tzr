@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useExpensesStore } from "@/stores/useExpensesStore";
-import ExpensesList from "@/components/TrackerComponents/Expenses/ExpensesAgent/ExpensesList";
+import ExpensesList from "@/components/TrackerComponents/Expenses/ExpensesList";
 import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
 import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
 import { useAuthStore } from "@/stores/authStore";
-import ExpensesCarouselDash from "@/components/TrackerComponents/Expenses/ExpensesAgent/ExpensesCarouselDash";
+import ExpensesListCards from "@/components/TrackerComponents/Expenses/ExpensesListCards";
 
 const ExpensesFormPage = () => {
   const fetchItems = useExpensesStore((state) => state.fetchItems);
@@ -24,7 +24,7 @@ const ExpensesFormPage = () => {
           <ExpensesList />
         </div>
         <div className="block xl:hidden">
-          <ExpensesCarouselDash />
+          <ExpensesListCards />
         </div>
       </PrivateLayout>
     </PrivateRoute>

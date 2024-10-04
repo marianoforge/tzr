@@ -20,10 +20,12 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
   setExpenses: (expenses) => set({ expenses }),
 
   setItems: (items) => set({ items: items }),
+
+  // Fetch items based on user ID
   fetchItems: async (userID: string) => {
     set({ isLoading: true });
     try {
-      const response = await axios.get(`/api/expenses/user/${userID}`);
+      const response = await axios.get(`/api/expenses?user_uid=${userID}`);
       set({ items: response.data });
     } catch (error) {
       set({ error: (error as Error).message });
@@ -32,6 +34,56 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
     }
   },
 
+  // Fetch all expenses by user ID
+  fetchExpenses: async (userID: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get(`/api/expenses?user_uid=${userID}`);
+      const fetchedExpenses = response.data;
+      set({ expenses: fetchedExpenses });
+      get().calculateTotals(); // Calculate totals after fetching expenses
+    } catch (error) {
+      set({ error: (error as Error).message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // Update an expense and sync it with the API
+  updateExpense: async (id: string, newData: Partial<Expense>) => {
+    set({ isLoading: true });
+    try {
+      await axios.put(`/api/expenses/${id}`, newData);
+      const { expenses } = get();
+      const updatedExpenses = expenses.map((expense) =>
+        expense.id === id ? { ...expense, ...newData } : expense
+      );
+      set({ expenses: updatedExpenses });
+      get().calculateTotals(); // Recalculate totals after update
+    } catch (error) {
+      set({ error: (error as Error).message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // Delete an expense and sync with the API
+  deleteExpense: async (id: string) => {
+    set({ isLoading: true });
+    try {
+      await axios.delete(`/api/expenses/${id}`);
+      const { expenses } = get();
+      const updatedExpenses = expenses.filter((expense) => expense.id !== id);
+      set({ expenses: updatedExpenses });
+      get().calculateTotals(); // Recalculate totals after deletion
+    } catch (error) {
+      set({ error: (error as Error).message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // Calculate totals from expenses
   calculateTotals: () => {
     const { expenses } = get();
 
@@ -73,36 +125,6 @@ export const useExpensesStore = create<ExpensesState>((set, get) => ({
     });
   },
 
-  setIsLoading: (isLoading) => set({ isLoading }),
-
-  setError: (error) => set({ error }),
-
-  fetchExpenses: async (userID: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      const response = await axios.get(`/api/expenses/user/${userID}`);
-      const fetchedExpenses = response.data;
-      set({ expenses: fetchedExpenses });
-      get().calculateTotals();
-    } catch (error) {
-      set({ error: (error as Error).message });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  updateExpense: (id: string, newData: Partial<Expense>) => {
-    const { expenses } = get();
-    const updatedExpenses = expenses.map((expense) =>
-      expense.id === id ? { ...expense, ...newData } : expense
-    );
-    set({ expenses: updatedExpenses });
-  },
-
-  deleteExpense: (id: string) => {
-    const { expenses } = get();
-    const updatedExpenses = expenses.filter((expense) => expense.id !== id);
-    set({ expenses: updatedExpenses });
-    get().calculateTotals();
-  },
+  setIsLoading: (isLoading: boolean) => set({ isLoading }),
+  setError: (error: string | null) => set({ error }),
 }));

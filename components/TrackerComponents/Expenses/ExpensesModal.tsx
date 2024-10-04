@@ -2,12 +2,14 @@ import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axios from "axios";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { Expense } from "@/types";
 import { expenseTypes } from "./FormExpenses";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateExpense } from "@/lib/api/expensesApi"; // Función para actualizar el gasto
 
+// Validación con Yup
 const schema = yup.object().shape({
   date: yup.string().required("La fecha es requerida"),
   amount: yup
@@ -39,8 +41,10 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
   isOpen,
   onClose,
   expense,
-  onExpenseUpdate,
 }) => {
+  const queryClient = useQueryClient(); // QueryClient para manejar la caché
+
+  // Configuración de useForm con react-hook-form y yup
   const {
     register,
     handleSubmit,
@@ -52,6 +56,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
     defaultValues: expense || {},
   });
 
+  // Resetear los valores del formulario cuando cambie el expense
   useEffect(() => {
     if (expense) {
       reset({
@@ -63,31 +68,34 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
     }
   }, [expense, reset]);
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  // Configuración de la mutación para actualizar el gasto
+  const mutation = useMutation({
+    mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
+    onSuccess: () => {
+      // Invalida la caché para obtener los datos más recientes
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      onClose(); // Cerrar el modal después de una actualización exitosa
+    },
+    onError: (error) => {
+      console.error("Error updating expense:", error);
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!expense?.id) {
       console.error("Expense ID is missing");
       return;
     }
 
-    try {
-      const response = await axios.put(`/api/expenses/${expense.id}`, data);
-      if (response.status !== 200) {
-        throw new Error("Error updating expense");
-      }
-
-      onExpenseUpdate({
-        ...data,
-        id: expense.id,
-        amountInDollars: data.amount / data.dollarRate,
-        user_uid: expense.user_uid,
-        otherType: data.otherType ?? "",
-        expenseAssociationType: data.expenseAssociationType ?? "",
-      });
-
-      onClose();
-    } catch (error) {
-      console.error("Error updating expense:", error);
-    }
+    // Actualizar el gasto mediante la mutación
+    mutation.mutate({
+      ...data,
+      id: expense.id,
+      amountInDollars: data.amount / data.dollarRate,
+      user_uid: expense.user_uid,
+      otherType: data.otherType ?? "",
+      expenseAssociationType: data.expenseAssociationType ?? "",
+    });
   };
 
   if (!isOpen || !expense) return null;
