@@ -178,7 +178,7 @@ export interface NavButtonProps {
 
 export interface UserInfoProps {
   userData: UserData | null;
-  isLoading: boolean;
+  isLoading?: boolean;
   error: string | null;
 }
 

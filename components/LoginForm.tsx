@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   signInWithEmailAndPassword,
   setPersistence,
-  browserSessionPersistence,
+  browserLocalPersistence, // Cambiar a browserLocalPersistence
 } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useRouter } from "next/router";
@@ -37,16 +37,19 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const [formError, setFormError] = useState("");
+
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
-      await setPersistence(auth, browserSessionPersistence);
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+      await setPersistence(auth, browserLocalPersistence); // Cambiar a browserLocalPersistence
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
 
-      setTimeout(() => {
-        auth.signOut();
-        alert("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
-        router.push("/login");
-      }, 60 * 60 * 1000);
+      // Almacenar el token en localStorage
+      const token = await userCredential.user.getIdToken();
+      localStorage.setItem("authToken", token);
 
       router.push("/dashboard");
     } catch {

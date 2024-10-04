@@ -10,16 +10,15 @@ import {
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
 import { VerticalNavButton } from "../NavComponents/VerticalNavButton";
-import { UserAvatar } from "../NavComponents/UserAvatar";
-import { UserInfo } from "../NavComponents/UserInfo";
 import Image from "next/image";
+import { UserActions } from "../NavComponents/UserActions";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
 }
 
 const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
-  const { userData, isLoading, fetchItems, error } = useUserDataStore();
+  const { userData, isLoading, fetchItems } = useUserDataStore();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -128,28 +127,17 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   };
 
   return (
-    <nav className="h-[calc(100vh-4rem)] text-sm flex-col w-64 fixed left-0 top-16 hidden xl:block">
-      <div className="flex items-center justify-center h-16 pl-4">
-        <h1 className="text-[24px] font-bold flex justify-center ">
-          {" "}
-          <Image src="/trackProLogo.png" alt="Logo" width={200} height={200} />
-        </h1>
+    <nav className="h-[calc(100vh-4rem)] text-sm flex-col w-[320px] fixed left-0 top-16 hidden xl:block min-h-[900px] overflow-y-auto">
+      <div className="flex items-center justify-center h-20 pl-4 ">
+        <Image src="/trackProLogo.png" alt="Logo" width={200} height={200} />
       </div>
       <div className="ml-6 h-[1px] w-64 bg-gray-300"></div>
-      <div className="flex flex-col h-[80%]">
+      <div className="flex flex-col">
         <div className="flex-grow flex flex-col space-y-2 p-4 font-semibold">
           {renderNavLinksBasedOnRole()}
         </div>
-      </div>
-      {/* <div className="px-8">
-        <UserActions setActiveView={setActiveView} />
-      </div> */}
-      <div className="flex space-x-3 justify-center items-center mr-3 h-[20%]">
-        <div className="flex flex-col items-center">
-          <UserAvatar />
-        </div>
-        <div className="sm:flex flex-col hidden items-center">
-          <UserInfo userData={userData} isLoading={isLoading} error={error} />
+        <div className="flex-grow flex flex-col space-y-2 p-4 font-semibold">
+          <UserActions setActiveView={setActiveView} />
         </div>
       </div>
     </nav>
