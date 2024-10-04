@@ -1,8 +1,8 @@
 import React from "react";
-import PrivateRoute from "@/components/TrackeComponents/PrivateRoute";
-import PrivateLayout from "@/components/TrackeComponents/PrivateLayout";
-import ExpensesList from "@/components/TrackeComponents/Expenses/ExpensesAgent/ExpensesList";
-import ExpensesCarouselDash from "@/components/TrackeComponents/Expenses/ExpensesAgent/ExpensesCarouselDash";
+import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
+import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
+import ExpensesList from "@/components/TrackerComponents/Expenses/ExpensesAgent/ExpensesList";
+import ExpensesCarouselDash from "@/components/TrackerComponents/Expenses/ExpensesAgent/ExpensesCarouselDash";
 
 const ExpensesBroker = () => {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import useUsersWithOperations from "@/hooks/useUserWithOperations";
-import Loader from "@/components/TrackeComponents/Loader";
+import Loader from "@/components/TrackerComponents/Loader";
 import { UserData } from "@/types";
 
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {

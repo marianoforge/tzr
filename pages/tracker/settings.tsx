@@ -1,5 +1,5 @@
-import PrivateLayout from "@/components/TrackeComponents/PrivateLayout";
-import PrivateRoute from "@/components/TrackeComponents/PrivateRoute";
+import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
+import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";

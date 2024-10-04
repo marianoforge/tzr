@@ -3,8 +3,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
-import Input from "@/components/TrackeComponents/FormComponents/Input";
-import Button from "@/components/TrackeComponents/FormComponents/Button";
+import Input from "@/components/TrackerComponents/FormComponents/Input";
+import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { Expense } from "@/types";
 import { expenseTypes } from "./FormExpenses";
 

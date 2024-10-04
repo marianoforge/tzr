@@ -4,9 +4,9 @@ import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
 import { useEventsStore } from "@/stores/useEventsStore";
-import Input from "@/components/TrackeComponents/FormComponents/Input";
-import TextArea from "@/components/TrackeComponents/FormComponents/TextArea";
-import Button from "@/components/TrackeComponents/FormComponents/Button";
+import Input from "@/components/TrackerComponents/FormComponents/Input";
+import TextArea from "@/components/TrackerComponents/FormComponents/TextArea";
+import Button from "@/components/TrackerComponents/FormComponents/Button";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

@@ -4,54 +4,13 @@ import { onAuthStateChanged } from "firebase/auth";
 import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
 import axios from "axios";
-import Input from "@/components/TrackeComponents/FormComponents/Input";
-import Button from "@/components/TrackeComponents/FormComponents/Button";
+import Input from "@/components/TrackerComponents/FormComponents/Input";
+import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { InferType } from "yup";
 import { calculateHonorarios } from "@/utils/calculations";
-
-const schema = yup.object().shape({
-  fecha_operacion: yup.string().required("La fecha de operación es requerida"),
-  direccion_reserva: yup
-    .string()
-    .required("La dirección de reserva es requerida"),
-  tipo_operacion: yup.string().required("El tipo de operación es requerido"),
-  valor_reserva: yup
-    .number()
-    .typeError("El valor de reserva debe ser un número")
-    .positive("El valor de reserva debe ser positivo")
-    .required("El valor de reserva es requerido"),
-  porcentaje_honorarios_asesor: yup
-    .number()
-    .typeError("Debe ser un número")
-    .min(0, "No puede ser negativo")
-    .required("Porcentaje de honorarios asesor es requerido"),
-  porcentaje_honorarios_broker: yup
-    .number()
-    .typeError("Debe ser un número")
-    .min(0, "No puede ser negativo")
-    .required("Porcentaje de honorarios broker es requerido"),
-  porcentaje_punta_compradora: yup
-    .number()
-    .typeError("Debe ser un número")
-    .min(0, "No puede ser negativo"),
-  porcentaje_punta_vendedora: yup
-    .number()
-    .typeError("Debe ser un número")
-    .min(0, "No puede ser negativo"),
-  punta_compradora: yup.boolean().required(),
-  punta_vendedora: yup.boolean().required(),
-  numero_sobre_reserva: yup.number().typeError("Debe ser un número").nullable(),
-  numero_sobre_refuerzo: yup
-    .number()
-    .typeError("Debe ser un número")
-    .nullable(),
-  referido: yup.string().nullable(),
-  compartido: yup.string().nullable(),
-  estado: yup.string().required("El estado es requerido"),
-});
+import { schema } from "./Schemas/OperationsFormSchema";
 
 type FormData = InferType<typeof schema>;
 

@@ -9,9 +9,9 @@ import {
   ClipboardDocumentCheckIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
-import { VerticalNavButton } from "@/components/TrackeComponents/NavComponents/VerticalNavButton";
+import { VerticalNavButton } from "@/components/TrackerComponents/NavComponents/VerticalNavButton";
 import Image from "next/image";
-import { UserActions } from "@/components/TrackeComponents/NavComponents/UserActions";
+import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;

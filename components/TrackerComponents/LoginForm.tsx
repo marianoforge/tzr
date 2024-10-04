@@ -8,23 +8,11 @@ import { auth } from "../../lib/firebase";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Input from "./FormComponents/Input";
 import Button from "./FormComponents/Button";
-
-const schema = yup.object().shape({
-  email: yup.string().email("Correo inválido").required("Correo es requerido"),
-  password: yup
-    .string()
-    .min(6, "Contraseña debe tener al menos 6 caracteres")
-    .required("Contraseña es requerida"),
-});
-
-interface LoginData {
-  email: string;
-  password: string;
-}
+import { schema } from "./LoginFormSchema";
+import { LoginData } from "@/types";
 
 const LoginForm = () => {
   const {

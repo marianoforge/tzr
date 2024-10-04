@@ -1,6 +1,6 @@
-import PrivateRoute from "@/components/TrackeComponents/PrivateRoute";
-import PrivateLayout from "@/components/TrackeComponents/PrivateLayout";
-import FormularioEvento from "@/components/TrackeComponents/Events/FormularioEvento";
+import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
+import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
+import FormularioEvento from "@/components/TrackerComponents/Events/FormularioEvento";
 import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 

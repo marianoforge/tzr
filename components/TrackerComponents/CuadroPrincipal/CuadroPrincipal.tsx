@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { formatNumber } from "@/utils/formatNumber";
-import Loader from "@/components/TrackeComponents/Loader";
+import Loader from "@/components/TrackerComponents/Loader";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useAuthStore } from "@/stores/authStore";
 

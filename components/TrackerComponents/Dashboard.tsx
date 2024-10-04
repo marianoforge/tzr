@@ -1,15 +1,15 @@
-import CuadroPrincipal from "@/components/TrackeComponents/CuadroPrincipal/CuadroPrincipal";
-import CuadroPrincipalChart from "@/components/TrackeComponents/CuadroPrincipal/CuadroPrincipalChart";
-import Bubbles from "@/components/TrackeComponents/Bubbles";
-import EventsList from "@/components/TrackeComponents/Events/EventsList";
-import MonthlyMockedBarchart from "@/components/TrackeComponents/MonthlyBarChart/MonthlyMockedBarchart";
-import ObjectiveChart from "@/components/TrackeComponents/ObjectiveChart";
-import OperationsListDash from "@/components/TrackeComponents/Operations/OperationsListDash";
+import CuadroPrincipal from "@/components/TrackerComponents/CuadroPrincipal/CuadroPrincipal";
+import CuadroPrincipalChart from "@/components/TrackerComponents/CuadroPrincipal/CuadroPrincipalChart";
+import Bubbles from "@/components/TrackerComponents/Bubbles";
+import EventsList from "@/components/TrackerComponents/Events/EventsList";
+import MonthlyMockedBarchart from "@/components/TrackerComponents/MonthlyBarChart/MonthlyMockedBarchart";
+import ObjectiveChart from "@/components/TrackerComponents/ObjectiveChart";
+import OperationsListDash from "@/components/TrackerComponents/Operations/OperationsListDash";
 import OperationsCarouselDash from "./Operations/OperationsCarouselDash";
-import Profitability from "@/components/TrackeComponents/Profitability";
-import { UserInfo } from "@/components/TrackeComponents/NavComponents/UserInfo";
+import Profitability from "@/components/TrackerComponents/Profitability";
+import { UserInfo } from "@/components/TrackerComponents/NavComponents/UserInfo";
 import { useUserDataStore } from "@/stores/userDataStore";
-import { UserAvatar } from "@/components/TrackeComponents/NavComponents/UserAvatar";
+import { UserAvatar } from "@/components/TrackerComponents/NavComponents/UserAvatar";
 
 const DashBoard = () => {
   const { userData, error } = useUserDataStore();

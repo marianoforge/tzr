@@ -1,12 +1,12 @@
-import PrivateRoute from "@/components/TrackeComponents/PrivateRoute";
-import PrivateLayout from "@/components/TrackeComponents/PrivateLayout";
-import FormularioOperacion from "@/components/TrackeComponents/Operations/FormularioOperacion";
+import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
+import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
+import OperationsForm from "@/components/TrackerComponents/Operations/OperationsForm";
 
 const ReservationInput = () => {
   return (
     <PrivateRoute>
       <PrivateLayout>
-        <FormularioOperacion />
+        <OperationsForm />
       </PrivateLayout>
     </PrivateRoute>
   );

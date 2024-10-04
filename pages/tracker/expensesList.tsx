@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useExpensesStore } from "@/stores/useExpensesStore";
-import ExpensesList from "@/components/TrackeComponents/Expenses/ExpensesAgent/ExpensesList";
-import PrivateLayout from "@/components/TrackeComponents/PrivateLayout";
-import PrivateRoute from "@/components/TrackeComponents/PrivateRoute";
+import ExpensesList from "@/components/TrackerComponents/Expenses/ExpensesAgent/ExpensesList";
+import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
+import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
 import { useAuthStore } from "@/stores/authStore";
-import ExpensesCarouselDash from "@/components/TrackeComponents/Expenses/ExpensesAgent/ExpensesCarouselDash";
+import ExpensesCarouselDash from "@/components/TrackerComponents/Expenses/ExpensesAgent/ExpensesCarouselDash";
 
 const ExpensesFormPage = () => {
   const fetchItems = useExpensesStore((state) => state.fetchItems);

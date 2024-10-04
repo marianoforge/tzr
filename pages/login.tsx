@@ -1,4 +1,4 @@
-import LoginForm from "../components/TrackeComponents/LoginForm";
+import LoginForm from "../components/TrackerComponents/LoginForm";
 
 const Login = () => {
   return (

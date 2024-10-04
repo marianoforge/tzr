@@ -1,6 +1,6 @@
-import Dashboard from "@/components/TrackeComponents/Dashboard";
-import PrivateLayout from "@/components/TrackeComponents/PrivateLayout";
-import PrivateRoute from "@/components/TrackeComponents/PrivateRoute";
+import Dashboard from "@/components/TrackerComponents/Dashboard";
+import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
+import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
 
 const DashboardPage = () => {
   return (

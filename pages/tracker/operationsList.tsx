@@ -1,8 +1,8 @@
-import PrivateLayout from "@/components/TrackeComponents/PrivateLayout";
-import PrivateRoute from "@/components/TrackeComponents/PrivateRoute";
+import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
+import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
 import React, { useState } from "react";
-import OperationsList from "@/components/TrackeComponents/Operations/OperationsList";
-import OperationsCarouselDash from "@/components/TrackeComponents/Operations/OperationsCarouselDash";
+import OperationsList from "@/components/TrackerComponents/Operations/OperationsList";
+import OperationsCarouselDash from "@/components/TrackerComponents/Operations/OperationsCarouselDash";
 
 const OperationsPage = () => {
   const [filter, setFilter] = useState<"all" | "open" | "closed">("all");

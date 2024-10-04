@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import ModalOK from "@/components/TrackeComponents/ModalOK";
+import ModalOK from "@/components/TrackerComponents/ModalOK";
 import { cleanString } from "@/utils/cleanString";
-import Input from "@/components/TrackeComponents/FormComponents/Input";
-import Button from "@/components/TrackeComponents/FormComponents/Button";
+import Input from "@/components/TrackerComponents/FormComponents/Input";
+import Button from "@/components/TrackerComponents/FormComponents/Button";
+import { RegisterData } from "@/types";
 
 const schema = yup.object().shape({
   firstName: yup.string().required("Nombre es requerido"),
@@ -24,15 +25,6 @@ const schema = yup.object().shape({
   numeroTelefono: yup.string().required("Número de Teléfono es requerido"),
   role: yup.string().required("Rol es requerido"),
 });
-
-interface RegisterData {
-  password: string;
-  agenciaBroker: string;
-  numeroTelefono: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
 
 const RegisterForm = () => {
   const {

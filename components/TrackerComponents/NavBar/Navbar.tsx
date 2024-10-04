@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
-import { NavButton } from "@/components/TrackeComponents/NavComponents/NavButton";
-import { UserActions } from "@/components/TrackeComponents/NavComponents/UserActions";
+import { NavButton } from "@/components/TrackerComponents/NavComponents/NavButton";
+import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
 
 interface NavbarProps {
   setActiveView: (view: string) => void;
