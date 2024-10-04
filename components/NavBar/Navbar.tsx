@@ -112,7 +112,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     <nav className="fixed top-0 left-0 right-0 p-4 bg-darkBlue z-50">
       <div className="flex items-center justify-between w-full">
         {/* Hamburger menu icon */}
-        <div className="lg:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
+        <div className="xl:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
           <button
             className="text-white focus:outline-none"
             onClick={toggleMenu}
@@ -141,12 +141,12 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="lg:hidden mt-6 mb-6 flex flex-col items-center">
+        <div className="xl:hidden mt-6 mb-6 flex flex-col items-center">
           {renderNavLinksBasedOnRole()}
         </div>
       )}
 
-      <div className="lg:hidden">
+      <div className="xl:hidden">
         <UserActions setActiveView={setActiveView} />
       </div>
     </nav>
