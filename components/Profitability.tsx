@@ -4,12 +4,14 @@ import { useExpensesStore } from "@/stores/useExpensesStore";
 import { useAuthStore } from "@/stores/authStore";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import Loader from "./Loader";
+import { useUserDataStore } from "@/stores/userDataStore";
 
 const Profitability = () => {
   const fetchExpenses = useExpensesStore((state) => state.fetchExpenses);
   const expenses = useExpensesStore((state) => state.expenses);
   const { totals } = useFilteredExpenses(expenses);
   const { userID } = useAuthStore();
+  const { userData } = useUserDataStore();
   const isLoadingExpenses = useExpensesStore((state) => state.isLoading);
 
   useEffect(() => {
@@ -70,16 +72,18 @@ const Profitability = () => {
           {loaderFn() ? <Loader /> : `${profitability.toFixed(2)}%`}
         </p>
       </div>
-      <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center justify-center h-[208px] w-full">
-        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold flex justify-center items-center h-2/5 pt-6">
-          Rentabilidad Team
-        </p>
-        <p
-          className={`text-2xl text-[48px] sm:text-2xl md:text-[48px]  xl:text-[40px] min-[1700px] font-bold text-greenAccent h-3/5 items-center justify-center flex`}
-        >
-          {loaderFn() ? <Loader /> : `${profitabilityBroker.toFixed(2)}%`}
-        </p>
-      </div>
+      {userData?.role === "team_leader_broker" && (
+        <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center justify-center h-[208px] w-full">
+          <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold flex justify-center items-center h-2/5 pt-6">
+            Rentabilidad Team
+          </p>
+          <p
+            className={`text-2xl text-[48px] sm:text-2xl md:text-[48px]  xl:text-[40px] min-[1700px] font-bold text-greenAccent h-3/5 items-center justify-center flex`}
+          >
+            {loaderFn() ? <Loader /> : `${profitabilityBroker.toFixed(2)}%`}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
