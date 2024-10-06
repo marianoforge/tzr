@@ -14,12 +14,10 @@ export default async function handler(
 
   if (req.method === "GET") {
     try {
-      console.log(`Fetching user data for ID: ${id}`);
       const userRef = doc(db, "usuarios", id);
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-        console.log(`No user data found for ID: ${id}`);
         return res.status(404).json({ message: "User not found" });
       }
 

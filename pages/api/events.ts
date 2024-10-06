@@ -14,7 +14,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { user_uid } = req.query;
+  const user_uid =
+    req.method === "GET" ? req.query.user_uid : req.body.user_uid;
 
   if (!user_uid || typeof user_uid !== "string") {
     return res.status(400).json({ message: "User UID is required" });

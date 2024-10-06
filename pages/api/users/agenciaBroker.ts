@@ -16,7 +16,6 @@ export default async function handler(
     }
 
     try {
-      console.log(`Fetching users with agenciaBroker: ${agenciaBroker}`);
       const usersRef = collection(db, "usuarios");
       const q = query(usersRef, where("agenciaBroker", "==", agenciaBroker));
       const querySnapshot = await getDocs(q);

@@ -83,7 +83,8 @@ export default async function handler(
     });
 
     res.status(201).json({ message: "Usuario registrado exitosamente" });
-  } catch {
+  } catch (error) {
+    console.error("Error al registrar usuario:", error); // Log para errores
     res.status(500).json({ message: "Error al registrar usuario" });
   }
 }

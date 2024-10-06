@@ -8,11 +8,9 @@ import OperationsListDash from "@/components/TrackerComponents/Operations/Operat
 import OperationsCarouselDash from "./Operations/OperationsCarouselDash";
 import Profitability from "@/components/TrackerComponents/Profitability";
 import { UserInfo } from "@/components/TrackerComponents/NavComponents/UserInfo";
-import { useUserDataStore } from "@/stores/userDataStore";
 import { UserAvatar } from "@/components/TrackerComponents/NavComponents/UserAvatar";
 
 const DashBoard = () => {
-  const { userData, error } = useUserDataStore();
   return (
     <>
       <div className="flex flex-row justify-between items-center">
@@ -21,7 +19,7 @@ const DashBoard = () => {
         </div>
         <div className="hidden xl:flex flex-row justify-end items-center gap-2 w-1/2">
           <UserAvatar />
-          <UserInfo userData={userData} error={error} />
+          <UserInfo />
         </div>
       </div>
       <div className="grid grid-cols-1 mt-16 sm:mt-14 md:mt-12 lg:mt-12 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">

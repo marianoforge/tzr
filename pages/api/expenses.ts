@@ -16,7 +16,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // Obtener el user_uid del query
-  const { user_uid } = req.query;
+  const user_uid =
+    req.method === "GET" ? req.query.user_uid : req.body.user_uid;
 
   // Validar que el user_uid se ha proporcionado correctamente
   if (!user_uid || typeof user_uid !== "string") {
@@ -77,8 +78,7 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
     !expenseType ||
     !description ||
     !dollarRate ||
-    !user_uid ||
-    !expenseAssociationType
+    !user_uid
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }

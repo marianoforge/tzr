@@ -102,7 +102,7 @@ export interface ExpenseFormData {
   description: string;
   dollarRate: number;
   otherType?: string;
-  expenseAssociationType: string;
+  expenseAssociationType?: string;
 }
 
 export interface ExpensesState extends BaseState<Expense> {
@@ -169,9 +169,9 @@ export interface ModalProps {
 }
 
 export interface UserInfoProps {
-  userData: UserData | null;
-  isLoading?: boolean;
-  error: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export interface RegisterData {

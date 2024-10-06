@@ -26,7 +26,6 @@ export default async function handler(
       res.status(500).json({ message: "Error fetching operation", error });
     }
   } else if (req.method === "PUT") {
-    console.log(req.body);
     const {
       fecha_operacion,
       direccion_reserva,

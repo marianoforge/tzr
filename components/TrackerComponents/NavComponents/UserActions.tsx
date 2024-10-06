@@ -14,7 +14,8 @@ export const UserActions = ({ setActiveView }: UserActionsProps) => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      localStorage.removeItem("authToken");
+
+      localStorage.clear();
       setActiveView("login");
     } catch (error) {
       console.error("Error signing out:", error);
