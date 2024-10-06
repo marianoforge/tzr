@@ -1,16 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { auth, db } from "../../lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../../lib/firebase";
 
 interface RegisterRequestBody {
   email: string;
-  password: string;
+  password?: string; // Hacemos que la contraseña sea opcional si es un usuario de Google
   agenciaBroker: string;
   numeroTelefono: string;
   firstName: string;
   lastName: string;
   role: string;
+  googleUser?: boolean; // Indicador si es un usuario de Google
+  uid?: string; // uid para usuarios de Google
 }
 
 export default async function handler(
@@ -29,20 +31,38 @@ export default async function handler(
     firstName,
     lastName,
     role,
+    googleUser,
+    uid, // Asegúrate de que el uid sea parte del payload
   }: RegisterRequestBody = req.body;
 
-  if (
-    !email ||
-    !password ||
-    agenciaBroker === undefined ||
-    !numeroTelefono ||
-    !firstName ||
-    !lastName
-  ) {
+  if (!email || !agenciaBroker || !numeroTelefono || !firstName || !lastName) {
     return res.status(400).json({ message: "Todos los campos son requeridos" });
   }
 
   try {
+    // Si el usuario proviene de Google (sin contraseña)
+    if (googleUser && uid) {
+      // Usamos el UID proporcionado por Firebase
+      await setDoc(doc(db, "usuarios", uid), {
+        email,
+        agenciaBroker,
+        numeroTelefono,
+        firstName,
+        lastName,
+        role,
+        uid, // Asegúrate de guardar el uid en el documento
+        createdAt: new Date(),
+      });
+      return res
+        .status(201)
+        .json({ message: "Usuario registrado exitosamente (Google)" });
+    }
+
+    // Si no es un usuario de Google, entonces necesitamos crear el usuario con contraseña
+    if (!password) {
+      return res.status(400).json({ message: "Contraseña es requerida" });
+    }
+
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -50,23 +70,20 @@ export default async function handler(
     );
     const user = userCredential.user;
 
+    // Guardar el documento con el UID proporcionado por Firebase para usuarios con email y contraseña
     await setDoc(doc(db, "usuarios", user.uid), {
-      name: firstName,
-      lastName: lastName,
       email: user.email,
-      uid: user.uid,
-      createdAt: new Date(),
       agenciaBroker,
       numeroTelefono,
+      firstName,
+      lastName,
       role,
+      uid: user.uid, // Guardamos el UID para usuarios con email/contraseña
+      createdAt: new Date(),
     });
 
     res.status(201).json({ message: "Usuario registrado exitosamente" });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred" });
-    }
+  } catch {
+    res.status(500).json({ message: "Error al registrar usuario" });
   }
 }

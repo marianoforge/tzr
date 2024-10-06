@@ -178,8 +178,8 @@ export interface RegisterData {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
-  confirmPassword: string;
+  password?: string; // Make password optional
+  confirmPassword?: string; // Make confirmPassword optional
   agenciaBroker: string;
   numeroTelefono: string;
   role: string;

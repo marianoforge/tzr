@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import ModalOK from "@/components/TrackerComponents/ModalOK";
@@ -9,35 +9,53 @@ import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { RegisterData } from "@/types";
 
-const schema = yup.object().shape({
-  firstName: yup.string().required("Nombre es requerido"),
-  lastName: yup.string().required("Apellido es requerido"),
-  email: yup.string().email("Correo inválido").required("Correo es requerido"),
-  password: yup
-    .string()
-    .min(8, "Contraseña debe tener al menos 6 caracteres")
-    .required("Contraseña es requerida"),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref("password"), undefined], "Las contraseñas no coinciden")
-    .required("Confirmar contraseña es requerido"),
-  agenciaBroker: yup.string().required("Agencia o Broker es requerido"),
-  numeroTelefono: yup.string().required("Número de Teléfono es requerido"),
-  role: yup.string().required("Rol es requerido"),
-});
-
 const RegisterForm = () => {
+  const router = useRouter();
+  const { googleUser, email, uid } = router.query; // Capturar uid desde la query (si es usuario de Google)
+
+  // Definir esquema de validación de forma dinámica dependiendo si es usuario de Google
+  const schema = yup.object().shape({
+    firstName: yup.string().required("Nombre es requerido"),
+    lastName: yup.string().required("Apellido es requerido"),
+    email: yup
+      .string()
+      .email("Correo inválido")
+      .required("Correo es requerido"),
+    agenciaBroker: yup.string().required("Agencia o Broker es requerido"),
+    numeroTelefono: yup.string().required("Número de Teléfono es requerido"),
+    role: yup.string().required("Rol es requerido"),
+    // Validación condicional para contraseña solo si el usuario NO es de Google
+    ...(googleUser !== "true" && {
+      password: yup
+        .string()
+        .min(6, "Contraseña debe tener al menos 6 caracteres")
+        .required("Contraseña es requerida"),
+      confirmPassword: yup
+        .string()
+        .oneOf([yup.ref("password"), undefined], "Las contraseñas no coinciden")
+        .required("Confirmar contraseña es requerido"),
+    }),
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
+    setValue, // Para setear el email automáticamente
+  } = useForm<RegisterData>({
+    resolver: yupResolver(schema) as Resolver<RegisterData>,
   });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [formError, setFormError] = useState("");
-  const router = useRouter();
+
+  // Setear el email automáticamente si el usuario viene de Google
+  useEffect(() => {
+    if (googleUser === "true" && email) {
+      setValue("email", email as string);
+    }
+  }, [googleUser, email, setValue]);
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     try {
@@ -49,6 +67,12 @@ const RegisterForm = () => {
         body: JSON.stringify({
           ...data,
           agenciaBroker: cleanString(data.agenciaBroker),
+          googleUser: googleUser === "true" ? true : false, // Marcar si es usuario de Google
+          uid: googleUser === "true" ? uid : undefined, // Enviar el UID si el usuario es de Google
+          // No enviar la contraseña si el usuario es de Google
+          password: googleUser !== "true" ? data.password : undefined,
+          confirmPassword:
+            googleUser !== "true" ? data.confirmPassword : undefined,
         }),
       });
 
@@ -59,12 +83,12 @@ const RegisterForm = () => {
 
       setModalMessage("Registro exitoso. Ahora puedes iniciar sesión.");
       setIsModalOpen(true);
-      router.push("/login");
+      router.push("/dashboard");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
-        setFormError("Error desconocido al registrar usuario");
+        setFormError("An unknown error occurred");
       }
     }
   };
@@ -73,10 +97,11 @@ const RegisterForm = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-6 rounded shadow-md  w-11/12 max-w-lg"
+        className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
       >
         <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
-        {formError && <p className="text-red-500 mb-4">{formError}</p>}{" "}
+        {formError && <p className="text-red-500 mb-4">{formError}</p>}
+
         <Input
           type="text"
           placeholder="Nombre"
@@ -86,6 +111,7 @@ const RegisterForm = () => {
         {errors.firstName && (
           <p className="text-red-500">{errors.firstName.message}</p>
         )}
+
         <Input
           type="text"
           placeholder="Apellido"
@@ -95,31 +121,40 @@ const RegisterForm = () => {
         {errors.lastName && (
           <p className="text-red-500">{errors.lastName.message}</p>
         )}
+
         <Input
           type="email"
           placeholder="Correo electrónico"
           {...register("email")}
           required
+          readOnly={googleUser === "true"} // Si viene de Google, no puede modificar el email
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-        <Input
-          type="password"
-          placeholder="Contraseña"
-          {...register("password")}
-          required
-        />
-        {errors.password && (
-          <p className="text-red-500">{errors.password.message}</p>
+
+        {googleUser !== "true" && (
+          <>
+            <Input
+              type="password"
+              placeholder="Contraseña"
+              {...register("password")}
+              required
+            />
+            {errors.password && (
+              <p className="text-red-500">{errors.password.message}</p>
+            )}
+
+            <Input
+              type="password"
+              placeholder="Repite la contraseña"
+              {...register("confirmPassword")}
+              required
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500">{errors.confirmPassword.message}</p>
+            )}
+          </>
         )}
-        <Input
-          type="password"
-          placeholder="Repite la contraseña"
-          {...register("confirmPassword")}
-          required
-        />
-        {errors.confirmPassword && (
-          <p className="text-red-500">{errors.confirmPassword.message}</p>
-        )}
+
         <Input
           type="text"
           placeholder="Agencia / Broker"
@@ -129,6 +164,7 @@ const RegisterForm = () => {
         {errors.agenciaBroker && (
           <p className="text-red-500">{errors.agenciaBroker.message}</p>
         )}
+
         <Input
           type="tel"
           placeholder="Número de Teléfono"
@@ -138,7 +174,7 @@ const RegisterForm = () => {
         {errors.numeroTelefono && (
           <p className="text-red-500">{errors.numeroTelefono.message}</p>
         )}
-        {/* Nuevo select agregado */}
+
         <select
           {...register("role")}
           className="block w-full mt-2 mb-4 p-2 border border-gray-300 rounded"
@@ -150,8 +186,24 @@ const RegisterForm = () => {
           <option value="agente_asesor">Agente / Asesor</option>
           <option value="team_leader_broker">Team Leader / Broker</option>
         </select>
-        <Button type="submit">Registrarse</Button>
+
+        <div className="flex justify-between">
+          <Button
+            type="submit"
+            className="bg-greenAccent hover:bg-green-600 text-white py-2 px-4 rounded-md w-48"
+          >
+            Registrarse
+          </Button>
+          <Button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="bg-mediumBlue hover:bg-blue-600 text-white py-2 px-4 rounded-md w-48"
+          >
+            Iniciar sesión
+          </Button>
+        </div>
       </form>
+
       <ModalOK
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

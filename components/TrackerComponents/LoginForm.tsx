@@ -1,18 +1,31 @@
 import { useState } from "react";
-import {
-  signInWithEmailAndPassword,
-  setPersistence,
-  browserLocalPersistence,
-} from "firebase/auth";
-import { auth } from "../../lib/firebase";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import Input from "./FormComponents/Input";
-import Button from "./FormComponents/Button";
-import { schema } from "./LoginFormSchema";
-import { LoginData } from "@/types";
+import * as yup from "yup";
+import {
+  auth,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  db,
+} from "@/lib/firebase"; // Import Firebase Auth
+import { signInWithPopup } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore"; // Importar Firestore para verificar el usuario
+import Button from "@/components/TrackerComponents/FormComponents/Button";
+import Input from "@/components/TrackerComponents/FormComponents/Input";
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+const schema = yup.object().shape({
+  email: yup.string().email("Correo inválido").required("Correo es requerido"),
+  password: yup
+    .string()
+    .min(6, "Contraseña debe tener al menos 6 caracteres")
+    .required("Contraseña es requerida"),
+});
 
 const LoginForm = () => {
   const {
@@ -22,25 +35,65 @@ const LoginForm = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const [formError, setFormError] = useState("");
 
+  // Iniciar sesión con correo y contraseña usando Firebase
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
-      await setPersistence(auth, browserLocalPersistence);
+      // Utilizamos Firebase Auth para iniciar sesión con correo y contraseña
       const userCredential = await signInWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
+      const user = userCredential.user;
 
-      const token = await userCredential.user.getIdToken();
-      localStorage.setItem("authToken", token);
+      // Verificamos si el usuario está en Firestore
+      const userDocRef = doc(db, "usuarios", user.uid); // Usamos el UID del usuario
+      const userDoc = await getDoc(userDocRef);
 
-      router.push("/tracker/dashboard");
+      if (!userDoc.exists()) {
+        // Si el usuario no existe en Firestore, redirigirlo al formulario de registro
+        router.push({
+          pathname: "/register",
+          query: { email: user.email, googleUser: "false", uid: user.uid },
+        });
+      } else {
+        // Si el usuario existe, redirigir al dashboard
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setFormError(err.message);
+      } else {
+        setFormError("Error desconocido al iniciar sesión.");
+      }
+    }
+  };
+
+  // Iniciar sesión con Google
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      const user = result.user;
+
+      // Verificar si el usuario ya existe en Firestore
+      const userDocRef = doc(db, "usuarios", user.uid); // Usamos el UID de Firebase
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // Si el usuario no existe, redirigir al formulario de registro para completar los datos
+        router.push({
+          pathname: "/register",
+          query: { email: user.email, googleUser: "true", uid: user.uid },
+        });
+      } else {
+        // Si el usuario ya existe, simplemente redirige al dashboard
+        router.push("/dashboard");
+      }
     } catch {
-      setFormError("Error al iniciar sesión, verifica tus credenciales.");
+      setFormError("Error al iniciar sesión con Google");
     }
   };
 
@@ -51,7 +104,9 @@ const LoginForm = () => {
         className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
       >
         <h2 className="text-2xl mb-4 text-center">Iniciar Sesión</h2>
-        {formError && <p className="text-red-500">{formError}</p>}
+        {formError && <p className="text-red-500 mb-4">{formError}</p>}
+
+        {/* Email and Password Fields */}
         <Input
           type="email"
           placeholder="Correo electrónico"
@@ -59,30 +114,41 @@ const LoginForm = () => {
           required
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-        <div className="relative">
-          <Input
-            type={showPassword ? "text" : "password"}
-            placeholder="Contraseña"
-            {...register("password")}
-            className="w-full p-2 mb-4 border border-gray-300 rounded pr-10"
-            required
-          />
-          {errors.password && (
-            <p className="text-red-500">{errors.password.message}</p>
-          )}
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 pr-3 pb-3 flex items-center text-sm leading-5"
+
+        <Input
+          type="password"
+          placeholder="Contraseña"
+          {...register("password")}
+          required
+        />
+        {errors.password && (
+          <p className="text-red-500">{errors.password.message}</p>
+        )}
+        <div className="flex justify-between">
+          <Button
+            type="submit"
+            className="bg-mediumBlue hover:bg-blue-600 text-white py-2 px-4 rounded-md w-58"
           >
-            {showPassword ? (
-              <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-            ) : (
-              <EyeIcon className="h-5 w-5 text-gray-400" />
-            )}
-          </button>
+            Iniciar Sesión con Email
+          </Button>
+          <Button
+            type="button"
+            onClick={() => router.push("/register")}
+            className="bg-greenAccent hover:bg-green-600 text-white py-2 px-4 rounded-md w-58"
+          >
+            Registrarse con Email
+          </Button>
         </div>
-        <Button type="submit">Iniciar Sesión</Button>
+
+        {/* Google Login Button */}
+        <hr className="my-4" />
+        <Button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="bg-redAccent hover:bg-red-600 text-white py-2 px-4 rounded-md w-58"
+        >
+          Iniciar sesión con Google
+        </Button>
       </form>
     </div>
   );
