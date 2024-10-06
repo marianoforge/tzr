@@ -95,7 +95,8 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
       user_uid,
       otherType: otherType ?? "", // Si no está presente, establece como una cadena vacía
       expenseAssociationType,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     // Guardar el nuevo gasto en Firestore

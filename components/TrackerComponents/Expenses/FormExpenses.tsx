@@ -36,14 +36,12 @@ const FormularioExpenses: React.FC = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [expenseAssociationType, setExpenseAssociationType] = useState("");
+  const [expenseAssociationType, setExpenseAssociationType] = useState("agent"); // Set default to "agent"
   const [userRole, setUserRole] = useState<string | null>(null); // State to store user role
 
   const queryClient = useQueryClient();
 
   const role = userData?.role;
-
-  console.log(role);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -102,8 +100,8 @@ const FormularioExpenses: React.FC = () => {
   const handleExpenseAssociationTypeChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setExpenseAssociationType(e.target.value);
-    setValue("expenseAssociationType", e.target.value);
+    setExpenseAssociationType(e.target.value || "agent"); // Default to "agent" if no value is selected
+    setValue("expenseAssociationType", e.target.value || "agent");
   };
 
   // Mutación para crear un nuevo gasto
@@ -126,10 +124,7 @@ const FormularioExpenses: React.FC = () => {
 
   // Manejo del envío del formulario
   const onSubmit: SubmitHandler<ExpenseFormData> = (data) => {
-    console.log("Formulario enviado con datos:", data); // Log to verify form data
-
     if (!userID) {
-      console.log("No se proporcionó un ID de usuario válido");
       setModalMessage("No se proporcionó un ID de usuario válido");
       setIsModalOpen(true);
       return;
@@ -149,8 +144,6 @@ const FormularioExpenses: React.FC = () => {
       user_uid: userID ?? "",
       expenseAssociationType: data.expenseAssociationType ?? "",
     };
-
-    console.log("Datos del gasto a enviar:", expenseData); // Log to verify expense data
 
     mutation.mutate(expenseData, {
       onError: (error) => {

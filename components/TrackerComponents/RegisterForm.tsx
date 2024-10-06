@@ -12,6 +12,7 @@ import { RegisterData } from "@/types";
 const RegisterForm = () => {
   const router = useRouter();
   const { googleUser, email, uid } = router.query; // Capturar uid desde la query (si es usuario de Google)
+  const [csrfToken, setCsrfToken] = useState<string | null>(null); // State to store the CSRF token
 
   // Definir esquema de validación de forma dinámica dependiendo si es usuario de Google
   const schema = yup.object().shape({
@@ -50,6 +51,21 @@ const RegisterForm = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [formError, setFormError] = useState("");
 
+  // Fetch the CSRF token when the component mounts
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const res = await fetch("/api/register"); // Endpoint to get the CSRF token
+        const data = await res.json();
+        setCsrfToken(data.csrfToken); // Store the token in the state
+      } catch (error) {
+        console.error("Error fetching CSRF token:", error);
+      }
+    };
+
+    fetchCsrfToken();
+  }, []);
+
   // Setear el email automáticamente si el usuario viene de Google
   useEffect(() => {
     if (googleUser === "true" && email) {
@@ -63,6 +79,7 @@ const RegisterForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "CSRF-Token": csrfToken || "", // Include the CSRF token in the request headers
         },
         body: JSON.stringify({
           ...data,

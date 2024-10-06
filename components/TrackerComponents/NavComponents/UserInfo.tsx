@@ -7,7 +7,6 @@ export const UserInfo = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { userID } = useAuthStore();
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {

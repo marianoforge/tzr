@@ -74,8 +74,7 @@ const FormularioEvento: React.FC = () => {
       ...data,
       user_uid: userID,
     };
-    console.log(eventData);
-    // Ejecutar la mutación para crear el evento
+
     mutation.mutate(eventData);
   };
 

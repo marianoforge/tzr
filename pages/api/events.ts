@@ -71,8 +71,8 @@ const createEvent = async (req: NextApiRequest, res: NextApiResponse) => {
       endTime,
       description,
       user_uid, // user_uid debería ser incluido aquí
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     const docRef = await addDoc(collection(db, "events"), newEvent);
