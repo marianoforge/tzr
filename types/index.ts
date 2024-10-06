@@ -65,13 +65,15 @@ export interface OperationsComponentsProps {
 }
 
 export interface Event {
-  id: string;
+  id?: string;
   title: string;
   date: string;
   startTime: string;
   endTime: string;
   description: string;
   user_uid: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface EventsState extends BaseState<Event> {
@@ -166,22 +168,10 @@ export interface ModalProps {
   onAccept: () => void;
 }
 
-export interface NavButtonProps {
-  onClick: () => void;
-  label: string;
-  fullWidth?: boolean;
-}
-
 export interface UserInfoProps {
   userData: UserData | null;
   isLoading?: boolean;
   error: string | null;
-}
-
-export interface VerticalNavButtonProps {
-  onClick: () => void;
-  label: string;
-  icon?: React.ReactNode;
 }
 
 export interface RegisterData {

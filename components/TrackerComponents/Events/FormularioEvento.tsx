@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
-import { useEventsStore } from "@/stores/useEventsStore";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import TextArea from "@/components/TrackerComponents/FormComponents/TextArea";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
@@ -11,7 +9,10 @@ import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query"; // Import Tanstack Query
+import { createEvent } from "@/lib/api/eventsApi"; // Import the createEvent function from the events API
 
+// Esquema de validación con Yup
 const schema = yup.object().shape({
   title: yup.string().required("El título es requerido"),
   date: yup.string().required("La fecha es requerida"),
@@ -20,7 +21,8 @@ const schema = yup.object().shape({
   description: yup.string().required("La descripción es requerida"),
 });
 
-interface EventFormData {
+// Interfaz para el formulario de eventos
+export interface EventFormData {
   title: string;
   date: string;
   startTime: string;
@@ -30,8 +32,12 @@ interface EventFormData {
 
 const FormularioEvento: React.FC = () => {
   const { userID } = useAuthStore();
-  const { fetchEvents } = useEventsStore();
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const router = useRouter();
 
+  // Configuración de react-hook-form
   const {
     register,
     handleSubmit,
@@ -41,10 +47,22 @@ const FormularioEvento: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const router = useRouter();
+  // Mutación para crear un nuevo evento usando Tanstack Query
+  const mutation = useMutation({
+    mutationFn: createEvent, // Función que crea el evento
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events", userID] }); // Invalidar cache para recargar eventos
+      setModalMessage("Evento guardado exitosamente");
+      setIsModalOpen(true);
+      reset(); // Resetear el formulario tras éxito
+    },
+    onError: () => {
+      setModalMessage("Error al agendar el evento");
+      setIsModalOpen(true);
+    },
+  });
 
+  // Manejar la presentación del formulario
   const onSubmit: SubmitHandler<EventFormData> = async (data) => {
     if (!userID) {
       setModalMessage("No se proporcionó un ID de usuario válido");
@@ -52,22 +70,13 @@ const FormularioEvento: React.FC = () => {
       return;
     }
 
-    try {
-      await axios.post("/api/events", {
-        ...data,
-        user_uid: userID,
-      });
+    const eventData = {
+      ...data,
+      user_uid: userID,
+    };
 
-      setModalMessage("Evento guardado exitosamente");
-      setIsModalOpen(true);
-      reset();
-
-      await fetchEvents("user_id");
-    } catch (error) {
-      console.error("Error al agendar el evento:", error);
-      setModalMessage("Error al agendar el evento");
-      setIsModalOpen(true);
-    }
+    // Ejecutar la mutación para crear el evento
+    mutation.mutate(eventData);
   };
 
   return (
@@ -122,10 +131,9 @@ const FormularioEvento: React.FC = () => {
         <div className="flex justify-center lg:justify-end items-center mt-8">
           <Button
             type="submit"
-            className=" bg-greenAccent text-white p-2 rounded hover:bg-green-600
-             transition-all duration-300 font-semibold w-[200px]"
+            className="bg-greenAccent text-white p-2 rounded hover:bg-green-600 transition-all duration-300 font-semibold w-[200px] cursor-pointer"
           >
-            Guardar Operación
+            Guardar Evento
           </Button>
         </div>
         <ModalOK

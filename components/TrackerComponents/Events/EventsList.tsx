@@ -1,30 +1,35 @@
-import React, { useEffect } from "react";
-import { useOperationsStore } from "@/stores/useOperationsStore";
+import React from "react";
 import Loader from "../Loader";
 import { useAuthStore } from "@/stores/authStore";
-import { useEventsStore } from "@/stores/useEventsStore";
+import { useQuery } from "@tanstack/react-query"; // Importar useQuery
+import { fetchUserEvents } from "@/lib/api/eventsApi"; // Asegúrate de tener esta función en tu eventsApi.ts
 import router from "next/router";
+import { Event } from "@/types";
 
 const EventsList: React.FC = () => {
   const { userID } = useAuthStore();
-  const { isLoading } = useOperationsStore();
-  const { events, error, fetchEvents } = useEventsStore();
 
-  useEffect(() => {
-    if (userID) {
-      fetchEvents(userID);
-    }
-  }, [userID, fetchEvents]);
+  // Utilizar Tanstack Query para obtener los eventos
+  const {
+    data: events = [],
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["events", userID], // Query key única por usuario
+    queryFn: () => fetchUserEvents(userID!), // Función para obtener eventos
+    enabled: !!userID, // Solo ejecutar la consulta si userID está definido
+  });
+
+  // Filtrar los primeros 3 eventos
+  const displayedEvents = events.slice(0, 3);
 
   if (error) {
     return (
       <p className="text-center text-red-500">
-        Error al obtener eventos: {error}
+        Error al obtener eventos: {(error as Error).message}
       </p>
     );
   }
-
-  const displayedEvents = events.slice(0, 3);
 
   return isLoading ? (
     <Loader />
@@ -33,7 +38,7 @@ const EventsList: React.FC = () => {
       {displayedEvents.length === 0 ? (
         <p className="text-center text-gray-500">No hay eventos programados.</p>
       ) : (
-        displayedEvents.map((event) => (
+        displayedEvents.map((event: Event) => (
           <div
             className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-lightBlue even:border-t-darkBlue w-full min-w-[340px]"
             key={event.id}

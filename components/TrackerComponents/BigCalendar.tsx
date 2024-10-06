@@ -4,31 +4,36 @@ import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect } from "react";
-import { useEventsStore } from "@/stores/useEventsStore";
-import { useAuthStore } from "@/stores/authStore";
 import EventModal from "./Events/EventModal";
 import { Event } from "@/types";
+import { useAuthStore } from "@/stores/authStore";
+import { useQuery } from "@tanstack/react-query"; // Import Tanstack Query
+import { fetchUserEvents } from "@/lib/api/eventsApi"; // Import fetchUserEvents API function
 
 const localizer = momentLocalizer(moment);
 
 const BigCalendar = () => {
-  const { events, fetchEvents } = useEventsStore();
   const { userID } = useAuthStore();
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState(new Date(2024, 8, 26));
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (userID) {
-      fetchEvents(userID);
-    }
-  }, [userID, fetchEvents]);
+  // Fetch events for the logged-in user
+  const {
+    data: events = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["events", userID],
+    queryFn: () => fetchUserEvents(userID as string),
+    enabled: !!userID, // Only fetch if userID exists
+  });
 
-  const calendarEvents = events.map((event) => ({
+  // Map the events data into a format compatible with the calendar
+  const calendarEvents = events.map((event: Event) => ({
     id: event.id,
     title: event.title,
-    date: event.date,
     startTime: new Date(`${event.date}T${event.startTime}`),
     endTime: new Date(`${event.date}T${event.endTime}`),
     description: event.description,
@@ -91,6 +96,14 @@ const BigCalendar = () => {
     return () => window.removeEventListener("resize", updateView);
   }, []);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading events: {error.message}</div>;
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-md p-2 sm:p-4 md:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
@@ -133,21 +146,24 @@ const BigCalendar = () => {
           eventTimeRangeFormat: () => "",
         }}
         components={{
-          event: (props) => (
+          event: (props: { event: Event }) => (
             <div
               className="bg-lightBlue text-white p-1 rounded text-xs sm:text-sm"
               onClick={() =>
                 handleEventClick({
                   ...props.event,
                   date: props.event.date,
-                  startTime: props.event.startTime.toISOString(),
-                  endTime: props.event.endTime.toISOString(),
+                  startTime: new Date(props.event.startTime).toISOString(),
+                  endTime: new Date(props.event.endTime).toISOString(),
+                  user_uid: props.event.user_uid,
+                  title: props.event.title,
+                  description: props.event.description,
                 })
               }
             >
-              <span>{formatEventTime(props.event.startTime)}</span>
+              <span>{formatEventTime(new Date(props.event.startTime))}</span>
               {" - "}
-              {props.title}
+              {props.event.title}
             </div>
           ),
         }}

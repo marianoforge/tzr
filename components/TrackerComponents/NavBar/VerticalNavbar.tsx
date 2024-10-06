@@ -9,9 +9,9 @@ import {
   ClipboardDocumentCheckIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
-import { VerticalNavButton } from "@/components/TrackerComponents/NavComponents/VerticalNavButton";
 import Image from "next/image";
 import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
+import { NavLink } from "../NavComponents/NavLink";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
@@ -32,77 +32,73 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     return () => unsubscribe();
   }, [fetchItems]);
 
-  const handleNavClick = (view: string) => {
-    setActiveView(view);
-  };
-
-  const renderNavButtons = (handleNavClick: (view: string) => void) => (
+  const renderNavButtons = () => (
     <>
-      <VerticalNavButton
-        onClick={() => handleNavClick("dashboard")}
-        label="Dashboard"
+      <NavLink
+        href="/dashboard"
         icon={<HomeIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Dashboard"
       />
       <div className="text-lg flex flex-col pt-4 pl-4 pb-2">
         <p>Informes</p>
       </div>
-      <VerticalNavButton
-        onClick={() => handleNavClick("operationsList")}
-        label="Operaciones"
+      <NavLink
+        href="/operationsList"
         icon={
           <ClipboardDocumentListIcon className="w-5 h-5 mr-2 text-lightBlue" />
         }
+        label="Operaciones"
       />
-      <VerticalNavButton
-        onClick={() => handleNavClick("expensesList")}
-        label="Gastos"
+      <NavLink
+        href="/expensesList"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Gastos"
       />
-      <VerticalNavButton
-        onClick={() => handleNavClick("calendar")}
-        label="Calendario de Eventos"
+      <NavLink
+        href="/calendar"
         icon={<CalendarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Calendario de Eventos"
       />
       <div className="text-lg flex flex-col pt-10 pl-4 pb-2">
         <p>Formularios</p>
       </div>
-      <VerticalNavButton
-        onClick={() => handleNavClick("reservationInput")}
-        label="Form de Operaciones"
+      <NavLink
+        href="/reservationInput"
         icon={
           <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
         }
+        label="Form de Operaciones"
       />
-      <VerticalNavButton
-        onClick={() => handleNavClick("eventForm")}
-        label="Form de Eventos"
+      <NavLink
+        href="/eventForm"
         icon={<TableCellsIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Form de Eventos"
       />
-      <VerticalNavButton
-        onClick={() => handleNavClick("expenses")}
-        label="Form de Gastos"
+      <NavLink
+        href="/expenses"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Form de Gastos"
       />
     </>
   );
 
-  const renderAdminNavButtons = (handleNavClick: (view: string) => void) => (
+  const renderAdminNavButtons = () => (
     <>
-      {renderNavButtons(handleNavClick)}
+      {renderNavButtons()}
       <div className="text-lg flex flex-col pt-10 pl-4 pb-2">
         <p>Reportes Team / Broker</p>
       </div>
-      <VerticalNavButton
-        onClick={() => handleNavClick("agents")}
-        label="Asesores"
+      <NavLink
+        href="/agents"
         icon={
           <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
         }
+        label="Asesores"
       />
-      <VerticalNavButton
-        onClick={() => handleNavClick("expensesBroker")}
-        label="Gastos"
+      <NavLink
+        href="/expensesBroker"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Gastos"
       />
     </>
   );
@@ -112,15 +108,15 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
 
     switch (userData.role) {
       case "team_leader_broker":
-        return renderAdminNavButtons(handleNavClick);
+        return renderAdminNavButtons();
       case "agente_asesor":
-        return renderNavButtons(handleNavClick);
+        return renderNavButtons();
       default:
         return (
-          <VerticalNavButton
-            onClick={() => handleNavClick("dashboard")}
-            label="Dashboard"
+          <NavLink
+            href="/dashboard"
             icon={<HomeIcon className="w-5 h-5 mr-2" />}
+            label="Dashboard"
           />
         );
     }

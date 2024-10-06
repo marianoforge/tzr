@@ -28,61 +28,28 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleNavClick = (view: string) => {
-    setActiveView(view);
-    setIsMenuOpen(false);
-  };
-
-  const renderNavButtons = (handleNavClick: (view: string) => void) => (
+  const renderNavButtons = () => (
     <>
+      <NavButton href="/dashboard" label="Dashboard" fullWidth />
+      <NavButton href="/calendar" label="Calendario" fullWidth />
+      <NavButton href="/operationsList" label="Operaciones" fullWidth />
+      <NavButton href="/expensesList" label="Gastos" fullWidth />
       <NavButton
-        onClick={() => handleNavClick("dashboard")}
-        label="Dashboard"
-        fullWidth
-      />
-      <NavButton
-        onClick={() => handleNavClick("calendar")}
-        label="Calendario"
-        fullWidth
-      />
-      <NavButton
-        onClick={() => handleNavClick("operationsList")}
-        label="Operaciones"
-        fullWidth
-      />
-      <NavButton
-        onClick={() => handleNavClick("expensesList")}
-        label="Gastos"
-        fullWidth
-      />
-      <NavButton
-        onClick={() => handleNavClick("reservationInput")}
+        href="/reservationInput"
         label="Form de Operaciones"
         fullWidth
       />
-      <NavButton
-        onClick={() => handleNavClick("eventForm")}
-        label="Form de Eventos"
-        fullWidth
-      />
-      <NavButton
-        onClick={() => handleNavClick("expenses")}
-        label="Form de Gastos"
-        fullWidth
-      />
+      <NavButton href="/eventForm" label="Form de Eventos" fullWidth />
+      <NavButton href="/expenses" label="Form de Gastos" fullWidth />
     </>
   );
 
-  const renderAdminNavButtons = (handleNavClick: (view: string) => void) => (
+  const renderAdminNavButtons = () => (
     <>
-      {renderNavButtons(handleNavClick)}
+      {renderNavButtons()}
+      <NavButton href="/agents" label="Informe Agentes / Asesores" fullWidth />
       <NavButton
-        onClick={() => handleNavClick("agents")}
-        label="Informe Agentes / Asesores"
-        fullWidth
-      />
-      <NavButton
-        onClick={() => handleNavClick("expensesBroker")}
+        href="/expensesBroker"
         label="Gastos Team / Broker"
         fullWidth
       />
@@ -94,17 +61,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
 
     switch (userData.role) {
       case "team_leader_broker":
-        return renderAdminNavButtons(handleNavClick);
+        return renderAdminNavButtons();
       case "agente_asesor":
-        return renderNavButtons(handleNavClick);
+        return renderNavButtons();
       default:
-        return (
-          <NavButton
-            onClick={() => handleNavClick("dashboard")}
-            label="Dashboard"
-            fullWidth
-          />
-        );
+        return <NavButton href="/dashboard" label="Dashboard" fullWidth />;
     }
   };
 

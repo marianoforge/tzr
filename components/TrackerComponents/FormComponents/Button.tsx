@@ -16,9 +16,9 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={
+      className={`${
         className || "bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-      }
+      } !cursor-pointer`} // Ensure cursor-pointer is applied
       onClick={onClick}
     >
       {children}
