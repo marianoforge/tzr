@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState, useEffect } from "react";
-import EventModal from "./Events/EventModal";
+import EventModal from "./EventModal";
 import { Event } from "@/types";
 import { useAuthStore } from "@/stores/authStore";
 import { useQuery } from "@tanstack/react-query"; // Import Tanstack Query
