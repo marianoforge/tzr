@@ -189,3 +189,20 @@ export interface LoginData {
   email: string;
   password: string;
 }
+export interface RegisterRequestBody {
+  email: string;
+  password?: string;
+  agenciaBroker: string;
+  numeroTelefono: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  googleUser?: boolean;
+  uid?: string;
+}
+
+export interface LoginRequestBody {
+  email?: string;
+  password?: string;
+  googleAuth?: boolean;
+}

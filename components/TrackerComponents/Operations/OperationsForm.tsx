@@ -11,7 +11,7 @@ import { InferType } from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query"; // Import Tanstack Query
 import { createOperation } from "@/lib/api/operationsApi"; // Import the createOperation function
 import { calculateHonorarios } from "@/utils/calculations";
-import { schema } from "./Schemas/OperationsFormSchema";
+import { schema } from "@/schemas/operationsFormSchema";
 import { Operation } from "@/types";
 
 type FormData = InferType<typeof schema>;

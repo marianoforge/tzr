@@ -2,41 +2,20 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import ModalOK from "@/components/TrackerComponents/ModalOK";
 import { cleanString } from "@/utils/cleanString";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { RegisterData } from "@/types";
+import { createSchema } from "@/schemas/registerFormSchema"; // Import the createSchema function
 
 const RegisterForm = () => {
   const router = useRouter();
   const { googleUser, email, uid } = router.query; // Capturar uid desde la query (si es usuario de Google)
   const [csrfToken, setCsrfToken] = useState<string | null>(null); // State to store the CSRF token
 
-  // Definir esquema de validación de forma dinámica dependiendo si es usuario de Google
-  const schema = yup.object().shape({
-    firstName: yup.string().required("Nombre es requerido"),
-    lastName: yup.string().required("Apellido es requerido"),
-    email: yup
-      .string()
-      .email("Correo inválido")
-      .required("Correo es requerido"),
-    agenciaBroker: yup.string().required("Agencia o Broker es requerido"),
-    numeroTelefono: yup.string().required("Número de Teléfono es requerido"),
-    role: yup.string().required("Rol es requerido"),
-    // Validación condicional para contraseña solo si el usuario NO es de Google
-    ...(googleUser !== "true" && {
-      password: yup
-        .string()
-        .min(6, "Contraseña debe tener al menos 6 caracteres")
-        .required("Contraseña es requerida"),
-      confirmPassword: yup
-        .string()
-        .oneOf([yup.ref("password"), undefined], "Las contraseñas no coinciden")
-        .required("Confirmar contraseña es requerido"),
-    }),
-  });
+  // Use the createSchema function to define the schema
+  const schema = createSchema(googleUser === "true");
 
   const {
     register,
@@ -55,7 +34,7 @@ const RegisterForm = () => {
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
-        const res = await fetch("/api/register"); // Endpoint to get the CSRF token
+        const res = await fetch("/api/auth/register"); // Endpoint to get the CSRF token
         const data = await res.json();
         setCsrfToken(data.csrfToken); // Store the token in the state
       } catch (error) {
@@ -75,7 +54,7 @@ const RegisterForm = () => {
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +63,7 @@ const RegisterForm = () => {
         body: JSON.stringify({
           ...data,
           agenciaBroker: cleanString(data.agenciaBroker),
-          googleUser: googleUser === "true" ? true : false, // Marcar si es usuario de Google
+          googleUser: googleUser === "true", // Marcar si es usuario de Google
           uid: googleUser === "true" ? uid : undefined, // Enviar el UID si el usuario es de Google
           // No enviar la contraseña si el usuario es de Google
           password: googleUser !== "true" ? data.password : undefined,

@@ -6,7 +6,7 @@ import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import { calculateHonorarios } from "@/utils/calculations";
-import { schema } from "./Schemas/OperationsModalSchema";
+import { schema } from "@/schemas/operationsModalSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateOperation } from "@/lib/api/operationsApi"; // Import the update API
 

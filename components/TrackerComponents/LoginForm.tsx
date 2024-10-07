@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import {
   auth,
   GoogleAuthProvider,
@@ -13,19 +12,8 @@ import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore"; // Importar Firestore para verificar el usuario
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
-
-interface LoginData {
-  email: string;
-  password: string;
-}
-
-const schema = yup.object().shape({
-  email: yup.string().email("Correo inválido").required("Correo es requerido"),
-  password: yup
-    .string()
-    .min(6, "Contraseña debe tener al menos 6 caracteres")
-    .required("Contraseña es requerida"),
-});
+import { schema } from "@/schemas/loginFormSchema";
+import { LoginData } from "@/types";
 
 const LoginForm = () => {
   const {

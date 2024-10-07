@@ -3,18 +3,8 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { setCsrfCookie, validateCsrfToken } from "@/lib/csrf";
-
-interface RegisterRequestBody {
-  email: string;
-  password?: string;
-  agenciaBroker: string;
-  numeroTelefono: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  googleUser?: boolean;
-  uid?: string;
-}
+import { RegisterRequestBody } from "@/types";
+import { createSchema } from "@/schemas/registerFormSchema"; // Importa el esquema
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,6 +46,10 @@ export default async function handler(
     }
 
     try {
+      // Validar los datos del cuerpo de la solicitud
+      const schema = createSchema(googleUser ?? false);
+      await schema.validate(req.body, { abortEarly: false });
+
       if (googleUser && uid) {
         await setDoc(doc(db, "usuarios", uid), {
           email,
