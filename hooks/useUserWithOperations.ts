@@ -21,7 +21,7 @@ const useUsersWithOperations = (
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/usersWithOps");
+        const response = await fetch("/api/users/usersWithOps");
         if (!response.ok) {
           throw new Error("Failed to fetch users and operations");
         }
