@@ -1,7 +1,10 @@
+// pages/api/operations/[id].ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { Operation } from "@/types";
 
+// Handler para manejar GET, PUT, DELETE de una operación específica
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -9,111 +12,67 @@ export default async function handler(
   const { id } = req.query;
 
   if (!id || typeof id !== "string") {
-    return res.status(400).json({ message: "Operation ID is required" });
+    return res
+      .status(400)
+      .json({ message: "Operation ID is required and must be a string" });
   }
 
-  if (req.method === "GET") {
-    try {
-      const operationRef = doc(db, "operations", id);
-      const operationSnap = await getDoc(operationRef);
-
-      if (!operationSnap.exists()) {
-        return res.status(404).json({ message: "Operation not found" });
-      }
-
-      res.status(200).json(operationSnap.data());
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching operation", error });
-    }
-  } else if (req.method === "PUT") {
-    const {
-      fecha_operacion,
-      direccion_reserva,
-      tipo_operacion,
-      estado,
-      valor_reserva,
-      punta_compradora,
-      punta_vendedora,
-      numero_sobre_reserva,
-      numero_sobre_refuerzo,
-      porcentaje_honorarios_asesor,
-      porcentaje_honorarios_broker,
-      honorarios_broker,
-      honorarios_asesor,
-      porcentaje_punta_compradora,
-      porcentaje_punta_vendedora,
-      referido,
-      compartido,
-    } = req.body;
-
-    if (
-      !fecha_operacion &&
-      !direccion_reserva &&
-      !tipo_operacion &&
-      !estado &&
-      !valor_reserva &&
-      !punta_compradora &&
-      !punta_vendedora &&
-      !numero_sobre_reserva &&
-      !numero_sobre_refuerzo &&
-      !porcentaje_honorarios_asesor &&
-      !porcentaje_honorarios_broker &&
-      !porcentaje_punta_compradora &&
-      !porcentaje_punta_vendedora &&
-      !honorarios_broker &&
-      !honorarios_asesor &&
-      !referido &&
-      !compartido
-    ) {
-      return res.status(400).json({ message: "No fields to update" });
-    }
-
-    try {
-      const operationRef = doc(db, "operations", id);
-      const updates = {
-        ...(fecha_operacion && { fecha_operacion }),
-        ...(direccion_reserva && { direccion_reserva }),
-        ...(tipo_operacion && { tipo_operacion }),
-        ...(estado && { estado }),
-        ...(valor_reserva && { valor_reserva }),
-        ...(punta_compradora !== undefined && { punta_compradora }),
-        ...(punta_vendedora !== undefined && { punta_vendedora }),
-        ...(numero_sobre_reserva !== undefined && { numero_sobre_reserva }),
-        ...(numero_sobre_refuerzo !== undefined && { numero_sobre_refuerzo }),
-        ...(porcentaje_honorarios_asesor !== undefined && {
-          porcentaje_honorarios_asesor,
-        }),
-        ...(porcentaje_honorarios_broker !== undefined && {
-          porcentaje_honorarios_broker,
-        }),
-        ...(porcentaje_punta_compradora !== undefined && {
-          porcentaje_punta_compradora,
-        }),
-        ...(porcentaje_punta_vendedora !== undefined && {
-          porcentaje_punta_vendedora,
-        }),
-        ...(honorarios_broker !== undefined && { honorarios_broker }),
-        ...(honorarios_asesor !== undefined && { honorarios_asesor }),
-        ...(referido && { referido }),
-        ...(compartido && { compartido }),
-        updatedAt: new Date(),
-      };
-      await updateDoc(operationRef, updates);
-
-      res.status(200).json({ message: "Operation updated successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Error updating operation", error });
-    }
-  } else if (req.method === "DELETE") {
-    try {
-      const operationRef = doc(db, "operations", id);
-      await deleteDoc(operationRef);
-
-      res.status(200).json({ message: "Operation deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Error deleting operation", error });
-    }
-  } else {
-    res.status(405).json({ message: "Method not allowed" });
+  switch (req.method) {
+    case "GET":
+      return getOperationById(id, res);
+    case "PUT":
+      return updateOperation(id, req.body, res);
+    case "DELETE":
+      return deleteOperation(id, res);
+    default:
+      return res.status(405).json({ message: "Method not allowed" });
   }
 }
+
+// Obtener una operación por ID
+const getOperationById = async (id: string, res: NextApiResponse) => {
+  try {
+    const docRef = doc(db, "operations", id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return res.status(404).json({ message: "Operation not found" });
+    }
+
+    return res.status(200).json({ id: docSnap.id, ...docSnap.data() });
+  } catch (error) {
+    console.error("Error fetching operation:", error);
+    return res.status(500).json({ message: "Error fetching operation" });
+  }
+};
+
+// Actualizar una operación por ID
+const updateOperation = async (
+  id: string,
+  updatedData: Partial<Operation>,
+  res: NextApiResponse
+) => {
+  try {
+    const docRef = doc(db, "operations", id);
+    await updateDoc(docRef, {
+      ...updatedData,
+      updatedAt: new Date().toISOString(),
+    });
+    return res.status(200).json({ message: "Operation updated successfully" });
+  } catch (error) {
+    console.error("Error updating operation:", error);
+    return res.status(500).json({ message: "Error updating operation" });
+  }
+};
+
+// Eliminar una operación por ID
+const deleteOperation = async (id: string, res: NextApiResponse) => {
+  try {
+    const docRef = doc(db, "operations", id);
+    await deleteDoc(docRef);
+    return res.status(200).json({ message: "Operation deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting operation:", error);
+    return res.status(500).json({ message: "Error deleting operation" });
+  }
+};

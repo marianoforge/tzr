@@ -1,8 +1,14 @@
+import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchUserOperations,
+  deleteOperation,
+  updateOperation,
+} from "@/lib/api/operationsApi";
 import { formatNumber } from "@/utils/formatNumber";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import Loader from "../Loader";
 import OperationsModal from "./OperationsModal";
-import { useOperations } from "../../../hooks/useOperations";
 import {
   CheckIcon,
   XMarkIcon,
@@ -10,6 +16,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/stores/authStore";
+import { Operation } from "@/types";
 
 interface OperationsTableProps {
   filter: "all" | "open" | "closed";
@@ -25,29 +32,83 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   filter,
   totals,
 }) => {
-  const {
-    operations,
-    isLoading,
-    handleEstadoChange,
-    handleEditClick,
-    handleDeleteClick,
-    isEditModalOpen,
-    selectedOperation,
-    setIsEditModalOpen,
-    fetchItems,
-  } = useOperations();
   const { userID } = useAuthStore();
+  const queryClient = useQueryClient();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
+    null
+  );
 
-  const filteredOperations = operations.filter((operation) => {
+  // Obtener las operaciones del usuario usando Tanstack Query
+  const { data: operations, isLoading } = useQuery({
+    queryKey: ["operations", userID || ""],
+    queryFn: () => fetchUserOperations(userID || ""),
+    enabled: !!userID, // Solo ejecuta la consulta si userID está definido
+  });
+
+  // Mutación para eliminar operación
+  const deleteMutation = useMutation({
+    mutationFn: deleteOperation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["operations", userID],
+      });
+    },
+  });
+
+  // Mutación para actualizar el estado de la operación
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Operation> }) =>
+      updateOperation({ id, data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["operations", userID],
+      });
+    },
+  });
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  const filteredOperations = operations?.filter((operation: Operation) => {
     if (filter === "all") return true;
     return filter === "open"
       ? operation.estado === "En Curso"
       : operation.estado === "Cerrada";
   });
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  const handleEstadoChange = (id: string, currentEstado: string) => {
+    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
+
+    // Buscar la operación existente en la lista de operaciones
+    const existingOperation = operations.find((op: Operation) => op.id === id);
+
+    // Si no se encuentra la operación, no hacer nada
+    if (!existingOperation) {
+      console.error("Operación no encontrada");
+      return;
+    }
+
+    // Crear un nuevo objeto con todas las propiedades de la operación existente
+    // y actualizar solo el campo "estado"
+    const updatedOperation: Operation = {
+      ...existingOperation, // Mantener todas las propiedades originales
+      estado: newEstado, // Modificar solo el estado
+    };
+
+    // Ejecutar la mutación de actualización con la operación completa
+    updateMutation.mutate({ id: id, data: updatedOperation });
+  };
+
+  const handleDeleteClick = (id: string) => {
+    deleteMutation.mutate(id);
+  };
+
+  const handleEditClick = (operation: Operation) => {
+    setSelectedOperation(operation);
+    setIsEditModalOpen(true);
+  };
 
   return (
     <div className="overflow-x-auto">
@@ -125,7 +186,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {filteredOperations.map((operacion) => (
+          {filteredOperations?.map((operacion: Operation) => (
             <tr
               key={operacion.id}
               className={`${OPERATIONS_LIST_COLORS.rowBg} ${OPERATIONS_LIST_COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
@@ -237,7 +298,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           operation={selectedOperation}
-          onUpdate={() => fetchItems(userID || "")} // Provide a default empty string if userID is null
+          onUpdate={() =>
+            queryClient.invalidateQueries({ queryKey: ["operations", userID] })
+          }
         />
       )}
     </div>

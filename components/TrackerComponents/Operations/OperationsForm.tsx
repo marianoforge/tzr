@@ -3,14 +3,16 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
-import axios from "axios";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType } from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query"; // Import Tanstack Query
+import { createOperation } from "@/lib/api/operationsApi"; // Import the createOperation function
 import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "./Schemas/OperationsFormSchema";
+import { Operation } from "@/types";
 
 type FormData = InferType<typeof schema>;
 
@@ -29,6 +31,7 @@ const OperationsForm = () => {
       punta_vendedora: false,
     },
   });
+
   const [userUID, setUserUID] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -36,7 +39,9 @@ const OperationsForm = () => {
   const [honorariosAsesor, setHonorariosAsesor] = useState(0);
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
+  // Fetch the user ID from Firebase authentication
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUserUID(user ? user.uid : null);
@@ -46,6 +51,7 @@ const OperationsForm = () => {
 
   const watchAllFields = watch();
 
+  // Calculate honorarios based on form values
   useEffect(() => {
     const valor_reserva = parseFloat(String(watchAllFields.valor_reserva)) || 0;
     const porcentaje_honorarios_asesor =
@@ -67,47 +73,46 @@ const OperationsForm = () => {
     watchAllFields.porcentaje_honorarios_broker,
   ]);
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  // Mutation to create a new operation using Tanstack Query
+  const mutation = useMutation({
+    mutationFn: createOperation, // Use the function to create an operation
+    onSuccess: () => {
+      if (userUID) {
+        queryClient.invalidateQueries({ queryKey: ["operations", userUID] }); // Invalidate query to refresh operations list
+      }
+      setModalMessage("Operación guardada exitosamente");
+      setShowModal(true);
+      reset(); // Reset form after successful submission
+    },
+    onError: () => {
+      setModalMessage("Error al guardar la operación");
+      setShowModal(true);
+    },
+  });
+
+  // Handle form submission
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!userUID) {
       setModalMessage("Usuario no autenticado. Por favor, inicia sesión.");
       setShowModal(true);
       return;
     }
 
-    try {
-      const dataToSubmit = {
-        ...data,
-        fecha_operacion: new Date(data.fecha_operacion).toISOString(),
-        honorarios_broker: honorariosBroker,
-        honorarios_asesor: honorariosAsesor,
-        user_uid: userUID,
-        punta_compradora: data.punta_compradora ? 1 : 0,
-        punta_vendedora: data.punta_vendedora ? 1 : 0,
-        estado: "En Curso",
-        porcentaje_punta_compradora: data.porcentaje_punta_compradora || 0,
-        porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
-      };
+    const dataToSubmit = {
+      ...data,
+      fecha_operacion: new Date(data.fecha_operacion).toISOString(),
+      honorarios_broker: honorariosBroker,
+      honorarios_asesor: honorariosAsesor,
+      user_uid: userUID,
+      punta_compradora: data.punta_compradora ? 1 : 0,
+      punta_vendedora: data.punta_vendedora ? 1 : 0,
+      estado: "En Curso",
+      porcentaje_punta_compradora: data.porcentaje_punta_compradora || 0,
+      porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
+    };
 
-      await axios.post("/api/operations", dataToSubmit, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      setModalMessage("Operación guardada exitosamente");
-      setShowModal(true);
-      reset();
-      router.push("/dashboard");
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        setModalMessage(
-          error.response.data.message || "Error al guardar la operación"
-        );
-      } else {
-        setModalMessage("Error al guardar la operación");
-      }
-      setShowModal(true);
-    }
+    // Execute the mutation to create the operation
+    mutation.mutate(dataToSubmit as unknown as Operation);
   };
 
   const handleModalAccept = () => {

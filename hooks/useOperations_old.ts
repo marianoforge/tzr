@@ -18,7 +18,7 @@ export const useOperations = (): UseOperationsReturn => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`/api/operations/user/${userID}`);
+      const response = await axios.get(`/api/operations/${userID}`);
       setOperations(response.data);
     } catch (err) {
       setError((err as Error).message);

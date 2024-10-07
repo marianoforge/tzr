@@ -33,7 +33,7 @@ export const useOperations = () => {
       if (!userUID) return;
 
       try {
-        const response = await axios.get(`/api/operations/user/${userUID}`);
+        const response = await axios.get(`/api/operations/${userUID}`);
         if (response.status !== 200) {
           throw new Error("Error al obtener las operaciones del usuario");
         }

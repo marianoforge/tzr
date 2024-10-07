@@ -1,18 +1,39 @@
-import { useEffect } from "react";
 import { formatNumber } from "@/utils/formatNumber";
 import Loader from "@/components/TrackerComponents/Loader";
-import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserOperations } from "@/lib/api/operationsApi";
+import { Operation } from "@/types";
 
 const CuadroPrincipal = () => {
   const { userID } = useAuthStore();
-  const { operations, totals, isLoading, fetchItems } = useOperationsStore();
 
-  useEffect(() => {
-    if (userID) {
-      fetchItems(userID);
+  const { data: operations = [], isLoading } = useQuery({
+    queryKey: ["operations", userID],
+    queryFn: () => fetchUserOperations(userID || ""),
+    enabled: !!userID, // Solo hace la petición si hay un userID
+  });
+
+  const totals = operations.reduce(
+    (
+      acc: {
+        punta_compradora: number;
+        punta_vendedora: number;
+        honorarios_asesor: number;
+      },
+      op: Operation
+    ) => {
+      acc.punta_compradora += Number(op.punta_compradora);
+      acc.punta_vendedora += Number(op.punta_vendedora);
+      acc.honorarios_asesor += Number(op.honorarios_asesor);
+      return acc;
+    },
+    {
+      punta_compradora: 0,
+      punta_vendedora: 0,
+      honorarios_asesor: 0,
     }
-  }, [userID, fetchItems]);
+  );
 
   return (
     <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">
@@ -37,7 +58,7 @@ const CuadroPrincipal = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {operations.map((operacion) => (
+                  {operations.map((operacion: Operation) => (
                     <tr
                       key={operacion.id}
                       className="border-b md:table-row flex flex-col md:flex-row mb-4 text-center"

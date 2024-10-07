@@ -2,7 +2,7 @@ import axios from "axios";
 import { Operation } from "@/types";
 
 export const fetchOperations = async (userID: string): Promise<Operation[]> => {
-  const response = await axios.get(`/api/operations/user/${userID}`);
+  const response = await axios.get(`/api/operations/${userID}`);
   return response.data;
 };
 

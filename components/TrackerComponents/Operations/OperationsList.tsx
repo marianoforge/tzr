@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { useOperationsStore } from "@/stores/useOperationsStore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import axios from "axios";
 import OperationsContainer from "./OperationsContainer";
 import OperationsModal from "./OperationsModal";
 import { formatNumber } from "@/utils/formatNumber";
@@ -15,6 +14,11 @@ import {
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import {
+  fetchUserOperations,
+  updateOperation,
+  deleteOperation,
+} from "@/lib/api/operationsApi";
 
 interface OperationsCarouselDashProps {
   filter: "all" | "open" | "closed";
@@ -25,14 +29,15 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
   filter,
   setFilter,
 }) => {
-  const { operations, setItems, isLoading, fetchItems } = useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
-  const router = useRouter();
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
+  // Autenticación del usuario para obtener UID
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -45,43 +50,39 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
     return () => unsubscribe();
   }, [router]);
 
-  useEffect(() => {
-    const fetchOperations = async () => {
-      if (!userUID) return;
+  // Query para obtener las operaciones del usuario
+  const { data: operations = [], isLoading } = useQuery({
+    queryKey: ["operations", userUID],
+    queryFn: () => fetchUserOperations(userUID || ""),
+    enabled: !!userUID, // Solo se ejecuta si userUID está disponible
+  });
 
-      try {
-        const response = await axios.get(`/api/operations/user/${userUID}`);
-
-        if (response.status !== 200) {
-          throw new Error("Error al obtener las operaciones del usuario");
-        }
-
-        const data = response.data;
-        setItems(data);
-      } catch (error) {
-        console.error("Error al obtener las operaciones:", error);
-      }
-    };
-
-    fetchOperations();
-  }, [userUID, setItems]);
-
-  const filteredOperations = operations.filter((operation) => {
+  // Filtrado de operaciones basado en el filtro seleccionado
+  const filteredOperations = operations.filter((operation: Operation) => {
     if (filter === "all") return true;
     return filter === "open"
       ? operation.estado === "En Curso"
       : operation.estado === "Cerrada";
   });
 
+  // Función para calcular los totales filtrados
   const calculateFilteredTotals = () => {
     return filteredOperations.reduce(
-      (totals, operation) => {
-        totals.valor_reserva += Number(operation.valor_reserva);
+      (
+        totals: {
+          valor_reserva: number;
+          suma_total_de_puntas: number;
+          honorarios_broker: number;
+          honorarios_asesor: number;
+        },
+        operation: Operation
+      ) => {
+        totals.valor_reserva += Number(operation.valor_reserva || 0);
         totals.suma_total_de_puntas +=
-          Number(operation.punta_vendedora) +
-          Number(operation.punta_compradora);
-        totals.honorarios_broker += Number(operation.honorarios_broker);
-        totals.honorarios_asesor += Number(operation.honorarios_asesor);
+          Number(operation.punta_vendedora || 0) +
+          Number(operation.punta_compradora || 0);
+        totals.honorarios_broker += Number(operation.honorarios_broker || 0);
+        totals.honorarios_asesor += Number(operation.honorarios_asesor || 0);
         return totals;
       },
       {
@@ -95,58 +96,39 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
 
   const filteredTotals = calculateFilteredTotals();
 
-  const handleEstadoChange = async (id: string, currentEstado: string) => {
-    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
-    try {
-      const response = await axios.put(`/api/operations/${id}`, {
-        estado: newEstado,
+  // Mutación para actualizar el estado de una operación
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Operation> }) =>
+      updateOperation({ id, data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["operations", userUID],
       });
+    },
+  });
 
-      if (response.status !== 200) {
-        throw new Error("Error updating operation status");
-      }
-
-      setItems(
-        operations.map((operacion) =>
-          operacion.id === id ? { ...operacion, estado: newEstado } : operacion
-        )
-      );
-    } catch (error) {
-      console.error("Error updating operation status:", error);
-    }
+  const handleEstadoChange = (id: string, currentEstado: string) => {
+    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
+    updateMutation.mutate({ id, data: { estado: newEstado } });
   };
 
-  const handleEditClick = async (operation: Operation, id: string) => {
+  // Mutación para eliminar una operación
+  const deleteMutation = useMutation({
+    mutationFn: deleteOperation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["operations", userUID],
+      });
+    },
+  });
+
+  const handleDeleteClick = (id: string) => {
+    deleteMutation.mutate(id);
+  };
+
+  const handleEditClick = (operation: Operation) => {
     setSelectedOperation(operation);
     setIsEditModalOpen(true);
-
-    try {
-      const response = await fetch(`/api/operations/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(operation),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Error updating operation:", error);
-    }
-  };
-
-  const handleDeleteClick = async (id: string) => {
-    try {
-      const response = await axios.delete(`/api/operations/${id}`);
-      if (response.status !== 200) {
-        throw new Error("Error deleting operation");
-      }
-      setItems(operations.filter((operacion) => operacion.id !== id));
-    } catch (error) {
-      console.error("Error deleting operation:", error);
-    }
   };
 
   return (
@@ -256,7 +238,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
             </tr>
           </thead>
           <tbody>
-            {filteredOperations.map((operacion) => (
+            {filteredOperations.map((operacion: Operation) => (
               <tr
                 key={operacion.id}
                 className={`${OPERATIONS_LIST_COLORS.rowBg} ${OPERATIONS_LIST_COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
@@ -313,8 +295,8 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                 </td>
                 <td>
                   <button
-                    onClick={() => handleEditClick(operacion, operacion.id)}
-                    className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm  font-semibold "
+                    onClick={() => handleEditClick(operacion)}
+                    className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
                   >
                     <PencilIcon className="h-5 w-5" />
                   </button>
@@ -322,16 +304,16 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                 <td>
                   <button
                     onClick={() => handleDeleteClick(operacion.id)}
-                    className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm  font-semibold"
+                    className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
                   >
-                    <TrashIcon className="text-redAccent h-5 w-5" />
+                    <TrashIcon className="h-5 w-5" />
                   </button>
                 </td>
               </tr>
             ))}
-            {/* Total row */}
+            {/* Fila de totales */}
             <tr
-              className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg} `}
+              className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg}`}
             >
               <td className="py-3 px-4" colSpan={7}>
                 Total
@@ -369,7 +351,11 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           operation={selectedOperation}
-          onUpdate={() => fetchItems(userUID!)}
+          onUpdate={() =>
+            queryClient.invalidateQueries({
+              queryKey: ["operations", userUID],
+            })
+          }
         />
       )}
     </OperationsContainer>

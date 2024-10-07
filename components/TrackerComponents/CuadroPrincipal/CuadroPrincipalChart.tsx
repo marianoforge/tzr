@@ -8,27 +8,23 @@ import {
   Tooltip,
 } from "recharts";
 import Loader from "../Loader";
-import { useOperationsStore } from "@/stores/useOperationsStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useQuery } from "@tanstack/react-query";
 import { Operation } from "@/types";
 import { COLORS } from "@/lib/constants";
+import { fetchUserOperations } from "@/lib/api/operationsApi";
 
 const CuadroPrincipalChart = () => {
   const { userID } = useAuthStore();
-  const {
-    isLoading,
-    fetchItems: fetchOperations,
-    operations,
-  } = useOperationsStore();
   const [tiposOperaciones, setTiposOperaciones] = useState<
     { name: string; value: number }[]
   >([]);
 
-  useEffect(() => {
-    if (userID) {
-      fetchOperations(userID);
-    }
-  }, [userID, fetchOperations]);
+  const { data: operations = [], isLoading } = useQuery({
+    queryKey: ["operations", userID],
+    queryFn: () => fetchUserOperations(userID || ""),
+    enabled: !!userID, // Solo hacer la petición si hay un userID
+  });
 
   useEffect(() => {
     if (operations.length > 0) {

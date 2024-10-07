@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import axios from "axios";
 import { InferType } from "yup";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { useOperationsStore } from "@/stores/useOperationsStore";
 import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "./Schemas/OperationsModalSchema";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateOperation } from "@/lib/api/operationsApi"; // Import the update API
 
 type FormData = InferType<typeof schema>;
 
@@ -34,6 +35,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     defaultValues: operation || {},
   });
 
+  const queryClient = useQueryClient();
   const { calculateTotals } = useOperationsStore();
 
   useEffect(() => {
@@ -50,44 +52,46 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     }
   }, [operation, reset]);
 
+  // Mutación para actualizar la operación
+  const mutation = useMutation({
+    mutationFn: updateOperation, // Función que actualiza la operación
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["operations"] }); // Wrap the string in an array
+      calculateTotals();
+      onUpdate();
+      onClose();
+    },
+    onError: (error) => {
+      console.error("Error updating operation:", error);
+    },
+  });
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (!operation?.id) {
       console.error("Operation ID is missing");
       return;
     }
 
-    try {
-      const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
-        data.valor_reserva,
-        data.porcentaje_honorarios_asesor,
-        data.porcentaje_honorarios_broker
-      );
+    const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
+      data.valor_reserva,
+      data.porcentaje_honorarios_asesor,
+      data.porcentaje_honorarios_broker
+    );
 
-      const payload = {
-        ...data,
-        honorarios_broker: honorariosBroker,
-        honorarios_asesor: honorariosAsesor,
-      };
+    const payload = {
+      ...data,
+      honorarios_broker: honorariosBroker,
+      honorarios_asesor: honorariosAsesor,
+    };
 
-      const response = await axios.put(
-        `/api/operations/${operation.id}`,
-        payload
-      );
-      if (response.status !== 200) {
-        throw new Error("Error updating operation");
-      }
-
-      calculateTotals();
-      onUpdate();
-      onClose();
-    } catch (error) {
-      console.error("Error updating operation:", error);
-    }
+    // Ejecutar la mutación para actualizar la operación
+    mutation.mutate({ id: operation.id, data: payload });
   };
 
   if (!isOpen || !operation) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[100%] md:w-[50%] lg:w-[40%] h-[75%] flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4">Editar Operación</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

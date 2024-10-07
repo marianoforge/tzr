@@ -1,5 +1,4 @@
-import { useOperationsStore } from "@/stores/useOperationsStore";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -12,32 +11,31 @@ import {
 } from "recharts";
 import Loader from "../Loader";
 import { useAuthStore } from "@/stores/authStore";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { COLORS, MAX_BAR_SIZE } from "@/lib/constants";
 import { formatOperationsData } from "@/utils/formatOperationsData";
 
 const MonthlyBarChart: React.FC = () => {
   const { userID } = useAuthStore();
-  const { isLoading } = useOperationsStore();
   const [data, setData] = useState<
     { month: string; currentYear: number; previousYear: number }[]
   >([]);
 
+  // Utilizamos useQuery para obtener las operaciones del usuario
+  const { data: operations = [], isLoading } = useQuery({
+    queryKey: ["operations", userID],
+    queryFn: () => fetchUserOperations(userID || ""),
+    enabled: !!userID, // Solo ejecuta la query si hay un userID
+  });
+
+  // Efecto para formatear los datos obtenidos
   useEffect(() => {
-    const fetchOperations = async () => {
-      try {
-        const response = await axios.get(`/api/operations/user/${userID}`);
-        const operations = response.data;
-
-        const formattedData = formatOperationsData(operations);
-        setData(formattedData);
-      } catch (error) {
-        console.error("Error fetching operations:", error);
-      }
-    };
-
-    fetchOperations();
-  }, [userID]);
+    if (operations.length > 0) {
+      const formattedData = formatOperationsData(operations);
+      setData(formattedData);
+    }
+  }, [operations]);
 
   if (data.length === 0) {
     return (

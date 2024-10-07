@@ -46,6 +46,7 @@ const DashBoard = () => {
           <CuadroPrincipalChart />
         </div>
         {/* Sacar el Mocked */}
+        {/* <MonthlyBarChart /> */}
         <MonthlyMockedBarchart />
       </div>
     </>
