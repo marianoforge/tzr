@@ -1,10 +1,22 @@
-import { useOperationsStore } from "@/stores/useOperationsStore";
-import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserOperations } from "@/lib/api/operationsApi";
+import { calculateTotals } from "@/utils/calculations";
 import Loader from "./Loader";
+import { useAuthStore } from "@/stores/authStore";
 import { formatValue } from "@/utils/formatValue";
 
 const Bubbles = () => {
-  const { totals, isLoading } = useOperationsStore();
+  const { userID } = useAuthStore();
+
+  // Utilizamos Tanstack Query para obtener las operaciones y calcular los totales
+  const { data: operations = [], isLoading } = useQuery({
+    queryKey: ["operations", userID],
+    queryFn: () => fetchUserOperations(userID || ""),
+    enabled: !!userID,
+  });
+
+  // Calculamos los totales basados en las operaciones obtenidas
+  const totals = calculateTotals(operations);
 
   const bubbleData = [
     {
@@ -46,7 +58,7 @@ const Bubbles = () => {
   ];
 
   return (
-    <div className=" bg-white p-4 rounded-xl shadow-md min-h-[450px] justify-center items-center ">
+    <div className="bg-white p-4 rounded-xl shadow-md min-h-[450px] justify-center items-center">
       {isLoading ? (
         <Loader />
       ) : (

@@ -4,11 +4,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType } from "yup";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
-import { useOperationsStore } from "@/stores/useOperationsStore";
 import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "@/schemas/operationsModalSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateOperation } from "@/lib/api/operationsApi"; // Import the update API
+import { updateOperation } from "@/lib/api/operationsApi"; // API para actualizar la operación
 
 type FormData = InferType<typeof schema>;
 
@@ -36,7 +35,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   });
 
   const queryClient = useQueryClient();
-  const { calculateTotals } = useOperationsStore();
 
   useEffect(() => {
     if (operation) {
@@ -54,12 +52,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   // Mutación para actualizar la operación
   const mutation = useMutation({
-    mutationFn: updateOperation, // Función que actualiza la operación
+    mutationFn: updateOperation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["operations"] }); // Wrap the string in an array
-      calculateTotals();
-      onUpdate();
-      onClose();
+      queryClient.invalidateQueries({ queryKey: ["operations"] }); // Invalida las consultas de operaciones para recargar datos
+      onUpdate(); // Llamar función de actualización
+      onClose(); // Cerrar el modal
     },
     onError: (error) => {
       console.error("Error updating operation:", error);
@@ -72,6 +69,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       return;
     }
 
+    // Calcular los honorarios
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
       data.porcentaje_honorarios_asesor,

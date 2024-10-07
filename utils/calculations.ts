@@ -1,5 +1,22 @@
 import { Operation } from "@/types";
 
+// Cálculo de honorarios basado en el valor de reserva y porcentajes
+export const calculateHonorarios = (
+  valor_reserva: number,
+  porcentaje_honorarios_asesor: number,
+  porcentaje_honorarios_broker: number
+) => {
+  const honorariosBroker = (valor_reserva * porcentaje_honorarios_broker) / 100;
+  const honorariosAsesor =
+    (valor_reserva *
+      porcentaje_honorarios_broker *
+      porcentaje_honorarios_asesor) /
+    10000;
+
+  return { honorariosBroker, honorariosAsesor };
+};
+
+// Cálculos de totales para operaciones
 export const calculateTotals = (operations: Operation[]) => {
   if (operations.length === 0) {
     return {
@@ -14,9 +31,6 @@ export const calculateTotals = (operations: Operation[]) => {
       punta_vendedora: 0,
       suma_total_de_puntas: 0,
       cantidad_operaciones: 0,
-      totalAmount: 0,
-      totalAmountInDollars: 0,
-      totalExpenses: 0,
     };
   }
 
@@ -33,12 +47,12 @@ export const calculateTotals = (operations: Operation[]) => {
     operations.reduce((acc, op) => acc + op.porcentaje_honorarios_broker, 0) /
     operations.length;
 
-  const totalHonorariosGDS = operations.reduce(
+  const totalHonorariosBroker = operations.reduce(
     (acc, op) => acc + op.honorarios_broker,
     0
   );
 
-  const totalHonorariosNetos = operations.reduce(
+  const totalHonorariosAsesor = operations.reduce(
     (acc, op) => acc + op.honorarios_asesor,
     0
   );
@@ -68,30 +82,13 @@ export const calculateTotals = (operations: Operation[]) => {
     valor_reserva: totalValorReserva,
     porcentaje_honorarios_asesor: totalPorcentajeHonorariosAsesor,
     porcentaje_honorarios_broker: totalPorcentajeHonorariosBroker,
-    honorarios_broker: totalHonorariosGDS,
-    honorarios_asesor: totalHonorariosNetos,
+    honorarios_broker: totalHonorariosBroker,
+    honorarios_asesor: totalHonorariosAsesor,
     mayor_venta_efectuada: mayorVentaEfectuada,
     promedio_valor_reserva: promedioValorReserva,
     punta_compradora: puntaCompradora,
     punta_vendedora: puntaVendedora,
     suma_total_de_puntas: sumaTotalDePuntas,
     cantidad_operaciones: cantidadOperaciones,
-    totalAmount: 0,
-    totalAmountInDollars: 0,
-    totalExpenses: 0,
   };
-};
-
-export const calculateHonorarios = (
-  valor_reserva: number,
-  porcentaje_honorarios_asesor: number,
-  porcentaje_honorarios_broker: number
-) => {
-  const honorariosBroker = (valor_reserva * porcentaje_honorarios_broker) / 100;
-  const honorariosAsesor =
-    (valor_reserva *
-      (porcentaje_honorarios_broker / 100) *
-      porcentaje_honorarios_asesor) /
-    100;
-  return { honorariosBroker, honorariosAsesor };
 };

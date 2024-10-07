@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { Operation } from "@/types";
-import { useOperationsStore } from "@/stores/useOperationsStore";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchUserOperations,
+  updateOperation,
+  deleteOperation,
+} from "@/lib/api/operationsApi";
 
 export const useOperations = () => {
-  const { operations, setItems, calculateTotals, isLoading, fetchItems } =
-    useOperationsStore();
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -16,6 +18,9 @@ export const useOperations = () => {
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  const queryClient = useQueryClient();
+
+  // Watch for user auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -28,42 +33,33 @@ export const useOperations = () => {
     return () => unsubscribe();
   }, [router]);
 
-  useEffect(() => {
-    const fetchOperations = async () => {
-      if (!userUID) return;
+  // Fetch operations using Tanstack Query
+  const { data: operations = [], isLoading } = useQuery({
+    queryKey: ["operations", userUID],
+    queryFn: () => fetchUserOperations(userUID || ""),
+    enabled: !!userUID, // Only fetch if userUID is available
+  });
 
-      try {
-        const response = await axios.get(`/api/operations/${userUID}`);
-        if (response.status !== 200) {
-          throw new Error("Error al obtener las operaciones del usuario");
-        }
-        setItems(response.data);
-        calculateTotals();
-      } catch (error) {
-        console.error("Error al obtener las operaciones:", error);
-      }
-    };
+  // Mutation to update operation state
+  const updateMutation = useMutation({
+    mutationFn: updateOperation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["operations", userUID] });
+    },
+  });
 
-    fetchOperations();
-  }, [userUID, setItems, calculateTotals]);
+  // Mutation to delete an operation
+  const deleteMutation = useMutation({
+    mutationFn: deleteOperation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["operations", userUID] });
+    },
+  });
 
   const handleEstadoChange = async (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
     try {
-      const response = await axios.put(`/api/operations/${id}`, {
-        estado: newEstado,
-      });
-
-      if (response.status !== 200) {
-        throw new Error("Error actualizando estado");
-      }
-
-      setItems(
-        operations.map((op) =>
-          op.id === id ? { ...op, estado: newEstado } : op
-        )
-      );
-      calculateTotals();
+      await updateMutation.mutateAsync({ id, data: { estado: newEstado } });
     } catch (error) {
       console.error("Error actualizando estado:", error);
     }
@@ -76,12 +72,7 @@ export const useOperations = () => {
 
   const handleDeleteClick = async (id: string) => {
     try {
-      const response = await axios.delete(`/api/operations/${id}`);
-      if (response.status !== 200) {
-        throw new Error("Error eliminando operación");
-      }
-      setItems(operations.filter((op) => op.id !== id));
-      calculateTotals();
+      await deleteMutation.mutateAsync(id);
     } catch (error) {
       console.error("Error eliminando operación:", error);
     }
@@ -97,6 +88,5 @@ export const useOperations = () => {
     handleEditClick,
     handleDeleteClick,
     setIsEditModalOpen,
-    fetchItems,
   };
 };
