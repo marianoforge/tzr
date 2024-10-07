@@ -20,7 +20,6 @@ export const useAuthStore = create<UserState>((set) => ({
         set({ userID: null, role: null });
       }
     });
-    //test
     return unsubscribe;
   },
 }));
