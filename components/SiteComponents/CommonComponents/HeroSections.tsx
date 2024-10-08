@@ -2,26 +2,26 @@ import Link from "next/link";
 
 const HeroSection = () => {
   return (
-    <section className="flex w-full pb-24 pt-16 sm:pb-32 sm:pt-24 md:pb-48 md:pt-32 items-center justify-center">
-      <div className="flex flex-col justify-center w-full px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-48">
-        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-medium text-lightPink">
-          Efficiency for every deal
+    <section className="relative flex flex-col text-center sm:text-center md:text-start gap-8 md:flex-row w-full pb-24 pt-16 sm:pb-32 sm:pt-24 md:pb-48 md:pt-32 items-center justify-center">
+      <div className="flex flex-col justify-center w-full md:w-[65%] px-4 sm:px-8 md:px-16  text-lightPink">
+        <h3 className="text-lg sm:text-xl font-medium mb-4 sm:mb-8">
+          Se eficiente, se productivo, se parte del 1%
+        </h3>
+        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[64px] font-medium leading-tight mt-2">
+          Optimiza tus números, multiplica tus resultados
         </h1>
-        <p className="mt-4 sm:mt-8 max-w-xl text-lg sm:text-xl md:text-2xl lg:text-3xl leading-8 sm:leading-10 text-lightPink">
-          TrackPro helps realtors to thrive in their business.
+      </div>
+      <div className="flex justify-start w-full md:w-[35%] text-wrap text-lightPink pr-4 sm:pr-6 flex-col">
+        <p className="leading-6 sm:leading-7 text-base sm:text-lg">
+          El 97% de los asesores inmobiliarios en Latinoamerica no son capaces
+          de vivir dignamente con lo que ganan; el 2% solo gana lo suficiente
+          para vivir. Pero el 1% restante se hace millonario.
         </p>
-        <div className="mt-8 sm:mt-12 flex flex-col gap-4 sm:gap-6 sm:flex-row">
-          <Link href="/register">
-            <button className="cursor-pointer shadow-md shadow-mediumBlue inline-flex items-center px-6 py-3 rounded-full bg-mediumBlue ring-1 ring-lightPink text-white text-lg font-medium hover:bg-lightPink hover:text-mediumBlue hover:ring-mediumBlue">
-              Get started
-            </button>
-          </Link>
-          <Link href="/pricing">
-            <button className="cursor-pointer shadow-md shadow-mediumBlue inline-flex items-center px-6 py-3 rounded-full bg-lightPink ring-1 ring-mediumBlue text-mediumBlue text-lg hover:bg-mediumBlue hover:text-white hover:ring-lightPink">
-              See pricing
-            </button>
-          </Link>
-        </div>
+        <Link href="/register">
+          <button className="px-4 mt-10 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-lightPink text-mediumBlue hover:bg-mediumBlue hover:text-white">
+            Empieza Gratis
+          </button>
+        </Link>
       </div>
     </section>
   );

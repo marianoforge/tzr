@@ -59,6 +59,10 @@ const nextConfig = {
         source: "/settings",
         destination: "/tracker/settings",
       },
+      {
+        source: "/reset-password",
+        destination: "/tracker/reset-password",
+      },
     ];
   },
 };

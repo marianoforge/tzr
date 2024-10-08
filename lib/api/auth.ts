@@ -1,48 +1,45 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import axios from "axios";
 
-interface LoginRequestBody {
-  email?: string;
-  password?: string;
-  googleAuth?: boolean;
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Método no permitido" });
-  }
-
-  const { email, password, googleAuth }: LoginRequestBody = req.body;
-
+// Login con email y contraseña
+export const loginWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   try {
-    if (googleAuth) {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      return res
-        .status(200)
-        .json({ message: "Inicio de sesión con Google exitoso" });
-    }
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Correo y contraseña son requeridos" });
-    }
-
-    await signInWithEmailAndPassword(auth, email, password);
-    return res.status(200).json({ message: "Inicio de sesión exitoso" });
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return { message: "Inicio de sesión exitoso", user: userCredential.user };
   } catch (error) {
     console.error(error);
-    return res.status(401).json({
-      message: "Error al iniciar sesión, verifica tus credenciales.",
-    });
+    throw new Error("Error al iniciar sesión con email y contraseña.");
   }
-}
+};
+
+// Login con Google
+export const loginWithGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return {
+      message: "Inicio de sesión con Google exitoso",
+      user: result.user,
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error al iniciar sesión con Google.");
+  }
+};
+
+export const resetPassword = async (email: string) => {
+  const response = await axios.post("/api/auth/reset-password", { email });
+  return response.data;
+};
