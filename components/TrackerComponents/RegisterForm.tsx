@@ -8,6 +8,8 @@ import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { RegisterData } from "@/types";
 import { createSchema } from "@/schemas/registerFormSchema"; // Import the createSchema function
+import Link from "next/link";
+import Image from "next/image";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -90,10 +92,21 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
+      <div className="flex items-center justify-center lg:justify-start">
+        <Link href="/" title="Home">
+          <Image
+            src="/trackProLogoNoBg.png"
+            alt="Logo"
+            width={150}
+            height={150}
+            className="w-80"
+          />
+        </Link>
+      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
+        className="bg-white p-6 shadow-md w-11/12 max-w-lg rounded-lg"
       >
         <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
         {formError && <p className="text-red-500 mb-4">{formError}</p>}
