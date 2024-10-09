@@ -7,13 +7,11 @@ export const createOperation = async (operationData: Operation) => {
   return response.data;
 };
 
-// Obtener operaciones de un usuario
 export const fetchUserOperations = async (userUID: string) => {
   const response = await axios.get(`/api/operations?user_uid=${userUID}`);
   return response.data;
 };
 
-// Actualizar una operación por ID
 export const updateOperation = async ({
   id,
   data,
@@ -25,7 +23,6 @@ export const updateOperation = async ({
   return response.data;
 };
 
-// Eliminar una operación por ID
 export const deleteOperation = async (id: string) => {
   const response = await axios.delete(`/api/operations/${id}`);
   return response.data;

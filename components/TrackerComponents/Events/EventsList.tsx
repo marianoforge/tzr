@@ -32,7 +32,7 @@ const EventsList: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center lg:text-sm lg:max-h-[450px] min-h-[450px] min-w-[340px]">
+    <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center lg:max-h-[450px] min-h-[450px] min-w-[340px]">
       {isLoading ? (
         <Loader />
       ) : (
@@ -48,8 +48,10 @@ const EventsList: React.FC = () => {
                 key={event.id}
               >
                 <div className="flex items-center justify-between">
-                  <h1 className="font-semibold text-gray-600">{event.title}</h1>
-                  <span className="text-gray-400 text-xs">
+                  <h1 className="font-semibold text-gray-600 text-md md:text-lg lg:text-md xl:text-lg">
+                    {event.title}
+                  </h1>
+                  <span className="text-gray-400 text-md md:text-lg lg:text-lg xl:text-md 2xl:text-sm">
                     {event.date} | {event.startTime} - {event.endTime}
                   </span>
                 </div>
@@ -62,7 +64,7 @@ const EventsList: React.FC = () => {
             ))
           )}
           <button
-            className="bg-darkBlue text-white p-2 rounded-md font-semibold"
+            className="bg-darkBlue text-white p-2 rounded-md font-semibold mt-2"
             onClick={() => {
               router.push("/calendar");
             }}

@@ -26,7 +26,7 @@ export const UserActions = ({ setActiveView }: UserActionsProps) => {
     <div className="w-full flex justify-around mt-4">
       <Link
         href={"/settings"}
-        className="text-white xl:text-[#2d3748] font-semibold rounded cursor-pointer transition duration-150 ease-in-out flex justify-center items-center gap-1 w-1/2"
+        className="text-white xl:text-mediumBlue font-semibold rounded cursor-pointer transition duration-150 ease-in-out flex justify-center items-center gap-1 w-1/2"
       >
         <Cog6ToothIcon className="h-5 w-5" />
         Settings

@@ -63,7 +63,7 @@ const CuadroPrincipal = () => {
                       key={operacion.id}
                       className="border-b md:table-row flex flex-col md:flex-row mb-4 text-center"
                     >
-                      <td className="py-2 px-4 before:content-['Tipo_de_Operación:'] md:before:content-none">
+                      <td className="py-2 px-4 text-start before:content-['Tipo_de_Operación:'] md:before:content-none">
                         {operacion.tipo_operacion}
                       </td>
                       <td className="py-2 px-4 before:content-['Punta_Compradora:'] md:before:content-none">
@@ -79,7 +79,7 @@ const CuadroPrincipal = () => {
                   ))}
                   {/* Total row */}
                   <tr className="font-bold hidden md:table-row text-center">
-                    <td className="py-2 px-4">Total</td>
+                    <td className="py-2 px-4 text-start">Total</td>
                     <td className="py-2 px-4">
                       {formatNumber(totals.punta_compradora)}
                     </td>

@@ -108,24 +108,30 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 mx-2 ${
-              filter === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
-            } rounded`}
+              filter === "all"
+                ? "bg-mediumBlue text-white"
+                : "bg-lightBlue text-white"
+            } rounded-lg`}
           >
             Todas las Operaciones
           </button>
           <button
             onClick={() => setFilter("open")}
             className={`px-4 py-2 mx-2 ${
-              filter === "open" ? "bg-blue-500 text-white" : "bg-gray-200"
-            } rounded`}
+              filter === "open"
+                ? "bg-mediumBlue text-white"
+                : "bg-lightBlue text-white"
+            } rounded-lg`}
           >
             Operaciones Abiertas
           </button>
           <button
             onClick={() => setFilter("closed")}
             className={`px-4 py-2 mx-2 ${
-              filter === "closed" ? "bg-blue-500 text-white" : "bg-gray-200"
-            } rounded`}
+              filter === "closed"
+                ? "bg-mediumBlue text-white"
+                : "bg-lightBlue text-white"
+            } rounded-lg`}
           >
             Operaciones Cerradas
           </button>
@@ -134,7 +140,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
       <Slider {...settings}>
         {filteredOperations.map((operacion: Operation) => (
           <div key={operacion.id} className="p-4">
-            <div className="bg-[#5DADE2]/10 text-darkBlue p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
+            <div className="bg-mediumBlue text-lightPink p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
               <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
                 <p>
                   <strong>Fecha de Operación:</strong>{" "}
@@ -171,7 +177,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
                 <div className="flex justify-around">
                   <button
                     onClick={() => handleEditClick(operacion)}
-                    className="text-darkBlue hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
+                    className="text-lightPink hover:text-lightGreen transition duration-150 ease-in-out text-sm font-semibold"
                   >
                     <PencilIcon className="h-5 w-5" />
                   </button>

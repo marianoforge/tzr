@@ -141,24 +141,30 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
         <button
           onClick={() => setFilter("all")}
           className={`px-4 py-2 mx-2 ${
-            filter === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
-          } rounded`}
+            filter === "all"
+              ? "bg-mediumBlue text-white"
+              : "bg-lightBlue text-white"
+          } rounded-lg`}
         >
           Todas las Operaciones
         </button>
         <button
           onClick={() => setFilter("open")}
           className={`px-4 py-2 mx-2 ${
-            filter === "open" ? "bg-blue-500 text-white" : "bg-gray-200"
-          } rounded`}
+            filter === "open"
+              ? "bg-mediumBlue text-white"
+              : "bg-lightBlue text-white"
+          } rounded-lg`}
         >
           Operaciones Abiertas
         </button>
         <button
           onClick={() => setFilter("closed")}
           className={`px-4 py-2 mx-2 ${
-            filter === "closed" ? "bg-blue-500 text-white" : "bg-gray-200"
-          } rounded`}
+            filter === "closed"
+              ? "bg-mediumBlue text-white"
+              : "bg-lightBlue text-white"
+          } rounded-lg`}
         >
           Operaciones Cerradas
         </button>

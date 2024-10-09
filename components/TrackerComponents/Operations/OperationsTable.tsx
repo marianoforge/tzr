@@ -110,6 +110,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     setIsEditModalOpen(true);
   };
 
+  const styleTotalRow = "py-3 px-4 text-center";
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
@@ -189,7 +191,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           {filteredOperations?.map((operacion: Operation) => (
             <tr
               key={operacion.id}
-              className={`${OPERATIONS_LIST_COLORS.rowBg} ${OPERATIONS_LIST_COLORS.rowHover} border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
+              className={`${OPERATIONS_LIST_COLORS.rowBg} hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
             >
               <td className="py-3 px-4 before:content-['Fecha:'] md:before:content-none">
                 {new Date(operacion.fecha_operacion).toLocaleDateString()}
@@ -274,22 +276,22 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           <tr
             className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg}`}
           >
-            <td className="py-3 px-4" colSpan={7}>
+            <td className="py-3 px-4 pl-10" colSpan={7}>
               Total
             </td>
-            <td className="py-3 px-4">
+            <td className={styleTotalRow}>
               ${formatNumber(Number(totals.valor_reserva))}
             </td>
-            <td className="py-3 px-4">
+            <td className={styleTotalRow}>
               ${formatNumber(Number(totals.suma_total_de_puntas))}
             </td>
-            <td className="py-3 px-4">
+            <td className={styleTotalRow}>
               ${formatNumber(Number(totals.honorarios_broker))}
             </td>
-            <td className="py-3 px-4">
+            <td className={styleTotalRow}>
               ${formatNumber(Number(totals.honorarios_asesor))}
             </td>
-            <td className="py-3 px-4" colSpan={3}></td>
+            <td className={styleTotalRow} colSpan={3}></td>
           </tr>
         </tbody>
       </table>
