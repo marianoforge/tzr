@@ -4,7 +4,6 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { Operation } from "@/types";
 
-// Handler para manejar GET, PUT, DELETE de una operación específica
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -29,7 +28,6 @@ export default async function handler(
   }
 }
 
-// Obtener una operación por ID
 const getOperationById = async (id: string, res: NextApiResponse) => {
   try {
     const docRef = doc(db, "operations", id);
@@ -46,7 +44,6 @@ const getOperationById = async (id: string, res: NextApiResponse) => {
   }
 };
 
-// Actualizar una operación por ID
 const updateOperation = async (
   id: string,
   updatedData: Partial<Operation>,
@@ -65,7 +62,6 @@ const updateOperation = async (
   }
 };
 
-// Eliminar una operación por ID
 const deleteOperation = async (id: string, res: NextApiResponse) => {
   try {
     const docRef = doc(db, "operations", id);

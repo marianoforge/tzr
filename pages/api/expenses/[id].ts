@@ -4,7 +4,6 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { ExpenseFormData } from "@/types";
 
-// Handler for GET, PUT, DELETE for a specific expense by ID
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -29,7 +28,6 @@ export default async function handler(
   }
 }
 
-// Function to get an expense by ID
 const getExpenseById = async (id: string, res: NextApiResponse) => {
   try {
     const docRef = doc(db, "expenses", id);
@@ -44,7 +42,6 @@ const getExpenseById = async (id: string, res: NextApiResponse) => {
   }
 };
 
-// Function to update an expense
 const updateExpense = async (
   id: string,
   updatedData: ExpenseFormData,
@@ -63,7 +60,6 @@ const updateExpense = async (
   }
 };
 
-// Function to delete an expense
 const deleteExpense = async (id: string, res: NextApiResponse) => {
   try {
     const docRef = doc(db, "expenses", id);

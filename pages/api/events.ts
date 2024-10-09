@@ -9,7 +9,6 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-// Handler para manejar GET y POST en este endpoint
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -31,7 +30,6 @@ export default async function handler(
   }
 }
 
-// Obtener eventos de un usuario
 const getUserEvents = async (userUID: string, res: NextApiResponse) => {
   try {
     const q = query(
@@ -52,11 +50,9 @@ const getUserEvents = async (userUID: string, res: NextApiResponse) => {
   }
 };
 
-// Crear un nuevo evento
 const createEvent = async (req: NextApiRequest, res: NextApiResponse) => {
   const { title, date, startTime, endTime, description, user_uid } = req.body;
 
-  // Verificación: validar que todos los campos estén presentes, incluido el user_uid
   if (!title || !date || !startTime || !endTime || !description || !user_uid) {
     return res.status(400).json({
       message: "Todos los campos son obligatorios, incluyendo el user_uid",

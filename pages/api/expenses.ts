@@ -10,16 +10,13 @@ import {
   orderBy,
 } from "firebase/firestore";
 
-// Handler para manejar GET y POST en este endpoint
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Obtener el user_uid del query
   const user_uid =
     req.method === "GET" ? req.query.user_uid : req.body.user_uid;
 
-  // Validar que el user_uid se ha proporcionado correctamente
   if (!user_uid || typeof user_uid !== "string") {
     return res.status(400).json({ message: "User UID is required" });
   }
@@ -36,7 +33,6 @@ export default async function handler(
   }
 }
 
-// Obtener los gastos de un usuario
 const getUserExpenses = async (userUID: string, res: NextApiResponse) => {
   try {
     const q = query(
@@ -57,7 +53,6 @@ const getUserExpenses = async (userUID: string, res: NextApiResponse) => {
   }
 };
 
-// Crear un nuevo gasto
 const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     date,

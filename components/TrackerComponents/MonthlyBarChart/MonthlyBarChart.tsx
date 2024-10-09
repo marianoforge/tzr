@@ -29,11 +29,21 @@ const MonthlyBarChart: React.FC = () => {
     enabled: !!userID, // Solo ejecuta la query si hay un userID
   });
 
+  console.log(operations);
+
   // Efecto para formatear los datos obtenidos
   useEffect(() => {
     if (operations.length > 0) {
       const formattedData = formatOperationsData(operations);
-      setData(formattedData);
+      console.log("Formatted Data:", formattedData); // Verifica los datos formateados
+
+      // Verificar que los datos estén correctamente formateados
+      const validData = formattedData.map((item) => ({
+        ...item,
+        currentYear: isNaN(item.currentYear) ? 0 : item.currentYear,
+        previousYear: isNaN(item.previousYear) ? 0 : item.previousYear,
+      }));
+      setData(validData);
     }
   }, [operations]);
 

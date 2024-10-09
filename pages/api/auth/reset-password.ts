@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "@/lib/firebase"; // Asegúrate de que el auth esté correctamente inicializado
+import { auth } from "@/lib/firebase";
 
 interface ResetPasswordRequestBody {
   email: string;

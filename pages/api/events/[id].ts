@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
-// Handler para GET, PUT, DELETE de un evento específico por ID
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -27,7 +26,6 @@ export default async function handler(
   }
 }
 
-// Obtener evento por ID
 const getEventById = async (id: string, res: NextApiResponse) => {
   try {
     const docRef = doc(db, "events", id);
@@ -42,7 +40,6 @@ const getEventById = async (id: string, res: NextApiResponse) => {
   }
 };
 
-// Actualizar evento
 const updateEvent = async (
   id: string,
   updatedData: Partial<{
@@ -67,7 +64,6 @@ const updateEvent = async (
   }
 };
 
-// Eliminar evento
 const deleteEvent = async (id: string, res: NextApiResponse) => {
   try {
     const docRef = doc(db, "events", id);

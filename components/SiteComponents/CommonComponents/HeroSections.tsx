@@ -7,7 +7,7 @@ const HeroSection = () => {
         <h3 className="text-lg sm:text-xl font-medium mb-4 sm:mb-8">
           Se eficiente, se productivo, se parte del 1%
         </h3>
-        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[64px] font-medium leading-tight mt-2">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[72px] font-medium leading-tight mt-2">
           Optimiza tus números, multiplica tus resultados
         </h1>
       </div>

@@ -2,13 +2,13 @@ import CuadroPrincipal from "@/components/TrackerComponents/CuadroPrincipal/Cuad
 import CuadroPrincipalChart from "@/components/TrackerComponents/CuadroPrincipal/CuadroPrincipalChart";
 import Bubbles from "@/components/TrackerComponents/Bubbles";
 import EventsList from "@/components/TrackerComponents/Events/EventsList";
-import MonthlyMockedBarchart from "@/components/TrackerComponents/MonthlyBarChart/MonthlyMockedBarchart";
 import ObjectiveChart from "@/components/TrackerComponents/ObjectiveChart";
 import OperationsListDash from "@/components/TrackerComponents/Operations/OperationsListDash";
 import OperationsCarouselDash from "./Operations/OperationsCarouselDash";
 import Profitability from "@/components/TrackerComponents/Profitability";
 import { UserInfo } from "@/components/TrackerComponents/NavComponents/UserInfo";
 import { UserAvatar } from "@/components/TrackerComponents/NavComponents/UserAvatar";
+import MonthlyBarChart from "./MonthlyBarChart/MonthlyBarChart";
 
 const DashBoard = () => {
   return (
@@ -46,8 +46,8 @@ const DashBoard = () => {
           <CuadroPrincipalChart />
         </div>
         {/* Sacar el Mocked */}
-        {/* <MonthlyBarChart /> */}
-        <MonthlyMockedBarchart />
+        <MonthlyBarChart />
+        {/* <MonthlyMockedBarchart /> */}
       </div>
     </>
   );

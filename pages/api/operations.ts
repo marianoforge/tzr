@@ -34,7 +34,6 @@ export default async function handler(
   }
 }
 
-// Obtener operaciones de un usuario
 const getUserOperations = async (userUID: string, res: NextApiResponse) => {
   try {
     const q = query(
@@ -55,7 +54,6 @@ const getUserOperations = async (userUID: string, res: NextApiResponse) => {
   }
 };
 
-// Crear una nueva operación
 const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     fecha_operacion,
