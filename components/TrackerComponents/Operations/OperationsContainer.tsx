@@ -14,15 +14,19 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
   operationsLength,
   children,
 }) => {
-  return isLoading ? (
-    <Loader />
-  ) : (
+  return (
     <div className="bg-white p-6 mt-6 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
-      {operationsLength === 0 ? (
-        <p className="text-center text-gray-600">No existen operaciones</p>
+      {isLoading ? (
+        <Loader />
       ) : (
-        children
+        <>
+          <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
+          {operationsLength === 0 ? (
+            <p className="text-center text-gray-600">No existen operaciones</p>
+          ) : (
+            children
+          )}
+        </>
       )}
     </div>
   );
