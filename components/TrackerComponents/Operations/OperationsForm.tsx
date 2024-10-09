@@ -291,7 +291,9 @@ const OperationsForm = () => {
                 {errors.numero_sobre_refuerzo.message}
               </p>
             )}
-            <label className="font-semibold">Nombre del Referido</label>
+            <label className="font-semibold">
+              Nombre del Referido (opcional)
+            </label>
             <Input
               type="text"
               placeholder="Por ejemplo: Juan Pérez"
@@ -301,7 +303,9 @@ const OperationsForm = () => {
             {errors.referido && (
               <p className="text-red-500">{errors.referido.message}</p>
             )}
-            <label className="font-semibold">Nombre del Compartido</label>
+            <label className="font-semibold">
+              Nombre del Compartido (opcional)
+            </label>
             <Input
               type="text"
               placeholder="Por ejemplo: Juana Pérez"
