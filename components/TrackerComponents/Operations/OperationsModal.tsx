@@ -203,7 +203,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           </div>
 
           <Input
-            type="number"
+            type="text"
             placeholder="Sobre de Reserva (opcional)"
             {...register("numero_sobre_reserva")}
             className="w-full p-2 border border-gray-300 rounded"
@@ -215,7 +215,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           )}
 
           <Input
-            type="number"
+            type="text"
             placeholder="Sobre de Refuerzo (opcional)"
             {...register("numero_sobre_refuerzo")}
             className="w-full p-2 border border-gray-300 rounded"

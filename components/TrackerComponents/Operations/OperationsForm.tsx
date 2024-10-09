@@ -318,11 +318,7 @@ const OperationsForm = () => {
             <label className="font-semibold">Cantidad de puntas</label>
             <div className="flex gap-10 mt-2">
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register("punta_vendedora")}
-                  required
-                />
+                <input type="checkbox" {...register("punta_vendedora")} />
                 <label>Punta Vendedora</label>
               </div>
               {errors.punta_vendedora && (
@@ -330,11 +326,7 @@ const OperationsForm = () => {
               )}
 
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register("punta_compradora")}
-                  required
-                />
+                <input type="checkbox" {...register("punta_compradora")} />
                 <label>Punta Compradora</label>
               </div>
               {errors.punta_compradora && (
