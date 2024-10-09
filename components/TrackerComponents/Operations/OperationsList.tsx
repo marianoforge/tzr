@@ -140,7 +140,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
       <div className="flex justify-center mb-6 mt-6">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 mx-2 ${
+          className={`px-4 py-2 mx-2 w-[195px] ${
             filter === "all"
               ? "bg-mediumBlue text-white"
               : "bg-lightBlue text-white"
@@ -150,17 +150,17 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
         </button>
         <button
           onClick={() => setFilter("open")}
-          className={`px-4 py-2 mx-2 ${
+          className={`px-4 py-2 mx-2 w-[195px] ${
             filter === "open"
               ? "bg-mediumBlue text-white"
               : "bg-lightBlue text-white"
           } rounded-lg`}
         >
-          Operaciones Abiertas
+          En curso / Reservas
         </button>
         <button
           onClick={() => setFilter("closed")}
-          className={`px-4 py-2 mx-2 ${
+          className={`px-4 py-2 mx-2 w-[195px] ${
             filter === "closed"
               ? "bg-mediumBlue text-white"
               : "bg-lightBlue text-white"
@@ -213,7 +213,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
               >
-                Valor Reserva
+                Valor Reserva / Operación
               </th>
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}

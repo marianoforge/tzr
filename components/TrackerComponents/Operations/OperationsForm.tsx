@@ -125,10 +125,11 @@ const OperationsForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
       >
-        <h2 className="text-2xl mb-4">Agregar Operación</h2>
+        <h2 className="text-2xl mb-4">Agregar Reserva / Operación</h2>
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2">
             {/* Left column */}
+            <label className="font-semibold">Fecha de la Operación</label>
             <Input
               type="date"
               {...register("fecha_operacion")}
@@ -138,7 +139,9 @@ const OperationsForm = () => {
             {errors.fecha_operacion && (
               <p className="text-red-500">{errors.fecha_operacion.message}</p>
             )}
-
+            <label className="font-semibold">
+              Dirección de la reserva / operación
+            </label>
             <Input
               type="text"
               placeholder="Dirección de la Reserva"
@@ -149,7 +152,7 @@ const OperationsForm = () => {
             {errors.direccion_reserva && (
               <p className="text-red-500">{errors.direccion_reserva.message}</p>
             )}
-
+            <label className="font-semibold">Tipo de operación</label>
             <select
               {...register("tipo_operacion")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
@@ -166,10 +169,12 @@ const OperationsForm = () => {
             {errors.tipo_operacion && (
               <p className="text-red-500">{errors.tipo_operacion.message}</p>
             )}
-
+            <label className="font-semibold">
+              Valor de reserva / operación
+            </label>
             <Input
               type="number"
-              placeholder="Valor de Reserva"
+              placeholder="Por ejemplo: 200000"
               {...register("valor_reserva")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
@@ -178,72 +183,92 @@ const OperationsForm = () => {
               <p className="text-red-500">{errors.valor_reserva.message}</p>
             )}
 
-            <div className="flex items-center justify-between">
-              <Input
-                placeholder="Porcentaje Punta Compradora"
-                type="number"
-                step="any"
-                {...register("porcentaje_punta_compradora")}
-                className="w-[45%] p-2 mb-4 border border-gray-300 rounded"
-                required
-              />
-              {errors.porcentaje_punta_compradora && (
-                <p className="text-red-500">
-                  {errors.porcentaje_punta_compradora.message}
-                </p>
-              )}
-
-              <Input
-                placeholder="Porcentaje Punta Vendedora"
-                type="number"
-                step="any"
-                {...register("porcentaje_punta_vendedora")}
-                className="w-[45%] p-2 mb-4 border border-gray-300 rounded"
-                required
-              />
-              {errors.porcentaje_punta_vendedora && (
-                <p className="text-red-500">
-                  {errors.porcentaje_punta_vendedora.message}
-                </p>
-              )}
+            <div className="flex items-center justify-between w-full gap-4">
+              <div className="flex flex-col w-[50%]">
+                <label className="font-semibold">
+                  Porcentaje punta compradoran
+                </label>
+                <Input
+                  placeholder="Por ejemplo: 3"
+                  type="number"
+                  step="any"
+                  {...register("porcentaje_punta_compradora")}
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
+                  required
+                />
+                {errors.porcentaje_punta_compradora && (
+                  <p className="text-red-500">
+                    {errors.porcentaje_punta_compradora.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col w-[50%]">
+                <label className="font-semibold">
+                  Porcentaje punta vendedora
+                </label>
+                <Input
+                  placeholder="Por ejemplo: 4"
+                  type="number"
+                  step="any"
+                  {...register("porcentaje_punta_vendedora")}
+                  className="w-full  p-2 mb-4 border border-gray-300 rounded"
+                  required
+                />
+                {errors.porcentaje_punta_vendedora && (
+                  <p className="text-red-500">
+                    {errors.porcentaje_punta_vendedora.message}
+                  </p>
+                )}
+              </div>
             </div>
-
-            <div className="flex items-center justify-between">
-              <Input
-                type="number"
-                step="any"
-                placeholder="Porcentaje Honorarios Asesor"
-                {...register("porcentaje_honorarios_asesor")}
-                className="w-[45%]  p-2 mb-4 border border-gray-300 rounded"
-                required
-              />
-              {errors.porcentaje_honorarios_asesor && (
-                <p className="text-red-500">
-                  {errors.porcentaje_honorarios_asesor.message}
-                </p>
-              )}
-
-              <Input
-                type="number"
-                step="any"
-                placeholder="Porcentaje Honorarios Broker"
-                {...register("porcentaje_honorarios_broker")}
-                className="w-[45%] p-2 mb-4 border border-gray-300 rounded"
-                required
-              />
-              {errors.porcentaje_honorarios_broker && (
-                <p className="text-red-500">
-                  {errors.porcentaje_honorarios_broker.message}
-                </p>
-              )}
+            <div className="flex items-center justify-between w-full gap-4">
+              <div className="flex flex-col w-[50%]">
+                <label className="font-semibold">
+                  Porcentaje honorarios asesor
+                </label>
+                <Input
+                  type="number"
+                  step="any"
+                  placeholder="Por ejemplo: 40"
+                  {...register("porcentaje_honorarios_asesor")}
+                  className="w-full  p-2 mb-4 border border-gray-300 rounded"
+                  required
+                />
+                {errors.porcentaje_honorarios_asesor && (
+                  <p className="text-red-500">
+                    {errors.porcentaje_honorarios_asesor.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col w-[50%]">
+                <label className="font-semibold">
+                  Porcentaje honorarios totales
+                </label>
+                <Input
+                  type="number"
+                  step="any"
+                  placeholder="Suma de las puntas"
+                  {...register("porcentaje_honorarios_broker")}
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
+                  required
+                />
+                {errors.porcentaje_honorarios_broker && (
+                  <p className="text-red-500">
+                    {errors.porcentaje_honorarios_broker.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="w-full md:w-1/2 px-2">
             {/* Right column */}
+            <label className="font-semibold">
+              Número de sobre de reserva (opcional)
+            </label>
             <Input
-              type="number"
-              placeholder="Sobre de Reserva (opcional)"
+              type="text"
+              placeholder="Por ejemplo: E12549"
               {...register("numero_sobre_reserva")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
@@ -252,10 +277,12 @@ const OperationsForm = () => {
                 {errors.numero_sobre_reserva.message}
               </p>
             )}
-
+            <label className="font-semibold">
+              Numero de sobre de refuerzo (opcional)
+            </label>
             <Input
-              type="number"
-              placeholder="Sobre de Refuerzo (opcional)"
+              type="text"
+              placeholder="Por ejemplo: E12549"
               {...register("numero_sobre_refuerzo")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
@@ -264,30 +291,34 @@ const OperationsForm = () => {
                 {errors.numero_sobre_refuerzo.message}
               </p>
             )}
-
+            <label className="font-semibold">Nombre del Referido</label>
             <Input
               type="text"
-              placeholder="Datos Referido (opcional)"
+              placeholder="Por ejemplo: Juan Pérez"
               {...register("referido")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
             {errors.referido && (
               <p className="text-red-500">{errors.referido.message}</p>
             )}
-
+            <label className="font-semibold">Nombre del Compartido</label>
             <Input
               type="text"
-              placeholder="Datos Compartido (opcional)"
+              placeholder="Por ejemplo: Juana Pérez"
               {...register("compartido")}
               className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
             {errors.compartido && (
               <p className="text-red-500">{errors.compartido.message}</p>
             )}
-
-            <div className="flex justify-center items-center gap-10">
+            <label className="font-semibold">Cantidad de puntas</label>
+            <div className="flex gap-10 mt-2">
               <div className="flex items-center gap-2">
-                <input type="checkbox" {...register("punta_vendedora")} />
+                <input
+                  type="checkbox"
+                  {...register("punta_vendedora")}
+                  required
+                />
                 <label>Punta Vendedora</label>
               </div>
               {errors.punta_vendedora && (
@@ -295,7 +326,11 @@ const OperationsForm = () => {
               )}
 
               <div className="flex items-center gap-2">
-                <input type="checkbox" {...register("punta_compradora")} />
+                <input
+                  type="checkbox"
+                  {...register("punta_compradora")}
+                  required
+                />
                 <label>Punta Compradora</label>
               </div>
               {errors.punta_compradora && (

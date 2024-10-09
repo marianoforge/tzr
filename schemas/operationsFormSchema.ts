@@ -31,11 +31,8 @@ export const schema = yup.object().shape({
     .min(0, "No puede ser negativo"),
   punta_compradora: yup.boolean().required(),
   punta_vendedora: yup.boolean().required(),
-  numero_sobre_reserva: yup.number().typeError("Debe ser un número").nullable(),
-  numero_sobre_refuerzo: yup
-    .number()
-    .typeError("Debe ser un número")
-    .nullable(),
+  numero_sobre_reserva: yup.string().nullable(),
+  numero_sobre_refuerzo: yup.string().nullable(),
   referido: yup.string().nullable(),
   compartido: yup.string().nullable(),
   estado: yup.string().required("El estado es requerido"),

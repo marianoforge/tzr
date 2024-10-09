@@ -123,7 +123,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
                 : "bg-lightBlue text-white"
             } rounded-lg`}
           >
-            Operaciones Abiertas
+            Operaciones en Curso / Reservas
           </button>
           <button
             onClick={() => setFilter("closed")}
@@ -154,7 +154,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
                   <strong>Tipo de Operación:</strong> {operacion.tipo_operacion}
                 </p>
                 <p>
-                  <strong>Valor Reserva:</strong> $
+                  <strong>Valor Reserva / Operación:</strong> $
                   {formatNumber(operacion.valor_reserva)}
                 </p>
               </div>
