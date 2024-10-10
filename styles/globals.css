@@ -119,3 +119,8 @@ body,
     transform: rotate(0.5turn);
   }
 }
+
+h3 {
+  font-size: 18px;
+  margin: 10px 0;
+}

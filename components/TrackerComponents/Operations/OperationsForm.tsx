@@ -340,7 +340,7 @@ const OperationsForm = () => {
         <div className="flex justify-center lg:justify-end items-center mt-8">
           <Button
             type="submit"
-            className=" bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] transition-all duration-300 font-semibold w-[200px]"
+            className=" bg-greenAccent text-white p-2 rounded hover:bg-green-700 transition-all duration-300 font-semibold w-[200px]"
           >
             Guardar Operación
           </Button>

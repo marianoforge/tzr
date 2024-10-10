@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Navigation from "./Navigation";
+
 const Navbar = () => {
   return (
     <header className="pt-6 sm:pt-12 lg:pt-16 w-full">
