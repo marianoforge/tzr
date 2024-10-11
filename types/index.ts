@@ -25,8 +25,8 @@ export interface Operation {
   direccion_reserva: string;
   tipo_operacion: string;
   valor_reserva: number;
-  numero_sobre_reserva?: number | null;
-  numero_sobre_refuerzo?: number | null;
+  numero_sobre_reserva?: string | null;
+  numero_sobre_refuerzo?: string | null;
   porcentaje_honorarios_asesor: number;
   porcentaje_honorarios_broker: number;
   porcentaje_punta_compradora?: number;
