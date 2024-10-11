@@ -47,11 +47,11 @@ const CuadroPrincipal = () => {
           {operations.length === 0 ? (
             <p className="text-center text-gray-600">No existen operaciones</p>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto text-center">
               <table className="w-full text-left border-collapse">
                 <thead className="hidden md:table-header-group">
-                  <tr className="border-b-2">
-                    <th className="py-2 px-4">Tipo de Operación</th>
+                  <tr className="border-b-2 text-center">
+                    <th className="py-2 px-4 text-start">Tipo de Operación</th>
                     <th className="py-2 px-4">Punta Compradora</th>
                     <th className="py-2 px-4">Punta Vendedora</th>
                     <th className="py-2 px-4">Facturación Neta</th>
@@ -61,9 +61,9 @@ const CuadroPrincipal = () => {
                   {operations.map((operacion: Operation) => (
                     <tr
                       key={operacion.id}
-                      className="border-b md:table-row flex flex-col md:flex-row mb-4 text-center"
+                      className="border-b md:table-row flex flex-col md:flex-row mb-4 text-center "
                     >
-                      <td className="py-2 px-4 text-start before:content-['Tipo_de_Operación:'] md:before:content-none">
+                      <td className="py-2 px-4 text-start before:content-['Tipo_de_Operación:'] md:before:content-none ">
                         {operacion.tipo_operacion}
                       </td>
                       <td className="py-2 px-4 before:content-['Punta_Compradora:'] md:before:content-none">
