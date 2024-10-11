@@ -72,7 +72,7 @@ const Bubbles = () => {
                 {data.title}
               </p>
               <p
-                className={`text-[40px] lg:text-[22px] xl:text-[24px] font-bold ${data.textColor} h-1/2 items-center justify-center flex`}
+                className={`text-[40px] lg:text-[30px] xl:text-[20px] 2xl:text-[24px] font-bold ${data.textColor} h-1/2 items-center justify-center flex`}
               >
                 {data.figure}
               </p>

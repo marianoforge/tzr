@@ -56,8 +56,10 @@ const EventsList: React.FC = () => {
                   </span>
                 </div>
                 <p className="mt-2 text-gray-400 text-sm">
-                  {event.description.length > 49 && window.innerWidth < 1024
+                  {event.description.length > 49 && window.innerWidth > 1024
                     ? `${event.description.substring(0, 49)} [...]`
+                    : event.description.length > 100
+                    ? `${event.description.substring(0, 40)} [...]`
                     : event.description}
                 </p>
               </div>

@@ -214,13 +214,13 @@ const FormularioExpenses: React.FC = () => {
                 <p className="text-red-500">{errors.dollarRate.message}</p>
               )}
             </div>
-            <div className="w-1/2">
+            <div className="w-1/2 ">
               <label className="block ">Monto en Dólares</label>
               <Input
                 type="text"
                 value={amountInDollars}
                 readOnly
-                className="bg-gray-100 cursor-not-allowed"
+                className="bg-gray-100 cursor-not-allowed p-2 mb-4 border border-gray-300 rounded"
               />
             </div>
           </div>
