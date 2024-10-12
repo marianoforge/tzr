@@ -79,16 +79,15 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
     watchAllFields.porcentaje_honorarios_broker,
   ]);
 
-  // Mutation to create a new operation using Tanstack Query
   const mutation = useMutation({
-    mutationFn: createOperation, // Use the function to create an operation
+    mutationFn: createOperation,
     onSuccess: () => {
       if (userUID) {
-        queryClient.invalidateQueries({ queryKey: ["operations", userUID] }); // Invalidate query to refresh operations list
+        queryClient.invalidateQueries({ queryKey: ["operations", userUID] });
       }
       setModalMessage("Operación guardada exitosamente");
       setShowModal(true);
-      reset(); // Reset form after successful submission
+      reset();
     },
     onError: () => {
       setModalMessage("Error al guardar la operación");
@@ -277,7 +276,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               <div className="w-1/2">
                 <label className="font-semibold">Monto sobre de reserva</label>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Por ejemplo: 2000"
                   {...register("monto_sobre_reserva")}
                 />
@@ -307,7 +306,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               <div className="w-1/2">
                 <label className="font-semibold">Monto sobre refuerzo</label>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Por ejemplo: 4000"
                   {...register("monto_sobre_refuerzo")}
                 />
