@@ -60,6 +60,10 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     direccion_reserva,
     tipo_operacion,
     valor_reserva,
+    porcentaje_punta_compradora,
+    porcentaje_punta_vendedora,
+    porcentaje_honorarios_asesor,
+    porcentaje_honorarios_broker,
     user_uid,
     ...rest
   } = req.body;
@@ -69,6 +73,10 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     !direccion_reserva ||
     !tipo_operacion ||
     !valor_reserva ||
+    !porcentaje_honorarios_asesor ||
+    !porcentaje_honorarios_broker ||
+    !porcentaje_punta_compradora ||
+    !porcentaje_punta_vendedora ||
     !user_uid
   ) {
     return res.status(400).json({ message: "All fields are required" });
@@ -80,6 +88,10 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
       direccion_reserva,
       tipo_operacion,
       valor_reserva,
+      porcentaje_punta_compradora,
+      porcentaje_punta_vendedora,
+      porcentaje_honorarios_asesor,
+      porcentaje_honorarios_broker,
       user_uid,
       ...rest,
       createdAt: new Date().toISOString(),

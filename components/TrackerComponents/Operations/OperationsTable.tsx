@@ -17,6 +17,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/stores/authStore";
 import { Operation } from "@/types";
+import { useUserDataStore } from "@/stores/userDataStore";
 
 interface OperationsTableProps {
   filter: "all" | "open" | "closed";
@@ -34,6 +35,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
 }) => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
+  const { userData } = useUserDataStore();
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
@@ -303,6 +306,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           onUpdate={() =>
             queryClient.invalidateQueries({ queryKey: ["operations", userID] })
           }
+          currentUser={userData!}
         />
       )}
     </div>

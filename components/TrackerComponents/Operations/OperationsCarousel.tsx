@@ -20,6 +20,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { Operation } from "@/types";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { useUserDataStore } from "@/stores/userDataStore";
 
 interface OperationsCarouselProps {
   filter: "all" | "open" | "closed";
@@ -42,6 +43,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
 
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
+  const { userData } = useUserDataStore();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -223,6 +225,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
           onClose={() => setIsEditModalOpen(false)}
           operation={selectedOperation}
           onUpdate={() => fetchUserOperations(userID!)} // This ensures the operations are refetched after update
+          currentUser={userData!}
         />
       )}
     </>

@@ -12,11 +12,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"; // Import T
 import { createOperation } from "@/lib/api/operationsApi"; // Import the createOperation function
 import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "@/schemas/operationsFormSchema";
-import { Operation } from "@/types";
+import { Operation, UserData } from "@/types";
+import useUsersWithOperations from "@/hooks/useUserWithOperations";
 
 type FormData = InferType<typeof schema>;
 
-const OperationsForm = () => {
+const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
   const {
     register,
     handleSubmit,
@@ -31,6 +32,7 @@ const OperationsForm = () => {
       punta_vendedora: false,
     },
   });
+  const { data } = useUsersWithOperations(currentUser);
 
   const [userUID, setUserUID] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -40,6 +42,10 @@ const OperationsForm = () => {
 
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const usersMapped = data?.map((user) => ({
+    name: `${user.firstName} ${user.lastName}`,
+  }));
 
   // Fetch the user ID from Firebase authentication
   useEffect(() => {
@@ -123,19 +129,16 @@ const OperationsForm = () => {
     <div className="flex justify-center items-center w-full">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
+        className="p-6 bg-white rounded shadow-md w-full xl:w-[80%] 2xl:w-[90%] justify-center items-center"
       >
-        <h2 className="text-2xl mb-4">Agregar Reserva / Operación</h2>
-        <div className="flex flex-wrap -mx-2">
-          <div className="w-full md:w-1/2 px-2">
+        <h2 className="text-2xl mb-4 justify-center">
+          Agregar Reserva / Operación
+        </h2>
+        <div className="flex flex-wrap -mx-2 gap-x-24 justify-center">
+          <div className="w-50% md:w-[40%] px-2">
             {/* Left column */}
             <label className="font-semibold">Fecha de la Operación</label>
-            <Input
-              type="date"
-              {...register("fecha_operacion")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-              required
-            />
+            <Input type="date" {...register("fecha_operacion")} required />
             {errors.fecha_operacion && (
               <p className="text-red-500">{errors.fecha_operacion.message}</p>
             )}
@@ -146,7 +149,6 @@ const OperationsForm = () => {
               type="text"
               placeholder="Dirección de la Reserva"
               {...register("direccion_reserva")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
             {errors.direccion_reserva && (
@@ -155,7 +157,7 @@ const OperationsForm = () => {
             <label className="font-semibold">Tipo de operación</label>
             <select
               {...register("tipo_operacion")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
             >
               <option value="">Selecciona el Tipo de Operación</option>
@@ -176,7 +178,6 @@ const OperationsForm = () => {
               type="number"
               placeholder="Por ejemplo: 200000"
               {...register("valor_reserva")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
             {errors.valor_reserva && (
@@ -186,14 +187,13 @@ const OperationsForm = () => {
             <div className="flex items-center justify-between w-full gap-4">
               <div className="flex flex-col w-[50%]">
                 <label className="font-semibold">
-                  Porcentaje punta compradoran
+                  Porcentaje punta compradora
                 </label>
                 <Input
                   placeholder="Por ejemplo: 3"
                   type="number"
                   step="any"
                   {...register("porcentaje_punta_compradora")}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required
                 />
                 {errors.porcentaje_punta_compradora && (
@@ -211,7 +211,6 @@ const OperationsForm = () => {
                   type="number"
                   step="any"
                   {...register("porcentaje_punta_vendedora")}
-                  className="w-full  p-2 mb-4 border border-gray-300 rounded"
                   required
                 />
                 {errors.porcentaje_punta_vendedora && (
@@ -231,7 +230,6 @@ const OperationsForm = () => {
                   step="any"
                   placeholder="Por ejemplo: 40"
                   {...register("porcentaje_honorarios_asesor")}
-                  className="w-full  p-2 mb-4 border border-gray-300 rounded"
                   required
                 />
                 {errors.porcentaje_honorarios_asesor && (
@@ -247,9 +245,8 @@ const OperationsForm = () => {
                 <Input
                   type="number"
                   step="any"
-                  placeholder="Suma de las puntas"
+                  placeholder="Por ejemplo 7"
                   {...register("porcentaje_honorarios_broker")}
-                  className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required
                 />
                 {errors.porcentaje_honorarios_broker && (
@@ -261,59 +258,133 @@ const OperationsForm = () => {
             </div>
           </div>
 
-          <div className="w-full md:w-1/2 px-2">
+          <div className="w-full md:w-[40%] px-2">
             {/* Right column */}
-            <label className="font-semibold">
-              Número de sobre de reserva (opcional)
-            </label>
-            <Input
-              type="text"
-              placeholder="Por ejemplo: E12549"
-              {...register("numero_sobre_reserva")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-            />
-            {errors.numero_sobre_reserva && (
-              <p className="text-red-500">
-                {errors.numero_sobre_reserva.message}
-              </p>
-            )}
-            <label className="font-semibold">
-              Numero de sobre de refuerzo (opcional)
-            </label>
-            <Input
-              type="text"
-              placeholder="Por ejemplo: E12549"
-              {...register("numero_sobre_refuerzo")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-            />
-            {errors.numero_sobre_refuerzo && (
-              <p className="text-red-500">
-                {errors.numero_sobre_refuerzo.message}
-              </p>
-            )}
-            <label className="font-semibold">
-              Nombre del Referido (opcional)
-            </label>
-            <Input
-              type="text"
-              placeholder="Por ejemplo: Juan Pérez"
-              {...register("referido")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-            />
-            {errors.referido && (
-              <p className="text-red-500">{errors.referido.message}</p>
-            )}
-            <label className="font-semibold">
-              Nombre del Compartido (opcional)
-            </label>
-            <Input
-              type="text"
-              placeholder="Por ejemplo: Juana Pérez"
-              {...register("compartido")}
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-            />
-            {errors.compartido && (
-              <p className="text-red-500">{errors.compartido.message}</p>
+            <div className="flex flex-row w-full gap-2 justify-center items-center">
+              <div className="w-1/2">
+                <label className="font-semibold">Número sobre de reserva</label>
+                <Input
+                  type="text"
+                  placeholder="Por ejemplo: E12549"
+                  {...register("numero_sobre_reserva")}
+                />
+                {errors.numero_sobre_reserva && (
+                  <p className="text-red-500">
+                    {errors.numero_sobre_reserva.message}
+                  </p>
+                )}
+              </div>
+              <div className="w-1/2">
+                <label className="font-semibold">Monto sobre de reserva</label>
+                <Input
+                  type="text"
+                  placeholder="Por ejemplo: 2000"
+                  {...register("monto_sobre_reserva")}
+                />
+                {errors.monto_sobre_reserva && (
+                  <p className="text-red-500">
+                    {errors.monto_sobre_reserva.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-row w-full gap-2 justify-center items-center">
+              <div className="w-1/2">
+                <label className="font-semibold">
+                  Número de sobre de refuerzo
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Por ejemplo: E12549"
+                  {...register("numero_sobre_refuerzo")}
+                />
+                {errors.numero_sobre_refuerzo && (
+                  <p className="text-red-500">
+                    {errors.numero_sobre_refuerzo.message}
+                  </p>
+                )}
+              </div>
+              <div className="w-1/2">
+                <label className="font-semibold">Monto sobre refuerzo</label>
+                <Input
+                  type="text"
+                  placeholder="Por ejemplo: 4000"
+                  {...register("monto_sobre_refuerzo")}
+                />
+                {errors.monto_sobre_refuerzo && (
+                  <p className="text-red-500">
+                    {errors.monto_sobre_refuerzo.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-row w-full gap-2 justify-center items-center">
+              <div className="w-1/2">
+                <label className="font-semibold">Referido</label>
+                <Input
+                  type="text"
+                  placeholder="Por ejemplo: Juan Pérez"
+                  {...register("referido")}
+                />
+                {errors.referido && (
+                  <p className="text-red-500">{errors.referido.message}</p>
+                )}
+              </div>
+              <div className="w-1/2">
+                <label className="font-semibold">Porcentaje Referido</label>
+                <Input
+                  type="number"
+                  placeholder="Por ejemplo 10%"
+                  {...register("porcentaje_referido")}
+                />
+                {errors.referido && (
+                  <p className="text-red-500">{errors.referido.message}</p>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-row w-full gap-2 justify-center items-center">
+              <div>
+                <label className="font-semibold">Compartido</label>
+                <Input
+                  type="text"
+                  placeholder="Por ejemplo: Juana Pérez"
+                  {...register("compartido")}
+                />
+                {errors.compartido && (
+                  <p className="text-red-500">{errors.compartido.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="font-semibold">Porcentaje Compartido</label>
+                <Input
+                  type="text"
+                  placeholder="Por ejemplo: 25%"
+                  {...register("porcentaje_compartido")}
+                />
+                {errors.porcentaje_compartido && (
+                  <p className="text-red-500">
+                    {errors.porcentaje_compartido.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <label className="font-semibold">Asesor que realizó la venta</label>
+            <select
+              {...register("realizador_venta")}
+              className="w-full p-2 mb-8 border border-gray-300 rounded"
+              required
+            >
+              <option value="">
+                Selecciona el asesor que realizó la venta
+              </option>
+              {usersMapped.map((user) => (
+                <option key={user.name} value={user.name}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+            {errors.realizador_venta && (
+              <p className="text-red-500">{errors.realizador_venta.message}</p>
             )}
             <label className="font-semibold">Cantidad de puntas</label>
             <div className="flex gap-10 mt-2">

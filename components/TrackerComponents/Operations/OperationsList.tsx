@@ -19,6 +19,7 @@ import {
   updateOperation,
   deleteOperation,
 } from "@/lib/api/operationsApi";
+import { useUserDataStore } from "@/stores/userDataStore";
 
 interface OperationsCarouselDashProps {
   filter: "all" | "open" | "closed";
@@ -36,6 +37,8 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const { userData } = useUserDataStore();
 
   // Autenticación del usuario para obtener UID
   useEffect(() => {
@@ -362,6 +365,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
               queryKey: ["operations", userUID],
             })
           }
+          currentUser={userData!}
         />
       )}
     </OperationsContainer>

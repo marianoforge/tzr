@@ -5,9 +5,11 @@ import { InferType } from "yup";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { calculateHonorarios } from "@/utils/calculations";
-import { schema } from "@/schemas/operationsModalSchema";
+import { schema } from "@/schemas/operationsFormSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateOperation } from "@/lib/api/operationsApi"; // API para actualizar la operación
+import { UserData } from "@/types";
+import useUsersWithOperations from "@/hooks/useUserWithOperations";
 
 type FormData = InferType<typeof schema>;
 
@@ -16,6 +18,7 @@ interface OperationsModalProps {
   onClose: () => void;
   operation: (FormData & { id: string }) | null;
   onUpdate: () => void;
+  currentUser: UserData;
 }
 
 const OperationsModal: React.FC<OperationsModalProps> = ({
@@ -23,6 +26,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   onClose,
   operation,
   onUpdate,
+  currentUser,
 }) => {
   const {
     register,
@@ -35,6 +39,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   });
 
   const queryClient = useQueryClient();
+  const { data } = useUsersWithOperations(currentUser);
+
+  const usersMapped = data?.map((user) => ({
+    name: `${user.firstName} ${user.lastName}`,
+  }));
 
   useEffect(() => {
     if (operation) {
@@ -90,7 +99,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[100%] md:w-[50%] lg:w-[40%] h-[75%] flex flex-col justify-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[100%] md:w-[50%] lg:w-[40%] h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4">Editar Operación</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
@@ -204,7 +213,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
           <Input
             type="text"
-            placeholder="Sobre de Reserva (opcional)"
+            placeholder="Sobre de Reserva"
             {...register("numero_sobre_reserva")}
             className="w-full p-2 border border-gray-300 rounded"
           />
@@ -216,7 +225,16 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
           <Input
             type="text"
-            placeholder="Sobre de Refuerzo (opcional)"
+            placeholder="Por ejemplo: 2000"
+            {...register("monto_sobre_reserva")}
+          />
+          {errors.monto_sobre_reserva && (
+            <p className="text-red-500">{errors.monto_sobre_reserva.message}</p>
+          )}
+
+          <Input
+            type="text"
+            placeholder="Sobre de Refuerzo"
             {...register("numero_sobre_refuerzo")}
             className="w-full p-2 border border-gray-300 rounded"
           />
@@ -228,7 +246,18 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
           <Input
             type="text"
-            placeholder="Datos Referido (opcional)"
+            placeholder="Por ejemplo: 4000"
+            {...register("monto_sobre_refuerzo")}
+          />
+          {errors.monto_sobre_refuerzo && (
+            <p className="text-red-500">
+              {errors.monto_sobre_refuerzo.message}
+            </p>
+          )}
+
+          <Input
+            type="text"
+            placeholder="Datos Referido"
             {...register("referido")}
             className="w-full p-2 border border-gray-300 rounded"
           />
@@ -237,13 +266,49 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           )}
 
           <Input
+            type="number"
+            placeholder="Por ejemplo 10%"
+            {...register("porcentaje_referido")}
+          />
+          {errors.referido && (
+            <p className="text-red-500">{errors.referido.message}</p>
+          )}
+
+          <Input
             type="text"
-            placeholder="Datos Compartido (opcional)"
+            placeholder="Datos Compartido"
             {...register("compartido")}
             className="w-full p-2 border border-gray-300 rounded"
           />
           {errors.compartido && (
             <p className="text-redAccent">{errors.compartido.message}</p>
+          )}
+
+          <Input
+            type="text"
+            placeholder="Por ejemplo: 25%"
+            {...register("porcentaje_compartido")}
+          />
+          {errors.porcentaje_compartido && (
+            <p className="text-red-500">
+              {errors.porcentaje_compartido.message}
+            </p>
+          )}
+          <label className="font-semibold">Asesor que realizó la venta</label>
+          <select
+            {...register("realizador_venta")}
+            className="w-full p-2 mb-8 border border-gray-300 rounded"
+            required
+          >
+            <option value="">Selecciona el asesor que realizó la venta</option>
+            {usersMapped.map((user) => (
+              <option key={user.name} value={user.name}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+          {errors.realizador_venta && (
+            <p className="text-red-500">{errors.realizador_venta.message}</p>
           )}
 
           <div className="flex justify-around items-center">

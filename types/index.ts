@@ -27,14 +27,19 @@ export interface Operation {
   valor_reserva: number;
   numero_sobre_reserva?: string | null;
   numero_sobre_refuerzo?: string | null;
+  monto_sobre_reserva?: number | null;
+  monto_sobre_refuerzo?: number | null;
   porcentaje_honorarios_asesor: number;
   porcentaje_honorarios_broker: number;
   porcentaje_punta_compradora?: number;
   porcentaje_punta_vendedora?: number;
+  porcentaje_compartido?: number | null;
+  porcentaje_referido?: number | null;
   honorarios_broker: number;
   honorarios_asesor: number;
   referido?: string | null;
   compartido?: string | null;
+  realizador_venta: string;
   estado: string;
 }
 

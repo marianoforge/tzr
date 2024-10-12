@@ -33,7 +33,14 @@ export const schema = yup.object().shape({
   punta_vendedora: yup.boolean().required(),
   numero_sobre_reserva: yup.string().nullable(),
   numero_sobre_refuerzo: yup.string().nullable(),
+  monto_sobre_reserva: yup.number().nullable(),
+  monto_sobre_refuerzo: yup.number().nullable(),
   referido: yup.string().nullable(),
   compartido: yup.string().nullable(),
+  porcentaje_compartido: yup.number().nullable(),
+  porcentaje_referido: yup.number().nullable(),
+  realizador_venta: yup
+    .string()
+    .required("El realizador de la venta es requerido"),
   estado: yup.string().required("El estado es requerido"),
 });
