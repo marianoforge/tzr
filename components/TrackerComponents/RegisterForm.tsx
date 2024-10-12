@@ -190,9 +190,9 @@ const RegisterForm = () => {
           required
         >
           <option value="" disabled selected>
-            ¿Sos Team Leader / Broker o Agente / Asesor?
+            ¿Sos Team Leader / Broker o Asesor?
           </option>
-          <option value="agente_asesor">Agente / Asesor</option>
+          <option value="agente_asesor"> Asesor</option>
           <option value="team_leader_broker">Team Leader / Broker</option>
         </select>
 

@@ -5,12 +5,7 @@ import OperationsContainer from "./OperationsContainer";
 import OperationsModal from "./OperationsModal";
 import { formatNumber } from "@/utils/formatNumber";
 import { Operation } from "@/types";
-import {
-  PencilIcon,
-  TrashIcon,
-  CheckIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -283,8 +278,8 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                     }
                     className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
                       operacion.estado === "En Curso"
-                        ? `bg-greenAccent`
-                        : `bg-redAccent`
+                        ? `bg-mediumBlue`
+                        : `bg-lightBlue`
                     }`}
                   >
                     <span
@@ -295,9 +290,13 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
                       } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
                     >
                       {operacion.estado === "En Curso" ? (
-                        <CheckIcon className="h-4 w-4 text-greenAccent" />
+                        <p className="h-4 w-4 text-mediumBlue flex justify-center items-center">
+                          A
+                        </p>
                       ) : (
-                        <XMarkIcon className="h-4 w-4 text-redAccent" />
+                        <p className="h-4 w-4 text-lightBlue flex justify-center items-center">
+                          C
+                        </p>
                       )}
                     </span>
                   </button>

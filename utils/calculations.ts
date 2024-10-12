@@ -65,13 +65,19 @@ export const calculateTotals = (operations: Operation[]) => {
 
   const puntaCompradora = operations.reduce(
     (acc, op) =>
-      acc + (typeof op.punta_compradora === "number" ? op.punta_compradora : 0),
+      acc +
+      (typeof op.punta_compradora === "number"
+        ? op.punta_compradora
+        : Number(op.punta_compradora)),
     0
   );
 
   const puntaVendedora = operations.reduce(
     (acc, op) =>
-      acc + (typeof op.punta_vendedora === "number" ? op.punta_vendedora : 0),
+      acc +
+      (typeof op.punta_vendedora === "number"
+        ? op.punta_vendedora
+        : Number(op.punta_vendedora)),
     0
   );
 

@@ -9,12 +9,7 @@ import { formatNumber } from "@/utils/formatNumber";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import Loader from "../Loader";
 import OperationsModal from "./OperationsModal";
-import {
-  CheckIcon,
-  XMarkIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/stores/authStore";
 import { Operation } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
@@ -239,8 +234,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   }
                   className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
                     operacion.estado === "En Curso"
-                      ? `bg-greenAccent`
-                      : `bg-redAccent`
+                      ? `bg-mediumBlue`
+                      : `bg-lightBlue`
                   }`}
                 >
                   <span
@@ -251,9 +246,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
                   >
                     {operacion.estado === "En Curso" ? (
-                      <CheckIcon className="h-4 w-4 text-greenAccent" />
+                      <p className="h-4 w-4 text-mediumBlue flex justify-center items-center">
+                        A
+                      </p>
                     ) : (
-                      <XMarkIcon className="h-4 w-4 text-redAccent" />
+                      <p className="h-4 w-4 text-lightBlue flex justify-center items-center">
+                        C
+                      </p>
                     )}
                   </span>
                 </button>
@@ -286,7 +285,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               ${formatNumber(Number(totals.valor_reserva))}
             </td>
             <td className={styleTotalRow}>
-              ${formatNumber(Number(totals.suma_total_de_puntas))}
+              {formatNumber(Number(totals.suma_total_de_puntas))}
             </td>
             <td className={styleTotalRow}>
               ${formatNumber(Number(totals.honorarios_broker))}

@@ -18,6 +18,8 @@ const Bubbles = () => {
   // Calculamos los totales basados en las operaciones obtenidas
   const totals = calculateTotals(operations);
 
+  console.log(operations);
+
   const bubbleData = [
     {
       title: "Honorarios Totales Netos (Asesor)",

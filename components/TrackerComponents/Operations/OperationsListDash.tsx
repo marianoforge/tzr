@@ -15,6 +15,7 @@ const OperationsListDash: React.FC = () => {
     enabled: !!userID, // Solo ejecuta si userID está disponible
   });
 
+  console.log(operations);
   // Los totales podrían ser calculados si están disponibles o derivados de las operaciones.
   const totals = operations.reduce(
     (
@@ -40,7 +41,7 @@ const OperationsListDash: React.FC = () => {
       honorarios_asesor: 0,
     }
   );
-
+  console.log(totals);
   return (
     <OperationsContainer
       isLoading={isLoading}
