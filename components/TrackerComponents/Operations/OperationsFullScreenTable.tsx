@@ -17,10 +17,10 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg w-[50%]">
+      <div className="bg-white pt-6 pb-10 px-12 rounded-lg w-[60%] 2xl:w-[50%]">
         <button
           onClick={onClose}
-          className="text-red-500 w-full flex justify-end"
+          className="text-red-500 w-full flex justify-end font-semibold"
         >
           Cerrar
         </button>
@@ -53,9 +53,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {operation.porcentaje_punta_vendedora}%
           </p>
           <p>
-            <span className="font-semibold">
-              Puntas Totales de la Operacion:
-            </span>{" "}
+            <span className="font-semibold">Cantidad de Puntas:</span>{" "}
             {formatNumber(
               Number(operation.punta_vendedora) +
                 Number(operation.punta_compradora)

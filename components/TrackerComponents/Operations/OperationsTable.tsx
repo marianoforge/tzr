@@ -9,7 +9,11 @@ import { formatNumber } from "@/utils/formatNumber";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import Loader from "../Loader";
 import OperationsModal from "./OperationsModal";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  PencilIcon,
+  TrashIcon,
+  MagnifyingGlassPlusIcon,
+} from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/stores/authStore";
 import { Operation } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
@@ -271,7 +275,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   onClick={() => handleViewClick(operacion)}
                   className="text-mediumBlue hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
                 >
-                  Ver
+                  <MagnifyingGlassPlusIcon className="h-5 w-5" />
                 </button>
               </td>
             </tr>
