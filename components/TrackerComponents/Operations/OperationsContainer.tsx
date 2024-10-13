@@ -15,7 +15,7 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
   children,
 }) => {
   return (
-    <div className="bg-white p-4 mt-6 rounded-xl shadow-md">
+    <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       {isLoading ? (
         <Loader />
       ) : (

@@ -67,7 +67,14 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   )}
                 </p>
                 <p>
-                  <strong>Puntas Vendedora:</strong>{" "}
+                  <strong>Puntas Vendedoras:</strong>{" "}
+                  {usuario.operaciones.reduce(
+                    (acc, op) => acc + (op.punta_vendedora ? 1 : 0),
+                    0
+                  )}
+                </p>
+                <p>
+                  <strong>Puntas totales:</strong>{" "}
                   {usuario.operaciones.reduce(
                     (acc, op) => acc + (op.punta_vendedora ? 1 : 0),
                     0

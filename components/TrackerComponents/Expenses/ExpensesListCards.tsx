@@ -114,7 +114,7 @@ const ExpensesListCards: React.FC = () => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="bg-white p-4 mt-6 rounded-xl shadow-md pb-10">
+    <div className="bg-white p-4 mt-20 rounded-xl shadow-md pb-10">
       <h2 className="text-2xl font-bold mb-4 text-center">Lista de Gastos</h2>
       {filteredExpenses.length === 0 ? (
         <p className="text-center text-gray-600">No existen gastos</p>
