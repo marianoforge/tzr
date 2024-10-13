@@ -58,6 +58,8 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     fecha_operacion,
     direccion_reserva,
+    localidad_reserva,
+    provincia_reserva,
     tipo_operacion,
     valor_reserva,
     porcentaje_punta_compradora,
@@ -71,6 +73,8 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
   if (
     !fecha_operacion ||
     !direccion_reserva ||
+    !localidad_reserva ||
+    !provincia_reserva ||
     !tipo_operacion ||
     !valor_reserva ||
     !porcentaje_honorarios_asesor ||
@@ -86,6 +90,8 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     const newOperation: Operation = {
       fecha_operacion,
       direccion_reserva,
+      localidad_reserva,
+      provincia_reserva,
       tipo_operacion,
       valor_reserva,
       porcentaje_punta_compradora,

@@ -153,9 +153,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             {errors.fecha_operacion && (
               <p className="text-red-500">{errors.fecha_operacion.message}</p>
             )}
-            <label className="font-semibold">
-              Dirección de la reserva / operación
-            </label>
+            <label className="font-semibold">Dirección de la operación</label>
             <Input
               type="text"
               placeholder="Dirección de la Reserva"
@@ -164,6 +162,51 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             />
             {errors.direccion_reserva && (
               <p className="text-red-500">{errors.direccion_reserva.message}</p>
+            )}
+            <label className="font-semibold">Localidad</label>
+            <Input
+              type="text"
+              placeholder="Por ejemplo: San Isidro"
+              {...register("localidad_reserva")}
+              required
+            />
+            {errors.localidad_reserva && (
+              <p className="text-red-500">{errors.localidad_reserva.message}</p>
+            )}
+            <label className="font-semibold">Provincia</label>
+            <select
+              {...register("provincia_reserva")}
+              className="w-full p-2 mb-8 border border-gray-300 rounded"
+              required
+            >
+              <option value="">Selecciona la Provincia</option>
+              <option value="Buenos Aires">Buenos Aires</option>
+              <option value="CABA">CABA</option>
+              <option value="Catamarca">Catamarca</option>
+              <option value="Chaco">Chaco</option>
+              <option value="Chubut">Chubut</option>
+              <option value="Córdoba">Córdoba</option>
+              <option value="Corrientes">Corrientes</option>
+              <option value="Entre Ríos">Entre Ríos</option>
+              <option value="Formosa">Formosa</option>
+              <option value="Jujuy">Jujuy</option>
+              <option value="La Pampa">La Pampa</option>
+              <option value="La Rioja">La Rioja</option>
+              <option value="Mendoza">Mendoza</option>
+              <option value="Misiones">Misiones</option>
+              <option value="Neuquén">Neuquén</option>
+              <option value="Río Negro">Río Negro</option>
+              <option value="Salta">Salta</option>
+              <option value="San Juan">San Juan</option>
+              <option value="San Luis">San Luis</option>
+              <option value="Santa Cruz">Santa Cruz</option>
+              <option value="Santa Fe">Santa Fe</option>
+              <option value="Santiago del Estero">Santiago del Estero</option>
+              <option value="Tierra del Fuego">Tierra del Fuego</option>
+              <option value="Tucumán">Tucumán</option>
+            </select>
+            {errors.provincia_reserva && (
+              <p className="text-red-500">{errors.provincia_reserva.message}</p>
             )}
             <label className="font-semibold">Tipo de operación</label>
             <select
@@ -181,18 +224,6 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             </select>
             {errors.tipo_operacion && (
               <p className="text-red-500">{errors.tipo_operacion.message}</p>
-            )}
-            <label className="font-semibold">
-              Valor de reserva / operación
-            </label>
-            <Input
-              type="number"
-              placeholder="Por ejemplo: 200000"
-              {...register("valor_reserva")}
-              required
-            />
-            {errors.valor_reserva && (
-              <p className="text-red-500">{errors.valor_reserva.message}</p>
             )}
 
             <div className="flex items-center justify-between w-full gap-4">
@@ -271,6 +302,18 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
 
           <div className="w-full md:w-[40%] px-2">
             {/* Right column */}
+            <label className="font-semibold">
+              Valor de reserva / operación
+            </label>
+            <Input
+              type="number"
+              placeholder="Por ejemplo: 200000"
+              {...register("valor_reserva")}
+              required
+            />
+            {errors.valor_reserva && (
+              <p className="text-red-500">{errors.valor_reserva.message}</p>
+            )}
             <div className="flex flex-row w-full gap-2 justify-center items-center">
               <div className="w-1/2">
                 <label className="font-semibold">Número sobre de reserva</label>
@@ -302,7 +345,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             <div className="flex flex-row w-full gap-2 justify-center items-center">
               <div className="w-1/2">
                 <label className="font-semibold">
-                  Número de sobre de refuerzo
+                  Número sobre de refuerzo
                 </label>
                 <Input
                   type="text"
@@ -354,7 +397,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               </div>
             </div>
             <div className="flex flex-row w-full gap-2 justify-center items-center">
-              <div>
+              <div className="w-1/2">
                 <label className="font-semibold">Compartido</label>
                 <Input
                   type="text"
@@ -365,7 +408,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                   <p className="text-red-500">{errors.compartido.message}</p>
                 )}
               </div>
-              <div>
+              <div className="w-1/2">
                 <label className="font-semibold">Porcentaje Compartido</label>
                 <Input
                   type="number"

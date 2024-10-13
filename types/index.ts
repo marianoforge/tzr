@@ -25,6 +25,8 @@ export interface Operation {
   id: string;
   fecha_operacion: string;
   direccion_reserva: string;
+  localidad_reserva: string;
+  provincia_reserva: string;
   tipo_operacion: string;
   valor_reserva: number;
   numero_sobre_reserva?: string | null;
@@ -33,8 +35,8 @@ export interface Operation {
   monto_sobre_refuerzo?: number | null;
   porcentaje_honorarios_asesor: number;
   porcentaje_honorarios_broker: number;
-  porcentaje_punta_compradora?: number;
-  porcentaje_punta_vendedora?: number;
+  porcentaje_punta_compradora: number;
+  porcentaje_punta_vendedora: number;
   porcentaje_compartido?: number | null;
   porcentaje_referido?: number | null;
   honorarios_broker: number;

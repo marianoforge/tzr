@@ -32,6 +32,14 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {operation.direccion_reserva}
           </p>
           <p>
+            <span className="font-semibold">Localidad:</span>{" "}
+            {operation.localidad_reserva}
+          </p>
+          <p>
+            <span className="font-semibold">Provincia:</span>{" "}
+            {operation.provincia_reserva}
+          </p>
+          <p>
             <span className="font-semibold">Tipo: </span>{" "}
             {operation.tipo_operacion}
           </p>
