@@ -1,6 +1,7 @@
 import React from "react";
 import { Operation } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
+import Button from "../FormComponents/Button";
 
 interface FullScreenModalProps {
   isOpen: boolean;
@@ -18,12 +19,6 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white pt-6 pb-10 px-12 rounded-lg w-[60%] 2xl:w-[50%]">
-        <button
-          onClick={onClose}
-          className="text-red-500 w-full flex justify-end font-semibold"
-        >
-          Cerrar
-        </button>
         <h2 className="text-2xl text-mediumBlue font-bold mb-6">
           Ficha de la Operación
         </h2>
@@ -113,6 +108,18 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             <span className="font-semibold">Estado de la Operacion: </span>{" "}
             {operation.estado}
           </p>
+        </div>
+        <div
+          className="flex justify-center items-center
+        "
+        >
+          <Button
+            type="button"
+            onClick={onClose}
+            className="bg-lightBlue text-white p-2 rounded hover:bg-lightBlue/80 transition-all duration-300 font-semibold w-48 mt-10"
+          >
+            Cerrar
+          </Button>
         </div>
       </div>
     </div>

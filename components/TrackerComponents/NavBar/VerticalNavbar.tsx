@@ -1,5 +1,5 @@
 import { useUserDataStore } from "@/stores/userDataStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
 import {
   HomeIcon,
@@ -8,10 +8,12 @@ import {
   TableCellsIcon,
   ClipboardDocumentCheckIcon,
   CurrencyDollarIcon,
+  UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
 import { NavLink } from "../NavComponents/NavLink";
+import AddUserModal from "../AddUserModal";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
@@ -31,6 +33,12 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
 
     return () => unsubscribe();
   }, [fetchItems]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddAdvisorClick = () => {
+    setIsModalOpen(true);
+  };
 
   const renderNavButtons = () => (
     <>
@@ -93,8 +101,15 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
         icon={
           <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
         }
-        label="Asesores"
+        label="Informe Asesores"
       />
+      <button
+        onClick={handleAddAdvisorClick}
+        className="flex items-center px-3 py-2 hover:text-mediumBlue"
+      >
+        <UserPlusIcon className="w-5 h-5 mr-2 text-lightBlue" />
+        Agregar Asesor
+      </button>
       <NavLink
         href="/expensesBroker"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
@@ -122,6 +137,11 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     }
   };
 
+  const renderModal = () => {
+    if (!isModalOpen) return null;
+    return <AddUserModal onClose={() => setIsModalOpen(false)} />;
+  };
+
   return (
     <nav className="h-[calc(100vh-4rem)] text-sm flex-col w-[320px] fixed left-0 top-16 hidden xl:block min-h-[900px] overflow-y-auto">
       <div className="flex items-center justify-center h-20 pl-4 ">
@@ -136,6 +156,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
           <UserActions setActiveView={setActiveView} />
         </div>
       </div>
+      {renderModal()}
     </nav>
   );
 };
