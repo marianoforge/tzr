@@ -10,8 +10,8 @@ import { useUserDataStore } from "@/stores/userDataStore";
 const Profitability = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
-  // Obtener gastos y operaciones usando Tanstack Query
   const validUserID = userID || ""; // Ensure userID is a string
+  const currentYear = new Date().getFullYear();
 
   const { data: expenses = [], isLoading: isLoadingExpenses } = useQuery({
     queryKey: ["expenses", validUserID],
@@ -24,12 +24,18 @@ const Profitability = () => {
     enabled: !!userID,
   });
 
-  // Calcular los totales de operaciones y gastos
-  const totalHonorariosNetosAsesor = operations.reduce(
+  // Filtrar operaciones para incluir solo las del año corriente
+  const currentYearOperations = operations.filter((operation: Operation) => {
+    const operationYear = new Date(operation.fecha_operacion).getFullYear();
+    return operationYear === currentYear;
+  });
+
+  // Calcular los totales de operaciones y gastos usando las operaciones filtradas
+  const totalHonorariosNetosAsesor = currentYearOperations.reduce(
     (acc: number, op: Operation) => acc + op.honorarios_asesor,
     0
   );
-  const totalHonorariosBroker = operations.reduce(
+  const totalHonorariosBroker = currentYearOperations.reduce(
     (acc: number, op: Operation) => acc + op.honorarios_broker,
     0
   );

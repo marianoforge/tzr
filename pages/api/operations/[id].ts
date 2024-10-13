@@ -53,12 +53,12 @@ const updateOperation = async (
     const docRef = doc(db, "operations", id);
     await updateDoc(docRef, {
       ...updatedData,
-      updatedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(), // Actualizamos el campo de fecha
     });
     return res.status(200).json({ message: "Operation updated successfully" });
   } catch (error) {
     console.error("Error updating operation:", error);
-    return res.status(500).json({ message: "Error updating operation" });
+    return res.status(500).json({ message: "Error updating operation", error });
   }
 };
 

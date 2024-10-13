@@ -21,7 +21,7 @@ import { calculateTotals } from "@/utils/calculations";
 import OperationsFullScreenTable from "./OperationsFullScreenTable";
 
 interface OperationsTableProps {
-  filter: "all" | "open" | "closed";
+  filter: "all" | "open" | "closed" | "currentYear" | "year2023";
   totals: ReturnType<typeof calculateTotals>;
 }
 
@@ -73,10 +73,14 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   }
 
   const filteredOperations = operations?.filter((operation: Operation) => {
+    const operationYear = new Date(operation.fecha_operacion).getFullYear();
+    const currentYear = new Date().getFullYear();
+
     if (filter === "all") return true;
-    return filter === "open"
-      ? operation.estado === "En Curso"
-      : operation.estado === "Cerrada";
+    if (filter === "open") return operation.estado === "En Curso";
+    if (filter === "closed") return operation.estado === "Cerrada";
+    if (filter === "currentYear") return operationYear === currentYear;
+    if (filter === "year2023") return operationYear === 2023;
   });
 
   const handleEstadoChange = (id: string, currentEstado: string) => {

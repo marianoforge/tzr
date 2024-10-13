@@ -10,8 +10,10 @@ import { Operation } from "@/types";
 import { calculateTotals } from "@/utils/calculations";
 
 interface OperationsCarouselDashProps {
-  filter: "all" | "open" | "closed";
-  setFilter: React.Dispatch<React.SetStateAction<"all" | "open" | "closed">>;
+  filter: "all" | "open" | "closed" | "currentYear" | "year2023";
+  setFilter: React.Dispatch<
+    React.SetStateAction<"all" | "open" | "closed" | "currentYear" | "year2023">
+  >;
 }
 
 const OperationsList: React.FC<OperationsCarouselDashProps> = ({
@@ -40,11 +42,24 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
   });
 
   const filteredOperations = operations.filter((operation: Operation) => {
+    const operationYear = new Date(operation.fecha_operacion).getFullYear();
+    const currentYear = new Date().getFullYear();
+
     if (filter === "all") return true;
-    return filter === "open"
-      ? operation.estado === "En Curso"
-      : operation.estado === "Cerrada";
+    if (filter === "open") return operation.estado === "En Curso";
+    if (filter === "closed") return operation.estado === "Cerrada";
+    if (filter === "currentYear") return operationYear === currentYear;
+    if (filter === "year2023") return operationYear === 2023;
   });
+
+  // Calcular los totales basados en las operaciones filtradas
+  const filteredTotals = calculateTotals(filteredOperations);
+
+  // Verificar si hay operaciones del año 2023
+  const hasYear2023Operations = operations.some(
+    (operation: Operation) =>
+      new Date(operation.fecha_operacion).getFullYear() === 2023
+  );
 
   return (
     <OperationsContainer
@@ -55,36 +70,71 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
       <div className="flex justify-center mb-6 mt-6">
         <button
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 mx-2 w-[195px] ${
+          className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
             filter === "all"
               ? "bg-mediumBlue text-white"
+              : operations.length === 0
+              ? "bg-gray-300 text-gray-500"
               : "bg-lightBlue text-white"
-          } rounded-lg`}
+          }`}
+          disabled={operations.length === 0}
         >
           Todas las Operaciones
         </button>
         <button
           onClick={() => setFilter("open")}
-          className={`px-4 py-2 mx-2 w-[195px] ${
+          className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
             filter === "open"
               ? "bg-mediumBlue text-white"
+              : operations.length === 0
+              ? "bg-gray-300 text-gray-500"
               : "bg-lightBlue text-white"
-          } rounded-lg`}
+          }`}
+          disabled={operations.length === 0}
         >
           En curso / Reservas
         </button>
         <button
           onClick={() => setFilter("closed")}
-          className={`px-4 py-2 mx-2 w-[195px] ${
+          className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
             filter === "closed"
               ? "bg-mediumBlue text-white"
+              : operations.length === 0
+              ? "bg-gray-300 text-gray-500"
               : "bg-lightBlue text-white"
-          } rounded-lg`}
+          }`}
+          disabled={operations.length === 0}
         >
           Operaciones Cerradas
         </button>
+        <button
+          onClick={() => setFilter("currentYear")}
+          className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
+            filter === "currentYear"
+              ? "bg-mediumBlue text-white"
+              : operations.length === 0
+              ? "bg-gray-300 text-gray-500"
+              : "bg-lightBlue text-white"
+          }`}
+          disabled={operations.length === 0}
+        >
+          Año Actual
+        </button>
+        <button
+          onClick={() => setFilter("year2023")}
+          className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
+            filter === "year2023"
+              ? "bg-mediumBlue text-white"
+              : operations.length === 0 || !hasYear2023Operations
+              ? "bg-gray-300 text-gray-500"
+              : "bg-lightBlue text-white"
+          }`}
+          disabled={operations.length === 0 || !hasYear2023Operations}
+        >
+          Año 2023
+        </button>
       </div>
-      <OperationsTable filter={filter} totals={calculateTotals(operations)} />
+      <OperationsTable filter={filter} totals={filteredTotals} />
     </OperationsContainer>
   );
 };

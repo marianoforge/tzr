@@ -34,7 +34,7 @@ export const schema = yup.object().shape({
     .min(0, "No puede ser negativo"),
   porcentaje_punta_vendedora: yup
     .number()
-    .required("Porcentaje de punta vendedora es requerido")
+    .required("Porcentaje de punta compradora es requerido")
     .typeError("Debe ser un número")
     .min(0, "No puede ser negativo"),
   punta_compradora: yup.boolean().required(),
@@ -45,13 +45,17 @@ export const schema = yup.object().shape({
     .number()
     .nullable()
     .transform((value, originalValue) =>
-      originalValue.trim() === "" ? 0 : value
+      typeof originalValue === "string" && originalValue.trim() === ""
+        ? 0
+        : value
     ),
   monto_sobre_refuerzo: yup
     .number()
     .nullable()
     .transform((value, originalValue) =>
-      originalValue.trim() === "" ? 0 : value
+      typeof originalValue === "string" && originalValue.trim() === ""
+        ? 0
+        : value
     ),
   referido: yup.string().nullable(),
   compartido: yup.string().nullable(),
@@ -59,13 +63,17 @@ export const schema = yup.object().shape({
     .number()
     .nullable()
     .transform((value, originalValue) =>
-      originalValue.trim() === "" ? 0 : value
+      typeof originalValue === "string" && originalValue.trim() === ""
+        ? 0
+        : value
     ),
   porcentaje_referido: yup
     .number()
     .nullable()
     .transform((value, originalValue) =>
-      originalValue.trim() === "" ? 0 : value
+      typeof originalValue === "string" && originalValue.trim() === ""
+        ? 0
+        : value
     ),
   realizador_venta: yup
     .string()

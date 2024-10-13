@@ -4,9 +4,11 @@ import { calculateTotals } from "@/utils/calculations";
 import Loader from "./Loader";
 import { useAuthStore } from "@/stores/authStore";
 import { formatValue } from "@/utils/formatValue";
+import { Operation } from "@/types";
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
+  const currentYear = new Date().getFullYear();
 
   // Utilizamos Tanstack Query para obtener las operaciones y calcular los totales
   const { data: operations = [], isLoading } = useQuery({
@@ -15,8 +17,14 @@ const Bubbles = () => {
     enabled: !!userID,
   });
 
-  // Calculamos los totales basados en las operaciones obtenidas
-  const totals = calculateTotals(operations);
+  // Filtramos las operaciones para incluir solo las del año corriente
+  const currentYearOperations = operations.filter((operation: Operation) => {
+    const operationYear = new Date(operation.fecha_operacion).getFullYear();
+    return operationYear === currentYear;
+  });
+
+  // Calculamos los totales basados en las operaciones filtradas
+  const totals = calculateTotals(currentYearOperations);
 
   const bubbleData = [
     {

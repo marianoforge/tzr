@@ -16,6 +16,27 @@ import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { COLORS, MAX_BAR_SIZE } from "@/lib/constants";
 import { formatOperationsData } from "@/utils/formatOperationsData";
 
+const CustomTooltip: React.FC<{
+  active?: boolean;
+  payload?: Array<{ value: number }>;
+  label?: string;
+}> = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded shadow-md">
+        <p className="label font-semibold">{`Mes: ${label}`}</p>
+        <p className="intro">{`Año Anterior: ${payload[0].value}`}</p>
+        <p className="intro">{`Año Actual: ${payload[1].value}`}</p>
+        <p className="intro">{`Diferencia Interanual: ${
+          payload[1].value - payload[0].value
+        }`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const MonthlyBarChart: React.FC = () => {
   const { userID } = useAuthStore();
   const [data, setData] = useState<
@@ -70,19 +91,19 @@ const MonthlyBarChart: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ paddingTop: "20px" }} />
-                <Bar
-                  dataKey="currentYear"
-                  fill={COLORS[0]}
-                  name="Año Actual"
-                  maxBarSize={MAX_BAR_SIZE}
-                  radius={[4, 4, 0, 0]}
-                />
                 <Bar
                   dataKey="previousYear"
                   fill={COLORS[1]}
                   name="Año Anterior"
+                  maxBarSize={MAX_BAR_SIZE}
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  dataKey="currentYear"
+                  fill={COLORS[0]}
+                  name="Año Actual"
                   maxBarSize={MAX_BAR_SIZE}
                   radius={[4, 4, 0, 0]}
                 />

@@ -77,8 +77,16 @@ interface ObjectiveChartProps {
 class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
   render() {
     const { userData, operations } = this.props;
+    const currentYear = new Date().getFullYear();
 
-    const totals = calculateTotals(operations);
+    // Filtrar operaciones para incluir solo las del año corriente
+    const currentYearOperations = operations.filter((operation: Operation) => {
+      const operationYear = new Date(operation.fecha_operacion).getFullYear();
+      return operationYear === currentYear;
+    });
+
+    // Calcular los totales usando las operaciones filtradas
+    const totals = calculateTotals(currentYearOperations);
 
     const percentage =
       (totals.valor_reserva * 100) / (userData?.objetivoAnual ?? 1);
@@ -135,7 +143,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
               </PieChart>
             </div>
             <h3 className="font-semibold text-mediumBlue">
-              {`Objetivo Anual de Ventas $${formatNumber(
+              {`Objetivo Anual de Ventas: $${formatNumber(
                 totals.valor_reserva
               )} / $${formatNumber(userData?.objetivoAnual ?? 0)}`}
             </h3>
