@@ -12,11 +12,11 @@ const Agents = () => {
       <PrivateLayout>
         {userData && (
           <>
-            <div className="hidden xl:block">
+            <div className="hidden lg:block">
               {userData && <AgentsReport currentUser={userData} />}
             </div>
 
-            <div className="block xl:hidden">
+            <div className="block lg:hidden">
               {userData && <AgentsReportCarouselDash currentUser={userData} />}
             </div>
           </>

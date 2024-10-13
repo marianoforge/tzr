@@ -3,9 +3,17 @@ import useUsersWithOperations from "@/hooks/useUserWithOperations";
 import Loader from "@/components/TrackerComponents/Loader";
 import { UserData } from "@/types";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
+import { formatNumber } from "@/utils/formatNumber";
 
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
+
+  const honorariosBrokerTotales = data.reduce((acc, usuario) => {
+    return (
+      acc +
+      usuario.operaciones.reduce((sum, op) => sum + op.honorarios_broker, 0)
+    );
+  }, 0);
 
   if (loading) {
     return <Loader />;
@@ -31,6 +39,9 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                 <th className="py-3 px-4 font-semibold text-center">Email</th>
                 <th className="py-3 px-4 font-semibold text-center">
                   Total Facturacion Bruta
+                </th>
+                <th className="py-3 px-4 font-semibold text-center">
+                  Aporte a la Facturacion Bruta
                 </th>
                 <th className="py-3 px-4 font-semibold text-center">
                   Cantidad de Operaciones
@@ -63,10 +74,12 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                   );
                   return totalB - totalA;
                 })
-                .map((usuario) => (
+                .map((usuario, index) => (
                   <tr
                     key={usuario.uid}
-                    className="border-b transition duration-150 ease-in-out text-center"
+                    className={`border-b transition duration-150 ease-in-out text-center ${
+                      index === 0 ? "bg-greenAccent/10" : ""
+                    }`}
                   >
                     <td className="py-3 px-4 font-semibold text">
                       {usuario.firstName} {usuario.lastName}
@@ -81,6 +94,25 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                               (acc, op) => acc + op.honorarios_broker,
                               0
                             )}
+                          </li>
+                        </ul>
+                      ) : (
+                        <span>No operations</span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {usuario.operaciones.length > 0 ? (
+                        <ul>
+                          <li>
+                            {formatNumber(
+                              (usuario.operaciones.reduce(
+                                (acc, op) => acc + op.honorarios_broker,
+                                0
+                              ) *
+                                100) /
+                                honorariosBrokerTotales
+                            )}
+                            %
                           </li>
                         </ul>
                       ) : (
