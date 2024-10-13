@@ -37,18 +37,28 @@ export const schema = yup.object().shape({
     .number()
     .nullable()
     .transform((value, originalValue) =>
-      originalValue.trim() === "" ? "" : value
+      originalValue.trim() === "" ? 0 : value
     ),
   monto_sobre_refuerzo: yup
     .number()
     .nullable()
     .transform((value, originalValue) =>
-      originalValue.trim() === "" ? "" : value
+      originalValue.trim() === "" ? 0 : value
     ),
   referido: yup.string().nullable(),
   compartido: yup.string().nullable(),
-  porcentaje_compartido: yup.number().nullable(),
-  porcentaje_referido: yup.number().nullable(),
+  porcentaje_compartido: yup
+    .number()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue.trim() === "" ? 0 : value
+    ),
+  porcentaje_referido: yup
+    .number()
+    .nullable()
+    .transform((value, originalValue) =>
+      originalValue.trim() === "" ? 0 : value
+    ),
   realizador_venta: yup
     .string()
     .required("El realizador de la venta es requerido"),

@@ -118,8 +118,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
 
   const styleTotalRow = "py-3 px-4 text-center";
 
-  console.log("Totals:", totals);
-
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">

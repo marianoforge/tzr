@@ -102,8 +102,6 @@ export const calculateTotals = (operations: Operation[]) => {
       ? totalPuntaVendedoraPorcentaje / operations.length
       : 0;
 
-  console.log("Promedio Punta Vendedora:", promedioPuntaVendedoraPorcentaje);
-
   return {
     valor_reserva: totalValorReserva,
     porcentaje_honorarios_asesor: totalPorcentajeHonorariosAsesor,

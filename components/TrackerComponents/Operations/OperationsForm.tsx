@@ -14,6 +14,7 @@ import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "@/schemas/operationsFormSchema";
 import { Operation, UserData } from "@/types";
 import useUsersWithOperations from "@/hooks/useUserWithOperations";
+import { useUserDataStore } from "@/stores/userDataStore";
 
 type FormData = InferType<typeof schema>;
 
@@ -35,6 +36,8 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
   const { data } = useUsersWithOperations(currentUser);
 
   const [userUID, setUserUID] = useState<string | null>(null);
+  const { userData } = useUserDataStore();
+
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [honorariosBroker, setHonorariosBroker] = useState(0);
@@ -43,8 +46,10 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  const userRole = userData?.role;
   const usersMapped = data?.map((user) => ({
     name: `${user.firstName} ${user.lastName}`,
+    uid: user.uid,
   }));
 
   // Fetch the user ID from Firebase authentication
@@ -103,12 +108,19 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
       return;
     }
 
+    // Determine the user UID to assign the operation to
+    const selectedUser = usersMapped.find(
+      (user) => user.name === data.realizador_venta
+    );
+    const assignedUserUID =
+      selectedUser && selectedUser.uid !== userUID ? selectedUser.uid : userUID;
+
     const dataToSubmit = {
       ...data,
       fecha_operacion: new Date(data.fecha_operacion).toISOString(),
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
-      user_uid: userUID,
+      user_uid: assignedUserUID, // Use the determined user UID
       punta_compradora: data.punta_compradora ? 1 : 0,
       punta_vendedora: data.punta_vendedora ? 1 : 0,
       estado: "En Curso",
@@ -356,7 +368,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               <div>
                 <label className="font-semibold">Porcentaje Compartido</label>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Por ejemplo: 25%"
                   {...register("porcentaje_compartido")}
                 />
@@ -367,23 +379,31 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                 )}
               </div>
             </div>
-            <label className="font-semibold">Asesor que realizó la venta</label>
-            <select
-              {...register("realizador_venta")}
-              className="w-full p-2 mb-8 border border-gray-300 rounded"
-              required
-            >
-              <option value="">
-                Selecciona el asesor que realizó la venta
-              </option>
-              {usersMapped.map((user) => (
-                <option key={user.name} value={user.name}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
-            {errors.realizador_venta && (
-              <p className="text-red-500">{errors.realizador_venta.message}</p>
+            {userRole === "team_leader_broker" && (
+              <>
+                <label className="font-semibold">
+                  Asesor que realizó la venta
+                </label>
+                <select
+                  {...register("realizador_venta")}
+                  className="w-full p-2 mb-8 border border-gray-300 rounded"
+                  required
+                >
+                  <option value="">
+                    Selecciona el asesor que realizó la venta
+                  </option>
+                  {usersMapped.map((user) => (
+                    <option key={user.uid} value={user.name}>
+                      {user.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.realizador_venta && (
+                  <p className="text-red-500">
+                    {errors.realizador_venta.message}
+                  </p>
+                )}
+              </>
             )}
             <label className="font-semibold">Cantidad de puntas</label>
             <div className="flex gap-10 mt-2">
