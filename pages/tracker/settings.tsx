@@ -5,14 +5,18 @@ import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { cleanString } from "@/utils/cleanString";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatNumber } from "@/utils/formatNumber";
 
 const Settings = () => {
   const { userID } = useAuthStore();
-  const { userData, fetchUserData, setUserData, error } = useUserDataStore();
+  const queryClient = useQueryClient();
+  const { error } = useUserDataStore();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [agenciaBroker, setAgenciaBroker] = useState("");
   const [numeroTelefono, setNumeroTelefono] = useState("");
+  const [objetivoAnual, setObjetivoAnual] = useState(0);
   const [success, setSuccess] = useState("");
   const [editMode, setEditMode] = useState({
     firstName: false,
@@ -20,59 +24,48 @@ const Settings = () => {
     password: false,
     agenciaBroker: false,
     numeroTelefono: false,
+    objetivoAnual: false,
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (userID) {
-      fetchUserData(userID);
-    }
-  }, [userID, fetchUserData]);
+  const { data: userDataQuery, isLoading: isLoadingQuery } = useQuery({
+    queryKey: ["userData", userID],
+    queryFn: async () => {
+      const response = await axios.get(`/api/users/${userID}`);
+      return response.data;
+    },
+    enabled: !!userID,
+  });
 
   useEffect(() => {
-    if (userData) {
-      setFirstName(userData.firstName || "");
-      setLastName(userData.lastName || "");
-      setAgenciaBroker(userData.agenciaBroker || "");
-      setNumeroTelefono(userData.numeroTelefono || "");
+    if (userDataQuery) {
+      setFirstName(userDataQuery.firstName);
+      setLastName(userDataQuery.lastName);
+      setAgenciaBroker(userDataQuery.agenciaBroker);
+      setNumeroTelefono(userDataQuery.numeroTelefono);
+      setObjetivoAnual(userDataQuery.objetivoAnual);
     }
-  }, [userData]);
+  }, [userDataQuery]);
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSuccess("");
-
+    setErrorMessage(null);
     try {
-      await axios.put(`/api/users/${userID}`, {
-        userID,
-        firstName,
-        lastName,
+      const response = await axios.put(`/api/users/${userID}`, {
+        firstName: cleanString(firstName),
+        lastName: cleanString(lastName),
         agenciaBroker: cleanString(agenciaBroker),
-        numeroTelefono,
+        numeroTelefono: cleanString(numeroTelefono),
+        objetivoAnual,
       });
-
-      setSuccess("Información actualizada exitosamente.");
-      if (!userData) {
-        throw new Error("User data is null");
+      console.log(response);
+      if (response.status === 200) {
+        setSuccess("Datos actualizados correctamente");
+        queryClient.invalidateQueries({ queryKey: ["userData", userID] });
       }
-      setUserData({
-        ...userData,
-        firstName,
-        lastName,
-        agenciaBroker,
-        numeroTelefono,
-        email: userData.email ?? null,
-      });
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response) {
-        setErrorMessage(
-          err.response.data.message || "Error al actualizar usuario"
-        );
-      } else if (err instanceof Error) {
-        setErrorMessage(err.message);
-      } else {
-        setErrorMessage("Error desconocido al actualizar usuario");
-      }
+    } catch (error) {
+      console.error("Error updating user data:", error);
+      setErrorMessage("Error al actualizar los datos");
     }
   };
 
@@ -88,12 +81,16 @@ const Settings = () => {
     <div>
       <PrivateRoute>
         <PrivateLayout>
-          <div className="flex items-center justify-center bg-white">
+          {isLoadingQuery ? (
+            <p>Loading...</p>
+          ) : (
             <form
               onSubmit={handleUpdate}
-              className="bg-white p-6 rounded shadow-md w-[100%]"
+              className="bg-white p-6 mt-20 rounded shadow-md w-[100%]"
             >
-              <h2 className="text-2xl mb-4 text-center">Datos Personales</h2>
+              <h2 className="text-2xl mb-4 text-center font-semibold">
+                Datos Personales
+              </h2>
               {error && <p className="text-red-500 mb-4">{error}</p>}
               {success && <p className="text-green-500 mb-4">{success}</p>}
               <div className="flex lg:flex-row flex-col items-center justify-center lg:gap-10 w-full mt-10">
@@ -115,7 +112,7 @@ const Settings = () => {
                         ? handleSave("firstName")
                         : toggleEditMode("firstName")
                     }
-                    className=" bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                    className=" bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
                   >
                     {editMode.firstName ? "Guardar" : "Editar"}
                   </button>
@@ -139,7 +136,7 @@ const Settings = () => {
                         ? handleSave("lastName")
                         : toggleEditMode("lastName")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
                   >
                     {editMode.lastName ? "Guardar" : "Editar"}
                   </button>
@@ -164,7 +161,7 @@ const Settings = () => {
                         ? handleSave("agenciaBroker")
                         : toggleEditMode("agenciaBroker")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
                   >
                     {editMode.agenciaBroker ? "Guardar" : "Editar"}
                   </button>
@@ -188,9 +185,34 @@ const Settings = () => {
                         ? handleSave("numeroTelefono")
                         : toggleEditMode("numeroTelefono")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600"
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
                   >
                     {editMode.numeroTelefono ? "Guardar" : "Editar"}
+                  </button>
+                </div>
+              </div>
+              <div className="flex lg:flex-row flex-col w-full">
+                <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-end pr-5">
+                  <input
+                    type="text"
+                    placeholder="Objetivo de Anual de Ventas"
+                    name="objetivoAnual"
+                    value={`$${formatNumber(objetivoAnual)}`}
+                    onChange={(e) => setObjetivoAnual(Number(e.target.value))}
+                    className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
+                    disabled={!editMode.objetivoAnual}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      editMode.objetivoAnual
+                        ? handleSave("objetivoAnual")
+                        : toggleEditMode("objetivoAnual")
+                    }
+                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
+                  >
+                    {editMode.objetivoAnual ? "Guardar" : "Editar"}
                   </button>
                 </div>
               </div>
@@ -203,7 +225,7 @@ const Settings = () => {
                 </button>
               </div>
             </form>
-          </div>
+          )}
         </PrivateLayout>
       </PrivateRoute>
       {errorMessage && <p className="error">{errorMessage}</p>}

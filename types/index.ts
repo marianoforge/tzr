@@ -143,6 +143,7 @@ export interface UserData {
   email: string | null;
   numeroTelefono: string | null;
   agenciaBroker: string | null;
+  objetivoAnual: number | null;
   role: string | null;
 }
 

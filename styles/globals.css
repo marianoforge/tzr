@@ -124,7 +124,3 @@ h3 {
   font-size: 18px;
   margin: 10px 0;
 }
-
-recharts-wrapper {
-  z-index: -100 !important;
-}

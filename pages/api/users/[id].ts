@@ -27,9 +27,23 @@ export default async function handler(
       res.status(500).json({ message: "Error fetching user data", error });
     }
   } else if (req.method === "PUT") {
-    const { name, lastName, email, agenciaBroker, numeroTelefono } = req.body;
+    const {
+      name,
+      lastName,
+      email,
+      agenciaBroker,
+      numeroTelefono,
+      objetivoAnual,
+    } = req.body;
 
-    if (!name && !lastName && !email && !agenciaBroker && !numeroTelefono) {
+    if (
+      !name &&
+      !lastName &&
+      !email &&
+      !agenciaBroker &&
+      !numeroTelefono &&
+      !objetivoAnual
+    ) {
       return res.status(400).json({ message: "No fields to update" });
     }
 
@@ -41,6 +55,7 @@ export default async function handler(
         ...(email && { email }),
         ...(agenciaBroker && { agenciaBroker }),
         ...(numeroTelefono && { numeroTelefono }),
+        ...(objetivoAnual && { objetivoAnual }),
         updatedAt: new Date(),
       };
       await updateDoc(userRef, updates);

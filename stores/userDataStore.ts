@@ -49,6 +49,7 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
         email: userData.email || null,
         numeroTelefono: userData.numeroTelefono || null,
         agenciaBroker: userData.agenciaBroker || null,
+        objetivoAnual: userData.objetivoAnual || null,
         role: userData.role || null,
       };
 
