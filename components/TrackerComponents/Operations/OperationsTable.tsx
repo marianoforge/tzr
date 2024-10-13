@@ -13,15 +13,12 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/stores/authStore";
 import { Operation } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
+import { calculateTotals } from "@/utils/calculations";
+import OperationsFullScreenTable from "./OperationsFullScreenTable";
 
 interface OperationsTableProps {
   filter: "all" | "open" | "closed";
-  totals: {
-    valor_reserva: number;
-    suma_total_de_puntas: number;
-    honorarios_broker: number;
-    honorarios_asesor: number;
-  };
+  totals: ReturnType<typeof calculateTotals>;
 }
 
 const OperationsTable: React.FC<OperationsTableProps> = ({
@@ -36,6 +33,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
   );
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewOperation, setViewOperation] = useState<Operation | null>(null);
 
   // Obtener las operaciones del usuario usando Tanstack Query
   const { data: operations, isLoading } = useQuery({
@@ -108,14 +107,21 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     setIsEditModalOpen(true);
   };
 
+  const handleViewClick = (operation: Operation) => {
+    setViewOperation(operation);
+    setIsViewModalOpen(true);
+  };
+
   const styleTotalRow = "py-3 px-4 text-center";
+
+  console.log("Totals:", totals);
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
           <tr
-            className={`${OPERATIONS_LIST_COLORS.headerBg} hidden md:table-row text-center`}
+            className={`${OPERATIONS_LIST_COLORS.headerBg} hidden md:table-row text-center text-sm`}
           >
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -125,37 +131,28 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
-              Dirección de Reserva
+              Operación
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
               Tipo de Operación
             </th>
+
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
-              Referido
+              Valor Reserva / Cierre
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
-              Compartido
+              Punta Compradora
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
-              Sobre de Reserva
-            </th>
-            <th
-              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-            >
-              Sobre de Refuerzo
-            </th>
-            <th
-              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-            >
-              Valor Reserva
+              Punta Vendedora
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -165,12 +162,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
-              Honorarios Totales Brutos
+              Honorarios Brutos
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
-              Honorarios Totales Netos
+              Honorarios Netos
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -179,7 +176,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-              colSpan={2}
+              colSpan={3}
             >
               Acciones
             </th>
@@ -200,20 +197,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               <td className="py-3 px-4 before:content-['Tipo:'] md:before:content-none">
                 {operacion.tipo_operacion}
               </td>
-              <td className="py-3 px-4 before:content-['Referido:'] md:before:content-none">
-                {operacion.referido}
-              </td>
-              <td className="py-3 px-4 before:content-['Compartido:'] md:before:content-none">
-                {operacion.compartido}
-              </td>
-              <td className="py-3 px-4 before:content-['Sobre Reserva:'] md:before:content-none">
-                {operacion.numero_sobre_reserva}
-              </td>
-              <td className="py-3 px-4 before:content-['Sobre Refuerzo:'] md:before:content-none">
-                {operacion.numero_sobre_refuerzo}
-              </td>
-              <td className="py-3 px-4 before:content-['Valor Reserva:'] md:before:content-none">
+
+              <td className="py-3 px-4 before:content-['Valor:'] md:before:content-none">
                 ${formatNumber(operacion.valor_reserva)}
+              </td>
+              <td className="py-3 px-4 before:content-['Punta Compradora:'] md:before:content-none">
+                {formatNumber(operacion.porcentaje_punta_compradora ?? 0)}%
+              </td>
+              <td className="py-3 px-4 before:content-['Punta Vendedora:'] md:before:content-none">
+                {formatNumber(operacion.porcentaje_punta_vendedora ?? 0)}%
               </td>
               <td className="py-3 px-4 before:content-['Puntas:'] md:before:content-none">
                 {formatNumber(
@@ -227,6 +219,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
                 ${formatNumber(operacion.honorarios_asesor)}
               </td>
+
               <td className="py-3 px-4 md:before:content-none">
                 <button
                   onClick={() =>
@@ -273,17 +266,42 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   <TrashIcon className="text-redAccent h-5 w-5" />
                 </button>
               </td>
+              <td className="md:before:content-none text-mediumBlue text-sm font-semibold">
+                <button
+                  onClick={() => handleViewClick(operacion)}
+                  className="text-mediumBlue hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
+                >
+                  Ver
+                </button>
+              </td>
             </tr>
           ))}
           <tr
             className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg}`}
           >
-            <td className="py-3 px-4 pl-10" colSpan={7}>
+            <td className="py-3 px-4 pl-10" colSpan={3}>
               Total
             </td>
             <td className={styleTotalRow}>
               ${formatNumber(Number(totals.valor_reserva))}
             </td>
+            <td className={styleTotalRow}>
+              {totals.promedio_punta_compradora_porcentaje !== undefined &&
+              totals.promedio_punta_compradora_porcentaje !== null
+                ? `${formatNumber(
+                    Number(totals.promedio_punta_compradora_porcentaje)
+                  )}%`
+                : "Cálculo no disponible"}
+            </td>
+            <td className={styleTotalRow}>
+              {totals.promedio_punta_vendedora_porcentaje !== undefined &&
+              totals.promedio_punta_vendedora_porcentaje !== null
+                ? `${formatNumber(
+                    Number(totals.promedio_punta_vendedora_porcentaje)
+                  )}%`
+                : "Cálculo no disponible"}
+            </td>
+
             <td className={styleTotalRow}>
               {formatNumber(Number(totals.suma_total_de_puntas))}
             </td>
@@ -293,7 +311,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             <td className={styleTotalRow}>
               ${formatNumber(Number(totals.honorarios_asesor))}
             </td>
-            <td className={styleTotalRow} colSpan={3}></td>
+            <td className={styleTotalRow} colSpan={4}></td>
           </tr>
         </tbody>
       </table>
@@ -306,6 +324,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             queryClient.invalidateQueries({ queryKey: ["operations", userID] })
           }
           currentUser={userData!}
+        />
+      )}
+      {isViewModalOpen && viewOperation && (
+        <OperationsFullScreenTable
+          isOpen={isViewModalOpen}
+          onClose={() => setIsViewModalOpen(false)}
+          operation={viewOperation}
         />
       )}
     </div>

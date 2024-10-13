@@ -84,6 +84,26 @@ export const calculateTotals = (operations: Operation[]) => {
   const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
   const cantidadOperaciones = operations.length;
 
+  const totalPuntaCompradoraPorcentaje = operations.reduce(
+    (acc, op) => acc + (op.porcentaje_punta_compradora || 0),
+    0
+  );
+
+  const totalPuntaVendedoraPorcentaje = operations.reduce(
+    (acc, op) => acc + (op.porcentaje_punta_vendedora || 0),
+    0
+  );
+
+  const promedioPuntaCompradoraPorcentaje =
+    totalPuntaCompradoraPorcentaje / operations.length;
+
+  const promedioPuntaVendedoraPorcentaje =
+    operations.length > 0
+      ? totalPuntaVendedoraPorcentaje / operations.length
+      : 0;
+
+  console.log("Promedio Punta Vendedora:", promedioPuntaVendedoraPorcentaje);
+
   return {
     valor_reserva: totalValorReserva,
     porcentaje_honorarios_asesor: totalPorcentajeHonorariosAsesor,
@@ -96,5 +116,9 @@ export const calculateTotals = (operations: Operation[]) => {
     punta_vendedora: puntaVendedora,
     suma_total_de_puntas: sumaTotalDePuntas,
     cantidad_operaciones: cantidadOperaciones,
+    promedio_punta_compradora: puntaCompradora / operations.length,
+    promedio_punta_vendedora: promedioPuntaVendedoraPorcentaje,
+    promedio_punta_compradora_porcentaje: promedioPuntaCompradoraPorcentaje,
+    promedio_punta_vendedora_porcentaje: promedioPuntaVendedoraPorcentaje,
   };
 };

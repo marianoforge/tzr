@@ -99,7 +99,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[100%] md:w-[50%] lg:w-[40%] h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[90%]  lg:w-[80%] xl:w-[40%] h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4">Editar Operación</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
@@ -294,7 +294,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               {errors.porcentaje_compartido.message}
             </p>
           )}
-          <label className="font-semibold">Asesor que realizó la venta</label>
           <select
             {...register("realizador_venta")}
             className="w-full p-2 mb-8 border border-gray-300 rounded"

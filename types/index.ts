@@ -15,6 +15,8 @@ export interface Totals {
   suma_total_de_puntas?: number;
   honorarios_broker?: number;
   honorarios_asesor?: number;
+  promedio_punta_compradora?: number;
+  promedio_punta_vendedora?: number;
 }
 
 export interface Operation {

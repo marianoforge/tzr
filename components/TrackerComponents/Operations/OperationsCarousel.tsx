@@ -10,12 +10,7 @@ import {
 } from "@/lib/api/operationsApi"; // Ensure you have these functions in your API
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import {
-  PencilIcon,
-  TrashIcon,
-  CheckIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/stores/authStore";
 import { Operation } from "@/types";
 import { useState } from "react";
@@ -113,7 +108,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
               filter === "all"
                 ? "bg-mediumBlue text-white"
                 : "bg-lightBlue text-white"
-            } rounded-lg`}
+            } rounded-lg w-[130px] text-sm md:w-[195px] md:text-base`}
           >
             Todas las Operaciones
           </button>
@@ -123,9 +118,9 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
               filter === "open"
                 ? "bg-mediumBlue text-white"
                 : "bg-lightBlue text-white"
-            } rounded-lg`}
+            } rounded-lg w-[130px] text-sm md:w-[195px] md:text-base`}
           >
-            Operaciones en Curso / Reservas
+            Operaciones En Curso
           </button>
           <button
             onClick={() => setFilter("closed")}
@@ -133,7 +128,7 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
               filter === "closed"
                 ? "bg-mediumBlue text-white"
                 : "bg-lightBlue text-white"
-            } rounded-lg`}
+            } rounded-lg w-[130px] text-sm md:w-[195px] md:text-base`}
           >
             Operaciones Cerradas
           </button>
@@ -141,32 +136,39 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
       )}
       <Slider {...settings}>
         {filteredOperations.map((operacion: Operation) => (
-          <div key={operacion.id} className="p-4">
-            <div className="bg-mediumBlue text-lightPink p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
+          <div key={operacion.id} className="px-0 py-4">
+            <div className="bg-lightBlue text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
               <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
                 <p>
                   <strong>Fecha de Operación:</strong>{" "}
                   {new Date(operacion.fecha_operacion).toLocaleDateString()}
                 </p>
                 <p>
-                  <strong>Dirección de Reserva:</strong>{" "}
-                  {operacion.direccion_reserva}
+                  <strong>Operación:</strong> {operacion.direccion_reserva}
                 </p>
                 <p>
                   <strong>Tipo de Operación:</strong> {operacion.tipo_operacion}
                 </p>
                 <p>
-                  <strong>Valor Reserva / Operación:</strong> $
+                  <strong>Valor Reserva / Cierre</strong> $
                   {formatNumber(operacion.valor_reserva)}
                 </p>
-              </div>
-              <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
                 <p>
                   <strong>Puntas:</strong>{" "}
                   {formatNumber(
                     Number(operacion.punta_vendedora) +
                       Number(operacion.punta_compradora)
                   )}
+                </p>
+              </div>
+              <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
+                <p>
+                  <strong>Porcentaje Punta Compradora:</strong>{" "}
+                  {formatNumber(Number(operacion.porcentaje_punta_compradora))}%
+                </p>
+                <p>
+                  <strong>Porcentaje Punta Vendedora:</strong>{" "}
+                  {formatNumber(Number(operacion.porcentaje_punta_vendedora))}%
                 </p>
                 <p>
                   <strong>Honorarios Totales Brutos:</strong> $
@@ -195,8 +197,8 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
                     }
                     className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
                       operacion.estado === "En Curso"
-                        ? `bg-greenAccent`
-                        : `bg-redAccent`
+                        ? `bg-mediumBlue`
+                        : `bg-darkBlue`
                     }`}
                   >
                     <span
@@ -207,9 +209,13 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
                       } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
                     >
                       {operacion.estado === "En Curso" ? (
-                        <CheckIcon className="h-4 w-4 text-greenAccent" />
+                        <p className="h-4 w-4 text-mediumBlue flex justify-center items-center">
+                          A
+                        </p>
                       ) : (
-                        <XMarkIcon className="h-4 w-4 text-redAccent" />
+                        <p className="h-4 w-4 text-darkBlue flex justify-center items-center">
+                          C
+                        </p>
                       )}
                     </span>
                   </button>

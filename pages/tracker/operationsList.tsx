@@ -10,10 +10,10 @@ const OperationsPage = () => {
   return (
     <PrivateRoute>
       <PrivateLayout>
-        <div className="hidden xl:block">
+        <div className="hidden lg:block">
           <OperationsList filter={filter} setFilter={setFilter} />
         </div>
-        <div className="block xl:hidden">
+        <div className="block lg:hidden">
           <OperationsCarouselDash filter={filter} setFilter={setFilter} />
         </div>
       </PrivateLayout>
