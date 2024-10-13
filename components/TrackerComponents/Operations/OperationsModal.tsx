@@ -198,9 +198,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <div className="flex space-x-4">
             <Input
               placeholder="Porcentaje Punta Compradora"
-              type="number"
+              type="text"
               step="any"
-              {...register("porcentaje_punta_compradora")}
+              {...register("porcentaje_punta_compradora", {
+                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+              })}
               className="w-1/2 p-2 border border-gray-300 rounded"
               required
             />
@@ -212,9 +214,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
             <Input
               placeholder="Porcentaje Punta Vendedora"
-              type="number"
+              type="text"
               step="any"
-              {...register("porcentaje_punta_vendedora")}
+              {...register("porcentaje_punta_vendedora", {
+                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+              })}
               className="w-1/2 p-2 border border-gray-300 rounded"
               required
             />
@@ -227,10 +231,12 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
           <div className="flex space-x-4">
             <Input
-              type="number"
+              type="text"
               step="any"
               placeholder="Porcentaje Honorarios Asesor"
-              {...register("porcentaje_honorarios_asesor")}
+              {...register("porcentaje_honorarios_asesor", {
+                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+              })}
               className="w-1/2 p-2 border border-gray-300 rounded"
               required
             />
@@ -241,10 +247,12 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             )}
 
             <Input
-              type="number"
+              type="text"
               step="any"
               placeholder="Porcentaje Honorarios Broker"
-              {...register("porcentaje_honorarios_broker")}
+              {...register("porcentaje_honorarios_broker", {
+                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+              })}
               className="w-1/2 p-2 border border-gray-300 rounded"
               required
             />
@@ -310,12 +318,14 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           )}
 
           <Input
-            type="number"
+            type="text"
             placeholder="Por ejemplo 10%"
-            {...register("porcentaje_referido")}
+            {...register("porcentaje_referido", {
+              setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+            })}
           />
-          {errors.referido && (
-            <p className="text-red-500">{errors.referido.message}</p>
+          {errors.porcentaje_referido && (
+            <p className="text-red-500">{errors.porcentaje_referido.message}</p>
           )}
 
           <Input
@@ -331,7 +341,9 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             type="text"
             placeholder="Por ejemplo: 25%"
-            {...register("porcentaje_compartido")}
+            {...register("porcentaje_compartido", {
+              setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+            })}
           />
           {errors.porcentaje_compartido && (
             <p className="text-red-500">

@@ -148,12 +148,16 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
         <div className="flex flex-wrap -mx-2 gap-x-24 justify-center">
           <div className="w-50% md:w-[40%] px-2">
             {/* Left column */}
-            <label className="font-semibold">Fecha de la Operación*</label>
+            <label className="font-semibold">
+              Fecha de la Operación<span className="text-redAccent">*</span>
+            </label>
             <Input type="date" {...register("fecha_operacion")} required />
             {errors.fecha_operacion && (
               <p className="text-red-500">{errors.fecha_operacion.message}</p>
             )}
-            <label className="font-semibold">Dirección de la operación*</label>
+            <label className="font-semibold">
+              Dirección de la operación<span className="text-redAccent">*</span>
+            </label>
             <Input
               type="text"
               placeholder="Dirección de la Reserva"
@@ -163,7 +167,9 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             {errors.direccion_reserva && (
               <p className="text-red-500">{errors.direccion_reserva.message}</p>
             )}
-            <label className="font-semibold">Localidad*</label>
+            <label className="font-semibold">
+              Localidad<span className="text-redAccent">*</span>
+            </label>
             <Input
               type="text"
               placeholder="Por ejemplo: San Isidro"
@@ -173,7 +179,9 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             {errors.localidad_reserva && (
               <p className="text-red-500">{errors.localidad_reserva.message}</p>
             )}
-            <label className="font-semibold">Provincia*</label>
+            <label className="font-semibold">
+              Provincia<span className="text-redAccent">*</span>
+            </label>
             <select
               {...register("provincia_reserva")}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
@@ -208,7 +216,9 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             {errors.provincia_reserva && (
               <p className="text-red-500">{errors.provincia_reserva.message}</p>
             )}
-            <label className="font-semibold">Tipo de operación*</label>
+            <label className="font-semibold">
+              Tipo de operación<span className="text-redAccent">*</span>
+            </label>
             <select
               {...register("tipo_operacion")}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
@@ -229,13 +239,16 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             <div className="flex items-center justify-between w-full gap-4">
               <div className="flex flex-col w-[50%]">
                 <label className="font-semibold">
-                  Porcentaje punta compradora*
+                  Porcentaje punta compradora
+                  <span className="text-redAccent">*</span>
                 </label>
                 <Input
                   placeholder="Por ejemplo: 3"
-                  type="number"
+                  type="text"
                   step="any"
-                  {...register("porcentaje_punta_compradora")}
+                  {...register("porcentaje_punta_compradora", {
+                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+                  })}
                   required
                 />
                 {errors.porcentaje_punta_compradora && (
@@ -246,13 +259,16 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               </div>
               <div className="flex flex-col w-[50%]">
                 <label className="font-semibold">
-                  Porcentaje punta vendedora*
+                  Porcentaje punta vendedora
+                  <span className="text-redAccent">*</span>
                 </label>
                 <Input
                   placeholder="Por ejemplo: 4"
-                  type="number"
+                  type="text"
                   step="any"
-                  {...register("porcentaje_punta_vendedora")}
+                  {...register("porcentaje_punta_vendedora", {
+                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+                  })}
                   required
                 />
                 {errors.porcentaje_punta_vendedora && (
@@ -265,13 +281,16 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
             <div className="flex items-center justify-between w-full gap-4">
               <div className="flex flex-col w-[50%]">
                 <label className="font-semibold">
-                  Porcentaje honorarios asesor*
+                  Porcentaje honorarios asesor
+                  <span className="text-redAccent">*</span>
                 </label>
                 <Input
-                  type="number"
+                  type="text"
                   step="any"
                   placeholder="Por ejemplo: 40"
-                  {...register("porcentaje_honorarios_asesor")}
+                  {...register("porcentaje_honorarios_asesor", {
+                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+                  })}
                   required
                 />
                 {errors.porcentaje_honorarios_asesor && (
@@ -282,13 +301,16 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               </div>
               <div className="flex flex-col w-[50%]">
                 <label className="font-semibold">
-                  Porcentaje honorarios totales*
+                  Porcentaje honorarios totales
+                  <span className="text-redAccent">*</span>
                 </label>
                 <Input
-                  type="number"
+                  type="text"
                   step="any"
                   placeholder="Por ejemplo 7"
-                  {...register("porcentaje_honorarios_broker")}
+                  {...register("porcentaje_honorarios_broker", {
+                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+                  })}
                   required
                 />
                 {errors.porcentaje_honorarios_broker && (
@@ -303,7 +325,8 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
           <div className="w-full md:w-[40%] px-2">
             {/* Right column */}
             <label className="font-semibold">
-              Valor de reserva / operación*
+              Valor de reserva / operación
+              <span className="text-redAccent">*</span>
             </label>
             <Input
               type="number"
@@ -387,9 +410,11 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               <div className="w-1/2">
                 <label className="font-semibold">Porcentaje Referido</label>
                 <Input
-                  type="number"
-                  placeholder="Por ejemplo 10%"
-                  {...register("porcentaje_referido")}
+                  type="text" // Keep the input type as "text"
+                  placeholder="Por ejemplo 10"
+                  {...register("porcentaje_referido", {
+                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+                  })}
                 />
                 {errors.referido && (
                   <p className="text-red-500">{errors.referido.message}</p>
@@ -411,9 +436,11 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               <div className="w-1/2">
                 <label className="font-semibold">Porcentaje Compartido</label>
                 <Input
-                  type="number"
-                  placeholder="Por ejemplo: 25%"
-                  {...register("porcentaje_compartido")}
+                  type="text"
+                  placeholder="Por ejemplo: 25"
+                  {...register("porcentaje_compartido", {
+                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+                  })}
                 />
                 {errors.porcentaje_compartido && (
                   <p className="text-red-500">
@@ -426,6 +453,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
               <>
                 <label className="font-semibold">
                   Asesor que realizó la venta
+                  <span className="text-redAccent">*</span>
                 </label>
                 <select
                   {...register("realizador_venta")}
@@ -433,7 +461,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                   required
                 >
                   <option value="">
-                    Selecciona el asesor que realizó la venta*
+                    Selecciona el asesor que realizó la venta
                   </option>
                   {usersMapped.map((user) => (
                     <option key={user.uid} value={user.name}>

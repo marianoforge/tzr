@@ -107,7 +107,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
                 router.push("/settings");
               }}
             >
-              Ver calendario de eventos
+              Agrega tu objetivo anual de ventas
             </button>
           </div>
         ) : (
