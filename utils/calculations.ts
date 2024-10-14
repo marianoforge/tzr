@@ -43,10 +43,9 @@ export const calculateTotals = (operations: Operation[]) => {
     (op) => op.tipo_operacion === "Venta" || op.tipo_operacion === "Desarrollo"
   );
 
-  const totalValorReservaFiltered = filteredOperations.reduce(
-    (acc, op) => acc + op.valor_reserva,
-    0
-  );
+  const totalValorReservaFiltered =
+    filteredOperations.reduce((acc, op) => acc + op.valor_reserva, 0) /
+    filteredOperations.length;
 
   const totalPorcentajeHonorariosAsesor =
     operations.reduce((acc, op) => acc + op.porcentaje_honorarios_asesor, 0) /
