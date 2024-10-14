@@ -89,7 +89,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
     const totals = calculateTotals(currentYearOperations);
 
     const percentage =
-      (totals.valor_reserva * 100) / (userData?.objetivoAnual ?? 1);
+      (totals.honorarios_broker * 100) / (userData?.objetivoAnual ?? 1);
 
     return (
       <div
@@ -144,7 +144,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
             </div>
             <h3 className="font-semibold text-mediumBlue">
               {`Objetivo Anual de Ventas: $${formatNumber(
-                totals.valor_reserva
+                totals.honorarios_broker
               )} / $${formatNumber(userData?.objetivoAnual ?? 0)}`}
             </h3>
           </>

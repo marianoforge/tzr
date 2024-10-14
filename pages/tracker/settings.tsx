@@ -112,7 +112,7 @@ const Settings = () => {
                         ? handleSave("firstName")
                         : toggleEditMode("firstName")
                     }
-                    className=" bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
+                    className=" bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
                   >
                     {editMode.firstName ? "Guardar" : "Editar"}
                   </button>
@@ -136,7 +136,7 @@ const Settings = () => {
                         ? handleSave("lastName")
                         : toggleEditMode("lastName")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
+                    className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
                   >
                     {editMode.lastName ? "Guardar" : "Editar"}
                   </button>
@@ -161,7 +161,7 @@ const Settings = () => {
                         ? handleSave("agenciaBroker")
                         : toggleEditMode("agenciaBroker")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
+                    className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
                   >
                     {editMode.agenciaBroker ? "Guardar" : "Editar"}
                   </button>
@@ -185,7 +185,7 @@ const Settings = () => {
                         ? handleSave("numeroTelefono")
                         : toggleEditMode("numeroTelefono")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
+                    className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
                   >
                     {editMode.numeroTelefono ? "Guardar" : "Editar"}
                   </button>
@@ -198,7 +198,10 @@ const Settings = () => {
                     placeholder="Objetivo de Anual de Ventas"
                     name="objetivoAnual"
                     value={`$${formatNumber(objetivoAnual)}`}
-                    onChange={(e) => setObjetivoAnual(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+                      setObjetivoAnual(Number(value));
+                    }}
                     className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
                     disabled={!editMode.objetivoAnual}
                     required
@@ -210,7 +213,7 @@ const Settings = () => {
                         ? handleSave("objetivoAnual")
                         : toggleEditMode("objetivoAnual")
                     }
-                    className="bg-blue-500 text-white px-2 h-[40px] rounded hover:bg-blue-600 w-[75px]"
+                    className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
                   >
                     {editMode.objetivoAnual ? "Guardar" : "Editar"}
                   </button>
@@ -219,7 +222,7 @@ const Settings = () => {
               <div className="flex items-center w-[80%] justify-end ml-2 mt-6">
                 <button
                   type="submit"
-                  className="w-[200px] bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] font-semibold"
+                  className="w-[200px] bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue font-semibold"
                 >
                   Actualizar
                 </button>
