@@ -243,7 +243,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                   <span className="text-redAccent">*</span>
                 </label>
                 <Input
-                  placeholder="Por ejemplo: 3"
+                  placeholder="Por ejemplo: 3%"
                   type="text"
                   step="any"
                   {...register("porcentaje_punta_compradora", {
@@ -263,7 +263,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                   <span className="text-redAccent">*</span>
                 </label>
                 <Input
-                  placeholder="Por ejemplo: 4"
+                  placeholder="Por ejemplo: 4%"
                   type="text"
                   step="any"
                   {...register("porcentaje_punta_vendedora", {
@@ -287,7 +287,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                 <Input
                   type="text"
                   step="any"
-                  placeholder="Por ejemplo: 40"
+                  placeholder="Por ejemplo: 40%"
                   {...register("porcentaje_honorarios_asesor", {
                     setValueAs: (value) => parseFloat(value) || 0, // Cast to number
                   })}
@@ -307,7 +307,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                 <Input
                   type="text"
                   step="any"
-                  placeholder="Por ejemplo 7"
+                  placeholder="Por ejemplo 7%"
                   {...register("porcentaje_honorarios_broker", {
                     setValueAs: (value) => parseFloat(value) || 0, // Cast to number
                   })}
@@ -411,7 +411,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                 <label className="font-semibold">Porcentaje Referido</label>
                 <Input
                   type="text" // Keep the input type as "text"
-                  placeholder="Por ejemplo 10"
+                  placeholder="Por ejemplo 10%"
                   {...register("porcentaje_referido", {
                     setValueAs: (value) => parseFloat(value) || 0, // Cast to number
                   })}
@@ -437,7 +437,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                 <label className="font-semibold">Porcentaje Compartido</label>
                 <Input
                   type="text"
-                  placeholder="Por ejemplo: 25"
+                  placeholder="Por ejemplo: 25%"
                   {...register("porcentaje_compartido", {
                     setValueAs: (value) => parseFloat(value) || 0, // Cast to number
                   })}
