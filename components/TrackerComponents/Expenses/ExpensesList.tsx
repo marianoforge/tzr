@@ -23,6 +23,8 @@ const ExpensesList = () => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Manejar la autenticación del usuario
   useEffect(() => {
@@ -94,6 +96,19 @@ const ExpensesList = () => {
     ? totals.teamBrokerTotal
     : totals.nonTeamBrokerTotal;
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentExpenses = filteredExpenses.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const totalPages = Math.ceil(filteredExpenses.length / itemsPerPage);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -102,7 +117,7 @@ const ExpensesList = () => {
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Lista de Gastos</h2>
 
-      {filteredExpenses.length === 0 ? (
+      {currentExpenses.length === 0 ? (
         <p className="text-center text-gray-600">No existen gastos</p>
       ) : (
         <div className="overflow-x-auto">
@@ -126,7 +141,7 @@ const ExpensesList = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredExpenses.map((expense) => (
+              {currentExpenses.map((expense) => (
                 <tr
                   key={expense.id}
                   className="border-b transition duration-150 ease-in-out text-center"
@@ -174,6 +189,25 @@ const ExpensesList = () => {
           </table>
         </div>
       )}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
+        >
+          Anterior
+        </button>
+        <span className="px-4 py-2 mx-1">
+          Página {currentPage} de {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
+        >
+          Siguiente
+        </button>
+      </div>
       {isEditModalOpen && selectedExpense && (
         <ExpensesModal
           isOpen={isEditModalOpen}

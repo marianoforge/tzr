@@ -40,6 +40,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [viewOperation, setViewOperation] = useState<Operation | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   // Obtener las operaciones del usuario usando Tanstack Query
   const { data: operations, isLoading } = useQuery({
     queryKey: ["operations", userID || ""],
@@ -82,6 +85,21 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     if (filter === "currentYear") return operationYear === currentYear;
     if (filter === "year2023") return operationYear === 2023;
   });
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOperations = filteredOperations?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const totalPages = Math.ceil(
+    (filteredOperations?.length || 0) / itemsPerPage
+  );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   const handleEstadoChange = (id: string, currentEstado: string) => {
     const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
@@ -189,7 +207,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {filteredOperations?.map((operacion: Operation) => (
+          {currentOperations?.map((operacion: Operation) => (
             <tr
               key={operacion.id}
               className={`${OPERATIONS_LIST_COLORS.rowBg} hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
@@ -321,6 +339,25 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           </tr>
         </tbody>
       </table>
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
+        >
+          Anterior
+        </button>
+        <span className="px-4 py-2 mx-1">
+          Página {currentPage} de {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
+        >
+          Siguiente
+        </button>
+      </div>
       {isEditModalOpen && (
         <OperationsModal
           isOpen={isEditModalOpen}
