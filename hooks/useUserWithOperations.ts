@@ -50,7 +50,6 @@ const useUsersWithOperations = (
           const filteredData = usersWithOperations.filter(
             (usuario) => usuario.uid === user.uid
           );
-          // console.log(filteredData);
           setData(filteredData);
         } else {
           setData(usersWithOperations);
