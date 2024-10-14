@@ -5,7 +5,9 @@ import OperationsList from "@/components/TrackerComponents/Operations/Operations
 import OperationsCarouselDash from "@/components/TrackerComponents/Operations/OperationsCarouselDash";
 
 const OperationsPage = () => {
-  const [filter, setFilter] = useState<"all" | "open" | "closed">("all");
+  const [filter, setFilter] = useState<
+    "all" | "open" | "closed" | "currentYear" | "year2023"
+  >("all");
 
   return (
     <PrivateRoute>

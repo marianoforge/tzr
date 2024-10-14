@@ -16,10 +16,11 @@ import { Operation } from "@/types";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useUserDataStore } from "@/stores/userDataStore";
+import { FilterType } from "./OperationsCarouselDash"; // Import the FilterType
 
 interface OperationsCarouselProps {
-  filter: "all" | "open" | "closed";
-  setFilter: React.Dispatch<React.SetStateAction<"all" | "open" | "closed">>;
+  filter: FilterType; // Use the FilterType here
+  setFilter: (filter: FilterType) => void;
 }
 
 const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
@@ -73,9 +74,10 @@ const OperationsCarousel: React.FC<OperationsCarouselProps> = ({
 
   const filteredOperations = operations.filter((operation: Operation) => {
     if (filter === "all") return true;
-    return filter === "open"
-      ? operation.estado === "En Curso"
-      : operation.estado === "Cerrada";
+    if (filter === "open") return operation.estado === "En Curso";
+    if (filter === "closed") return operation.estado === "Cerrada";
+    // Add logic for additional filter types if needed
+    return true; // Default case if no specific filter logic is needed
   });
 
   if (isLoading) {

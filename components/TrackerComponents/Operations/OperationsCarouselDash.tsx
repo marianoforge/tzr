@@ -1,9 +1,11 @@
 import React from "react";
 import OperationsCarousel from "./OperationsCarousel";
 
+export type FilterType = "all" | "open" | "closed" | "currentYear" | "year2023";
+
 interface OperationsCarouselDashProps {
-  filter: "all" | "open" | "closed";
-  setFilter: React.Dispatch<React.SetStateAction<"all" | "open" | "closed">>;
+  filter: FilterType;
+  setFilter: (filter: FilterType) => void;
 }
 
 const OperationsCarouselDash: React.FC<OperationsCarouselDashProps> = ({
