@@ -2,6 +2,8 @@ import { useState } from "react";
 import { resetPassword } from "@/lib/api/auth";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
+import Link from "next/link";
+import Image from "next/image";
 
 const PasswordResetForm = () => {
   const [email, setEmail] = useState("");
@@ -23,31 +25,44 @@ const PasswordResetForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handlePasswordReset}
-        className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
-      >
-        <h2 className="text-2xl mb-4 text-center">
-          Recuperación de Contraseña
-        </h2>
-        {message && <p className="text-green-500 mb-4">{message}</p>}
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-
-        <Input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Button
-          type="submit"
-          className="bg-mediumBlue hover:bg-blue-600 text-white py-2 px-4 rounded-md w-full mt-4"
+    <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex items-center justify-center lg:justify-start">
+          <Link href="/" title="Home">
+            <Image
+              src="/trackProLogoNoBg.png"
+              alt="Logo"
+              width={150}
+              height={150}
+              className="w-80"
+            />
+          </Link>
+        </div>
+        <form
+          onSubmit={handlePasswordReset}
+          className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
         >
-          Enviar enlace de recuperación
-        </Button>
-      </form>
+          <h2 className="text-2xl mb-4 text-center">
+            Recuperación de Contraseña
+          </h2>
+          {message && <p className="text-green-500 mb-4">{message}</p>}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
+          <Input
+            type="email"
+            placeholder="Correo electrónico"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Button
+            type="submit"
+            className="bg-mediumBlue hover:bg-blue-600 text-white py-2 px-4 rounded-md w-full mt-4"
+          >
+            Enviar enlace de recuperación
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -196,7 +196,7 @@ const RegisterForm = () => {
           <option value="team_leader_broker">Team Leader / Broker</option>
         </select>
 
-        <div className="flex justify-between">
+        <div className="flex flex-col gap-4 mt-6 sm:mt-0 sm:flex-row justify-center items-center sm:justify-around">
           <Button
             type="submit"
             className="bg-greenAccent hover:bg-green-600 text-white py-2 px-4 rounded-md w-48"

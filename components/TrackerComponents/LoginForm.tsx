@@ -125,31 +125,40 @@ const LoginForm = () => {
         {errors.password && (
           <p className="text-red-500">{errors.password.message}</p>
         )}
-        <div className="flex justify-between">
+        <div className="flex flex-col gap-4 justify-center items-center sm:flex-row sm:justify-between">
           <Button
             type="submit"
-            className="bg-mediumBlue hover:bg-blue-600 text-white py-2 px-4 rounded-md w-58"
+            className="bg-mediumBlue hover:bg-mediumBlue/90 text-white py-2 px-4 rounded-md w-[220px]"
           >
             Iniciar Sesión con Email
           </Button>
           <Button
             type="button"
-            onClick={() => router.push("/register")}
-            className="bg-greenAccent hover:bg-green-600 text-white py-2 px-4 rounded-md w-58"
+            onClick={() => router.push("/reset-password")}
+            className="bg-lightBlue hover:bg-lightBlue/90 text-white py-2 px-4 rounded-md w-[220px]"
           >
-            Registrarse con Email
+            Recuperar Contraseña
           </Button>
         </div>
 
         {/* Google Login Button */}
-        <hr className="my-4" />
-        <Button
-          type="button"
-          onClick={handleGoogleLogin}
-          className="bg-redAccent hover:bg-red-600 text-white py-2 px-4 rounded-md w-58"
-        >
-          Iniciar sesión con Google
-        </Button>
+        <hr className="hidden sm:block sm:my-4" />
+        <div className="flex flex-col gap-4 mt-4 justify-center items-center sm:flex-row sm:justify-between sm:mt-0 ">
+          <Button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="bg-redAccent hover:bg-redAccent/90 text-white py-2 px-4 rounded-md w-[220px]"
+          >
+            Iniciar sesión con Google
+          </Button>
+          <Button
+            type="button"
+            onClick={() => router.push("/register")}
+            className="bg-greenAccent hover:bg-greenAccent/90 text-white py-2 px-4 rounded-md w-[220px]"
+          >
+            Registrarse con Email
+          </Button>
+        </div>
       </form>
     </div>
   );
