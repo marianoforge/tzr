@@ -21,19 +21,39 @@ const useUsersWithOperations = (
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/users/usersWithOps");
+
+        // Fetch the data from the new endpoint
+        const response = await fetch("/api/users/usersWithOps", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!response.ok) {
           throw new Error("Failed to fetch users and operations");
         }
-        const result: UserWithOperations[] = await response.json();
 
+        // Assuming response contains the CSRF token along with user data
+        const {
+          csrfToken,
+          usersWithOperations,
+        }: { csrfToken: string; usersWithOperations: UserWithOperations[] } =
+          await response.json();
+
+        // Optional: If needed, handle CSRF token (e.g., save it in cookies/localStorage)
+        // This is just an example, you might use the CSRF token in subsequent requests.
+        console.log("Received CSRF token:", csrfToken);
+
+        // Filter data if the user is a team leader
         if (user.role === "team_leader_broker") {
-          const filteredData = result.filter(
-            (usuario) => usuario.agenciaBroker === user.agenciaBroker
+          const filteredData = usersWithOperations.filter(
+            (usuario) => usuario.uid === user.uid
           );
+          // console.log(filteredData);
           setData(filteredData);
         } else {
-          setData(result);
+          setData(usersWithOperations);
         }
       } catch (err) {
         setError((err as Error).message);

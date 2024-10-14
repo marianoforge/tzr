@@ -12,13 +12,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"; // Import T
 import { createOperation } from "@/lib/api/operationsApi"; // Import the createOperation function
 import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "@/schemas/operationsFormSchema";
-import { Operation, UserData } from "@/types";
-import useUsersWithOperations from "@/hooks/useUserWithOperations";
+import { Operation, TeamMember } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
+import { useTeamMembers } from "@/hooks/useTeamMembers";
 
 type FormData = InferType<typeof schema>;
 
-const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
+const OperationsForm = () => {
   const {
     register,
     handleSubmit,
@@ -33,7 +33,8 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
       punta_vendedora: false,
     },
   });
-  const { data } = useUsersWithOperations(currentUser);
+
+  const { data: teamMembers } = useTeamMembers();
 
   const [userUID, setUserUID] = useState<string | null>(null);
   const { userData } = useUserDataStore();
@@ -47,10 +48,21 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
   const queryClient = useQueryClient();
 
   const userRole = userData?.role;
-  const usersMapped = data?.map((user) => ({
-    name: `${user.firstName} ${user.lastName}`,
-    uid: user.uid,
-  }));
+  const usersMapped = [
+    ...(teamMembers?.map((member: TeamMember) => ({
+      name: `${member.firstName} ${member.lastName}`,
+      uid: member.id,
+    })) || []),
+    ...(userUID
+      ? [
+          {
+            name:
+              `${userData?.firstName} ${userData?.lastName}` || "Logged User",
+            uid: userUID,
+          },
+        ]
+      : []),
+  ];
 
   // Fetch the user ID from Firebase authentication
   useEffect(() => {
@@ -110,7 +122,7 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
 
     // Determine the user UID to assign the operation to
     const selectedUser = usersMapped.find(
-      (user) => user.name === data.realizador_venta
+      (member: { name: string }) => member.name === data.realizador_venta
     );
     const assignedUserUID =
       selectedUser && selectedUser.uid !== userUID ? selectedUser.uid : userUID;
@@ -463,9 +475,9 @@ const OperationsForm = ({ currentUser }: { currentUser: UserData }) => {
                   <option value="">
                     Selecciona el asesor que realizó la venta
                   </option>
-                  {usersMapped.map((user) => (
-                    <option key={user.uid} value={user.name}>
-                      {user.name}
+                  {usersMapped.map((member) => (
+                    <option key={member.uid} value={member.name}>
+                      {member.name}
                     </option>
                   ))}
                 </select>

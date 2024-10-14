@@ -24,7 +24,6 @@ const Bubbles = () => {
 
   // Calculamos los totales basados en las operaciones filtradas
   const totals = calculateTotals(currentYearOperations);
-  console.log(totals.total_valor_ventas_desarrollos);
 
   const bubbleData = [
     {

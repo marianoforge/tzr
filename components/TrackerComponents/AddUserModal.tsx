@@ -1,78 +1,84 @@
-import React, { useEffect, useState } from "react";
-
-import { createSchema } from "@/schemas/registerFormSchema";
-import { RegisterData } from "@/types";
-import { cleanString } from "@/utils/cleanString";
+import React, { useState, useEffect } from "react";
+import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler, Resolver } from "react-hook-form";
 import Button from "./FormComponents/Button";
 import Input from "./FormComponents/Input";
 import ModalOK from "./ModalOK";
+import { useAuthStore } from "@/stores/authStore";
 
 interface AddUserModalProps {
   onClose: () => void;
 }
 
+export const createSchema = () =>
+  yup.object().shape({
+    firstName: yup.string().required("Nombre es requerido"),
+    lastName: yup.string().required("Apellido es requerido"),
+    email: yup.string().email("Correo inválido").nullable(),
+    numeroTelefono: yup.string().nullable(),
+  });
+
+export interface TeamMemberRequestBody {
+  email?: string;
+  firstName: string;
+  lastName: string;
+  numeroTelefono?: string;
+}
+
 const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const router = useRouter();
-  const { googleUser, email, uid } = router.query; // Capturar uid desde la query (si es usuario de Google)
-  const [csrfToken, setCsrfToken] = useState<string | null>(null); // State to store the CSRF token
+  const { userID } = useAuthStore();
+  const schema = createSchema();
 
-  // Use the createSchema function to define the schema
-  const schema = createSchema(googleUser === "true");
+  // Estado para almacenar el token CSRF
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue, // Para setear el email automáticamente
-  } = useForm<RegisterData>({
-    resolver: yupResolver(schema) as Resolver<RegisterData>,
+  } = useForm<TeamMemberRequestBody>({
+    resolver: yupResolver(schema) as Resolver<TeamMemberRequestBody>,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [formError, setFormError] = useState("");
 
-  // Fetch the CSRF token when the component mounts
+  // Obtener el CSRF token cuando se carga el componente
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
-        const res = await fetch("/api/auth/register"); // Endpoint to get the CSRF token
-        const data = await res.json();
-        setCsrfToken(data.csrfToken); // Store the token in the state
+        const response = await fetch("/api/users/teamMembers", {
+          method: "GET",
+        });
+        const data = await response.json();
+        setCsrfToken(data.csrfToken); // Guardar el CSRF token en el estado
       } catch (error) {
         console.error("Error fetching CSRF token:", error);
       }
     };
 
-    fetchCsrfToken();
+    fetchCsrfToken(); // Llamar a la función para obtener el token
   }, []);
 
-  // Setear el email automáticamente si el usuario viene de Google
-  useEffect(() => {
-    if (googleUser === "true" && email) {
-      setValue("email", email as string);
-    }
-  }, [googleUser, email, setValue]);
-
-  const onSubmit: SubmitHandler<RegisterData> = async (data) => {
+  const onSubmit: SubmitHandler<TeamMemberRequestBody> = async (data) => {
     try {
-      const response = await fetch("/api/auth/register", {
+      if (!userID) {
+        throw new Error("El UID del usuario es requerido");
+      }
+
+      const response = await fetch("/api/users/teamMembers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken || "",
+          "CSRF-Token": csrfToken || "", // Enviar el token CSRF en los headers
         },
         body: JSON.stringify({
+          uid: userID, // Incluir el UID del usuario
           ...data,
-          agenciaBroker: cleanString(data.agenciaBroker),
-          googleUser: googleUser === "true",
-          uid: googleUser === "true" ? uid : undefined,
-          password: googleUser !== "true" ? data.password : undefined,
-          confirmPassword:
-            googleUser !== "true" ? data.confirmPassword : undefined,
         }),
       });
 
@@ -127,68 +133,19 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
             type="email"
             placeholder="Correo electrónico"
             {...register("email")}
-            required
-            readOnly={googleUser === "true"} // Si viene de Google, no puede modificar el email
           />
           {errors.email && (
             <p className="text-red-500">{errors.email.message}</p>
-          )}
-
-          {googleUser !== "true" && (
-            <>
-              <Input
-                type="password"
-                placeholder="Contraseña"
-                {...register("password")}
-                required
-              />
-              {errors.password && (
-                <p className="text-red-500">{errors.password.message}</p>
-              )}
-
-              <Input
-                type="password"
-                placeholder="Repite la contraseña"
-                {...register("confirmPassword")}
-                required
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-500">{errors.confirmPassword.message}</p>
-              )}
-            </>
-          )}
-
-          <Input
-            type="text"
-            placeholder="Agencia / Broker"
-            {...register("agenciaBroker")}
-            required
-          />
-          {errors.agenciaBroker && (
-            <p className="text-red-500">{errors.agenciaBroker.message}</p>
           )}
 
           <Input
             type="tel"
             placeholder="Número de Teléfono"
             {...register("numeroTelefono")}
-            required
           />
           {errors.numeroTelefono && (
             <p className="text-red-500">{errors.numeroTelefono.message}</p>
           )}
-
-          <select
-            {...register("role")}
-            className="block w-full mt-2 mb-4 p-2 border border-gray-300 rounded"
-            required
-          >
-            <option value="" disabled selected>
-              ¿Sos Team Leader / Broker o Asesor?
-            </option>
-            <option value="agente_asesor"> Asesor</option>
-            <option value="team_leader_broker">Team Leader / Broker</option>
-          </select>
 
           <div className="flex justify-between items-center mt-8">
             <Button

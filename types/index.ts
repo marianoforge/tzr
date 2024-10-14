@@ -45,6 +45,7 @@ export interface Operation {
   compartido?: string | null;
   realizador_venta: string;
   estado: string;
+  user_uid: string;
 }
 
 export interface OperationsState extends BaseState<Operation> {
@@ -145,6 +146,7 @@ export interface UserData {
   agenciaBroker: string | null;
   objetivoAnual: number | null;
   role: string | null;
+  uid: string | null;
 }
 
 export interface UserDataState extends BaseState<UserData> {
@@ -215,4 +217,24 @@ export interface LoginRequestBody {
   email?: string;
   password?: string;
   googleAuth?: boolean;
+}
+
+// Define TeamMember utilizando el mismo tipo Operation
+export interface TeamMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  numeroTelefono: string;
+  operaciones: Operation[]; // Aquí aseguramos que es el mismo tipo Operation[]
+}
+
+// Define UserWithOperations si aún no está definido
+export interface UserWithOperations {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  agenciaBroker?: string;
+  operaciones: Operation[];
 }

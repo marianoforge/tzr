@@ -58,7 +58,6 @@ const Settings = () => {
         numeroTelefono: cleanString(numeroTelefono),
         objetivoAnual,
       });
-      console.log(response);
       if (response.status === 200) {
         setSuccess("Datos actualizados correctamente");
         queryClient.invalidateQueries({ queryKey: ["userData", userID] });
