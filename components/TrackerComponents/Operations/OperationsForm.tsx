@@ -423,7 +423,7 @@ const OperationsForm = () => {
                 <label className="font-semibold">Porcentaje Referido</label>
                 <Input
                   type="text" // Keep the input type as "text"
-                  placeholder="Por ejemplo 10%"
+                  placeholder="Por ejemplo 25%"
                   {...register("porcentaje_referido", {
                     setValueAs: (value) => parseFloat(value) || 0, // Cast to number
                   })}
@@ -449,7 +449,7 @@ const OperationsForm = () => {
                 <label className="font-semibold">Porcentaje Compartido</label>
                 <Input
                   type="text"
-                  placeholder="Por ejemplo: 25%"
+                  placeholder="Por ejemplo: 2%"
                   {...register("porcentaje_compartido", {
                     setValueAs: (value) => parseFloat(value) || 0, // Cast to number
                   })}
