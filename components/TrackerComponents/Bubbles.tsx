@@ -16,7 +16,6 @@ const Bubbles = () => {
     queryFn: () => fetchUserOperations(userID || ""),
     enabled: !!userID,
   });
-
   // Filtramos las operaciones para incluir solo las del año corriente
   const currentYearOperations = operations.filter((operation: Operation) => {
     const operationYear = new Date(operation.fecha_operacion).getFullYear();
@@ -25,6 +24,7 @@ const Bubbles = () => {
 
   // Calculamos los totales basados en las operaciones filtradas
   const totals = calculateTotals(currentYearOperations);
+  console.log(totals.total_valor_ventas_desarrollos);
 
   const bubbleData = [
     {
@@ -53,7 +53,10 @@ const Bubbles = () => {
     },
     {
       title: "Promedio Valor Operación",
-      figure: formatValue(totals.promedio_valor_reserva, "currency"),
+      figure: formatValue(
+        totals.total_valor_ventas_desarrollos ?? 0,
+        "currency"
+      ),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
     },

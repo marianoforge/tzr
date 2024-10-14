@@ -39,6 +39,15 @@ export const calculateTotals = (operations: Operation[]) => {
     0
   );
 
+  const filteredOperations = operations.filter(
+    (op) => op.tipo_operacion === "Venta" || op.tipo_operacion === "Desarrollo"
+  );
+
+  const totalValorReservaFiltered = filteredOperations.reduce(
+    (acc, op) => acc + op.valor_reserva,
+    0
+  );
+
   const totalPorcentajeHonorariosAsesor =
     operations.reduce((acc, op) => acc + op.porcentaje_honorarios_asesor, 0) /
     operations.length;
@@ -118,5 +127,6 @@ export const calculateTotals = (operations: Operation[]) => {
     promedio_punta_vendedora: promedioPuntaVendedoraPorcentaje,
     promedio_punta_compradora_porcentaje: promedioPuntaCompradoraPorcentaje,
     promedio_punta_vendedora_porcentaje: promedioPuntaVendedoraPorcentaje,
+    total_valor_ventas_desarrollos: totalValorReservaFiltered,
   };
 };
