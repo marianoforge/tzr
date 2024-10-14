@@ -105,7 +105,7 @@ const BigCalendar = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-2 sm:p-4 md:p-6">
+    <div className="bg-white rounded-xl shadow-md p-2 sm:p-4 md:p-6 mt-20">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
         <div className="flex space-x-2 sm:space-x-4 mb-2 sm:mb-0">
           <NavButton onClick={() => navigateCalendar("PREV")} label="<" />

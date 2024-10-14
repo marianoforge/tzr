@@ -160,11 +160,11 @@ const FormularioExpenses: React.FC = () => {
     amount && dollarRate ? (amount / dollarRate).toFixed(2) : 0;
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center mt-20">
       {userRole ? ( // Render form only if userRole is fetched
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="p-6 bg-white rounded shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
+          className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
         >
           <h2 className="text-2xl mb-4">Registrar Gasto</h2>
 
