@@ -8,9 +8,7 @@ const ReservationInput = () => {
 
   return (
     <PrivateRoute>
-      <PrivateLayout>
-        {userData && <OperationsForm currentUser={userData} />}
-      </PrivateLayout>
+      <PrivateLayout>{userData && <OperationsForm />}</PrivateLayout>
     </PrivateRoute>
   );
 };
