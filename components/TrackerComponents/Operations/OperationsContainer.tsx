@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { useRouter } from "next/router"; // Importa useRouter de next/router
 import Loader from "../Loader";
 
 interface OperationsContainerProps {
@@ -14,8 +15,17 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
   operationsLength,
   children,
 }) => {
+  const router = useRouter(); // Obtén el objeto router
+
+  // Define la clase de margen superior basada en la ruta actual
+  const marginTopClass = router.pathname.includes("dashboard")
+    ? "mt-10"
+    : "mt-20";
+
+  console.log(marginTopClass);
+
   return (
-    <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
+    <div className={`bg-white p-4 ${marginTopClass} rounded-xl shadow-md`}>
       {isLoading ? (
         <Loader />
       ) : (

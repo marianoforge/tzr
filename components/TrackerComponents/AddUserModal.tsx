@@ -161,14 +161,14 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           <div className="flex justify-between items-center mt-8">
             <Button
               type="submit"
-              className="bg-mediumBlue hover:bg-mediumBlue/80 text-white py-2 px-4 rounded-md w-48"
+              className="bg-mediumBlue hover:bg-lightBlue text-white py-2 px-4 rounded-md w-48"
             >
               Agregar Asesor
             </Button>
             <Button
               type="button"
               onClick={onClose}
-              className="bg-lightBlue text-white p-2 rounded hover:bg-lightBlue/80 transition-all duration-300 font-semibold w-48"
+              className="bg-lightBlue text-white p-2 rounded hover:bg-mediumBlue transition-all duration-300 font-semibold w-48"
             >
               Cerrar
             </Button>

@@ -84,7 +84,7 @@ const FormularioEvento: React.FC = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
       >
-        <h2 className="text-2xl mb-4">Agendar Evento</h2>
+        <h2 className="text-2xl mb-4 font-semibold">Agendar Evento</h2>
         <div className="flex flex-wrap -mx-2">
           <div className="w-full px-2">
             <Input
@@ -127,10 +127,10 @@ const FormularioEvento: React.FC = () => {
             )}
           </div>
         </div>
-        <div className="flex justify-center lg:justify-end items-center mt-8">
+        <div className="flex justify-center items-center mt-8">
           <Button
             type="submit"
-            className="bg-greenAccent text-white p-2 rounded hover:bg-green-600 transition-all duration-300 font-semibold w-[200px] cursor-pointer"
+            className="bg-mediumBlue hover:bg-lightBlue text-white p-2 rounded  transition-all duration-300 font-semibold w-[200px] cursor-pointer"
           >
             Guardar Evento
           </Button>

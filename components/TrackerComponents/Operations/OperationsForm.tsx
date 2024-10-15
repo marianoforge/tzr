@@ -510,10 +510,10 @@ const OperationsForm = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center lg:justify-end items-center mt-8">
+        <div className="flex justify-center items-center mt-8 w-full">
           <Button
             type="submit"
-            className=" bg-greenAccent text-white p-2 rounded hover:bg-green-700 transition-all duration-300 font-semibold w-[200px]"
+            className="bg-mediumBlue hover:bg-lightBlue text-white p-2 rounded transition-all duration-300 font-semibold w-[200px]"
           >
             Guardar Operación
           </Button>

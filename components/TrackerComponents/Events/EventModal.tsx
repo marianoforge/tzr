@@ -50,14 +50,14 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
         <div className="flex justify-between gap-4">
           <button
             onClick={handleDeleteClick}
-            className="bg-redAccent text-white p-2 rounded hover:bg-red-600 transition-all duration-300 font-bold w-full"
+            className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-bold w-full"
           >
             Eliminar
           </button>
 
           <button
             onClick={onClose}
-            className="bg-greenAccent text-white p-2 rounded hover:bg-green-600 transition-all duration-300 font-bold w-full "
+            className="bg-lightBlue text-white p-2 rounded hover:bg-mediumBlue transition-all duration-300 font-bold w-full "
           >
             Cerrar
           </button>

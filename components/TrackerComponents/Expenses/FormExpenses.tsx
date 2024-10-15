@@ -166,7 +166,7 @@ const FormularioExpenses: React.FC = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
         >
-          <h2 className="text-2xl mb-4">Registrar Gasto</h2>
+          <h2 className="text-2xl mb-4 font-semibold">Registrar Gasto</h2>
 
           {userRole === "team_leader_broker" && (
             <div className="mb-4">
@@ -257,10 +257,10 @@ const FormularioExpenses: React.FC = () => {
             )}
           </div>
 
-          <div className="flex justify-center items-center mt-8">
+          <div className="flex justify-center items-center mt-8 w-full">
             <button
               type="submit" // Ensure the button type is submit
-              className="bg-[#7ED994] text-white p-2 rounded hover:bg-[#34D399] transition-all duration-300 font-semibold w-[200px]"
+              className="text-white p-2 rounded bg-mediumBlue hover:bg-lightBlue transition-all duration-300 font-semibold w-[200px]"
             >
               Guardar Gasto
             </button>

@@ -66,7 +66,7 @@ const EventsList: React.FC = () => {
             ))
           )}
           <button
-            className="bg-darkBlue text-white p-2 rounded-md font-semibold mt-2"
+            className="bg-mediumBlue hover:bg-lightBlue text-white p-2 rounded-md font-semibold mt-2"
             onClick={() => {
               router.push("/calendar");
             }}

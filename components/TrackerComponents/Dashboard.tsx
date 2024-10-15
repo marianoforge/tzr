@@ -41,13 +41,18 @@ const DashBoard = () => {
         <div className="block lg:hidden">
           <OperationsCarouselDash filter="all" setFilter={() => {}} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-6">
+        <div
+          className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-6"
+          style={{ marginTop: "2.5rem" }}
+        >
           <CuadroPrincipal />
           <CuadroPrincipalChart />
         </div>
         {/* Sacar el Mocked */}
-        <MonthlyBarChart />
-        {/* <MonthlyMockedBarchart /> */}
+        <div style={{ marginTop: "2.5rem" }}>
+          <MonthlyBarChart />
+          {/* <MonthlyMockedBarchart /> */}
+        </div>
       </div>
     </>
   );
