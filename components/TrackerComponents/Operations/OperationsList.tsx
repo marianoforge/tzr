@@ -55,12 +55,6 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
   // Calcular los totales basados en las operaciones filtradas
   const filteredTotals = calculateTotals(filteredOperations);
 
-  // Verificar si hay operaciones del año 2023
-  const hasYear2023Operations = operations.some(
-    (operation: Operation) =>
-      new Date(operation.fecha_operacion).getFullYear() === 2023
-  );
-
   return (
     <OperationsContainer
       isLoading={isLoading}
@@ -86,11 +80,15 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
           className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
             filter === "open"
               ? "bg-mediumBlue text-white"
-              : operations.length === 0
+              : operations.every(
+                  (operation: Operation) => operation.estado !== "En Curso"
+                )
               ? "bg-gray-300 text-gray-500"
               : "bg-lightBlue text-white"
           }`}
-          disabled={operations.length === 0}
+          disabled={operations.every(
+            (operation: Operation) => operation.estado !== "En Curso"
+          )}
         >
           En curso / Reservas
         </button>
@@ -99,11 +97,15 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
           className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
             filter === "closed"
               ? "bg-mediumBlue text-white"
-              : operations.length === 0
+              : operations.every(
+                  (operation: Operation) => operation.estado !== "Cerrada"
+                )
               ? "bg-gray-300 text-gray-500"
               : "bg-lightBlue text-white"
           }`}
-          disabled={operations.length === 0}
+          disabled={operations.every(
+            (operation: Operation) => operation.estado !== "Cerrada"
+          )}
         >
           Operaciones Cerradas
         </button>
@@ -112,11 +114,19 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
           className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
             filter === "currentYear"
               ? "bg-mediumBlue text-white"
-              : operations.length === 0
+              : operations.every(
+                  (operation: Operation) =>
+                    new Date(operation.fecha_operacion).getFullYear() !==
+                    new Date().getFullYear()
+                )
               ? "bg-gray-300 text-gray-500"
               : "bg-lightBlue text-white"
           }`}
-          disabled={operations.length === 0}
+          disabled={operations.every(
+            (operation: Operation) =>
+              new Date(operation.fecha_operacion).getFullYear() !==
+              new Date().getFullYear()
+          )}
         >
           Año Actual
         </button>
@@ -125,11 +135,17 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
           className={`px-4 py-2 mx-2 w-[195px] rounded-lg ${
             filter === "year2023"
               ? "bg-mediumBlue text-white"
-              : operations.length === 0 || !hasYear2023Operations
+              : operations.every(
+                  (operation: Operation) =>
+                    new Date(operation.fecha_operacion).getFullYear() !== 2023
+                )
               ? "bg-gray-300 text-gray-500"
               : "bg-lightBlue text-white"
           }`}
-          disabled={operations.length === 0 || !hasYear2023Operations}
+          disabled={operations.every(
+            (operation: Operation) =>
+              new Date(operation.fecha_operacion).getFullYear() !== 2023
+          )}
         >
           Año 2023
         </button>
