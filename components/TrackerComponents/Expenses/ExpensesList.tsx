@@ -104,11 +104,17 @@ const ExpensesList = () => {
     indexOfLastItem
   );
 
-  const totalPages = Math.ceil(filteredExpenses.length / itemsPerPage);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredExpenses.length / itemsPerPage)
+  );
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
+
+  // Deshabilitar los botones si no hay al menos 10 elementos
+  const disablePagination = filteredExpenses.length < itemsPerPage;
 
   if (isLoading) {
     return <Loader />;
@@ -221,7 +227,7 @@ const ExpensesList = () => {
           <div className="flex justify-center mt-4">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1 || disablePagination}
               className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
             >
               Anterior
@@ -231,7 +237,7 @@ const ExpensesList = () => {
             </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || disablePagination}
               className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
             >
               Siguiente

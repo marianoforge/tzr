@@ -43,7 +43,9 @@ const Settings = () => {
       setLastName(userDataQuery.lastName);
       setAgenciaBroker(userDataQuery.agenciaBroker);
       setNumeroTelefono(userDataQuery.numeroTelefono);
-      setObjetivoAnual(userDataQuery.objetivoAnual);
+      setObjetivoAnual(
+        userDataQuery.objetivoAnual ?? "Objetivo anual no definido"
+      );
     }
   }, [userDataQuery]);
 
@@ -198,7 +200,7 @@ const Settings = () => {
                     name="objetivoAnual"
                     value={`$${formatNumber(objetivoAnual)}`}
                     onChange={(e) => {
-                      const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+                      const value = e.target.value.replace(/[^0-9]/g, "");
                       setObjetivoAnual(Number(value));
                     }}
                     className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
