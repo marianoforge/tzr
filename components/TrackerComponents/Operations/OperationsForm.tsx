@@ -133,6 +133,7 @@ const OperationsForm = () => {
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
       user_uid: assignedUserUID, // Use the determined user UID
+      teamId: userUID, // Add the logged-in user's ID as teamId
       punta_compradora: data.punta_compradora ? 1 : 0,
       punta_vendedora: data.punta_vendedora ? 1 : 0,
       estado: "En Curso",

@@ -22,8 +22,6 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
     ? "mt-10"
     : "mt-20";
 
-  console.log(marginTopClass);
-
   return (
     <div className={`bg-white p-4 ${marginTopClass} rounded-xl shadow-md`}>
       {isLoading ? (

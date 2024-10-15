@@ -8,8 +8,8 @@ import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "@/schemas/operationsFormSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateOperation } from "@/lib/api/operationsApi"; // API para actualizar la operación
-import { UserData } from "@/types";
-import useUsersWithOperations from "@/hooks/useUserWithOperations";
+import { TeamMember, UserData } from "@/types";
+import { useTeamMembers } from "@/hooks/useTeamMembers";
 
 type FormData = InferType<typeof schema>;
 
@@ -39,11 +39,26 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   });
 
   const queryClient = useQueryClient();
-  const { data } = useUsersWithOperations(currentUser);
+  const { data: teamMembers } = useTeamMembers();
 
-  const usersMapped = data?.map((user) => ({
-    name: `${user.firstName} ${user.lastName}`,
-  }));
+  const usersMapped = [
+    ...(teamMembers?.map((member: TeamMember) => ({
+      name: `${member.firstName} ${member.lastName}`,
+      uid: member.id,
+    })) || []),
+    ...(currentUser.uid
+      ? [
+          {
+            name:
+              `${currentUser.firstName} ${currentUser?.lastName}` ||
+              "Logged User",
+            uid: currentUser.uid,
+          },
+        ]
+      : []),
+  ];
+
+  console.log(usersMapped);
 
   useEffect(() => {
     if (operation) {
@@ -98,9 +113,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   if (!isOpen || !operation) return null;
 
-  console.log(operation);
-
-  const isOperationOwnedByCurrentUser = operation.user_uid === currentUser.uid;
+  console.log(usersMapped);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -354,22 +367,20 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               {errors.porcentaje_compartido.message}
             </p>
           )}
-          {!isOperationOwnedByCurrentUser && (
-            <select
-              {...register("realizador_venta")}
-              className="w-full p-2 mb-8 border border-gray-300 rounded"
-              required
-            >
-              <option value="">
-                Selecciona el asesor que realizó la venta
+
+          <select
+            {...register("realizador_venta")}
+            className="w-full p-2 mb-8 border border-gray-300 rounded"
+            required
+          >
+            <option value="">Selecciona el asesor que realizó la venta</option>
+            {usersMapped.map((user) => (
+              <option key={user.uid || user.name} value={user.name}>
+                {user.name}
               </option>
-              {usersMapped.map((user) => (
-                <option key={user.name} value={user.name}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
-          )}
+            ))}
+          </select>
+
           {errors.realizador_venta && (
             <p className="text-red-500">{errors.realizador_venta.message}</p>
           )}

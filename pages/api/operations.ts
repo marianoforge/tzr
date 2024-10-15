@@ -38,7 +38,7 @@ const getUserOperations = async (userUID: string, res: NextApiResponse) => {
   try {
     const q = query(
       collection(db, "operations"),
-      where("user_uid", "==", userUID),
+      where("teamId", "==", userUID), // Filtra por teamId igual a userUID
       orderBy("fecha_operacion", "asc")
     );
     const querySnapshot = await getDocs(q);
@@ -67,6 +67,7 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     porcentaje_honorarios_asesor,
     porcentaje_honorarios_broker,
     user_uid,
+    teamId, // Añadir teamId aquí
     ...rest
   } = req.body;
 
@@ -81,7 +82,8 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     !porcentaje_honorarios_broker ||
     !porcentaje_punta_compradora ||
     !porcentaje_punta_vendedora ||
-    !user_uid
+    !user_uid ||
+    !teamId
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -99,6 +101,7 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
       porcentaje_honorarios_asesor,
       porcentaje_honorarios_broker,
       user_uid,
+      teamId, // Añadir teamId aquí
       ...rest,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

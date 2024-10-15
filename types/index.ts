@@ -46,6 +46,7 @@ export interface Operation {
   realizador_venta: string;
   estado: string;
   user_uid: string;
+  teamId: string;
 }
 
 export interface OperationsState extends BaseState<Operation> {
