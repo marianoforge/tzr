@@ -16,7 +16,7 @@ type FormData = InferType<typeof schema>;
 interface OperationsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  operation: (FormData & { id: string }) | null;
+  operation: (FormData & { id: string; user_uid: string }) | null; // Added user_uid
   onUpdate: () => void;
   currentUser: UserData;
 }
@@ -97,6 +97,10 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   };
 
   if (!isOpen || !operation) return null;
+
+  console.log(operation);
+
+  const isOperationOwnedByCurrentUser = operation.user_uid === currentUser.uid;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -350,18 +354,22 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               {errors.porcentaje_compartido.message}
             </p>
           )}
-          <select
-            {...register("realizador_venta")}
-            className="w-full p-2 mb-8 border border-gray-300 rounded"
-            required
-          >
-            <option value="">Selecciona el asesor que realizó la venta</option>
-            {usersMapped.map((user) => (
-              <option key={user.name} value={user.name}>
-                {user.name}
+          {!isOperationOwnedByCurrentUser && (
+            <select
+              {...register("realizador_venta")}
+              className="w-full p-2 mb-8 border border-gray-300 rounded"
+              required
+            >
+              <option value="">
+                Selecciona el asesor que realizó la venta
               </option>
-            ))}
-          </select>
+              {usersMapped.map((user) => (
+                <option key={user.name} value={user.name}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+          )}
           {errors.realizador_venta && (
             <p className="text-red-500">{errors.realizador_venta.message}</p>
           )}

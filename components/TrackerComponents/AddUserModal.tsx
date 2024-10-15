@@ -7,6 +7,7 @@ import Button from "./FormComponents/Button";
 import Input from "./FormComponents/Input";
 import ModalOK from "./ModalOK";
 import { useAuthStore } from "@/stores/authStore";
+import { useMutation } from "@tanstack/react-query";
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -38,6 +39,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<TeamMemberRequestBody>({
     resolver: yupResolver(schema) as Resolver<TeamMemberRequestBody>,
@@ -64,8 +66,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
     fetchCsrfToken(); // Llamar a la función para obtener el token
   }, []);
 
-  const onSubmit: SubmitHandler<TeamMemberRequestBody> = async (data) => {
-    try {
+  // Usar useMutation para manejar la solicitud POST
+  const mutation = useMutation<unknown, Error, TeamMemberRequestBody>({
+    mutationFn: async (data: TeamMemberRequestBody) => {
       if (!userID) {
         throw new Error("El UID del usuario es requerido");
       }
@@ -87,16 +90,24 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
         throw new Error(errorData.message || "Error al registrar usuario");
       }
 
+      return response.json();
+    },
+    onSuccess: () => {
       setModalMessage("Se ha agregado un nuevo asesor.");
       setIsModalOpen(true);
-      router.push("/dashboard");
-    } catch (err: unknown) {
+      reset();
+    },
+    onError: (err: unknown) => {
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
         setFormError("An unknown error occurred");
       }
-    }
+    },
+  });
+
+  const onSubmit: SubmitHandler<TeamMemberRequestBody> = (data) => {
+    mutation.mutate(data);
   };
 
   return (
@@ -166,7 +177,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
 
         <ModalOK
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            onClose(); // Cerrar el modal principal también
+          }}
           message={modalMessage}
           onAccept={() => router.push("/dashboard")}
         />
