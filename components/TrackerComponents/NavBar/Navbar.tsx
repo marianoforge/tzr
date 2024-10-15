@@ -11,6 +11,7 @@ interface NavbarProps {
 const Navbar = ({ setActiveView }: NavbarProps) => {
   const { userData, isLoading, fetchUserData } = useUserDataStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null); // Estado para almacenar los días restantes
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -23,6 +24,26 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
 
     return () => unsubscribe();
   }, [fetchUserData]);
+
+  useEffect(() => {
+    if (userData && userData.trialEndsAt) {
+      // Verificar si trialEndsAt es un Firestore Timestamp o una fecha nativa
+      let trialEndDate;
+
+      if (userData.trialEndsAt && "toDate" in userData.trialEndsAt) {
+        trialEndDate = userData.trialEndsAt.toDate(); // Si es Timestamp de Firestore
+      } else {
+        trialEndDate = new Date(userData.trialEndsAt); // Si es un Date nativo o string ISO
+      }
+
+      // Calcular los días restantes
+      const currentDate = new Date();
+      const diffTime = trialEndDate.getTime() - currentDate.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convertir milisegundos a días
+
+      setDaysLeft(diffDays >= 0 ? diffDays : 0); // Si la fecha ha pasado, mostrar 0 días
+    }
+  }, [userData]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -70,7 +91,14 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 p-4 bg-darkBlue z-50">
+    <nav className="fixed top-0 left-0 right-0  bg-darkBlue z-50 text-center">
+      {/* Mostrar los días de prueba restantes */}
+      <p className="text-white text-sm pt-2 font-semibold">
+        {daysLeft !== null
+          ? `Te quedan ${daysLeft} días de prueba de Realtor Track Pro Agent - Comprar Licencia`
+          : "Bienvenido a Realtor Track Pro"}
+      </p>
+
       <div className="flex items-center justify-between w-full">
         {/* Hamburger menu icon */}
         <div className="xl:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
@@ -93,7 +121,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
               />
             </svg>
           </button>
-          <div className=" text-white text-xl font-bold w-full">TRACKPRO</div>
+          <div className="text-white text-xl font-bold w-full">TRACKPRO</div>
         </div>
 
         {/* Desktop user info */}

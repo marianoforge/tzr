@@ -1,3 +1,4 @@
+// RegisterForm.tsx
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler, Resolver } from "react-hook-form";
@@ -7,47 +8,49 @@ import { cleanString } from "@/utils/cleanString";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { RegisterData } from "@/types";
-import { createSchema } from "@/schemas/registerFormSchema"; // Import the createSchema function
+import { createSchema } from "@/schemas/registerFormSchema";
 import Link from "next/link";
 import Image from "next/image";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 const RegisterForm = () => {
   const router = useRouter();
-  const { googleUser, email, uid } = router.query; // Capturar uid desde la query (si es usuario de Google)
-  const [csrfToken, setCsrfToken] = useState<string | null>(null); // State to store the CSRF token
-
-  // Use the createSchema function to define the schema
-  const schema = createSchema(googleUser === "true");
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue, // Para setear el email automáticamente
-  } = useForm<RegisterData>({
-    resolver: yupResolver(schema) as Resolver<RegisterData>,
-  });
-
+  const { googleUser, email, uid, priceId } = router.query; // Capturar priceId directamente de la query
+  const [csrfToken, setCsrfToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [formError, setFormError] = useState("");
 
-  // Fetch the CSRF token when the component mounts
+  const schema = createSchema(googleUser === "true");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<RegisterData>({
+    resolver: yupResolver(schema) as Resolver<RegisterData>,
+  });
+
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
-        const res = await fetch("/api/auth/register"); // Endpoint to get the CSRF token
+        const res = await fetch("/api/auth/register", {
+          method: "GET",
+        });
         const data = await res.json();
-        setCsrfToken(data.csrfToken); // Store the token in the state
+        setCsrfToken(data.csrfToken);
       } catch (error) {
-        console.error("Error fetching CSRF token:", error);
+        console.error("Error al obtener el token CSRF:", error);
       }
     };
-
     fetchCsrfToken();
   }, []);
 
-  // Setear el email automáticamente si el usuario viene de Google
   useEffect(() => {
     if (googleUser === "true" && email) {
       setValue("email", email as string);
@@ -55,19 +58,31 @@ const RegisterForm = () => {
   }, [googleUser, email, setValue]);
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
+    setLoading(true);
+    if (!csrfToken) {
+      setFormError("No se pudo obtener el token CSRF, intenta nuevamente.");
+      setLoading(false);
+      return;
+    }
+
     try {
+      // 1. Registrar el usuario
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken || "", // Include the CSRF token in the request headers
+          "CSRF-Token": csrfToken || "",
         },
         body: JSON.stringify({
           ...data,
           agenciaBroker: cleanString(data.agenciaBroker),
-          googleUser: googleUser === "true", // Marcar si es usuario de Google
-          uid: googleUser === "true" ? uid : undefined, // Enviar el UID si el usuario es de Google
-          // No enviar la contraseña si el usuario es de Google
+          googleUser: googleUser === "true",
+          uid: googleUser === "true" ? uid : undefined,
+          priceId: priceId || null, // Si hay un priceId, lo usamos, de lo contrario null
+          // trialEndsAt solo si NO está comprando una licencia (sin priceId)
+          ...(priceId
+            ? {}
+            : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
           password: googleUser !== "true" ? data.password : undefined,
           confirmPassword:
             googleUser !== "true" ? data.confirmPassword : undefined,
@@ -79,15 +94,45 @@ const RegisterForm = () => {
         throw new Error(errorData.message || "Error al registrar usuario");
       }
 
-      setModalMessage("Registro exitoso. Ahora puedes iniciar sesión.");
-      setIsModalOpen(true);
-      router.push("/dashboard");
+      if (priceId) {
+        // 2. Si se seleccionó una licencia, crear la sesión de Stripe y redirigir
+        const stripeRes = await fetch("/api/checkout/checkout_session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            priceId: priceId,
+          }),
+        });
+
+        const { sessionId } = await stripeRes.json();
+        const stripe = await stripePromise;
+
+        if (sessionId) {
+          const { error } = await stripe!.redirectToCheckout({ sessionId });
+          if (error) {
+            throw new Error(
+              "Error en la redirección a Stripe: " + error.message
+            );
+          }
+        } else {
+          throw new Error("No se pudo obtener el sessionId para Stripe.");
+        }
+      } else {
+        // 3. Si no seleccionaron licencia, terminar el registro y redirigir al dashboard
+        setModalMessage("Registro exitoso. Ahora puedes iniciar sesión.");
+        setIsModalOpen(true);
+        router.push("/dashboard");
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
-        setFormError("An unknown error occurred");
+        setFormError("Ocurrió un error desconocido");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,6 +156,7 @@ const RegisterForm = () => {
         <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
         {formError && <p className="text-red-500 mb-4">{formError}</p>}
 
+        {/* Nombre */}
         <Input
           type="text"
           placeholder="Nombre"
@@ -121,6 +167,7 @@ const RegisterForm = () => {
           <p className="text-red-500">{errors.firstName.message}</p>
         )}
 
+        {/* Apellido */}
         <Input
           type="text"
           placeholder="Apellido"
@@ -131,15 +178,17 @@ const RegisterForm = () => {
           <p className="text-red-500">{errors.lastName.message}</p>
         )}
 
+        {/* Email */}
         <Input
           type="email"
           placeholder="Correo electrónico"
           {...register("email")}
           required
-          readOnly={googleUser === "true"} // Si viene de Google, no puede modificar el email
+          readOnly={googleUser === "true"}
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
+        {/* Contraseñas solo si no es Google */}
         {googleUser !== "true" && (
           <>
             <Input
@@ -164,6 +213,7 @@ const RegisterForm = () => {
           </>
         )}
 
+        {/* Agencia / Broker */}
         <Input
           type="text"
           placeholder="Agencia / Broker"
@@ -174,6 +224,7 @@ const RegisterForm = () => {
           <p className="text-red-500">{errors.agenciaBroker.message}</p>
         )}
 
+        {/* Número de Teléfono */}
         <Input
           type="tel"
           placeholder="Número de Teléfono"
@@ -184,6 +235,7 @@ const RegisterForm = () => {
           <p className="text-red-500">{errors.numeroTelefono.message}</p>
         )}
 
+        {/* Selección del rol */}
         <select
           {...register("role")}
           className="block w-full mt-2 mb-4 p-2 border border-gray-300 rounded"
@@ -196,12 +248,18 @@ const RegisterForm = () => {
           <option value="team_leader_broker">Team Leader / Broker</option>
         </select>
 
+        {/* Botón de registro */}
         <div className="flex flex-col gap-4 mt-6 sm:mt-0 sm:flex-row justify-center items-center sm:justify-around">
           <Button
             type="submit"
+            disabled={loading}
             className="bg-greenAccent hover:bg-green-600 text-white py-2 px-4 rounded-md w-48"
           >
-            Registrarse
+            {loading
+              ? "Procesando..."
+              : priceId
+              ? "Comprar Licencia"
+              : "Registrarse"}
           </Button>
           <Button
             type="button"

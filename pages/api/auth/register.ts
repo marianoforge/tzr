@@ -1,21 +1,23 @@
+// pages/api/auth/register.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { setCsrfCookie, validateCsrfToken } from "@/lib/csrf";
 import { RegisterRequestBody } from "@/types";
-import { createSchema } from "@/schemas/registerFormSchema"; // Importa el esquema
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
+    // Generar y devolver el CSRF token
     const token = setCsrfCookie(res);
     return res.status(200).json({ csrfToken: token });
   }
 
   if (req.method === "POST") {
+    // Validar el CSRF token
     const isValidCsrf = validateCsrfToken(req);
     if (!isValidCsrf) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -31,6 +33,7 @@ export default async function handler(
       role,
       googleUser,
       uid,
+      priceId,
     }: RegisterRequestBody = req.body;
 
     if (
@@ -46,10 +49,7 @@ export default async function handler(
     }
 
     try {
-      // Validar los datos del cuerpo de la solicitud
-      const schema = createSchema(googleUser ?? false);
-      await schema.validate(req.body, { abortEarly: false });
-
+      // Si el usuario se está registrando con Google
       if (googleUser && uid) {
         await setDoc(doc(db, "usuarios", uid), {
           email,
@@ -58,18 +58,25 @@ export default async function handler(
           firstName,
           lastName,
           role,
-          uid,
+          priceId,
+          // Si no hay priceId, asignar un trial de 7 días
+          ...(priceId
+            ? {}
+            : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
           createdAt: new Date(),
         });
+
         return res
           .status(201)
           .json({ message: "Usuario registrado exitosamente (Google)" });
       }
 
+      // Si falta la contraseña para el registro con email y contraseña
       if (!password) {
-        return res.status(400).json({ message: "Contraseña es requerida" });
+        return res.status(400).json({ message: "La contraseña es requerida" });
       }
 
+      // Registro con email y contraseña
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -84,8 +91,13 @@ export default async function handler(
         firstName,
         lastName,
         role,
+        priceId,
         uid: user.uid,
         createdAt: new Date(),
+        // Si no hay priceId, asignar un trial de 7 días
+        ...(priceId
+          ? {}
+          : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
       });
 
       return res
@@ -95,7 +107,7 @@ export default async function handler(
       console.error(error);
       return res.status(500).json({ message: "Error al registrar usuario" });
     }
-  } else {
-    res.status(405).json({ message: "Método no permitido" });
   }
+
+  return res.status(405).json({ message: "Método no permitido" });
 }

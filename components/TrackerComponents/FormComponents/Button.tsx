@@ -5,6 +5,7 @@ interface ButtonProps {
   className?: string;
   onClick?: () => void;
   children: React.ReactNode;
+  disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({

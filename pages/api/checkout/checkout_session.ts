@@ -1,5 +1,4 @@
 // pages/api/checkout_session.ts
-
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
@@ -12,23 +11,25 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { priceId } = req.body;
+    const { priceId } = req.body; // Obtener el Price ID del body
 
     try {
+      // Crear una sesión de Stripe Checkout
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
           {
-            price: priceId, // Use the Stripe Price ID from your Stripe dashboard
+            price: priceId, // Usar el Price ID para crear la sesión
             quantity: 1,
           },
         ],
-        mode: "subscription", // Change to 'payment' for one-time payments
+        mode: "subscription", // Cambiar a 'payment' si es un pago único
         success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
       });
 
-      res.status(200).json({ id: session.id });
+      // Devolver el sessionId para que el frontend lo utilice
+      res.status(200).json({ sessionId: session.id });
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       res.status(500).json({ error: errorMessage });

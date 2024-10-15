@@ -147,6 +147,7 @@ export interface UserData {
   objetivoAnual: number | null;
   role: string | null;
   uid: string | null;
+  trialEndsAt: Date | { toDate: () => Date } | null; // Allow for Firestore Timestamp
 }
 
 export interface UserDataState extends BaseState<UserData> {
@@ -211,6 +212,8 @@ export interface RegisterRequestBody {
   role: string;
   googleUser?: boolean;
   uid?: string;
+  priceId: string;
+  trialEndsAt: string;
 }
 
 export interface LoginRequestBody {
