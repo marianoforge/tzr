@@ -52,6 +52,7 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
         objetivoAnual: userData.objetivoAnual || null,
         role: userData.role || null,
         uid: userData.uid || null,
+        trialEndsAt: userData.trialEndsAt || null,
       };
 
       set({ userData: validatedUserData, isLoading: false });
