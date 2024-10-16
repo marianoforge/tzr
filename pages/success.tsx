@@ -24,7 +24,9 @@ export default function Success() {
 
       if (sessionId) {
         try {
-          const res = await fetch(`/api/checkout_session/${sessionId}`);
+          const res = await fetch(
+            `/api/checkout/checkout_session/${sessionId}`
+          );
           const data = await res.json();
           setSession(data); // Guardar los datos de la sesión
         } catch (error) {
