@@ -92,11 +92,10 @@ const LoginForm = () => {
       <div className="flex items-center justify-center lg:justify-start">
         <Link href="/" title="Home">
           <Image
-            src="/trackProLogoNoBg.png"
+            src="/trackproBWNoBg.png"
             alt="Logo"
-            width={150}
-            height={150}
-            className="w-80"
+            width={350}
+            height={350}
           />
         </Link>
       </div>
@@ -104,7 +103,9 @@ const LoginForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-6 rounded-lg shadow-md w-11/12 max-w-lg"
       >
-        <h2 className="text-2xl mb-4 text-center">Iniciar Sesión</h2>
+        <h2 className="text-2xl mb-4 text-center font-semibold">
+          Iniciar Sesión
+        </h2>
         {formError && <p className="text-red-500 mb-4">{formError}</p>}
 
         {/* Email and Password Fields */}
