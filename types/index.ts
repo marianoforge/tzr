@@ -110,7 +110,7 @@ export interface ExpenseFormData {
   amount: number;
   amountInDollars?: number;
   expenseType: string;
-  description: string;
+  description?: string;
   dollarRate: number;
   otherType?: string;
   expenseAssociationType?: string;

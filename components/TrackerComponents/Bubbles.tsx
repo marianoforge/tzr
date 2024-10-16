@@ -79,7 +79,7 @@ const Bubbles = () => {
               key={index}
               className={`${data.bgColor} rounded-xl py-6 text-center shadow-md flex flex-col justify-around items-center h-[200px]`}
             >
-              <p className="text-xl text-white lg:text-lg xl:text-lg 2xl:text-base font-semibold h-1/2 items-center justify-center flex">
+              <p className="text-xl text-white lg:text-lg xl:text-lg 2xl:text-base lg:px-1 font-semibold h-1/2 items-center justify-center flex">
                 {data.title}
               </p>
               <p

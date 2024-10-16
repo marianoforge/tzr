@@ -15,7 +15,7 @@ const localizer = momentLocalizer(moment);
 const BigCalendar = () => {
   const { userID } = useAuthStore();
   const [view, setView] = useState<View>(Views.MONTH);
-  const [date, setDate] = useState(new Date(2024, 8, 26));
+  const [date, setDate] = useState(new Date()); // Cambiar a la fecha actual
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -105,7 +105,7 @@ const BigCalendar = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-2 sm:p-4 md:p-6 mt-20">
+    <div className="bg-white rounded-xl shadow-md p-2 sm:p-4 md:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
         <div className="flex space-x-2 sm:space-x-4 mb-2 sm:mb-0">
           <NavButton onClick={() => navigateCalendar("PREV")} label="<" />
@@ -116,12 +116,16 @@ const BigCalendar = () => {
           {moment(date).format("MMMM YYYY")}
         </div>
         <div className="flex flex-wrap justify-center sm:justify-end space-x-2">
-          {["día", "semana", "mes"].map((viewOption) => (
+          {[
+            { label: "Día", value: Views.DAY },
+            { label: "Semana", value: Views.WEEK },
+            { label: "Mes", value: Views.MONTH },
+          ].map((viewOption) => (
             <ViewButton
-              key={viewOption}
-              view={viewOption as View}
+              key={viewOption.value}
+              view={viewOption.value} // Asegúrate de pasar el valor en inglés
               currentView={view}
-              onClick={() => setView(viewOption as View)}
+              onClick={() => setView(viewOption.value)} // Asegúrate de establecer el valor correcto
             />
           ))}
         </div>
@@ -197,19 +201,19 @@ const ViewButton = ({
   currentView,
   onClick,
 }: {
-  view: string;
-  currentView: string;
+  view: View; // Cambiado para usar tipo View, que es compatible
+  currentView: View;
   onClick: () => void;
 }) => (
   <button
     onClick={onClick}
     className={`px-2 sm:px-3 py-1 rounded-md transition-all duration-300 text-xs sm:text-sm ${
       currentView === view
-        ? "bg-greenAccent text-white font-semibold hover:bg-green-600"
+        ? "bg-mediumBlue text-white font-semibold hover:bg-lightBlue"
         : "bg-gray-200 text-gray-600 hover:bg-gray-300 font-semibold"
     }`}
   >
-    {view.charAt(0).toUpperCase() + view.slice(1)}
+    {view === "day" ? "Día" : view === "week" ? "Semana" : "Mes"}
   </button>
 );
 

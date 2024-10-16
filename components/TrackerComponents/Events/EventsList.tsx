@@ -32,7 +32,7 @@ const EventsList: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center lg:max-h-[450px] min-h-[450px] min-w-[340px]">
+    <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center">
       {isLoading ? (
         <Loader />
       ) : (
@@ -44,24 +44,22 @@ const EventsList: React.FC = () => {
           ) : (
             displayedEvents.map((event: Event) => (
               <div
-                className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-lightBlue even:border-t-darkBlue w-full min-w-[340px]"
+                className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-lightBlue even:border-t-darkBlue w-full 2xl:h-[102px]"
                 key={event.id}
               >
-                <div className="flex items-center justify-between">
-                  <h1 className="font-semibold text-gray-600 text-md md:text-lg lg:text-md xl:text-lg">
-                    {event.title}
-                  </h1>
-                  <span className="text-gray-400 text-md md:text-lg lg:text-lg xl:text-md 2xl:text-sm">
+                <div className="flex items-center justify-between gap-1">
+                  <h1 className="font-semibold text-base">{event.title}</h1>
+                  <span className="text-gray-400  2xl:text-sm">
                     {event.date} | {event.startTime} - {event.endTime}
                   </span>
                 </div>
-                <p className="mt-2 text-gray-400 text-sm">
-                  {event.description.length > 49 && window.innerWidth > 1024
-                    ? `${event.description.substring(0, 49)} [...]`
-                    : event.description.length > 100
-                    ? `${event.description.substring(0, 40)} [...]`
-                    : event.description}
-                </p>
+                <div className="2xl:hidden">
+                  <p className="mt-2 text-gray-400 text-sm">
+                    {event.description.length > 49
+                      ? `${event.description.substring(0, 100)}`
+                      : event.description}
+                  </p>
+                </div>
               </div>
             ))
           )}

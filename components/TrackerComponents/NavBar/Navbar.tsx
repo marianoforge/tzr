@@ -91,15 +91,16 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0  bg-darkBlue z-50 text-center">
-      {/* Mostrar los días de prueba restantes */}
-      <p className="text-white text-sm pt-2 font-semibold">
-        {daysLeft !== null
-          ? `Te quedan ${daysLeft} días de prueba de Realtor Track Pro Agent - Comprar Licencia`
-          : "Bienvenido a Realtor Track Pro"}
-      </p>
+    <nav className="fixed top-0 left-0 right-0 w-full bg-darkBlue z-50 text-center">
+      <div className="flex items-center justify-center h-4 pt-6">
+        <p className="text-white text-sm font-semibold">
+          {daysLeft !== 0
+            ? `Te quedan ${daysLeft} días de prueba de Realtor Track Pro Agent - Comprar Licencia`
+            : "Bienvenido a Realtor Trackpro"}
+        </p>
+      </div>
 
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full mt-4">
         {/* Hamburger menu icon */}
         <div className="xl:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
           <button
@@ -121,7 +122,15 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
               />
             </svg>
           </button>
-          <div className="text-white text-xl font-bold w-full">TRACKPRO</div>
+          <div className="text-white text-xl font-bold lg:w-[150px] pb-1">
+            {/* <Image
+              src="/trackProLogo.png"
+              alt="Logo"
+              width={350}
+              height={350}
+            /> */}
+            realtor trackpro
+          </div>
         </div>
 
         {/* Desktop user info */}

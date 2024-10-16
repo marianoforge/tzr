@@ -66,7 +66,7 @@ const FormularioExpenses: React.FC = () => {
     date: yup.string().required("La fecha es requerida"),
     amount: yup.number().required("El monto es requerido").positive(),
     amountInDollars: yup.number(),
-    description: yup.string().required("La descripción es requerida"),
+    description: yup.string(),
     otherType: yup
       .string()
       .when("expenseType", ([expenseType], schema: yup.StringSchema) => {
@@ -139,7 +139,7 @@ const FormularioExpenses: React.FC = () => {
       amountInDollars,
       otherType: data.otherType ?? "",
       expenseType: data.expenseType,
-      description: data.description,
+      description: data.description ?? "",
       dollarRate: data.dollarRate,
       user_uid: userID ?? "",
       expenseAssociationType: data.expenseAssociationType ?? "",

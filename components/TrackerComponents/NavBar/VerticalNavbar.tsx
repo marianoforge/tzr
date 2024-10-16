@@ -144,8 +144,8 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
 
   return (
     <nav className="h-[calc(100vh-8rem)] text-sm flex-col w-[320px] fixed left-0 top-16 hidden xl:block overflow-y-auto">
-      <div className="flex items-center justify-center h-20 pl-4">
-        <Image src="/trackProLogo.png" alt="Logo" width={200} height={200} />
+      <div className="flex items-center justify-center h-20">
+        <Image src="/trackProLogo.png" alt="Logo" width={350} height={350} />
       </div>
       <div className="ml-6 h-[1px] w-64 bg-gray-300"></div>
       <div className="flex flex-col">
