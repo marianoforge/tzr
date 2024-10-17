@@ -117,7 +117,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[90%]  lg:w-[80%] xl:w-[40%] h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[90%] lg:w-[80%] xl:w-[40%] max-h-[80vh] overflow-y-auto flex flex-col">
         <h2 className="text-2xl font-bold mb-4">Editar Operación</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
@@ -407,14 +407,14 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <div className="flex gap-4 justify-center items-center">
             <Button
               type="submit"
-              className="bg-greenAccent text-white p-2 rounded hover:bg-green-700 transition-all duration-300 font-semibold w-[30%]"
+              className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-[30%]"
             >
               Guardar
             </Button>
             <Button
               type="button"
               onClick={onClose}
-              className="bg-redAccent text-white p-2 rounded hover:bg-red-700 transition-all duration-300 font-semibold w-[30%]"
+              className="bg-lightBlue text-white p-2 rounded hover:bg-mediumBlue transition-all duration-300 font-semibold w-[30%]"
             >
               Cerrar
             </Button>

@@ -28,7 +28,7 @@ const Bubbles = () => {
 
   const bubbleData = [
     {
-      title: "Honorarios Totales Netos (Asesor)",
+      title: "Honorarios Totales Netos - Asesor / Broker",
       figure: formatValue(totals.honorarios_asesor, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",

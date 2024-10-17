@@ -93,7 +93,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
 
     return (
       <div
-        className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center "
+        className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center"
         style={{ height: "225px" }}
       >
         <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold pt-2 pb-2">
@@ -142,7 +142,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
                 )}
               </PieChart>
             </div>
-            <h3 className="font-semibold text-mediumBlue">
+            <h3 className="font-semibold text-mediumBlue text-base">
               {`Objetivo Anual de Ventas: $${formatNumber(
                 totals.honorarios_broker
               )} / $${formatNumber(userData?.objetivoAnual ?? 0)}`}

@@ -198,10 +198,10 @@ const Settings = () => {
                     type="text"
                     placeholder="Objetivo de Anual de Ventas"
                     name="objetivoAnual"
-                    value={`$${formatNumber(objetivoAnual)}`}
+                    value={`$${formatNumber(objetivoAnual || 0)}`} // Default to 0 if empty
                     onChange={(e) => {
                       const value = e.target.value.replace(/[^0-9]/g, "");
-                      setObjetivoAnual(Number(value));
+                      setObjetivoAnual(Number(value) || 0); // Default to 0 if conversion fails
                     }}
                     className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
                     disabled={!editMode.objetivoAnual}

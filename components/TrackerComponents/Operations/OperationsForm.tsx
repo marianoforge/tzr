@@ -256,7 +256,7 @@ const OperationsForm = () => {
                   <span className="text-redAccent">*</span>
                 </label>
                 <Input
-                  placeholder="Por ejemplo: 3%"
+                  placeholder="Por ejemplo: 4%"
                   type="text"
                   step="any"
                   {...register("porcentaje_punta_compradora", {
@@ -276,7 +276,7 @@ const OperationsForm = () => {
                   <span className="text-redAccent">*</span>
                 </label>
                 <Input
-                  placeholder="Por ejemplo: 4%"
+                  placeholder="Por ejemplo: 3%"
                   type="text"
                   step="any"
                   {...register("porcentaje_punta_vendedora", {

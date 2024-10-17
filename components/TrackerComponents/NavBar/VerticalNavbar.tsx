@@ -60,7 +60,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
       <NavLink
         href="/expensesList"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Gastos"
+        label="Gastos Propios"
       />
       <NavLink
         href="/calendar"
@@ -113,7 +113,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
       <NavLink
         href="/expensesBroker"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Gastos"
+        label="Gastos Broker / Team"
       />
     </>
   );
