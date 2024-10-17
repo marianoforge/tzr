@@ -1,15 +1,13 @@
 import CardsSection from "@/components/SiteComponents/CardsSection";
+import LicenseSection from "@/components/SiteComponents/LicensesSection";
 import MainLayout from "@/components/SiteComponents/CommonComponents/MainLayout";
 
 const Home = () => {
   return (
-    <>
-      <div className="min-h-screen bg-white">
-        <MainLayout>
-          <CardsSection />
-        </MainLayout>
-      </div>
-    </>
+    <MainLayout>
+      <CardsSection />
+      <LicenseSection />
+    </MainLayout>
   );
 };
 

@@ -38,6 +38,8 @@ export default function Success() {
     fetchSession();
   }, [router.query.session_id]);
 
+  console.log(session);
+
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
       <div className="flex items-center justify-center lg:justify-start">
@@ -54,18 +56,7 @@ export default function Success() {
         <h1 className="text-[32px] text-greenAccent font-semibold">
           ¡Pago exitoso!
         </h1>
-        {session ? (
-          <div>
-            <p>Detalles de tu pago:</p>
-            <p>ID de la sesión: {session.id}</p>
-            <p>Correo del cliente: {session.customer_email}</p>
-            <p>Total pagado: ${session.amount_total / 100}</p>{" "}
-            {/* Stripe maneja cantidades en centavos */}
-            <p>Estado del pago: {session.payment_status}</p>
-          </div>
-        ) : (
-          <p className="text-lg">Cargando detalles del pago...</p>
-        )}
+
         <div className="w-full flex justify-around">
           <Button
             onClick={() => router.push("/")}

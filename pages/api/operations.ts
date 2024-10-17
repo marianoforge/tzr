@@ -71,21 +71,25 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     ...rest
   } = req.body;
 
+  // Validar que todos los campos requeridos estén presentes.
+  // Asegúrate de que los porcentajes permitan valores de 0.
   if (
     !fecha_operacion ||
     !direccion_reserva ||
     !localidad_reserva ||
     !provincia_reserva ||
     !tipo_operacion ||
-    !valor_reserva ||
-    !porcentaje_honorarios_asesor ||
-    !porcentaje_honorarios_broker ||
-    !porcentaje_punta_compradora ||
-    !porcentaje_punta_vendedora ||
+    valor_reserva === undefined || // Acepta valores numéricos incluyendo 0
+    porcentaje_honorarios_asesor === undefined || // Acepta 0
+    porcentaje_honorarios_broker === undefined || // Acepta 0
+    porcentaje_punta_compradora === undefined || // Acepta 0
+    porcentaje_punta_vendedora === undefined || // Acepta 0
     !user_uid ||
     !teamId
   ) {
-    return res.status(400).json({ message: "All fields are required" });
+    return res
+      .status(400)
+      .json({ message: "Todos los campos son obligatorios" });
   }
 
   try {
@@ -110,9 +114,9 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     const docRef = await addDoc(collection(db, "operations"), newOperation);
     return res
       .status(201)
-      .json({ id: docRef.id, message: "Operation created successfully" });
+      .json({ id: docRef.id, message: "Operación creada exitosamente" });
   } catch (error) {
-    console.error("Error creating operation:", error);
-    return res.status(500).json({ message: "Error creating operation" });
+    console.error("Error creando la operación:", error);
+    return res.status(500).json({ message: "Error creando la operación" });
   }
 };
