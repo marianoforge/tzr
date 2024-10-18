@@ -117,7 +117,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
 
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">Lista de Agentes</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Informe Asesores</h2>
       {combinedData.length === 0 ? (
         <p className="text-center text-gray-600">No existen agentes</p>
       ) : (
@@ -130,8 +130,10 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                 <th className="py-3 px-4 font-semibold text-center w-1/6">
                   Nombre
                 </th>
-                <th className="py-3 px-4 font-semibold text-center">Email</th>
-                <th className="py-3 px-4 font-semibold text-center">
+                <th className="py-3 px-4 font-semibold text-center w-1/10">
+                  Email
+                </th>
+                <th className="py-3 px-4 font-semibold text-center w-1/6">
                   Total Facturación Bruta
                 </th>
                 <th className="py-3 px-4 font-semibold text-center">
@@ -174,7 +176,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                 .map((usuario, index) => (
                   <tr
                     key={usuario.id}
-                    className={`border-b text-start ${
+                    className={`border-b text-center ${
                       index === 0 ? "bg-green-100" : ""
                     }`}
                   >
@@ -189,6 +191,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                       {usuario.operaciones.length > 0 ? (
                         <ul>
                           <li>
+                            $
                             {formatNumber(
                               usuario.operaciones.reduce(
                                 (acc: number, op: Operation) =>
@@ -202,7 +205,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                         <span>No operations</span>
                       )}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 text-center">
                       {usuario.operaciones.length > 0 ? (
                         <ul>
                           <li>
