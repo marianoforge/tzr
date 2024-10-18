@@ -1,28 +1,100 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import useUsersWithOperations from "@/hooks/useUserWithOperations";
 import Loader from "@/components/TrackerComponents/Loader";
 import { UserData, Operation, TeamMember, UserWithOperations } from "@/types";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import { formatNumber } from "@/utils/formatNumber";
 import { useTeamMembersOps } from "@/hooks/useTeamMembersOps";
+import EditAgentsModal from "./EditAgentsModal";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-// El tipo del componente debe incluir los props, en este caso el currentUser de tipo UserData.
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
   const teamLeadId = currentUser.uid || "";
   const { members } = useTeamMembersOps(teamLeadId);
 
-  const combinedData: TeamMember[] = [
-    ...data.map((user: UserWithOperations) => ({
-      id: user.uid, // Asigna el uid a id
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      numeroTelefono: "",
-      operaciones: user.operaciones,
-    })),
-    ...(members || []), // Incluye los miembros del equipo si existen
-  ];
+  // Estado para almacenar los miembros combinados
+  const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null); // Miembro seleccionado para editar
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
+
+  // Inicializamos el combinedData solo cuando se cargan data y members
+  useEffect(() => {
+    if (data && members) {
+      const initialData: TeamMember[] = [
+        ...data.map((user: UserWithOperations) => ({
+          id: user.uid,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          numeroTelefono: "",
+          operaciones: user.operaciones,
+        })),
+        ...(members || []), // Incluye los miembros del equipo si existen
+      ];
+      setCombinedData(initialData);
+    }
+  }, [data, members]); // Solo se ejecuta cuando 'data' y 'members' cambian
+
+  // Borrar miembro
+  const handleDeleteClick = async (memberId: string) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este miembro?")) {
+      try {
+        const response = await fetch(`/api/teamMembers/${memberId}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          // Actualizar el estado eliminando el miembro
+          setCombinedData((prevData) =>
+            prevData.filter((member) => member.id !== memberId)
+          );
+          console.log(`Miembro con ID ${memberId} borrado.`);
+        } else {
+          console.error("Error al borrar el miembro:", await response.text());
+        }
+      } catch (error) {
+        console.error("Error en la petición DELETE:", error);
+      }
+    }
+  };
+
+  // Abrir el modal con los datos del miembro seleccionado
+  const handleEditClick = (member: TeamMember) => {
+    setSelectedMember(member);
+    setIsModalOpen(true); // Abre el modal con los datos del miembro seleccionado
+  };
+
+  // Actualizar miembro
+  const handleSubmit = async (updatedMember: TeamMember) => {
+    try {
+      const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: updatedMember.firstName,
+          lastName: updatedMember.lastName,
+          email: updatedMember.email,
+        }),
+      });
+
+      if (response.ok) {
+        // Actualizar el estado con los nuevos datos
+        setCombinedData((prevData) =>
+          prevData.map((member) =>
+            member.id === updatedMember.id ? updatedMember : member
+          )
+        );
+        console.log("Miembro actualizado correctamente.");
+        setIsModalOpen(false); // Cierra el modal después de la actualización exitosa
+      } else {
+        console.error("Error al actualizar el miembro:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error en la petición PUT:", error);
+    }
+  };
 
   const honorariosBrokerTotales = combinedData.reduce((acc, usuario) => {
     return (
@@ -55,7 +127,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
               <tr
                 className={`${OPERATIONS_LIST_COLORS.headerBg} ${OPERATIONS_LIST_COLORS.headerText}`}
               >
-                <th className="py-3 px-4 font-semibold text-center">Name</th>
+                <th className="py-3 px-4 font-semibold text-center">Nombre</th>
                 <th className="py-3 px-4 font-semibold text-center">Email</th>
                 <th className="py-3 px-4 font-semibold text-center">
                   Total Facturación Bruta
@@ -78,6 +150,9 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                 <th className="py-3 px-4 font-semibold text-center">
                   Monto Total Operaciones
                 </th>
+                <th className="py-3 px-4 font-semibold text-center">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -97,23 +172,24 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                 .map((usuario, index) => (
                   <tr
                     key={usuario.id}
-                    className={`border-b transition duration-150 ease-in-out text-center ${
-                      index === 0 ? "bg-greenAccent/10" : ""
+                    className={`border-b text-center ${
+                      index === 0 ? "bg-green-100" : ""
                     }`}
                   >
-                    <td className="py-3 px-4 font-semibold text">
+                    <td className="py-3 px-4 font-semibold">
                       {usuario.firstName} {usuario.lastName}
                     </td>
-
                     <td className="py-3 px-4">{usuario.email}</td>
                     <td className="py-3 px-4">
                       {usuario.operaciones.length > 0 ? (
                         <ul>
                           <li>
-                            {usuario.operaciones.reduce(
-                              (acc: number, op: Operation) =>
-                                acc + op.honorarios_broker,
-                              0
+                            {formatNumber(
+                              usuario.operaciones.reduce(
+                                (acc: number, op: Operation) =>
+                                  acc + op.honorarios_broker,
+                                0
+                              )
                             )}
                           </li>
                         </ul>
@@ -151,73 +227,64 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {usuario.operaciones.length > 0 ? (
-                        <ul>
-                          <li>
-                            {usuario.operaciones.reduce(
-                              (acc: number, op: Operation) =>
-                                acc + (op.punta_compradora ? 1 : 0),
-                              0
-                            )}
-                          </li>
-                        </ul>
-                      ) : (
-                        <span>No operations</span>
+                      {usuario.operaciones.reduce(
+                        (acc, op) => acc + (op.punta_compradora ? 1 : 0),
+                        0
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {usuario.operaciones.length > 0 ? (
-                        <ul>
-                          <li>
-                            {usuario.operaciones.reduce(
-                              (acc: number, op: Operation) =>
-                                acc + (op.punta_vendedora ? 1 : 0),
-                              0
-                            )}
-                          </li>
-                        </ul>
-                      ) : (
-                        <span>No operations</span>
+                      {usuario.operaciones.reduce(
+                        (acc, op) => acc + (op.punta_vendedora ? 1 : 0),
+                        0
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      {usuario.operaciones.length > 0 ? (
-                        <ul>
-                          <li>
-                            {usuario.operaciones.reduce(
-                              (acc: number, op: Operation) =>
-                                acc +
-                                (op.punta_compradora ? 1 : 0) +
-                                (op.punta_vendedora ? 1 : 0),
-                              0
-                            )}
-                          </li>
-                        </ul>
-                      ) : (
-                        <span>No operations</span>
+                      {usuario.operaciones.reduce(
+                        (acc, op) =>
+                          acc +
+                          (op.punta_compradora ? 1 : 0) +
+                          (op.punta_vendedora ? 1 : 0),
+                        0
                       )}
                     </td>
-
                     <td className="py-3 px-4">
-                      {usuario.operaciones.length > 0 ? (
-                        <ul>
-                          <li>
-                            {usuario.operaciones.reduce(
-                              (acc: number, op: Operation) =>
-                                acc + op.valor_reserva,
-                              0
-                            )}
-                          </li>
-                        </ul>
-                      ) : (
-                        <span>No operations</span>
+                      {formatNumber(
+                        usuario.operaciones.reduce(
+                          (acc, op) => acc + op.valor_reserva,
+                          0
+                        )
                       )}
+                    </td>
+                    {/* Columna de acciones */}
+                    <td className="py-3 px-4">
+                      <button
+                        onClick={() => handleEditClick(usuario)}
+                        className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
+                      >
+                        <PencilIcon className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(usuario.id)}
+                        className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
                     </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* Modal para editar */}
+      {isModalOpen && selectedMember && (
+        <EditAgentsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          member={selectedMember}
+          onSubmit={handleSubmit} // Pasa handleSubmit al modal
+        />
       )}
     </div>
   );

@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
 import { NavLink } from "../NavComponents/NavLink";
-import AddUserModal from "../AddUserModal";
+import AddUserModal from "../Agents/AddUserModal";
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;

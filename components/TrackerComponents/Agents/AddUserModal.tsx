@@ -3,9 +3,9 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler, Resolver } from "react-hook-form";
-import Button from "./FormComponents/Button";
-import Input from "./FormComponents/Input";
-import ModalOK from "./ModalOK";
+import Button from "../FormComponents/Button";
+import Input from "../FormComponents/Input";
+import ModalOK from "../ModalOK";
 import { useAuthStore } from "@/stores/authStore";
 import { useMutation } from "@tanstack/react-query";
 
