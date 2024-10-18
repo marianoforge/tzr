@@ -92,23 +92,45 @@ export const calculateTotals = (operations: Operation[]) => {
   const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
   const cantidadOperaciones = operations.length;
 
-  const totalPuntaCompradoraPorcentaje = operations.reduce(
+  //(Sin Alquileres)
+
+  const filtroOperacionsSinAlquileres = operations.filter(
+    (op) => !op.tipo_operacion.includes("Alquiler")
+  );
+
+  const totalPuntaCompradoraPorcentaje = filtroOperacionsSinAlquileres.reduce(
     (acc, op) => acc + (op.porcentaje_punta_compradora || 0),
     0
   );
 
-  const totalPuntaVendedoraPorcentaje = operations.reduce(
+  const totalPuntaVendedoraPorcentaje = filtroOperacionsSinAlquileres.reduce(
     (acc, op) => acc + (op.porcentaje_punta_vendedora || 0),
     0
   );
 
+  const validPuntaCompradoraOperations = filtroOperacionsSinAlquileres.filter(
+    (op) => op.porcentaje_punta_compradora !== null
+  );
+
+  const validPuntaVendedoraOperations = filtroOperacionsSinAlquileres.filter(
+    (op) => op.porcentaje_punta_vendedora !== null
+  );
+
   const promedioPuntaCompradoraPorcentaje =
-    totalPuntaCompradoraPorcentaje / operations.length;
+    validPuntaCompradoraOperations.length > 0
+      ? totalPuntaCompradoraPorcentaje / validPuntaCompradoraOperations.length
+      : 0;
 
   const promedioPuntaVendedoraPorcentaje =
-    operations.length > 0
-      ? totalPuntaVendedoraPorcentaje / operations.length
+    validPuntaVendedoraOperations.length > 0
+      ? totalPuntaVendedoraPorcentaje / validPuntaVendedoraOperations.length
       : 0;
+
+  console.table({
+    promedioPuntaCompradoraPorcentaje,
+    promedioPuntaVendedoraPorcentaje,
+    filtroOperacionsSinAlquileres,
+  });
 
   return {
     valor_reserva: totalValorReserva,

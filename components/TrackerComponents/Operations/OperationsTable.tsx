@@ -19,6 +19,8 @@ import { Operation } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { calculateTotals } from "@/utils/calculations";
 import OperationsFullScreenTable from "./OperationsFullScreenTable";
+import { Tooltip } from "react-tooltip";
+import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
 
 interface OperationsTableProps {
   filter: "all" | "open" | "closed" | "currentYear" | "year2023";
@@ -197,6 +199,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
               Estado
+              <InformationCircleIcon
+                className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                data-tooltip-id="tooltip-estado"
+                data-tooltip-content="Estado de la operacion C=Cerrada, A=Abierta / En Curso"
+              />
+              <Tooltip id="tooltip-estado" place="top" />
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -311,19 +319,39 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             </td>
             <td className={styleTotalRow}>
               {totals.promedio_punta_compradora_porcentaje !== undefined &&
-              totals.promedio_punta_compradora_porcentaje !== null
-                ? `${formatNumber(
+              totals.promedio_punta_compradora_porcentaje !== null ? (
+                <>
+                  {`${formatNumber(
                     Number(totals.promedio_punta_compradora_porcentaje)
-                  )}%`
-                : "Cálculo no disponible"}
+                  )}%`}
+                  <InformationCircleIcon
+                    className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                    data-tooltip-id="tooltip-compradora"
+                    data-tooltip-content="Promedio del % sin incluir alquileres ni puntas en 0 (no existentes)."
+                  />
+                  <Tooltip id="tooltip-compradora" place="top" />
+                </>
+              ) : (
+                "Cálculo no disponible"
+              )}
             </td>
             <td className={styleTotalRow}>
               {totals.promedio_punta_vendedora_porcentaje !== undefined &&
-              totals.promedio_punta_vendedora_porcentaje !== null
-                ? `${formatNumber(
+              totals.promedio_punta_vendedora_porcentaje !== null ? (
+                <>
+                  {`${formatNumber(
                     Number(totals.promedio_punta_vendedora_porcentaje)
-                  )}%`
-                : "Cálculo no disponible"}
+                  )}%`}
+                  <InformationCircleIcon
+                    className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                    data-tooltip-id="tooltip-vendedora"
+                    data-tooltip-content="Promedio del % sin incluir alquileres ni puntas en 0 (no existentes)."
+                  />
+                  <Tooltip id="tooltip-vendedora" place="top" />
+                </>
+              ) : (
+                "Cálculo no disponible"
+              )}
             </td>
 
             <td className={styleTotalRow}>

@@ -1,3 +1,4 @@
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { calculateTotals } from "@/utils/calculations";
@@ -5,6 +6,8 @@ import Loader from "./Loader";
 import { useAuthStore } from "@/stores/authStore";
 import { formatValue } from "@/utils/formatValue";
 import { Operation } from "@/types";
+import { Tooltip } from "react-tooltip";
+import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
@@ -16,6 +19,7 @@ const Bubbles = () => {
     queryFn: () => fetchUserOperations(userID || ""),
     enabled: !!userID,
   });
+
   // Filtramos las operaciones para incluir solo las del año corriente
   const currentYearOperations = operations.filter((operation: Operation) => {
     const operationYear = new Date(operation.fecha_operacion).getFullYear();
@@ -32,24 +36,29 @@ const Bubbles = () => {
       figure: formatValue(totals.honorarios_asesor, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
+      tooltip:
+        "Este es el monto total de honorarios netos obtenidos por el asesor o broker.",
     },
     {
       title: "Honorarios Totales Brutos",
       figure: formatValue(totals.honorarios_broker, "currency"),
       bgColor: "bg-darkBlue",
       textColor: "text-white",
+      tooltip: "Este es el monto total de honorarios brutos.",
     },
     {
       title: "Monto Total de Operaciones Efectuadas",
       figure: formatValue(totals.valor_reserva, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
+      tooltip: "Este es el valor total de las operaciones realizadas.",
     },
     {
       title: "Cantidad Total de Puntas",
       figure: formatValue(totals.suma_total_de_puntas, "none"),
       bgColor: "bg-darkBlue",
       textColor: "text-white",
+      tooltip: "Número total de puntas realizadas.",
     },
     {
       title: "Promedio Valor Operación",
@@ -59,12 +68,14 @@ const Bubbles = () => {
       ),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
+      tooltip: "Promedio del valor de las operaciones efectuadas.",
     },
     {
       title: "Cantidad de Operaciones Efectuadas",
       figure: formatValue(totals.cantidad_operaciones, "none"),
       bgColor: "bg-darkBlue",
       textColor: "text-white",
+      tooltip: "Número total de operaciones efectuadas.",
     },
   ];
 
@@ -77,8 +88,15 @@ const Bubbles = () => {
           {bubbleData.map((data, index) => (
             <div
               key={index}
-              className={`${data.bgColor} rounded-xl py-6 text-center shadow-md flex flex-col justify-around items-center h-[200px]`}
+              className={`${data.bgColor} rounded-xl py-6 text-center shadow-md flex flex-col justify-around items-center h-[200px] relative`}
             >
+              {/* Heroicons Info icon with tooltip */}
+              <InformationCircleIcon
+                className="absolute top-2 right-2 text-white h-5 w-5 cursor-pointer"
+                data-tooltip-id={`tooltip-${index}`}
+                data-tooltip-content={data.tooltip}
+              />
+
               <p className="text-xl text-white lg:text-lg xl:text-lg 2xl:text-base lg:px-1 font-semibold h-1/2 items-center justify-center flex">
                 {data.title}
               </p>
@@ -87,6 +105,9 @@ const Bubbles = () => {
               >
                 {data.figure}
               </p>
+
+              {/* Tooltip for the icon */}
+              <Tooltip id={`tooltip-${index}`} place="top" />
             </div>
           ))}
         </div>
