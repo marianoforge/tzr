@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 
 import "slick-carousel/slick/slick.css";
@@ -8,6 +8,8 @@ import Loader from "../Loader";
 import { TeamMember, UserData, UserWithOperations } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
 import { useTeamMembersOps } from "@/hooks/useTeamMembersOps";
+import EditAgentsModal from "./EditAgentsModal";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const settings = {
@@ -21,18 +23,51 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
   const teamLeadId = currentUser.uid || "";
   const { members } = useTeamMembersOps(teamLeadId);
+  const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
 
-  const combinedData: TeamMember[] = [
-    ...data.map((user: UserWithOperations) => ({
-      id: user.uid, // Asigna el uid a id
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      numeroTelefono: "",
-      operaciones: user.operaciones,
-    })),
-    ...(members || []), // Incluye los miembros del equipo si existen
-  ];
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (data && members) {
+      const initialData: TeamMember[] = [
+        ...data.map((user: UserWithOperations) => ({
+          id: user.uid,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          numeroTelefono: "",
+          operaciones: user.operaciones,
+        })),
+        ...(members || []), // Incluye los miembros del equipo si existen
+      ];
+      setCombinedData(initialData);
+    }
+  }, [data, members]); // Solo se ejecuta cuando 'data' y 'members' cambian
+
+  // Borrar miembro
+  const handleDeleteClick = async (memberId: string) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este miembro?")) {
+      try {
+        const response = await fetch(`/api/teamMembers/${memberId}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          // Actualizar el estado eliminando el miembro
+          setCombinedData((prevData) =>
+            prevData.filter((member) => member.id !== memberId)
+          );
+          console.log(`Miembro con ID ${memberId} borrado.`);
+        } else {
+          console.error("Error al borrar el miembro:", await response.text());
+        }
+      } catch (error) {
+        console.error("Error en la petición DELETE:", error);
+      }
+    }
+  };
+
+  // Abrir el modal con los datos del miembro seleccionado
 
   const honorariosBrokerTotales = combinedData.reduce((acc, usuario) => {
     return (
@@ -40,6 +75,42 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
       usuario.operaciones.reduce((sum, op) => sum + op.honorarios_broker, 0)
     );
   }, 0);
+
+  const handleEditClick = (member: TeamMember) => {
+    setSelectedMember(member);
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (updatedMember: TeamMember) => {
+    try {
+      const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: updatedMember.firstName,
+          lastName: updatedMember.lastName,
+          email: updatedMember.email,
+        }),
+      });
+
+      if (response.ok) {
+        // Update the combinedData with the new data
+        setCombinedData((prevData) =>
+          prevData.map((member) =>
+            member.id === updatedMember.id ? updatedMember : member
+          )
+        );
+        console.log("Member updated successfully.");
+        setIsModalOpen(false);
+      } else {
+        console.error("Error updating member:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error in PUT request:", error);
+    }
+  };
 
   if (loading) {
     return <Loader />;
@@ -126,11 +197,38 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                     0
                   )}
                 </p>
+                {data.some(
+                  (user: UserWithOperations) => user.uid === usuario.id
+                ) ? null : (
+                  <div className="flex w-full justify-center gap-8">
+                    <button
+                      onClick={() => handleEditClick(usuario)}
+                      className="text-lightPink hover:text-lightGreen transition duration-150 ease-in-out text-sm font-semibold "
+                    >
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(usuario.id)}
+                      className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
+                    >
+                      <TrashIcon className="text-redAccent h-5 w-5" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         ))}
       </Slider>
+
+      {isModalOpen && selectedMember && (
+        <EditAgentsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          member={selectedMember}
+          onSubmit={handleSubmit}
+        />
+      )}
     </>
   );
 };
