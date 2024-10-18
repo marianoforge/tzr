@@ -3,7 +3,7 @@ import { collection, getDocs, addDoc } from "firebase/firestore"; // Importa add
 import * as yup from "yup";
 import { db } from "@/lib/firebase";
 import { setCsrfCookie, validateCsrfToken } from "@/lib/csrf";
-import { TeamMemberRequestBody } from "@/components/TrackerComponents/AddUserModal";
+import { TeamMemberRequestBody } from "@/types";
 
 export const teamMemberSchema = yup.object().shape({
   firstName: yup.string().required("Nombre es requerido"),

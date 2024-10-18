@@ -8,6 +8,7 @@ import Input from "../FormComponents/Input";
 import ModalOK from "../ModalOK";
 import { useAuthStore } from "@/stores/authStore";
 import { useMutation } from "@tanstack/react-query";
+import { TeamMemberRequestBody } from "@/types";
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -20,13 +21,6 @@ export const createSchema = () =>
     email: yup.string().email("Correo inválido").nullable(),
     numeroTelefono: yup.string().nullable(),
   });
-
-export interface TeamMemberRequestBody {
-  email?: string;
-  firstName: string;
-  lastName: string;
-  numeroTelefono?: string;
-}
 
 const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const router = useRouter();

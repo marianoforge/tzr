@@ -242,3 +242,10 @@ export interface UserWithOperations {
   agenciaBroker?: string;
   operaciones: Operation[];
 }
+
+export interface TeamMemberRequestBody {
+  email?: string;
+  firstName: string;
+  lastName: string;
+  numeroTelefono?: string;
+}
