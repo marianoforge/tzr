@@ -12,6 +12,7 @@ import { createSchema } from "@/schemas/registerFormSchema";
 import Link from "next/link";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -25,6 +26,7 @@ const RegisterForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [formError, setFormError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
 
   const schema = createSchema(googleUser === "true");
   const {
@@ -189,27 +191,50 @@ const RegisterForm = () => {
 
         {/* Contraseñas solo si no es Google */}
         {googleUser !== "true" && (
-          <>
+          <div className="relative">
             <Input
               type="password"
               placeholder="Contraseña"
               {...register("password")}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)} // Alternar el estado
+              className="absolute right-2 top-3"
+            >
+              {showPassword ? (
+                <EyeSlashIcon className="h-5 w-5 text-gray-500" />
+              ) : (
+                <EyeIcon className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
             {errors.password && (
               <p className="text-red-500">{errors.password.message}</p>
             )}
-
-            <Input
-              type="password"
-              placeholder="Repite la contraseña"
-              {...register("confirmPassword")}
-              required
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-500">{errors.confirmPassword.message}</p>
-            )}
-          </>
+            <div className="relative">
+              <Input
+                type="password"
+                placeholder="Repite la contraseña"
+                {...register("confirmPassword")}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)} // Alternar el estado
+                className="absolute right-2 top-3"
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+              {errors.confirmPassword && (
+                <p className="text-red-500">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+          </div>
         )}
 
         {/* Agencia / Broker */}

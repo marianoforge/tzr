@@ -127,7 +127,9 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
               <tr
                 className={`${OPERATIONS_LIST_COLORS.headerBg} ${OPERATIONS_LIST_COLORS.headerText}`}
               >
-                <th className="py-3 px-4 font-semibold text-center">Nombre</th>
+                <th className="py-3 px-4 font-semibold text-center w-1/6">
+                  Nombre
+                </th>
                 <th className="py-3 px-4 font-semibold text-center">Email</th>
                 <th className="py-3 px-4 font-semibold text-center">
                   Total Facturación Bruta
@@ -172,12 +174,15 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                 .map((usuario, index) => (
                   <tr
                     key={usuario.id}
-                    className={`border-b text-center ${
+                    className={`border-b text-start ${
                       index === 0 ? "bg-green-100" : ""
                     }`}
                   >
-                    <td className="py-3 px-4 font-semibold">
+                    <td className="py-3 px-4 font-semibold w-1/6">
                       {usuario.firstName} {usuario.lastName}
+                      {data.some(
+                        (user: UserWithOperations) => user.uid === usuario.id
+                      ) && " (yo)"}
                     </td>
                     <td className="py-3 px-4">{usuario.email}</td>
                     <td className="py-3 px-4">
@@ -257,18 +262,24 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                     </td>
                     {/* Columna de acciones */}
                     <td className="py-3 px-4">
-                      <button
-                        onClick={() => handleEditClick(usuario)}
-                        className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
-                      >
-                        <PencilIcon className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(usuario.id)}
-                        className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
-                      >
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
+                      {data.some(
+                        (user: UserWithOperations) => user.uid === usuario.id
+                      ) ? null : (
+                        <>
+                          <button
+                            onClick={() => handleEditClick(usuario)}
+                            className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
+                          >
+                            <PencilIcon className="h-5 w-5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(usuario.id)}
+                            className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

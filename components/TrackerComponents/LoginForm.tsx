@@ -16,6 +16,7 @@ import { schema } from "@/schemas/loginFormSchema";
 import { LoginData } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"; // Importar los íconos de Heroicons
 
 const LoginForm = () => {
   const {
@@ -27,6 +28,7 @@ const LoginForm = () => {
   });
   const router = useRouter();
   const [formError, setFormError] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
 
   // Iniciar sesión con correo y contraseña usando Firebase
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
@@ -117,48 +119,62 @@ const LoginForm = () => {
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
-        <Input
-          type="password"
-          placeholder="Contraseña"
-          {...register("password")}
-          required
-        />
-        {errors.password && (
-          <p className="text-red-500">{errors.password.message}</p>
-        )}
-        <div className="flex flex-col gap-4 justify-center items-center sm:flex-row sm:justify-between">
+        <div className="relative">
+          <Input
+            type={showPassword ? "text" : "password"} // Cambiar el tipo de input según el estado
+            placeholder="Contraseña"
+            style={{ marginBottom: 0 }}
+            {...register("password")}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)} // Alternar el estado
+            className="absolute right-2 top-3"
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="h-5 w-5 text-gray-500" />
+            ) : (
+              <EyeIcon className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
+          {errors.password && (
+            <p className="text-red-500">{errors.password.message}</p>
+          )}
+        </div>
+
+        <Link
+          href="/reset-password"
+          className="text-mediumBlue hover:underline mt-1 block text-right text-xs pr-2 font-semibold"
+        >
+          Recuperar Contraseña
+        </Link>
+
+        <div className="flex flex-col gap-4 justify-center sm:justify-around items-center sm:flex-row  mt-6">
           <Button
             type="submit"
-            className="bg-mediumBlue hover:bg-mediumBlue/90 text-white py-2 px-4 rounded-md w-[220px]"
+            className="bg-mediumBlue hover:bg-mediumBlue/90 text-white py-2 px-4 rounded-md w-[200px] text-sm"
           >
             Iniciar Sesión con Email
           </Button>
           <Button
             type="button"
-            onClick={() => router.push("/reset-password")}
-            className="bg-lightBlue hover:bg-lightBlue/90 text-white py-2 px-4 rounded-md w-[220px]"
+            onClick={handleGoogleLogin}
+            className="bg-redAccent hover:bg-redAccent/90 text-white py-2 px-4 rounded-md w-[200px] text-sm"
           >
-            Recuperar Contraseña
+            Iniciar sesión con Google
           </Button>
         </div>
 
         {/* Google Login Button */}
         <hr className="hidden sm:block sm:my-4" />
-        <div className="flex flex-col gap-4 mt-4 justify-center items-center sm:flex-row sm:justify-between sm:mt-0 ">
-          <Button
-            type="button"
-            onClick={handleGoogleLogin}
-            className="bg-redAccent hover:bg-redAccent/90 text-white py-2 px-4 rounded-md w-[220px]"
-          >
-            Iniciar sesión con Google
-          </Button>
-          <Button
-            type="button"
-            onClick={() => router.push("/register")}
-            className="bg-greenAccent hover:bg-greenAccent/90 text-white py-2 px-4 rounded-md w-[220px]"
+        <div className="flex flex-col gap-4 mt-4 justify-center items-center sm:flex-row sm:mt-0 ">
+          <Link
+            href="/reset-password"
+            className="text-mediumBlue hover:underline mt-1 block text-right text-sm pr-2 font-semibold"
           >
             Registrarse con Email
-          </Button>
+          </Link>
         </div>
       </form>
     </div>
