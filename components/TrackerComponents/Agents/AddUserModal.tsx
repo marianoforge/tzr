@@ -152,7 +152,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
             <p className="text-red-500">{errors.numeroTelefono.message}</p>
           )}
 
-          <div className="flex justify-between items-center mt-8">
+          <div className="flex justify-between items-center mt-8 gap-4">
             <Button
               type="submit"
               className="bg-mediumBlue hover:bg-lightBlue text-white py-2 px-4 rounded-md w-48"

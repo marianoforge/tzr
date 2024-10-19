@@ -3,11 +3,12 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType } from "yup";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
+import Select from "@/components/TrackerComponents/FormComponents/Select";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "@/schemas/operationsFormSchema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateOperation } from "@/lib/api/operationsApi"; // API para actualizar la operación
+import { updateOperation } from "@/lib/api/operationsApi";
 import { TeamMember, UserData } from "@/types";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
 
@@ -16,7 +17,7 @@ type FormData = InferType<typeof schema>;
 interface OperationsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  operation: (FormData & { id: string; user_uid: string }) | null; // Added user_uid
+  operation: (FormData & { id: string; user_uid: string }) | null;
   onUpdate: () => void;
   currentUser: UserData;
 }
@@ -58,8 +59,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       : []),
   ];
 
-  console.log(usersMapped);
-
   useEffect(() => {
     if (operation) {
       const formattedOperation = {
@@ -74,13 +73,12 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     }
   }, [operation, reset]);
 
-  // Mutación para actualizar la operación
   const mutation = useMutation({
     mutationFn: updateOperation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["operations"] }); // Invalida las consultas de operaciones para recargar datos
-      onUpdate(); // Llamar función de actualización
-      onClose(); // Cerrar el modal
+      queryClient.invalidateQueries({ queryKey: ["operations"] });
+      onUpdate();
+      onClose();
     },
     onError: (error) => {
       console.error("Error updating operation:", error);
@@ -88,13 +86,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log("Form submitted", data); // Debugging log
     if (!operation?.id) {
       console.error("Operation ID is missing");
       return;
     }
 
-    // Calcular los honorarios
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
       data.porcentaje_honorarios_asesor,
@@ -107,286 +103,230 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       honorarios_asesor: honorariosAsesor,
     };
 
-    // Ejecutar la mutación para actualizar la operación
     mutation.mutate({ id: operation.id, data: payload });
   };
 
   if (!isOpen || !operation) return null;
 
-  console.log(usersMapped);
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[90%] lg:w-[80%] xl:w-[40%] max-h-[80vh] overflow-y-auto flex flex-col">
-        <h2 className="text-2xl font-bold mb-4">Editar Operación</h2>
+      <div className="bg-white p-6 rounded-xl shadow-lg font-bold w-[90%] lg:w-[80%] xl:w-[40%] max-h-[80vh] overflow-y-auto flex flex-col">
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Editar Operación
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
+            label="Fecha de Operación"
             type="date"
             {...register("fecha_operacion")}
-            className="w-full p-2 border border-gray-300 rounded"
+            error={errors.fecha_operacion?.message}
             required
           />
-          {errors.fecha_operacion && (
-            <p className="text-redAccent">{errors.fecha_operacion.message}</p>
-          )}
 
           <Input
+            label="Dirección de la Reserva"
             type="text"
-            placeholder="Dirección de la Reserva"
             {...register("direccion_reserva")}
-            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Dirección de la Reserva"
+            error={errors.direccion_reserva?.message}
             required
           />
-          {errors.direccion_reserva && (
-            <p className="text-red-500">{errors.direccion_reserva.message}</p>
-          )}
+
           <Input
+            label="Localidad de la Reserva"
             type="text"
-            placeholder="Por ejemplo: San Isidro"
             {...register("localidad_reserva")}
+            placeholder="Por ejemplo: San Isidro"
+            error={errors.localidad_reserva?.message}
             required
           />
-          {errors.localidad_reserva && (
-            <p className="text-red-500">{errors.localidad_reserva.message}</p>
-          )}
 
-          <select
-            {...register("provincia_reserva")}
-            className="w-full p-2 mb-8 border border-gray-300 rounded"
+          <Select
+            label="Provincia de la Reserva"
+            options={[
+              { value: "Buenos Aires", label: "Buenos Aires" },
+              { value: "CABA", label: "CABA" },
+              { value: "Catamarca", label: "Catamarca" },
+              { value: "Chaco", label: "Chaco" },
+              { value: "Chubut", label: "Chubut" },
+              { value: "Córdoba", label: "Córdoba" },
+              { value: "Corrientes", label: "Corrientes" },
+              { value: "Entre Ríos", label: "Entre Ríos" },
+              { value: "Formosa", label: "Formosa" },
+              { value: "Jujuy", label: "Jujuy" },
+              { value: "La Pampa", label: "La Pampa" },
+              { value: "La Rioja", label: "La Rioja" },
+              { value: "Mendoza", label: "Mendoza" },
+              { value: "Misiones", label: "Misiones" },
+              { value: "Neuquén", label: "Neuquén" },
+              { value: "Río Negro", label: "Río Negro" },
+              { value: "Salta", label: "Salta" },
+              { value: "San Juan", label: "San Juan" },
+              { value: "San Luis", label: "San Luis" },
+              { value: "Santa Cruz", label: "Santa Cruz" },
+              { value: "Santa Fe", label: "Santa Fe" },
+              { value: "Santiago del Estero", label: "Santiago del Estero" },
+              { value: "Tierra del Fuego", label: "Tierra del Fuego" },
+              { value: "Tucumán", label: "Tucumán" },
+            ]}
+            register={register}
+            name="provincia_reserva"
+            error={errors.provincia_reserva?.message}
             required
-          >
-            <option value="">Selecciona la Provincia</option>
-            <option value="Buenos Aires">Buenos Aires</option>
-            <option value="CABA">CABA</option>
-            <option value="Catamarca">Catamarca</option>
-            <option value="Chaco">Chaco</option>
-            <option value="Chubut">Chubut</option>
-            <option value="Córdoba">Córdoba</option>
-            <option value="Corrientes">Corrientes</option>
-            <option value="Entre Ríos">Entre Ríos</option>
-            <option value="Formosa">Formosa</option>
-            <option value="Jujuy">Jujuy</option>
-            <option value="La Pampa">La Pampa</option>
-            <option value="La Rioja">La Rioja</option>
-            <option value="Mendoza">Mendoza</option>
-            <option value="Misiones">Misiones</option>
-            <option value="Neuquén">Neuquén</option>
-            <option value="Río Negro">Río Negro</option>
-            <option value="Salta">Salta</option>
-            <option value="San Juan">San Juan</option>
-            <option value="San Luis">San Luis</option>
-            <option value="Santa Cruz">Santa Cruz</option>
-            <option value="Santa Fe">Santa Fe</option>
-            <option value="Santiago del Estero">Santiago del Estero</option>
-            <option value="Tierra del Fuego">Tierra del Fuego</option>
-            <option value="Tucumán">Tucumán</option>
-          </select>
-          {errors.provincia_reserva && (
-            <p className="text-red-500">{errors.provincia_reserva.message}</p>
-          )}
-          <select
-            {...register("tipo_operacion")}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          >
-            <option value="">Selecciona el Tipo de Operación</option>
-            <option value="Venta">Venta</option>
-            <option value="Alquiler temporal">Alquiler temporal</option>
-            <option value="Alquiler">Alquiler</option>
-            <option value="Alquiler Comercial">Alquiler Comercial</option>
-            <option value="Fondo de Comercio">Fondo de Comercio</option>
-            <option value="Desarrollo">Desarrollo Inmobiliario</option>
-          </select>
-          {errors.tipo_operacion && (
-            <p className="text-red-500">{errors.tipo_operacion.message}</p>
-          )}
+          />
+
+          <Select
+            label="Tipo de Operación"
+            options={[
+              { value: "Venta", label: "Venta" },
+              { value: "Alquiler temporal", label: "Alquiler temporal" },
+              { value: "Alquiler", label: "Alquiler" },
+              { value: "Alquiler Comercial", label: "Alquiler Comercial" },
+              { value: "Fondo de Comercio", label: "Fondo de Comercio" },
+              { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
+            ]}
+            register={register}
+            name="tipo_operacion"
+            error={errors.tipo_operacion?.message}
+          />
 
           <Input
+            label="Valor de Reserva"
             type="number"
-            placeholder="Valor de Reserva"
             {...register("valor_reserva")}
-            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Valor de Reserva"
+            error={errors.valor_reserva?.message}
             required
           />
-          {errors.valor_reserva && (
-            <p className="text-redAccent">{errors.valor_reserva.message}</p>
-          )}
-
-          <div className="flex space-x-4">
-            <Input
-              placeholder="Porcentaje Punta Compradora"
-              type="text"
-              step="any"
-              {...register("porcentaje_punta_compradora", {
-                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-              })}
-              className="w-1/2 p-2 border border-gray-300 rounded"
-              required
-            />
-            {errors.porcentaje_punta_compradora && (
-              <p className="text-redAccent">
-                {errors.porcentaje_punta_compradora.message}
-              </p>
-            )}
-
-            <Input
-              placeholder="Porcentaje Punta Vendedora"
-              type="text"
-              step="any"
-              {...register("porcentaje_punta_vendedora", {
-                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-              })}
-              className="w-1/2 p-2 border border-gray-300 rounded"
-              required
-            />
-            {errors.porcentaje_punta_vendedora && (
-              <p className="text-redAccent">
-                {errors.porcentaje_punta_vendedora.message}
-              </p>
-            )}
-          </div>
-
-          <div className="flex space-x-4">
-            <Input
-              type="text"
-              step="any"
-              placeholder="Porcentaje Honorarios Asesor"
-              {...register("porcentaje_honorarios_asesor", {
-                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-              })}
-              className="w-1/2 p-2 border border-gray-300 rounded"
-              required
-            />
-            {errors.porcentaje_honorarios_asesor && (
-              <p className="text-redAccent">
-                {errors.porcentaje_honorarios_asesor.message}
-              </p>
-            )}
-
-            <Input
-              type="text"
-              step="any"
-              placeholder="Porcentaje Honorarios Broker"
-              {...register("porcentaje_honorarios_broker", {
-                setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-              })}
-              className="w-1/2 p-2 border border-gray-300 rounded"
-              required
-            />
-            {errors.porcentaje_honorarios_broker && (
-              <p className="text-redAccent">
-                {errors.porcentaje_honorarios_broker.message}
-              </p>
-            )}
-          </div>
 
           <Input
+            label="Porcentaje Punta Compradora"
             type="text"
-            placeholder="Sobre de Reserva"
+            step="any"
+            {...register("porcentaje_punta_compradora", {
+              setValueAs: (value) => parseFloat(value) || 0,
+            })}
+            error={errors.porcentaje_punta_compradora?.message}
+            required
+          />
+
+          <Input
+            label="Porcentaje Punta Vendedora"
+            type="text"
+            step="any"
+            {...register("porcentaje_punta_vendedora", {
+              setValueAs: (value) => parseFloat(value) || 0,
+            })}
+            error={errors.porcentaje_punta_vendedora?.message}
+            required
+          />
+
+          <Input
+            label="Porcentaje Honorarios Asesor"
+            type="text"
+            step="any"
+            {...register("porcentaje_honorarios_asesor", {
+              setValueAs: (value) => parseFloat(value) || 0,
+            })}
+            error={errors.porcentaje_honorarios_asesor?.message}
+            required
+          />
+
+          <Input
+            label="Porcentaje Honorarios Broker"
+            type="text"
+            step="any"
+            {...register("porcentaje_honorarios_broker", {
+              setValueAs: (value) => parseFloat(value) || 0,
+            })}
+            error={errors.porcentaje_honorarios_broker?.message}
+            required
+          />
+
+          <Input
+            label="Sobre de Reserva"
+            type="text"
             {...register("numero_sobre_reserva")}
-            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Sobre de Reserva"
+            error={errors.numero_sobre_reserva?.message}
           />
-          {errors.numero_sobre_reserva && (
-            <p className="text-redAccent">
-              {errors.numero_sobre_reserva.message}
-            </p>
-          )}
 
           <Input
+            label="Monto Sobre de Reserva"
             type="text"
-            placeholder="Por ejemplo: 2000"
             {...register("monto_sobre_reserva")}
+            placeholder="Por ejemplo: 2000"
+            error={errors.monto_sobre_reserva?.message}
           />
-          {errors.monto_sobre_reserva && (
-            <p className="text-red-500">{errors.monto_sobre_reserva.message}</p>
-          )}
 
           <Input
+            label="Sobre de Refuerzo"
             type="text"
-            placeholder="Sobre de Refuerzo"
             {...register("numero_sobre_refuerzo")}
-            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Sobre de Refuerzo"
+            error={errors.numero_sobre_refuerzo?.message}
           />
-          {errors.numero_sobre_refuerzo && (
-            <p className="text-redAccent">
-              {errors.numero_sobre_refuerzo.message}
-            </p>
-          )}
 
           <Input
+            label="Monto Sobre de Refuerzo"
             type="text"
-            placeholder="Por ejemplo: 4000"
             {...register("monto_sobre_refuerzo")}
+            placeholder="Por ejemplo: 4000"
+            error={errors.monto_sobre_refuerzo?.message}
           />
-          {errors.monto_sobre_refuerzo && (
-            <p className="text-red-500">
-              {errors.monto_sobre_refuerzo.message}
-            </p>
-          )}
 
           <Input
+            label="Datos Referido"
             type="text"
-            placeholder="Datos Referido"
             {...register("referido")}
-            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Datos Referido"
+            error={errors.referido?.message}
           />
-          {errors.referido && (
-            <p className="text-redAccent">{errors.referido.message}</p>
-          )}
 
           <Input
+            label="Porcentaje Referido"
             type="text"
-            placeholder="Por ejemplo 10%"
+            step="any"
             {...register("porcentaje_referido", {
-              setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+              setValueAs: (value) => parseFloat(value) || 0,
             })}
+            placeholder="Por ejemplo 10%"
+            error={errors.porcentaje_referido?.message}
           />
-          {errors.porcentaje_referido && (
-            <p className="text-red-500">{errors.porcentaje_referido.message}</p>
-          )}
 
           <Input
+            label="Datos Compartido"
             type="text"
-            placeholder="Datos Compartido"
             {...register("compartido")}
-            className="w-full p-2 border border-gray-300 rounded"
+            placeholder="Datos Compartido"
+            error={errors.compartido?.message}
           />
-          {errors.compartido && (
-            <p className="text-redAccent">{errors.compartido.message}</p>
-          )}
 
           <Input
+            label="Porcentaje Compartido"
             type="text"
-            placeholder="Por ejemplo: 25%"
+            step="any"
             {...register("porcentaje_compartido", {
-              setValueAs: (value) => parseFloat(value) || 0, // Cast to number
+              setValueAs: (value) => parseFloat(value) || 0,
             })}
+            placeholder="Por ejemplo: 25%"
+            error={errors.porcentaje_compartido?.message}
           />
-          {errors.porcentaje_compartido && (
-            <p className="text-red-500">
-              {errors.porcentaje_compartido.message}
-            </p>
-          )}
 
-          <select
-            {...register("realizador_venta")}
-            className="w-full p-2 mb-8 border border-gray-300 rounded"
+          <Select
+            label="Asesor que realizó la venta"
+            options={usersMapped.map((user) => ({
+              value: user.name,
+              label: user.name,
+            }))}
+            register={register}
+            name="realizador_venta"
+            error={errors.realizador_venta?.message}
             required
-          >
-            <option value="">Selecciona el asesor que realizó la venta</option>
-            {usersMapped.map((user) => (
-              <option key={user.uid || user.name} value={user.name}>
-                {user.name}
-              </option>
-            ))}
-          </select>
+          />
 
-          {errors.realizador_venta && (
-            <p className="text-red-500">{errors.realizador_venta.message}</p>
-          )}
-
-          <div className="flex justify-around items-center">
-            <div className="flex items-center gap-2">
+          <div className="flex justify-around items-center ">
+            <div className="flex items-center gap-2 my-4">
               <input type="checkbox" {...register("punta_vendedora")} />
               <label>Punta Vendedora</label>
             </div>
@@ -394,7 +334,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               <p className="text-redAccent">{errors.punta_vendedora.message}</p>
             )}
 
-            <div className="flex items-center gap-2 mb-8">
+            <div className="flex items-center gap-2 my-4">
               <input type="checkbox" {...register("punta_compradora")} />
               <label>Punta Compradora</label>
             </div>
@@ -404,6 +344,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               </p>
             )}
           </div>
+
           <div className="flex gap-4 justify-center items-center">
             <Button
               type="submit"

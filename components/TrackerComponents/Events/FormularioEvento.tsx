@@ -88,43 +88,50 @@ const FormularioEvento: React.FC = () => {
         <div className="flex flex-wrap -mx-2">
           <div className="w-full px-2">
             <Input
+              label="Título del evento"
               type="text"
               placeholder="Título del evento"
               {...register("title")}
+              error={errors.title?.message}
               required
             />
-            {errors.title && (
-              <p className="text-red-500">{errors.title.message}</p>
-            )}
 
-            <Input type="date" {...register("date")} required />
-            {errors.date && (
-              <p className="text-red-500">{errors.date.message}</p>
-            )}
+            <Input
+              label="Fecha del evento"
+              type="date"
+              {...register("date")}
+              error={errors.date?.message}
+              required
+            />
 
             <div className="flex gap-4 mb-4">
               <div className="w-1/2">
-                <Input type="time" {...register("startTime")} required />
-                {errors.startTime && (
-                  <p className="text-red-500">{errors.startTime.message}</p>
-                )}
+                <Input
+                  label="Hora de inicio"
+                  type="time"
+                  {...register("startTime")}
+                  error={errors.startTime?.message}
+                  required
+                />
               </div>
               <div className="w-1/2">
-                <Input type="time" {...register("endTime")} required />
-                {errors.endTime && (
-                  <p className="text-red-500">{errors.endTime.message}</p>
-                )}
+                <Input
+                  label="Hora de fin"
+                  type="time"
+                  {...register("endTime")}
+                  error={errors.endTime?.message}
+                  required
+                />
               </div>
             </div>
 
             <TextArea
+              label="Descripción del evento"
               placeholder="Descripción del evento"
               {...register("description")}
+              error={errors.description?.message}
               required
             />
-            {errors.description && (
-              <p className="text-red-500">{errors.description.message}</p>
-            )}
           </div>
         </div>
         <div className="flex justify-center items-center mt-8">

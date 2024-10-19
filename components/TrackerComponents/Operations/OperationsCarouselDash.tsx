@@ -13,7 +13,7 @@ const OperationsCarouselDash: React.FC<OperationsCarouselDashProps> = ({
   setFilter,
 }) => {
   return (
-    <div className="bg-white p-6 mt-12 rounded-xl shadow-md pb-10 ">
+    <div className="bg-white p-6 mt-20 rounded-xl shadow-md pb-10 ">
       <OperationsCarousel filter={filter} setFilter={setFilter} />
     </div>
   );

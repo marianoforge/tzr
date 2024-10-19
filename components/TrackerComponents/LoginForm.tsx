@@ -112,40 +112,29 @@ const LoginForm = () => {
 
         {/* Email and Password Fields */}
         <Input
+          label="Correo Electrónico"
           type="email"
-          placeholder="Correo electrónico"
+          placeholder="juanaperez@gmail.com"
           {...register("email")}
+          error={errors.email?.message}
           required
         />
-        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
-        <div className="relative">
-          <Input
-            type={showPassword ? "text" : "password"} // Cambiar el tipo de input según el estado
-            placeholder="Contraseña"
-            style={{ marginBottom: 0 }}
-            {...register("password")}
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)} // Alternar el estado
-            className="absolute right-2 top-3"
-          >
-            {showPassword ? (
-              <EyeSlashIcon className="h-5 w-5 text-gray-500" />
-            ) : (
-              <EyeIcon className="h-5 w-5 text-gray-500" />
-            )}
-          </button>
-          {errors.password && (
-            <p className="text-red-500">{errors.password.message}</p>
-          )}
-        </div>
+        <Input
+          label="Contraseña"
+          type={showPassword ? "text" : "password"}
+          placeholder="********"
+          {...register("password")}
+          error={errors.password?.message}
+          required
+          showPasswordToggle
+          onTogglePassword={() => setShowPassword(!showPassword)}
+          isPasswordVisible={showPassword}
+        />
 
         <Link
           href="/reset-password"
-          className="text-mediumBlue hover:underline mt-1 block text-right text-xs pr-2 font-semibold"
+          className="text-mediumBlue hover:underline block text-right text-sm pr-2 -mt-4 font-semibold"
         >
           Recuperar Contraseña
         </Link>

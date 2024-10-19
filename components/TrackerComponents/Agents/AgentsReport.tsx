@@ -127,7 +127,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
               <tr
                 className={`${OPERATIONS_LIST_COLORS.headerBg} ${OPERATIONS_LIST_COLORS.headerText}`}
               >
-                <th className="py-3 px-4 font-semibold text-center w-1/6">
+                <th className="py-3 px-4 font-semibold text-start w-1/6">
                   Nombre
                 </th>
                 <th className="py-3 px-4 font-semibold text-center w-1/10">
@@ -180,7 +180,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                       index === 0 ? "bg-green-100" : ""
                     }`}
                   >
-                    <td className="py-3 px-4 font-semibold w-1/6">
+                    <td className="py-3 px-4 font-semibold w-1/6 text-start">
                       {usuario.firstName} {usuario.lastName}
                       {data.some(
                         (user: UserWithOperations) => user.uid === usuario.id

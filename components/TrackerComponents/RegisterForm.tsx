@@ -13,6 +13,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import Select from "@/components/TrackerComponents/FormComponents/Select";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -159,147 +160,90 @@ const RegisterForm = () => {
           <p className="text-redAccent mb-4 text-center">{formError}</p>
         )}
 
-        {/* Nombre */}
-        <label className="font-semibold text-mediumBlue">Nombre</label>
         <Input
+          label="Nombre"
           type="text"
           placeholder="Juan"
           {...register("firstName")}
+          error={errors.firstName?.message}
           required
         />
-        {errors.firstName && (
-          <p className="text-redAccent">{errors.firstName.message}</p>
-        )}
 
-        {/* Apellido */}
-        <label className="font-semibold text-mediumBlue">Apellido</label>
         <Input
+          label="Apellido"
           type="text"
           placeholder="Pérez"
           {...register("lastName")}
+          error={errors.lastName?.message}
           required
         />
-        {errors.lastName && (
-          <p className="text-redAccent">{errors.lastName.message}</p>
-        )}
 
-        {/* Email */}
-        <label className="font-semibold text-mediumBlue">
-          Correo Electrónico
-        </label>
         <Input
+          label="Correo Electrónico"
           type="email"
           placeholder="juan@perez.com"
           {...register("email")}
+          error={errors.email?.message}
           required
           readOnly={googleUser === "true"}
         />
-        {errors.email && (
-          <p className="text-redAccent">{errors.email.message}</p>
-        )}
-
-        {/* Contraseñas solo si no es Google */}
 
         {googleUser !== "true" && (
           <>
-            <div className="relative">
-              <label className="font-semibold text-mediumBlue">
-                Contraseña
-              </label>
-              <Input
-                type={showPassword ? "text" : "password"} // Cambiar el tipo basado en showPassword
-                placeholder="************"
-                {...register("password")}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)} // Alternar el estado
-                className="absolute right-2 top-9"
-              >
-                {showPassword ? (
-                  <EyeSlashIcon className="h-5 w-5 text-gray-500" />
-                ) : (
-                  <EyeIcon className="h-5 w-5 text-gray-500" />
-                )}
-              </button>
-              {errors.password && (
-                <p className="text-redAccent">{errors.password.message}</p>
-              )}
-            </div>
-            <div className="relative">
-              <label className="font-semibold text-mediumBlue">
-                Repite la Contraseña
-              </label>
-              <Input
-                type={showPassword ? "text" : "password"} // Cambiar el tipo basado en showPassword
-                placeholder="************"
-                {...register("confirmPassword")}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)} // Alternar el estado
-                className="absolute right-2 top-9"
-              >
-                {showPassword ? (
-                  <EyeSlashIcon className="h-5 w-5 text-gray-500" />
-                ) : (
-                  <EyeIcon className="h-5 w-5 text-gray-500" />
-                )}
-              </button>
-              {errors.confirmPassword && (
-                <p className="text-redAccent">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
+            <Input
+              label="Contraseña"
+              type="password"
+              placeholder="************"
+              {...register("password")}
+              error={errors.password?.message}
+              required
+              showPasswordToggle
+              onTogglePassword={() => setShowPassword(!showPassword)}
+              isPasswordVisible={showPassword}
+            />
+
+            <Input
+              label="Repite la Contraseña"
+              type="password"
+              placeholder="************"
+              {...register("confirmPassword")}
+              error={errors.confirmPassword?.message}
+              required
+              showPasswordToggle
+              onTogglePassword={() => setShowPassword(!showPassword)}
+              isPasswordVisible={showPassword}
+            />
           </>
         )}
 
-        {/* Agencia / Broker */}
-        <label className="font-semibold text-mediumBlue">
-          Agencia / Broker a la que perteneces
-        </label>
         <Input
+          label="Agencia / Broker a la que perteneces"
           type="text"
           placeholder="Gustavo De Simone Soluciones Inmobiliarias"
           {...register("agenciaBroker")}
+          error={errors.agenciaBroker?.message}
           required
         />
-        {errors.agenciaBroker && (
-          <p className="text-redAccent">{errors.agenciaBroker.message}</p>
-        )}
 
-        {/* Número de Teléfono */}
-        <label className="font-semibold text-mediumBlue">
-          Número de Teléfono
-        </label>
         <Input
+          label="Número de Teléfono"
           type="tel"
           placeholder="+54 11 6348 8465"
           {...register("numeroTelefono")}
+          error={errors.numeroTelefono?.message}
           required
         />
-        {errors.numeroTelefono && (
-          <p className="text-redAccent">{errors.numeroTelefono.message}</p>
-        )}
 
-        {/* Selección del rol */}
-        <label className="font-semibold text-mediumBlue">
-          ¿Sos Team Leader / Broker o Asesor?
-        </label>
-        <select
-          {...register("role")}
-          className="block w-full mt-2 mb-4 p-2 border border-gray-300 text-gray-400 rounded"
+        <Select
+          label="¿Sos Team Leader / Broker o Asesor?"
+          options={[
+            { value: "agente_asesor", label: "Asesor" },
+            { value: "team_leader_broker", label: "Team Leader / Broker" },
+          ]}
+          register={register}
+          name="role"
           required
-        >
-          <option value="" disabled selected className="text-gray-500">
-            Team Leader / Broker o Asesor
-          </option>
-          <option value="agente_asesor"> Asesor</option>
-          <option value="team_leader_broker">Team Leader / Broker</option>
-        </select>
+        />
 
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 mt-6 sm:mt-0 sm:flex-row justify-center items-center sm:justify-around">

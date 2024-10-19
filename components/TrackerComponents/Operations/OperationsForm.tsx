@@ -15,6 +15,9 @@ import { schema } from "@/schemas/operationsFormSchema";
 import { Operation, TeamMember } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
+import Select from "@/components/TrackerComponents/FormComponents/Select";
+
+// ... other imports ...
 
 type FormData = InferType<typeof schema>;
 
@@ -161,327 +164,233 @@ const OperationsForm = () => {
         <div className="flex flex-wrap -mx-2 gap-x-24 justify-center">
           <div className="w-50% md:w-[40%] px-2">
             {/* Left column */}
-            <label className="font-semibold">
-              Fecha de la Operación<span className="text-redAccent">*</span>
-            </label>
-            <Input type="date" {...register("fecha_operacion")} required />
-            {errors.fecha_operacion && (
-              <p className="text-red-500">{errors.fecha_operacion.message}</p>
-            )}
-            <label className="font-semibold">
-              Dirección de la operación<span className="text-redAccent">*</span>
-            </label>
             <Input
+              label="Fecha de la Operación"
+              type="date"
+              {...register("fecha_operacion")}
+              error={errors.fecha_operacion?.message}
+              required
+            />
+
+            <Input
+              label="Dirección de la operación"
               type="text"
               placeholder="Dirección de la Reserva"
               {...register("direccion_reserva")}
+              error={errors.direccion_reserva?.message}
               required
             />
-            {errors.direccion_reserva && (
-              <p className="text-red-500">{errors.direccion_reserva.message}</p>
-            )}
-            <label className="font-semibold">
-              Localidad<span className="text-redAccent">*</span>
-            </label>
+
             <Input
+              label="Localidad"
               type="text"
               placeholder="Por ejemplo: San Isidro"
               {...register("localidad_reserva")}
+              error={errors.localidad_reserva?.message}
               required
             />
-            {errors.localidad_reserva && (
-              <p className="text-red-500">{errors.localidad_reserva.message}</p>
-            )}
-            <label className="font-semibold">
-              Provincia<span className="text-redAccent">*</span>
-            </label>
-            <select
+
+            <Select
+              label="Provincia" // Add the missing label prop
+              register={register} // Add the missing register prop
               {...register("provincia_reserva")}
+              options={[
+                { value: "", label: "Selecciona la Provincia" },
+                { value: "Buenos Aires", label: "Buenos Aires" },
+                { value: "CABA", label: "CABA" },
+                { value: "Catamarca", label: "Catamarca" },
+                { value: "Chaco", label: "Chaco" },
+                { value: "Chubut", label: "Chubut" },
+                { value: "Córdoba", label: "Córdoba" },
+                { value: "Corrientes", label: "Corrientes" },
+                { value: "Entre Ríos", label: "Entre Ríos" },
+                { value: "Formosa", label: "Formosa" },
+                { value: "Jujuy", label: "Jujuy" },
+                { value: "La Pampa", label: "La Pampa" },
+                { value: "La Rioja", label: "La Rioja" },
+                { value: "Mendoza", label: "Mendoza" },
+                { value: "Misiones", label: "Misiones" },
+                { value: "Neuquén", label: "Neuquén" },
+                { value: "Río Negro", label: "Río Negro" },
+                { value: "Salta", label: "Salta" },
+                { value: "San Juan", label: "San Juan" },
+                { value: "San Luis", label: "San Luis" },
+                { value: "Santa Cruz", label: "Santa Cruz" },
+                { value: "Santa Fe", label: "Santa Fe" },
+                { value: "Santiago del Estero", label: "Santiago del Estero" },
+                { value: "Tierra del Fuego", label: "Tierra del Fuego" },
+                { value: "Tucumán", label: "Tucumán" },
+              ]}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
-            >
-              <option value="">Selecciona la Provincia</option>
-              <option value="Buenos Aires">Buenos Aires</option>
-              <option value="CABA">CABA</option>
-              <option value="Catamarca">Catamarca</option>
-              <option value="Chaco">Chaco</option>
-              <option value="Chubut">Chubut</option>
-              <option value="Córdoba">Córdoba</option>
-              <option value="Corrientes">Corrientes</option>
-              <option value="Entre Ríos">Entre Ríos</option>
-              <option value="Formosa">Formosa</option>
-              <option value="Jujuy">Jujuy</option>
-              <option value="La Pampa">La Pampa</option>
-              <option value="La Rioja">La Rioja</option>
-              <option value="Mendoza">Mendoza</option>
-              <option value="Misiones">Misiones</option>
-              <option value="Neuquén">Neuquén</option>
-              <option value="Río Negro">Río Negro</option>
-              <option value="Salta">Salta</option>
-              <option value="San Juan">San Juan</option>
-              <option value="San Luis">San Luis</option>
-              <option value="Santa Cruz">Santa Cruz</option>
-              <option value="Santa Fe">Santa Fe</option>
-              <option value="Santiago del Estero">Santiago del Estero</option>
-              <option value="Tierra del Fuego">Tierra del Fuego</option>
-              <option value="Tucumán">Tucumán</option>
-            </select>
+            />
             {errors.provincia_reserva && (
               <p className="text-red-500">{errors.provincia_reserva.message}</p>
             )}
-            <label className="font-semibold">
-              Tipo de operación<span className="text-redAccent">*</span>
-            </label>
-            <select
+
+            <Select
+              label="Tipo de operación" // Add the missing label prop
+              register={register} // Add the missing register prop
               {...register("tipo_operacion")}
+              options={[
+                { value: "", label: "Selecciona el Tipo de Operación" },
+                { value: "Venta", label: "Venta" },
+                { value: "Alquiler temporal", label: "Alquiler temporal" },
+                { value: "Alquiler", label: "Alquiler" },
+                { value: "Alquiler Comercial", label: "Alquiler Comercial" },
+                { value: "Fondo de Comercio", label: "Fondo de Comercio" },
+                { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
+              ]}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
-            >
-              <option value="">Selecciona el Tipo de Operación</option>
-              <option value="Venta">Venta</option>
-              <option value="Alquiler temporal">Alquiler temporal</option>
-              <option value="Alquiler">Alquiler</option>
-              <option value="Alquiler Comercial">Alquiler Comercial</option>
-              <option value="Fondo de Comercio">Fondo de Comercio</option>
-              <option value="Desarrollo">Desarrollo Inmobiliario</option>
-            </select>
+            />
             {errors.tipo_operacion && (
               <p className="text-red-500">{errors.tipo_operacion.message}</p>
             )}
 
-            <div className="flex items-center justify-between w-full gap-4">
-              <div className="flex flex-col w-[50%]">
-                <label className="font-semibold">
-                  Porcentaje punta compradora
-                  <span className="text-redAccent">*</span>
-                </label>
-                <Input
-                  placeholder="Por ejemplo: 4%"
-                  type="text"
-                  step="any"
-                  {...register("porcentaje_punta_compradora", {
-                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-                  })}
-                  required
-                />
-                {errors.porcentaje_punta_compradora && (
-                  <p className="text-red-500">
-                    {errors.porcentaje_punta_compradora.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col w-[50%]">
-                <label className="font-semibold">
-                  Porcentaje punta vendedora
-                  <span className="text-redAccent">*</span>
-                </label>
-                <Input
-                  placeholder="Por ejemplo: 3%"
-                  type="text"
-                  step="any"
-                  {...register("porcentaje_punta_vendedora", {
-                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-                  })}
-                  required
-                />
-                {errors.porcentaje_punta_vendedora && (
-                  <p className="text-red-500">
-                    {errors.porcentaje_punta_vendedora.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center justify-between w-full gap-4">
-              <div className="flex flex-col w-[50%]">
-                <label className="font-semibold">
-                  Porcentaje honorarios asesor
-                  <span className="text-redAccent">*</span>
-                </label>
-                <Input
-                  type="text"
-                  step="any"
-                  placeholder="Por ejemplo: 40%"
-                  {...register("porcentaje_honorarios_asesor", {
-                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-                  })}
-                  required
-                />
-                {errors.porcentaje_honorarios_asesor && (
-                  <p className="text-red-500">
-                    {errors.porcentaje_honorarios_asesor.message}
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col w-[50%]">
-                <label className="font-semibold">
-                  Porcentaje honorarios totales
-                  <span className="text-redAccent">*</span>
-                </label>
-                <Input
-                  type="text"
-                  step="any"
-                  placeholder="Por ejemplo 7%"
-                  {...register("porcentaje_honorarios_broker", {
-                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-                  })}
-                  required
-                />
-                {errors.porcentaje_honorarios_broker && (
-                  <p className="text-red-500">
-                    {errors.porcentaje_honorarios_broker.message}
-                  </p>
-                )}
-              </div>
-            </div>
+            <Input
+              label="Porcentaje punta compradora"
+              type="text"
+              placeholder="Por ejemplo: 4%"
+              {...register("porcentaje_punta_compradora", {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_punta_compradora?.message}
+              required
+            />
+
+            <Input
+              label="Porcentaje punta vendedora"
+              type="text"
+              placeholder="Por ejemplo: 3%"
+              {...register("porcentaje_punta_vendedora", {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_punta_vendedora?.message}
+              required
+            />
+
+            <Input
+              label="Porcentaje honorarios asesor"
+              type="text"
+              placeholder="Por ejemplo: 40%"
+              {...register("porcentaje_honorarios_asesor", {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_honorarios_asesor?.message}
+              required
+            />
+
+            <Input
+              label="Porcentaje honorarios totales"
+              type="text"
+              placeholder="Por ejemplo: 7%"
+              {...register("porcentaje_honorarios_broker", {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_honorarios_broker?.message}
+              required
+            />
+            <Input
+              label="Valor de reserva / operación"
+              type="number"
+              placeholder="Por ejemplo: 200000"
+              {...register("valor_reserva")}
+              error={errors.valor_reserva?.message}
+              required
+            />
           </div>
 
           <div className="w-full md:w-[40%] px-2">
             {/* Right column */}
-            <label className="font-semibold">
-              Valor de reserva / operación
-              <span className="text-redAccent">*</span>
-            </label>
+
             <Input
-              type="number"
-              placeholder="Por ejemplo: 200000"
-              {...register("valor_reserva")}
-              required
+              label="Número sobre de reserva"
+              type="text"
+              placeholder="Por ejemplo: E12549"
+              {...register("numero_sobre_reserva")}
+              error={errors.numero_sobre_reserva?.message}
             />
-            {errors.valor_reserva && (
-              <p className="text-red-500">{errors.valor_reserva.message}</p>
-            )}
-            <div className="flex flex-row w-full gap-2 justify-center items-center">
-              <div className="w-1/2">
-                <label className="font-semibold">Número sobre de reserva</label>
-                <Input
-                  type="text"
-                  placeholder="Por ejemplo: E12549"
-                  {...register("numero_sobre_reserva")}
-                />
-                {errors.numero_sobre_reserva && (
-                  <p className="text-red-500">
-                    {errors.numero_sobre_reserva.message}
-                  </p>
-                )}
-              </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Monto sobre de reserva</label>
-                <Input
-                  type="number"
-                  placeholder="Por ejemplo: 2000"
-                  {...register("monto_sobre_reserva")}
-                />
-                {errors.monto_sobre_reserva && (
-                  <p className="text-red-500">
-                    {errors.monto_sobre_reserva.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-row w-full gap-2 justify-center items-center">
-              <div className="w-1/2">
-                <label className="font-semibold">
-                  Número sobre de refuerzo
-                </label>
-                <Input
-                  type="text"
-                  placeholder="Por ejemplo: E12549"
-                  {...register("numero_sobre_refuerzo")}
-                />
-                {errors.numero_sobre_refuerzo && (
-                  <p className="text-red-500">
-                    {errors.numero_sobre_refuerzo.message}
-                  </p>
-                )}
-              </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Monto sobre refuerzo</label>
-                <Input
-                  type="number"
-                  placeholder="Por ejemplo: 4000"
-                  {...register("monto_sobre_refuerzo")}
-                />
-                {errors.monto_sobre_refuerzo && (
-                  <p className="text-red-500">
-                    {errors.monto_sobre_refuerzo.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-row w-full gap-2 justify-center items-center">
-              <div className="w-1/2">
-                <label className="font-semibold">Referido</label>
-                <Input
-                  type="text"
-                  placeholder="Por ejemplo: Juan Pérez"
-                  {...register("referido")}
-                />
-                {errors.referido && (
-                  <p className="text-red-500">{errors.referido.message}</p>
-                )}
-              </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Porcentaje Referido</label>
-                <Input
-                  type="text" // Keep the input type as "text"
-                  placeholder="Por ejemplo 25%"
-                  {...register("porcentaje_referido", {
-                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-                  })}
-                />
-                {errors.referido && (
-                  <p className="text-red-500">{errors.referido.message}</p>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-row w-full gap-2 justify-center items-center">
-              <div className="w-1/2">
-                <label className="font-semibold">Compartido</label>
-                <Input
-                  type="text"
-                  placeholder="Por ejemplo: Juana Pérez"
-                  {...register("compartido")}
-                />
-                {errors.compartido && (
-                  <p className="text-red-500">{errors.compartido.message}</p>
-                )}
-              </div>
-              <div className="w-1/2">
-                <label className="font-semibold">Porcentaje Compartido</label>
-                <Input
-                  type="text"
-                  placeholder="Por ejemplo: 2%"
-                  {...register("porcentaje_compartido", {
-                    setValueAs: (value) => parseFloat(value) || 0, // Cast to number
-                  })}
-                />
-                {errors.porcentaje_compartido && (
-                  <p className="text-red-500">
-                    {errors.porcentaje_compartido.message}
-                  </p>
-                )}
-              </div>
-            </div>
+
+            <Input
+              label="Monto sobre de reserva"
+              type="number"
+              placeholder="Por ejemplo: 2000"
+              {...register("monto_sobre_reserva")}
+              error={errors.monto_sobre_reserva?.message}
+            />
+
+            <Input
+              label="Número sobre de refuerzo"
+              type="text"
+              placeholder="Por ejemplo: E12549"
+              {...register("numero_sobre_refuerzo")}
+              error={errors.numero_sobre_refuerzo?.message}
+            />
+
+            <Input
+              label="Monto sobre refuerzo"
+              type="number"
+              placeholder="Por ejemplo: 4000"
+              {...register("monto_sobre_refuerzo")}
+              error={errors.monto_sobre_refuerzo?.message}
+            />
+
+            <Input
+              label="Referido"
+              type="text"
+              placeholder="Por ejemplo: Juan Pérez"
+              {...register("referido")}
+              error={errors.referido?.message}
+            />
+
+            <Input
+              label="Porcentaje Referido"
+              type="text"
+              placeholder="Por ejemplo: 25%"
+              {...register("porcentaje_referido", {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_referido?.message}
+            />
+
+            <Input
+              label="Compartido"
+              type="text"
+              placeholder="Por ejemplo: Juana Pérez"
+              {...register("compartido")}
+              error={errors.compartido?.message}
+            />
+
+            <Input
+              label="Porcentaje Compartido"
+              type="text"
+              placeholder="Por ejemplo: 2%"
+              {...register("porcentaje_compartido", {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_compartido?.message}
+            />
+
             {userRole === "team_leader_broker" && (
               <>
-                <label className="font-semibold">
-                  Asesor que realizó la venta
-                  <span className="text-redAccent">*</span>
-                </label>
-                <select
+                <Select
+                  label="Asesor que realizó la venta" // Add the missing label prop
+                  register={register} // Add the missing register prop
                   {...register("realizador_venta")}
+                  options={[
+                    {
+                      value: "",
+                      label: "Selecciona el asesor que realizó la venta",
+                    },
+                    ...usersMapped.map((member) => ({
+                      value: member.name,
+                      label: member.name,
+                    })),
+                  ]}
                   className="w-full p-2 mb-8 border border-gray-300 rounded"
                   required
-                >
-                  <option value="">
-                    Selecciona el asesor que realizó la venta
-                  </option>
-                  {usersMapped.map((member) => (
-                    <option key={member.uid} value={member.name}>
-                      {member.name}
-                    </option>
-                  ))}
-                </select>
+                />
                 {errors.realizador_venta && (
                   <p className="text-red-500">
                     {errors.realizador_venta.message}
@@ -489,7 +398,10 @@ const OperationsForm = () => {
                 )}
               </>
             )}
-            <label className="font-semibold">Cantidad de puntas*</label>
+
+            <label className="font-semibold text-mediumBlue">
+              Cantidad de puntas*
+            </label>
             <div className="flex gap-10 mt-2">
               <div className="flex items-center gap-2">
                 <input type="checkbox" {...register("punta_vendedora")} />

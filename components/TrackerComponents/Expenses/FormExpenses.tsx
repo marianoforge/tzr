@@ -7,27 +7,28 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import TextArea from "@/components/TrackerComponents/FormComponents/TextArea";
+import Select from "@/components/TrackerComponents/FormComponents/Select"; // Select importado
 import { Expense, ExpenseFormData } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query"; // Importar useMutation
-import { createExpense } from "@/lib/api/expensesApi"; // Función para crear gasto
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createExpense } from "@/lib/api/expensesApi";
 import { AxiosError } from "axios";
 
 // Tipos de gastos
 export const expenseTypes = [
-  "Fee (Franquicia)",
-  "Carteleria",
-  "Marketing",
-  "Varios",
-  "Contador",
-  "Matricula",
-  "ABAO",
-  "Fianza",
-  "Alquiler Oficina",
-  "Portales Inmobiliarios",
-  "CRM",
-  "Viaticos",
-  "Otros",
+  { value: "Fee (Franquicia)", label: "Fee (Franquicia)" },
+  { value: "Carteleria", label: "Carteleria" },
+  { value: "Marketing", label: "Marketing" },
+  { value: "Varios", label: "Varios" },
+  { value: "Contador", label: "Contador" },
+  { value: "Matricula", label: "Matricula" },
+  { value: "ABAO", label: "ABAO" },
+  { value: "Fianza", label: "Fianza" },
+  { value: "Alquiler Oficina", label: "Alquiler Oficina" },
+  { value: "Portales Inmobiliarios", label: "Portales Inmobiliarios" },
+  { value: "CRM", label: "CRM" },
+  { value: "Viaticos", label: "Viaticos" },
+  { value: "Otros", label: "Otros" },
 ];
 
 const FormularioExpenses: React.FC = () => {
@@ -36,25 +37,22 @@ const FormularioExpenses: React.FC = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [expenseAssociationType, setExpenseAssociationType] = useState("agent"); // Set default to "agent"
-  const [userRole, setUserRole] = useState<string | null>(null); // State to store user role
+  const [expenseAssociationType, setExpenseAssociationType] = useState("agent");
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
-
   const role = userData?.role;
 
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        // Assume this function fetches the role
-        setUserRole(role ?? null); // Use null as a default value if role is undefined
+        setUserRole(role ?? null);
       } catch (error) {
         console.error("Error fetching user role:", error);
         setModalMessage("Error fetching user role");
         setIsModalOpen(true);
       }
     };
-
     if (userID) {
       fetchUserRole();
     }
@@ -62,10 +60,12 @@ const FormularioExpenses: React.FC = () => {
 
   const schema = yup.object().shape({
     expenseType: yup.string().required(),
-    expenseAssociationType: yup.string(),
     date: yup.string().required("La fecha es requerida"),
     amount: yup.number().required("El monto es requerido").positive(),
-    amountInDollars: yup.number(),
+    dollarRate: yup
+      .number()
+      .positive()
+      .required("La cotización del dólar es requerida"),
     description: yup.string(),
     otherType: yup
       .string()
@@ -74,10 +74,6 @@ const FormularioExpenses: React.FC = () => {
           ? schema.required("Debes especificar el tipo de gasto")
           : schema;
       }),
-    dollarRate: yup
-      .number()
-      .positive()
-      .required("La cotización del dólar es requerida"),
   });
 
   const {
@@ -89,29 +85,19 @@ const FormularioExpenses: React.FC = () => {
     setValue,
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
-    context: { role: userRole }, // Pass the fetched role to the validation context
   });
 
-  // Obtener el valor de los campos del formulario
   const selectedExpenseType = watch("expenseType");
   const amount = watch("amount");
   const dollarRate = watch("dollarRate");
 
-  const handleExpenseAssociationTypeChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setExpenseAssociationType(e.target.value || "agent"); // Default to "agent" if no value is selected
-    setValue("expenseAssociationType", e.target.value || "agent");
-  };
-
-  // Mutación para crear un nuevo gasto
   const mutation = useMutation({
     mutationFn: (expenseData: Expense) => createExpense(expenseData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses"] }); // Pass an object with queryKey
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
       setModalMessage("Gasto guardado exitosamente");
       setIsModalOpen(true);
-      reset(); // Reiniciar el formulario después de éxito
+      reset();
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
@@ -122,7 +108,6 @@ const FormularioExpenses: React.FC = () => {
     },
   });
 
-  // Manejo del envío del formulario
   const onSubmit: SubmitHandler<ExpenseFormData> = (data) => {
     if (!userID) {
       setModalMessage("No se proporcionó un ID de usuario válido");
@@ -142,18 +127,10 @@ const FormularioExpenses: React.FC = () => {
       description: data.description ?? "",
       dollarRate: data.dollarRate,
       user_uid: userID ?? "",
-      expenseAssociationType: data.expenseAssociationType ?? "",
+      expenseAssociationType,
     };
 
-    mutation.mutate(expenseData, {
-      onError: (error) => {
-        const axiosError = error as AxiosError;
-        console.error(
-          "Mutation error:",
-          axiosError.response?.data || axiosError.message
-        );
-      },
-    });
+    mutation.mutate(expenseData);
   };
 
   const amountInDollars =
@@ -161,7 +138,7 @@ const FormularioExpenses: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">
-      {userRole ? ( // Render form only if userRole is fetched
+      {userRole ? (
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
@@ -169,97 +146,92 @@ const FormularioExpenses: React.FC = () => {
           <h2 className="text-2xl mb-4 font-semibold">Registrar Gasto</h2>
 
           {userRole === "team_leader_broker" && (
-            <div className="mb-4">
-              <label className="block ">Tipo de Gasto</label>
-              <select
-                value={expenseAssociationType}
-                onChange={handleExpenseAssociationTypeChange}
-                className="w-full p-2 border"
-              >
-                <option value="">Seleccione una opción</option>
-                <option value="team_broker">
-                  Gasto Asociado al Team / Broker
-                </option>
-                <option value="agent">Gasto Asociado como Asesor</option>
-              </select>
-            </div>
+            <Select
+              label="Asociación del Gasto"
+              options={[
+                {
+                  value: "team_broker",
+                  label: "Gasto Asociado al Team / Broker",
+                },
+                { value: "agent", label: "Gasto Asociado como Asesor" },
+              ]}
+              register={register}
+              name="expenseAssociationType"
+              className="w-full p-2 border"
+              mb="mb-6"
+              required
+            />
           )}
 
-          <div className="mb-4">
-            <label className="block ">Fecha del Gasto</label>
-            <Input type="date" {...register("date")} required />
-            {errors.date && (
-              <p className="text-red-500">{errors.date.message}</p>
-            )}
-          </div>
+          <Input
+            label="Fecha del Gasto"
+            type="date"
+            {...register("date")}
+            error={errors.date?.message}
+            required
+          />
 
-          <div className="mb-4">
-            <label className="block ">Monto</label>
-            <Input type="number" step="0.01" {...register("amount")} required />
-            {errors.amount && (
-              <p className="text-red-500">{errors.amount.message}</p>
-            )}
-          </div>
+          <Input
+            label="Monto"
+            type="number"
+            placeholder="1000000"
+            {...register("amount")}
+            error={errors.amount?.message}
+            required
+          />
 
-          <div className="mb-4 flex gap-4 items-center">
+          <div className="flex gap-4 items-center">
             <div className="w-1/2">
-              <label className="block ">Cotización del Dólar</label>
               <Input
+                label="Cotización del Dólar"
                 type="number"
-                step="0.01"
+                placeholder="1250"
                 {...register("dollarRate")}
+                error={errors.dollarRate?.message}
                 required
               />
-              {errors.dollarRate && (
-                <p className="text-red-500">{errors.dollarRate.message}</p>
-              )}
             </div>
             <div className="w-1/2 ">
-              <label className="block ">Monto en Dólares</label>
               <Input
+                label="Monto en Dólares"
                 type="text"
                 value={amountInDollars}
                 readOnly
-                className="bg-gray-100 cursor-not-allowed p-2 mb-4 border border-gray-300 rounded"
+                className="bg-gray-100 cursor-not-allowed p-2 rounded-lg"
               />
             </div>
           </div>
 
-          <div className="mb-4">
-            <label className="block ">Tipo de Gasto</label>
-            <select {...register("expenseType")} className="w-full p-2 border">
-              {expenseTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-            {errors.expenseType && (
-              <p className="text-red-500">{errors.expenseType.message}</p>
-            )}
-          </div>
-
-          {selectedExpenseType === "Otros" && (
-            <div className="mb-4">
-              <label className="block ">Especifica el tipo de gasto</label>
-              <Input type="text" {...register("otherType")} />
-              {errors.otherType && (
-                <p className="text-red-500">{errors.otherType.message}</p>
-              )}
-            </div>
+          <Select
+            label="Tipo de Gasto"
+            options={expenseTypes}
+            register={register}
+            name="expenseType"
+            required
+            mb="mb-6"
+          />
+          {errors.expenseType && (
+            <p className="text-red-500">{errors.expenseType.message}</p>
           )}
 
-          <div className="mb-4">
-            <label className="block ">Descripción</label>
-            <TextArea {...register("description")} />
-            {errors.description && (
-              <p className="text-red-500">{errors.description.message}</p>
-            )}
-          </div>
+          {selectedExpenseType === "Otros" && (
+            <Input
+              label="Especifica el tipo de gasto"
+              type="text"
+              {...register("otherType")}
+              error={errors.otherType?.message}
+            />
+          )}
 
-          <div className="flex justify-center items-center mt-8 w-full">
+          <TextArea
+            label="Descripción"
+            {...register("description")}
+            error={errors.description?.message}
+          />
+
+          <div className="flex justify-center items-center mt-6 w-full">
             <button
-              type="submit" // Ensure the button type is submit
+              type="submit"
               className="text-white p-2 rounded bg-mediumBlue hover:bg-lightBlue transition-all duration-300 font-semibold w-[200px]"
             >
               Guardar Gasto
@@ -267,7 +239,7 @@ const FormularioExpenses: React.FC = () => {
           </div>
         </form>
       ) : (
-        <p>Loading...</p> // Show loading state while fetching role
+        <p>Loading...</p>
       )}
       <ModalOK
         isOpen={isModalOpen}
