@@ -82,7 +82,6 @@ const FormularioExpenses: React.FC = () => {
     formState: { errors },
     watch,
     reset,
-    setValue,
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
   });

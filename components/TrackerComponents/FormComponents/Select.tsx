@@ -1,19 +1,20 @@
 import React from "react";
-import { UseFormRegister } from "react-hook-form";
+import { UseFormRegister, Path, FieldValues } from "react-hook-form"; // Importa FieldValues
 
-interface SelectProps {
+// Agregamos 'extends FieldValues' para cumplir con las restricciones de react-hook-form
+interface SelectProps<T extends FieldValues> {
   label: string;
   options: { value: string; label: string }[];
-  register: UseFormRegister<any>;
-  name: string;
+  register: UseFormRegister<T>;
+  name: Path<T>; // Usamos Path<T> para asegurarnos de que sea una ruta válida dentro de T
   required?: boolean;
   className?: string;
   mb?: string;
   error?: string;
-  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void; // Added onChange property
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const Select: React.FC<SelectProps> = ({
+const Select = <T extends FieldValues>({
   label,
   options,
   register,
@@ -21,17 +22,17 @@ const Select: React.FC<SelectProps> = ({
   required = false,
   className = "",
   mb = "-mb-2", // Valor por defecto para margen inferior
-  error, // Añadido para manejar errores
-  onChange, // Destructure onChange
-}) => {
+  error,
+  onChange,
+}: SelectProps<T>) => {
   return (
     <div className={mb}>
       <label className="font-semibold text-mediumBlue">{label}</label>
       <select
-        {...register(name)}
+        {...register(name)} // Utilizamos Path<T> aquí
         className={`block w-full mt-2 mb-4 p-2 border border-gray-300 text-gray-400 rounded ${className}`}
         required={required}
-        onChange={onChange} // Use onChange
+        onChange={onChange}
       >
         <option value="" disabled selected className="text-gray-500">
           {label}
