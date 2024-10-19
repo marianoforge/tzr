@@ -155,74 +155,92 @@ const RegisterForm = () => {
         className="bg-white p-6 shadow-md w-11/12 max-w-lg rounded-lg"
       >
         <h2 className="text-2xl mb-4 text-center">Regístrate</h2>
-        {formError && <p className="text-red-500 mb-4">{formError}</p>}
+        {formError && (
+          <p className="text-redAccent mb-4 text-center">{formError}</p>
+        )}
 
         {/* Nombre */}
+        <label className="font-semibold text-mediumBlue">Nombre</label>
         <Input
           type="text"
-          placeholder="Nombre"
+          placeholder="Juan"
           {...register("firstName")}
           required
         />
         {errors.firstName && (
-          <p className="text-red-500">{errors.firstName.message}</p>
+          <p className="text-redAccent">{errors.firstName.message}</p>
         )}
 
         {/* Apellido */}
+        <label className="font-semibold text-mediumBlue">Apellido</label>
         <Input
           type="text"
-          placeholder="Apellido"
+          placeholder="Pérez"
           {...register("lastName")}
           required
         />
         {errors.lastName && (
-          <p className="text-red-500">{errors.lastName.message}</p>
+          <p className="text-redAccent">{errors.lastName.message}</p>
         )}
 
         {/* Email */}
+        <label className="font-semibold text-mediumBlue">
+          Correo Electrónico
+        </label>
         <Input
           type="email"
-          placeholder="Correo electrónico"
+          placeholder="juan@perez.com"
           {...register("email")}
           required
           readOnly={googleUser === "true"}
         />
-        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-redAccent">{errors.email.message}</p>
+        )}
 
         {/* Contraseñas solo si no es Google */}
+
         {googleUser !== "true" && (
-          <div className="relative">
-            <Input
-              type="password"
-              placeholder="Contraseña"
-              {...register("password")}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)} // Alternar el estado
-              className="absolute right-2 top-3"
-            >
-              {showPassword ? (
-                <EyeSlashIcon className="h-5 w-5 text-gray-500" />
-              ) : (
-                <EyeIcon className="h-5 w-5 text-gray-500" />
-              )}
-            </button>
-            {errors.password && (
-              <p className="text-red-500">{errors.password.message}</p>
-            )}
+          <>
             <div className="relative">
+              <label className="font-semibold text-mediumBlue">
+                Contraseña
+              </label>
               <Input
-                type="password"
-                placeholder="Repite la contraseña"
+                type={showPassword ? "text" : "password"} // Cambiar el tipo basado en showPassword
+                placeholder="************"
+                {...register("password")}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)} // Alternar el estado
+                className="absolute right-2 top-9"
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+              {errors.password && (
+                <p className="text-redAccent">{errors.password.message}</p>
+              )}
+            </div>
+            <div className="relative">
+              <label className="font-semibold text-mediumBlue">
+                Repite la Contraseña
+              </label>
+              <Input
+                type={showPassword ? "text" : "password"} // Cambiar el tipo basado en showPassword
+                placeholder="************"
                 {...register("confirmPassword")}
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)} // Alternar el estado
-                className="absolute right-2 top-3"
+                className="absolute right-2 top-9"
               >
                 {showPassword ? (
                   <EyeSlashIcon className="h-5 w-5 text-gray-500" />
@@ -231,42 +249,53 @@ const RegisterForm = () => {
                 )}
               </button>
               {errors.confirmPassword && (
-                <p className="text-red-500">{errors.confirmPassword.message}</p>
+                <p className="text-redAccent">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
-          </div>
+          </>
         )}
 
         {/* Agencia / Broker */}
+        <label className="font-semibold text-mediumBlue">
+          Agencia / Broker a la que perteneces
+        </label>
         <Input
           type="text"
-          placeholder="Agencia / Broker"
+          placeholder="Gustavo De Simone Soluciones Inmobiliarias"
           {...register("agenciaBroker")}
           required
         />
         {errors.agenciaBroker && (
-          <p className="text-red-500">{errors.agenciaBroker.message}</p>
+          <p className="text-redAccent">{errors.agenciaBroker.message}</p>
         )}
 
         {/* Número de Teléfono */}
+        <label className="font-semibold text-mediumBlue">
+          Número de Teléfono
+        </label>
         <Input
           type="tel"
-          placeholder="Número de Teléfono"
+          placeholder="+54 11 6348 8465"
           {...register("numeroTelefono")}
           required
         />
         {errors.numeroTelefono && (
-          <p className="text-red-500">{errors.numeroTelefono.message}</p>
+          <p className="text-redAccent">{errors.numeroTelefono.message}</p>
         )}
 
         {/* Selección del rol */}
+        <label className="font-semibold text-mediumBlue">
+          ¿Sos Team Leader / Broker o Asesor?
+        </label>
         <select
           {...register("role")}
-          className="block w-full mt-2 mb-4 p-2 border border-gray-300 rounded"
+          className="block w-full mt-2 mb-4 p-2 border border-gray-300 text-gray-400 rounded"
           required
         >
-          <option value="" disabled selected>
-            ¿Sos Team Leader / Broker o Asesor?
+          <option value="" disabled selected className="text-gray-500">
+            Team Leader / Broker o Asesor
           </option>
           <option value="agente_asesor"> Asesor</option>
           <option value="team_leader_broker">Team Leader / Broker</option>
@@ -277,7 +306,7 @@ const RegisterForm = () => {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-greenAccent hover:bg-green-600 text-white py-2 px-4 rounded-md w-48"
+            className="bg-lightBlue hover:bg-mediumBlue text-white py-2 px-4 rounded-md w-48"
           >
             {loading
               ? "Procesando..."
@@ -288,7 +317,7 @@ const RegisterForm = () => {
           <Button
             type="button"
             onClick={() => router.push("/login")}
-            className="bg-mediumBlue hover:bg-blue-600 text-white py-2 px-4 rounded-md w-48"
+            className="bg-mediumBlue hover:bg-lightBlue text-white py-2 px-4 rounded-md w-48"
           >
             Iniciar sesión
           </Button>

@@ -105,7 +105,17 @@ export default async function handler(
         .json({ message: "Usuario registrado exitosamente" });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: "Error al registrar usuario" });
+      if (error instanceof Error) {
+        return res.status(500).json({
+          message: error.message.includes("email-already-in-use")
+            ? "El email ya está registrado"
+            : "Error en el registro",
+        });
+      } else {
+        return res.status(500).json({
+          message: "Error desconocido en el registro",
+        });
+      }
     }
   }
 

@@ -170,10 +170,10 @@ const LoginForm = () => {
         <hr className="hidden sm:block sm:my-4" />
         <div className="flex flex-col gap-4 mt-4 justify-center items-center sm:flex-row sm:mt-0 ">
           <Link
-            href="/reset-password"
+            href="/register"
             className="text-mediumBlue hover:underline mt-1 block text-right text-sm pr-2 font-semibold"
           >
-            Registrarse con Email
+            ¿No tienes cuenta? - Regístrate
           </Link>
         </div>
       </form>
