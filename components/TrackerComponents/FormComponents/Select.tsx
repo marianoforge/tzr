@@ -1,14 +1,16 @@
 import React from "react";
+import { UseFormRegister } from "react-hook-form";
 
 interface SelectProps {
   label: string;
   options: { value: string; label: string }[];
-  register: any;
+  register: UseFormRegister<any>;
   name: string;
   required?: boolean;
   className?: string;
-  mb?: string; // Nueva propiedad opcional para margen inferior
-  error?: string; // Nueva propiedad opcional para mensajes de error
+  mb?: string;
+  error?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void; // Added onChange property
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -20,6 +22,7 @@ const Select: React.FC<SelectProps> = ({
   className = "",
   mb = "-mb-2", // Valor por defecto para margen inferior
   error, // Añadido para manejar errores
+  onChange, // Destructure onChange
 }) => {
   return (
     <div className={mb}>
@@ -28,6 +31,7 @@ const Select: React.FC<SelectProps> = ({
         {...register(name)}
         className={`block w-full mt-2 mb-4 p-2 border border-gray-300 text-gray-400 rounded ${className}`}
         required={required}
+        onChange={onChange} // Use onChange
       >
         <option value="" disabled selected className="text-gray-500">
           {label}

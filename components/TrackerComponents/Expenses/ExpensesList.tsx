@@ -136,9 +136,7 @@ const ExpensesList = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr
-                    className={`${OPERATIONS_LIST_COLORS.headerBg} hidden md:table-row text-center text-sm`}
-                  >
+                  <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
                     <th
                       className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                     >
@@ -206,9 +204,7 @@ const ExpensesList = () => {
                     </tr>
                   ))}
                   {/* Total row */}
-                  <tr
-                    className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg}`}
-                  >
+                  <tr className="font-bold hidden md:table-row bg-lightBlue/10">
                     <td className="py-3 px-4 text-center" colSpan={1}>
                       Total
                     </td>

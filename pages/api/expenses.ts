@@ -71,9 +71,9 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
     !date ||
     !amount ||
     !expenseType ||
-    !description ||
     !dollarRate ||
-    !user_uid
+    !user_uid ||
+    !expenseAssociationType
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -88,7 +88,7 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
       description,
       dollarRate,
       user_uid,
-      otherType: otherType ?? "", // Si no está presente, establece como una cadena vacía
+      otherType: otherType ?? "",
       expenseAssociationType,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

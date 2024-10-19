@@ -12,7 +12,6 @@ import { createSchema } from "@/schemas/registerFormSchema";
 import Link from "next/link";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Select from "@/components/TrackerComponents/FormComponents/Select";
 
 const stripePromise = loadStripe(

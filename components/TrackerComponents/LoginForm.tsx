@@ -16,7 +16,6 @@ import { schema } from "@/schemas/loginFormSchema";
 import { LoginData } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"; // Importar los íconos de Heroicons
 
 const LoginForm = () => {
   const {

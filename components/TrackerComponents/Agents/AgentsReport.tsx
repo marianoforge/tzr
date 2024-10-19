@@ -125,18 +125,16 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr
-                className={`${OPERATIONS_LIST_COLORS.headerBg} ${OPERATIONS_LIST_COLORS.headerText}`}
+                className={`bg-lightBlue/10 ${OPERATIONS_LIST_COLORS.headerText}`}
               >
                 <th className="py-3 px-4 font-semibold text-start w-1/6">
                   Nombre
                 </th>
-                <th className="py-3 px-4 font-semibold text-center w-1/10">
-                  Email
-                </th>
+                <th className="py-3 px-4 font-semibold text-center">Email</th>
                 <th className="py-3 px-4 font-semibold text-center w-1/6">
                   Total Facturación Bruta
                 </th>
-                <th className="py-3 px-4 font-semibold text-center">
+                <th className="py-3 px-4 font-semibold text-center w-1/6">
                   Aporte a la Facturación Bruta
                 </th>
                 <th className="py-3 px-4 font-semibold text-center">

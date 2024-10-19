@@ -136,6 +136,11 @@ const FormularioExpenses: React.FC = () => {
   const amountInDollars =
     amount && dollarRate ? (amount / dollarRate).toFixed(2) : 0;
 
+  // Example usage of setExpenseAssociationType
+  const handleAssociationTypeChange = (newType: string) => {
+    setExpenseAssociationType(newType);
+  };
+
   return (
     <div className="flex flex-col justify-center items-center mt-20">
       {userRole ? (
@@ -158,8 +163,8 @@ const FormularioExpenses: React.FC = () => {
               register={register}
               name="expenseAssociationType"
               className="w-full p-2 border"
-              mb="mb-6"
               required
+              onChange={(e) => handleAssociationTypeChange(e.target.value)}
             />
           )}
 
@@ -208,7 +213,7 @@ const FormularioExpenses: React.FC = () => {
             register={register}
             name="expenseType"
             required
-            mb="mb-6"
+            mb="mb-4"
           />
           {errors.expenseType && (
             <p className="text-red-500">{errors.expenseType.message}</p>
@@ -229,7 +234,7 @@ const FormularioExpenses: React.FC = () => {
             error={errors.description?.message}
           />
 
-          <div className="flex justify-center items-center mt-6 w-full">
+          <div className="flex justify-center items-center mt-8 w-full">
             <button
               type="submit"
               className="text-white p-2 rounded bg-mediumBlue hover:bg-lightBlue transition-all duration-300 font-semibold w-[200px]"

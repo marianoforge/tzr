@@ -146,21 +146,19 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr
-            className={`${OPERATIONS_LIST_COLORS.headerBg} hidden md:table-row text-center text-sm`}
-          >
+          <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
               Fecha de Operación
             </th>
             <th
-              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/5`}
             >
               Operación
             </th>
             <th
-              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[160px]`}
             >
               Tipo de Operación
             </th>
@@ -215,10 +213,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {currentOperations?.map((operacion: Operation) => (
+          {currentOperations?.map((operacion: Operation, index: number) => (
             <tr
               key={operacion.id}
-              className={`${OPERATIONS_LIST_COLORS.rowBg} hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
+              className={`${
+                index % 2 === 0 ? "bg-white" : "bg-mediumBlue/10"
+              } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
             >
               <td className="py-3 px-4 before:content-['Fecha:'] md:before:content-none">
                 {new Date(operacion.fecha_operacion).toLocaleDateString()}
@@ -308,9 +308,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               </td>
             </tr>
           ))}
-          <tr
-            className={`font-bold hidden md:table-row ${OPERATIONS_LIST_COLORS.headerBg}`}
-          >
+          <tr className={`font-bold hidden md:table-row bg-lightBlue/10`}>
             <td className="py-3 px-4 pl-10" colSpan={3}>
               Total
             </td>
