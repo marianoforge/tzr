@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
@@ -34,6 +34,7 @@ export default function Success() {
               `/api/stripe/subscription_status?subscription_id=${data.subscription}`
             );
             const { status } = await subscriptionRes.json();
+            console.log("Estado de la suscripción:", status);
           }
         } catch (error) {
           console.error(
