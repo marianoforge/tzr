@@ -36,7 +36,10 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     reset,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
-    defaultValues: operation || {},
+    defaultValues: {
+      ...operation,
+      realizador_venta: operation?.realizador_venta || "", // Asegúrate de incluir realizador_venta aquí
+    },
   });
 
   const queryClient = useQueryClient();

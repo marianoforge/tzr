@@ -16,6 +16,8 @@ import { Expense } from "@/types";
 import ExpensesModal from "./ExpensesModal";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
+import { format } from "date-fns"; // Importa format desde date-fns
+import { toZonedTime } from "date-fns-tz"; // Importa utcToZonedTime desde date-fns-tz
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -27,7 +29,6 @@ const ExpensesList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Manejar la autenticación del usuario
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -40,35 +41,31 @@ const ExpensesList = () => {
     return () => unsubscribe();
   }, [router]);
 
-  // Solo ejecutar la consulta si userUID está definido
   const { data: expenses, isLoading } = useQuery({
-    queryKey: ["expenses", userUID], // Query key
-    queryFn: () => fetchUserExpenses(userUID as string), // Query function
-    enabled: !!userUID, // Solo habilitar la consulta si userUID no es null
+    queryKey: ["expenses", userUID],
+    queryFn: () => fetchUserExpenses(userUID as string),
+    enabled: !!userUID,
   });
 
-  // Recalcular los totales cuando los datos sean cargados
   useEffect(() => {
     if (expenses) {
       calculateTotals();
     }
   }, [expenses, calculateTotals]);
 
-  // Mutation para eliminar un gasto
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] }); // Correctly pass the query key
-      calculateTotals(); // Recalcular los totales
+      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] });
+      calculateTotals();
     },
   });
 
-  // Mutation para actualizar un gasto
   const mutationUpdate = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] }); // Correctly pass the query key
-      calculateTotals(); // Recalcular los totales
+      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] });
+      calculateTotals();
     },
   });
 
@@ -85,7 +82,6 @@ const ExpensesList = () => {
     mutationUpdate.mutate(updatedExpense);
   };
 
-  // Filtrar gastos basados en la ruta
   const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
     useFilteredExpenses(expenses || []);
 
@@ -113,8 +109,13 @@ const ExpensesList = () => {
     setCurrentPage(newPage);
   };
 
-  // Deshabilitar los botones si no hay al menos 10 elementos
   const disablePagination = filteredExpenses.length < itemsPerPage;
+
+  // Formatear la fecha usando date-fns y utcToZonedTime
+  const formatDate = (date: string) => {
+    const zonedDate = toZonedTime(date, "UTC");
+    return format(zonedDate, "dd/MM/yyyy");
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -175,9 +176,7 @@ const ExpensesList = () => {
                       key={expense.id}
                       className="border-b transition duration-150 ease-in-out text-center"
                     >
-                      <td className="py-3 px-4">
-                        {new Date(expense.date).toLocaleDateString()}
-                      </td>
+                      <td className="py-3 px-4">{formatDate(expense.date)}</td>
                       <td className="py-3 px-4">
                         ${formatNumber(expense.amount)}
                       </td>
@@ -203,7 +202,6 @@ const ExpensesList = () => {
                       </td>
                     </tr>
                   ))}
-                  {/* Total row */}
                   <tr className="font-bold hidden md:table-row bg-lightBlue/10">
                     <td className="py-3 px-4 text-center" colSpan={1}>
                       Total

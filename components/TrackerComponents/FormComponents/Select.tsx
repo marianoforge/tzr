@@ -12,6 +12,7 @@ interface SelectProps<T extends FieldValues> {
   mb?: string;
   error?: string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  defaultValue?: string;
 }
 
 const Select = <T extends FieldValues>({
@@ -24,6 +25,7 @@ const Select = <T extends FieldValues>({
   mb = "-mb-2", // Valor por defecto para margen inferior
   error,
   onChange,
+  defaultValue,
 }: SelectProps<T>) => {
   return (
     <div className={mb}>
@@ -33,8 +35,9 @@ const Select = <T extends FieldValues>({
         className={`block w-full mt-2 mb-4 p-2 border border-gray-300 text-gray-400 rounded ${className}`}
         required={required}
         onChange={onChange}
+        defaultValue={defaultValue} // Añadido defaultValue aquí
       >
-        <option value="" disabled selected className="text-gray-500">
+        <option value="" disabled className="text-gray-500">
           {label}
         </option>
         {options.map((option) => (
