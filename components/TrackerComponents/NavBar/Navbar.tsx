@@ -29,7 +29,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  const pruebaDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días a partir de hoy
   const renderNavButtons = () => (
     <>
       <NavButton href="/dashboard" label="Dashboard" fullWidth />

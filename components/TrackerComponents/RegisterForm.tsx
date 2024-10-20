@@ -143,7 +143,7 @@ const RegisterForm = () => {
       <div className="flex items-center justify-center lg:justify-start">
         <Link href="/" title="Home">
           <Image
-            src="/trackproBWNoBg.png"
+            src="/trackproLogoWhite.png"
             alt="Logo"
             width={350}
             height={350}

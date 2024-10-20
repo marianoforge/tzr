@@ -9,7 +9,7 @@ const Navbar = () => {
         <div className="w-full lg:w-[35%] flex items-center justify-center lg:justify-start">
           <Link href="/" title="Home">
             <Image
-              src="/trackproBWNoBg.png"
+              src="/trackproLogoWhite.png"
               alt="Logo"
               width={350}
               height={350}

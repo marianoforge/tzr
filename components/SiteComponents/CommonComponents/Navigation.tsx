@@ -21,7 +21,7 @@ const Navigation = () => {
           { name: "Contact", link: "/" },
         ].map((item, index) => (
           <Link href={item.link} key={index}>
-            <button className="px-2 sm:px-4 py-2 sm:py-3 text-sm sm:text-xl font-bold text-lightPink">
+            <button className="px-2 sm:px-4 py-2 sm:py-3 text-sm sm:text-xl font-bold text-white">
               {item.name}
             </button>
           </Link>
@@ -30,7 +30,7 @@ const Navigation = () => {
       <nav className="hidden w-full sm:w-[50%] lg:w-full md:flex space-x-2 sm:space-x-4 items-center justify-end">
         {userID ? (
           <Link href="/dashboard">
-            <button className="px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-lightPink text-mediumBlue hover:bg-mediumBlue hover:text-white">
+            <button className="px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white">
               Dashboard
             </button>
           </Link>
@@ -41,7 +41,7 @@ const Navigation = () => {
           ].map((item, index) => (
             <Link href={item.link} key={index}>
               <button
-                className="px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-lightPink text-mediumBlue hover:bg-mediumBlue hover:text-white"
+                className="px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white"
                 onClick={item.onClick} // Asignar el evento onClick
               >
                 {item.name}

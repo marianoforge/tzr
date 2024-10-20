@@ -21,7 +21,8 @@ export default async function handler(
 
     // Devolver el estado de la suscripción (trialing, active, etc.)
     res.status(200).json({ status: subscription.status });
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error("Error al obtener el estado de la suscripción:", error);
     res
       .status(500)
       .json({ error: "Error al obtener el estado de la suscripción" });

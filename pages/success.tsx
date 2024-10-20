@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
-import {
-  formatDateTime,
-  formatEventDateTime,
-} from "@/utils/formatEventDateTime";
+import { formatDateTime } from "@/utils/formatEventDateTime";
 
 interface SessionType {
   id: string;
@@ -20,10 +17,6 @@ interface SessionType {
 
 export default function Success() {
   const router = useRouter();
-  const [session, setSession] = useState<SessionType | null>(null);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(
-    null
-  );
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -34,7 +27,6 @@ export default function Success() {
           // 1. Obtener los detalles de la sesión de Stripe usando el session_id
           const res = await fetch(`/api/checkout/${sessionId}`);
           const data: SessionType = await res.json();
-          setSession(data); // Guardar los datos de la sesión
 
           // 2. Verificar el estado de la suscripción si existe
           if (data.subscription) {
@@ -42,7 +34,6 @@ export default function Success() {
               `/api/stripe/subscription_status?subscription_id=${data.subscription}`
             );
             const { status } = await subscriptionRes.json();
-            setSubscriptionStatus(status); // Guardar el estado de la suscripción ('trialing', 'active', etc.)
           }
         } catch (error) {
           console.error(
@@ -67,7 +58,7 @@ export default function Success() {
       <div className="flex items-center justify-center lg:justify-start">
         <Link href="/" title="Home">
           <Image
-            src="/trackproBWNoBg.png"
+            src="/trackproLogoWhite.png"
             alt="Logo"
             width={350}
             height={350}
