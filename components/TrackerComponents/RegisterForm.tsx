@@ -245,22 +245,18 @@ const RegisterForm = () => {
         />
 
         {/* Botón de registro */}
-        <div className="flex flex-col gap-4 mt-6 sm:mt-0 sm:flex-row justify-center items-center sm:justify-around">
+        <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">
           <Button
             type="submit"
             disabled={loading}
-            className="bg-lightBlue hover:bg-mediumBlue text-white py-2 px-4 rounded-md w-48"
+            className="bg-lightBlue hover:bg-mediumBlue text-white py-2 px-4 mt-4 rounded-md w-48"
           >
-            {loading
-              ? "Procesando..."
-              : priceId
-              ? "Comprar Licencia"
-              : "Registrarse"}
+            Registrarse
           </Button>
           <Button
             type="button"
             onClick={() => router.push("/login")}
-            className="bg-mediumBlue hover:bg-lightBlue text-white py-2 px-4 rounded-md w-48"
+            className="bg-mediumBlue hover:bg-lightBlue text-white py-2 px-4 mt-4 rounded-md w-48"
           >
             Iniciar sesión
           </Button>

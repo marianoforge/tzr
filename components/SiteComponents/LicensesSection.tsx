@@ -16,14 +16,14 @@ const CardsSection = () => {
   };
 
   return (
-    <div className="flex flex-col justify-around items-center gap-20 pb-10 lg:flex-row">
-      <div className="p-6 border rounded-lg shadow-xl lg:min-w-[360px]">
+    <div className=" flex flex-col justify-around items-center gap-20 pb-10 lg:flex-row">
+      <div className="bg-white  p-6 border rounded-lg shadow-xl lg:min-w-[360px]">
         <h2 className="text-lg font-semibold">ASESOR</h2>
         <p>Everything you need to start selling.</p>
         <p className="text-2xl font-bold mt-4">$9.99 USD per month</p>
         <button
           onClick={() => handleLicenseSelect(PRICE_ID_STARTER)}
-          className="bg-black text-white py-2 px-4 mt-4"
+          className="bg-mediumBlue text-white py-2 px-4 mt-4"
         >
           Start a free trial
         </button>
@@ -36,13 +36,13 @@ const CardsSection = () => {
         </ul>
       </div>
 
-      <div className="p-6 border rounded-lg shadow-xl lg:min-w-[360px]">
+      <div className="bg-white p-6 border rounded-lg shadow-xl lg:min-w-[360px]">
         <h2 className="text-lg font-semibold">TEAM LEAD</h2>
         <p>All the extras for your growing team.</p>
         <p className="text-2xl font-bold mt-4">$12.99 USD per month</p>
         <button
           onClick={() => handleLicenseSelect(PRICE_ID_GROWTH)}
-          className="bg-black text-white py-2 px-4 mt-4"
+          className="bg-lightBlue text-white py-2 px-4 mt-4"
         >
           Start a free trial
         </button>
@@ -55,13 +55,13 @@ const CardsSection = () => {
         </ul>
       </div>
 
-      <div className="p-6 border rounded-lg shadow-xl lg:min-w-[360px]">
-        <h2 className="text-lg font-semibold">ENTERPRICE</h2>
+      <div className="bg-white p-6 border rounded-lg shadow-xl lg:min-w-[360px]">
+        <h2 className="text-lg font-semibold">ENTERPRISE</h2>
         <p>Added flexibility to close deals at scale.</p>
         <p className="text-2xl font-bold mt-4">Contact Us</p>
         <button
           onClick={() => handleLicenseSelect(PRICE_ID_ENTERPRISE)}
-          className="bg-black text-white py-2 px-4 mt-4"
+          className="bg-mediumBlue text-white py-2 px-4 mt-4"
         >
           Start a free trial
         </button>

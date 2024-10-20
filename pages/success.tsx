@@ -1,22 +1,29 @@
-// pages/success.tsx
-
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
-// Define el tipo de datos de la sesión según lo que obtienes de Stripe
+import {
+  formatDateTime,
+  formatEventDateTime,
+} from "@/utils/formatEventDateTime";
+
 interface SessionType {
   id: string;
   amount_total: number;
-  customer_email: string;
   payment_status: string;
-  // Agrega más propiedades de la sesión si las necesitas
+  subscription: string; // Para almacenar el ID de la suscripción
+  customer_details: {
+    email: string;
+  };
 }
 
 export default function Success() {
   const router = useRouter();
   const [session, setSession] = useState<SessionType | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -24,13 +31,24 @@ export default function Success() {
 
       if (sessionId) {
         try {
-          const res = await fetch(
-            `/api/checkout/checkout_session/${sessionId}`
-          );
-          const data = await res.json();
+          // 1. Obtener los detalles de la sesión de Stripe usando el session_id
+          const res = await fetch(`/api/checkout/${sessionId}`);
+          const data: SessionType = await res.json();
           setSession(data); // Guardar los datos de la sesión
+
+          // 2. Verificar el estado de la suscripción si existe
+          if (data.subscription) {
+            const subscriptionRes = await fetch(
+              `/api/stripe/subscription_status?subscription_id=${data.subscription}`
+            );
+            const { status } = await subscriptionRes.json();
+            setSubscriptionStatus(status); // Guardar el estado de la suscripción ('trialing', 'active', etc.)
+          }
         } catch (error) {
-          console.error("Error al obtener los detalles de la sesión:", error);
+          console.error(
+            "Error al obtener los detalles de la sesión o suscripción:",
+            error
+          );
         }
       }
     };
@@ -38,7 +56,11 @@ export default function Success() {
     fetchSession();
   }, [router.query.session_id]);
 
-  console.log(session);
+  const timestamp = 1729450553;
+  const sevenDaysInSeconds = 7 * 24 * 60 * 60; // 7 days in seconds
+  const newTimestamp = timestamp + sevenDaysInSeconds;
+  const date = new Date(newTimestamp * 1000); // Convertir segundos a milisegundos
+  const formattedDate = formatDateTime(date);
 
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
@@ -52,14 +74,22 @@ export default function Success() {
           />
         </Link>
       </div>
-      <div className="bg-white p-6 shadow-md w-11/12 max-w-lg rounded-lg justify-center items-center flex flex-col h-auto gap-8">
-        <h1 className="text-[32px] text-greenAccent font-semibold">
-          ¡Pago exitoso!
-        </h1>
+
+      <div className="bg-white p-6 text-lg shadow-md w-11/12 max-w-lg rounded-lg justify-center items-center flex flex-col h-auto gap-2">
+        <div className="px-[20px] mb-4 space-y-1">
+          <div className="text-lg text-greenAccent font-semibold text-center mb-3">
+            <h2>¡Muchas Gracias!</h2>
+            <h1>La transacción se ha realizado con éxito</h1>
+          </div>
+          <p>
+            Fin de la prueba gratis:{" "}
+            <span className="font-semibold">{formattedDate}</span>
+          </p>
+        </div>
 
         <div className="w-full flex justify-around">
           <Button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/login")}
             className="bg-mediumBlue hover:bg-lightBlue text-white p-2 rounded transition-all duration-300 font-semibold w-[200px] cursor-pointer"
             type="button"
           >

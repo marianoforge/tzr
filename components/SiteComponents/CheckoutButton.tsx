@@ -1,4 +1,3 @@
-// components/CheckoutButton.tsx
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -13,31 +12,25 @@ const CheckoutButton = ({ priceId }: { priceId: string }) => {
     setLoading(true);
 
     try {
-      // Llamar a tu API para crear la sesión de Stripe Checkout
-      const res = await fetch("/api/checkout/checkout_session", {
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          priceId, // Pasar el Price ID de Stripe al backend
-        }),
+        body: JSON.stringify({ priceId }),
       });
 
-      const { id } = await res.json();
-
+      const { sessionId } = await res.json();
       const stripe = await stripePromise;
 
-      // Redirigir al usuario a la página de pago de Stripe
-      const { error } = await stripe!.redirectToCheckout({
-        sessionId: id, // Usamos el ID de la sesión de Stripe
-      });
-
-      if (error) {
-        console.error("Error en la redirección a Stripe:", error);
+      if (sessionId) {
+        const { error } = await stripe!.redirectToCheckout({ sessionId });
+        if (error) console.error("Stripe redirection error:", error);
+      } else {
+        console.error("No sessionId returned.");
       }
     } catch (error) {
-      console.error("Error creando sesión de Checkout:", error);
+      console.error("Error in Checkout session creation:", error);
     } finally {
       setLoading(false);
     }

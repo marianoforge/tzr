@@ -8,3 +8,11 @@ export const formatEventDateTime = (date: Date) => {
     minute: "2-digit",
   });
 };
+
+export const formatDateTime = (date: Date) => {
+  return date.toLocaleString("es-ES", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};

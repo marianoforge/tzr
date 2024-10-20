@@ -1,7 +1,6 @@
-// pages/api/auth/register.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, Timestamp } from "firebase/firestore"; // Importa Timestamp
 import { auth, db } from "@/lib/firebase";
 import { setCsrfCookie, validateCsrfToken } from "@/lib/csrf";
 import { RegisterRequestBody } from "@/types";
@@ -11,13 +10,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
-    // Generar y devolver el CSRF token
     const token = setCsrfCookie(res);
     return res.status(200).json({ csrfToken: token });
   }
 
   if (req.method === "POST") {
-    // Validar el CSRF token
     const isValidCsrf = validateCsrfToken(req);
     if (!isValidCsrf) {
       return res.status(403).json({ message: "Invalid CSRF token" });
@@ -59,11 +56,15 @@ export default async function handler(
           lastName,
           role,
           priceId,
-          // Si no hay priceId, asignar un trial de 7 días
+          createdAt: Timestamp.now(), // Timestamp para createdAt
+          // Si no hay priceId, asignar un trial de 7 días usando un Timestamp de Firestore
           ...(priceId
             ? {}
-            : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
-          createdAt: new Date(),
+            : {
+                trialEndsAt: Timestamp.fromDate(
+                  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                ),
+              }), // Timestamp para trialEndsAt
         });
 
         return res
@@ -93,11 +94,15 @@ export default async function handler(
         role,
         priceId,
         uid: user.uid,
-        createdAt: new Date(),
-        // Si no hay priceId, asignar un trial de 7 días
+        createdAt: Timestamp.now(), // Timestamp para createdAt
+        // Si no hay priceId, asignar un trial de 7 días usando un Timestamp de Firestore
         ...(priceId
           ? {}
-          : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
+          : {
+              trialEndsAt: Timestamp.fromDate(
+                new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+              ),
+            }), // Timestamp para trialEndsAt
       });
 
       return res

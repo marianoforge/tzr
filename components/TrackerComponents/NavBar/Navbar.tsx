@@ -3,6 +3,7 @@ import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
 import { NavButton } from "@/components/TrackerComponents/NavComponents/NavButton";
 import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
+import useTrialDaysLeft from "@/hooks/useTrialDaysLeft";
 
 interface NavbarProps {
   setActiveView: (view: string) => void;
@@ -11,7 +12,7 @@ interface NavbarProps {
 const Navbar = ({ setActiveView }: NavbarProps) => {
   const { userData, isLoading, fetchUserData } = useUserDataStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [daysLeft, setDaysLeft] = useState<number | null>(null); // Estado para almacenar los días restantes
+  const daysLeft = useTrialDaysLeft(userData);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -25,30 +26,10 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     return () => unsubscribe();
   }, [fetchUserData]);
 
-  useEffect(() => {
-    if (userData && userData.trialEndsAt) {
-      // Verificar si trialEndsAt es un Firestore Timestamp o una fecha nativa
-      let trialEndDate;
-
-      if (userData.trialEndsAt && "toDate" in userData.trialEndsAt) {
-        trialEndDate = userData.trialEndsAt.toDate(); // Si es Timestamp de Firestore
-      } else {
-        trialEndDate = new Date(userData.trialEndsAt); // Si es un Date nativo o string ISO
-      }
-
-      // Calcular los días restantes
-      const currentDate = new Date();
-      const diffTime = trialEndDate.getTime() - currentDate.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convertir milisegundos a días
-
-      setDaysLeft(diffDays >= 0 ? diffDays : 0); // Si la fecha ha pasado, mostrar 0 días
-    }
-  }, [userData]);
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
+  const pruebaDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días a partir de hoy
   const renderNavButtons = () => (
     <>
       <NavButton href="/dashboard" label="Dashboard" fullWidth />
