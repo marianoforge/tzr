@@ -28,7 +28,6 @@ const Bubbles = () => {
 
   // Calculamos los totales basados en las operaciones filtradas
   const totals = calculateTotals(currentYearOperations);
-  console.log(totals);
 
   const bubbleData = [
     {

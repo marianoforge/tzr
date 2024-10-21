@@ -6,6 +6,7 @@ import { useAuthStore } from "@/stores/authStore"; // Esto sigue para obtener el
 import Loader from "./Loader";
 import { Expense, Operation } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
+import { calculateTotals } from "@/utils/calculations";
 
 const Profitability = () => {
   const { userID } = useAuthStore();
@@ -29,16 +30,12 @@ const Profitability = () => {
     const operationYear = new Date(operation.fecha_operacion).getFullYear();
     return operationYear === currentYear;
   });
+  const totals = calculateTotals(currentYearOperations);
 
   // Calcular los totales de operaciones y gastos usando las operaciones filtradas
-  const totalHonorariosNetosAsesor = currentYearOperations.reduce(
-    (acc: number, op: Operation) => acc + op.honorarios_asesor,
-    0
-  );
-  const totalHonorariosBroker = currentYearOperations.reduce(
-    (acc: number, op: Operation) => acc + op.honorarios_broker,
-    0
-  );
+  const totalHonorariosNetosAsesor = totals.honorarios_asesor_cerradas;
+  const totalHonorariosBroker = totals.honorarios_broker_cerradas;
+
   const totalAmountInDollarsExpenses = expenses.reduce(
     (acc: number, exp: Expense) => acc + exp.amountInDollars, // Cambia según la estructura de tus gastos
     0
@@ -47,16 +44,15 @@ const Profitability = () => {
     (acc: number, exp: Expense) => acc + exp.amountInDollars || 0, // Suponiendo que tengas un campo así
     0
   );
-
   const profitability =
-    totalHonorariosNetosAsesor > 0
+    totalHonorariosNetosAsesor && totalHonorariosNetosAsesor > 0
       ? ((totalHonorariosNetosAsesor - totalAmountInDollarsExpenses) /
           totalHonorariosNetosAsesor) *
         100
       : 0;
 
   const profitabilityBroker =
-    totalHonorariosBroker > 0
+    totalHonorariosBroker && totalHonorariosBroker > 0
       ? ((totalHonorariosBroker - totalExpensesTeamBroker) /
           totalHonorariosBroker) *
         100

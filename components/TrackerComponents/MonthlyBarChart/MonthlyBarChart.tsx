@@ -23,7 +23,7 @@ const CustomTooltip: React.FC<{
 }> = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded shadow-md">
+      <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
         <p className="intro">{`Año Anterior: ${payload[0].value}`}</p>
         <p className="intro">{`Año Actual: ${payload[1].value}`}</p>

@@ -36,7 +36,7 @@ const CuadroPrincipal = () => {
   );
 
   return (
-    <div className="bg-white p-4 rounded shadow-md w-full hidden md:block">
+    <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block">
       {isLoading ? (
         <Loader />
       ) : (

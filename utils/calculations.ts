@@ -65,6 +65,14 @@ export const calculateTotals = (operations: Operation[]) => {
     0
   );
 
+  const totalHonorariosAsesorCerradas = operations
+    .filter((op) => op.estado === "Cerrada")
+    .reduce((acc, op) => acc + op.honorarios_asesor, 0);
+
+  const totalHonorariosBrokerCerradas = operations
+    .filter((op) => op.estado === "Cerrada")
+    .reduce((acc, op) => acc + op.honorarios_broker, 0);
+
   const mayorVentaEfectuada = Math.max(
     ...operations.map((op) => op.valor_reserva)
   );
@@ -138,6 +146,8 @@ export const calculateTotals = (operations: Operation[]) => {
     porcentaje_honorarios_broker: totalPorcentajeHonorariosBroker,
     honorarios_broker: totalHonorariosBroker,
     honorarios_asesor: totalHonorariosAsesor,
+    honorarios_asesor_cerradas: totalHonorariosAsesorCerradas,
+    honorarios_broker_cerradas: totalHonorariosBrokerCerradas,
     mayor_venta_efectuada: mayorVentaEfectuada,
     promedio_valor_reserva: promedioValorReserva,
     punta_compradora: puntaCompradora,
