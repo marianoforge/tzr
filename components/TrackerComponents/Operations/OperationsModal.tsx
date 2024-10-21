@@ -94,6 +94,17 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       return;
     }
 
+    // Find the selected user by name to get the uid
+    const selectedUser = usersMapped.find(
+      (user) => user.name === data.realizador_venta
+    );
+    const selectedUser_id = selectedUser ? selectedUser.uid : null;
+
+    if (!selectedUser_id) {
+      console.error("Selected user ID is missing");
+      return;
+    }
+
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
       data.porcentaje_honorarios_asesor,
@@ -104,6 +115,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       ...data,
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
+      user_uid: selectedUser_id,
     };
 
     mutation.mutate({ id: operation.id, data: payload });
@@ -187,6 +199,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               { value: "Alquiler Comercial", label: "Alquiler Comercial" },
               { value: "Fondo de Comercio", label: "Fondo de Comercio" },
               { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
+              { value: "Cochera", label: "Cochera" },
             ]}
             register={register}
             name="tipo_operacion"

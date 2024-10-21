@@ -67,6 +67,8 @@ const OperationsForm = () => {
       : []),
   ];
 
+  console.log("usersMapped", usersMapped);
+
   // Fetch the user ID from Firebase authentication
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -240,6 +242,7 @@ const OperationsForm = () => {
                 { value: "Alquiler Comercial", label: "Alquiler Comercial" },
                 { value: "Fondo de Comercio", label: "Fondo de Comercio" },
                 { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
+                { value: "Cochera", label: "Cochera" },
               ]}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required

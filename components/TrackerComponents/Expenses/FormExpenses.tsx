@@ -28,6 +28,7 @@ export const expenseTypes = [
   { value: "Portales Inmobiliarios", label: "Portales Inmobiliarios" },
   { value: "CRM", label: "CRM" },
   { value: "Viaticos", label: "Viaticos" },
+  { value: "Expensas", label: "Expensas" },
   { value: "Otros", label: "Otros" },
 ];
 

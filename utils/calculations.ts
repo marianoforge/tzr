@@ -126,11 +126,11 @@ export const calculateTotals = (operations: Operation[]) => {
       ? totalPuntaVendedoraPorcentaje / validPuntaVendedoraOperations.length
       : 0;
 
-  console.table({
-    promedioPuntaCompradoraPorcentaje,
-    promedioPuntaVendedoraPorcentaje,
-    filtroOperacionsSinAlquileres,
-  });
+  // console.table({
+  //   promedioPuntaCompradoraPorcentaje,
+  //   promedioPuntaVendedoraPorcentaje,
+  //   filtroOperacionsSinAlquileres,
+  // });
 
   return {
     valor_reserva: totalValorReserva,
