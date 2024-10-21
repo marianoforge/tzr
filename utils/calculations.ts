@@ -1,5 +1,21 @@
 import { Operation } from "@/types";
 
+// Utility function to sum a specific field in operations
+const sumField = (operations: Operation[], field: keyof Operation) =>
+  operations.reduce((acc, op) => acc + (Number(op[field]) || 0), 0);
+
+// Utility function to calculate average of a specific field
+const averageField = (operations: Operation[], field: keyof Operation) =>
+  operations.length > 0 ? sumField(operations, field) / operations.length : 0;
+
+// Utility function to filter operations by type
+const filterOperationsByType = (operations: Operation[], type: string) =>
+  operations.filter((op) => op.tipo_operacion === type);
+
+// Utility function to filter operations excluding a type
+const filterOperationsExcludingType = (operations: Operation[], type: string) =>
+  operations.filter((op) => !op.tipo_operacion.includes(type));
+
 // Cálculo de honorarios basado en el valor de reserva y porcentajes
 export const calculateHonorarios = (
   valor_reserva: number,
@@ -34,90 +50,70 @@ export const calculateTotals = (operations: Operation[]) => {
     };
   }
 
-  const totalValorReserva = operations.reduce(
-    (acc, op) => acc + op.valor_reserva,
-    0
+  const totalValorReserva = sumField(operations, "valor_reserva");
+  const totalValorReservaCerradas = sumField(
+    operations.filter((op) => op.estado === "Cerrada"),
+    "valor_reserva"
   );
 
-  const totalValorReservaCerradas = operations
-    .filter((op) => op.estado === "Cerrada")
-    .reduce((acc, op) => acc + op.valor_reserva, 0);
+  const filteredOperations = filterOperationsByType(operations, "Venta")
+    .concat(filterOperationsByType(operations, "Desarrollo"))
+    .filter((op) => op.estado === "Cerrada");
 
-  const filteredOperations = operations.filter(
-    (op) => op.tipo_operacion === "Venta" || op.tipo_operacion === "Desarrollo"
+  const totalValorReservaFiltered = averageField(
+    filteredOperations,
+    "valor_reserva"
   );
 
-  const totalValorReservaFiltered =
-    filteredOperations.reduce((acc, op) => acc + op.valor_reserva, 0) /
-    filteredOperations.length;
+  const totalPorcentajeHonorariosAsesor = averageField(
+    operations,
+    "porcentaje_honorarios_asesor"
+  );
+  const totalPorcentajeHonorariosBroker = averageField(
+    operations,
+    "porcentaje_honorarios_broker"
+  );
+  const totalHonorariosBroker = sumField(operations, "honorarios_broker");
+  const totalHonorariosAsesor = sumField(operations, "honorarios_asesor");
 
-  const totalPorcentajeHonorariosAsesor =
-    operations.reduce((acc, op) => acc + op.porcentaje_honorarios_asesor, 0) /
-    operations.length;
-
-  const totalPorcentajeHonorariosBroker =
-    operations.reduce((acc, op) => acc + op.porcentaje_honorarios_broker, 0) /
-    operations.length;
-
-  const totalHonorariosBroker = operations.reduce(
-    (acc, op) => acc + op.honorarios_broker,
-    0
+  const totalHonorariosAsesorCerradas = sumField(
+    operations.filter((op) => op.estado === "Cerrada"),
+    "honorarios_asesor"
   );
 
-  const totalHonorariosAsesor = operations.reduce(
-    (acc, op) => acc + op.honorarios_asesor,
-    0
+  const totalHonorariosBrokerCerradas = sumField(
+    operations.filter((op) => op.estado === "Cerrada"),
+    "honorarios_broker"
   );
-
-  const totalHonorariosAsesorCerradas = operations
-    .filter((op) => op.estado === "Cerrada")
-    .reduce((acc, op) => acc + op.honorarios_asesor, 0);
-
-  const totalHonorariosBrokerCerradas = operations
-    .filter((op) => op.estado === "Cerrada")
-    .reduce((acc, op) => acc + op.honorarios_broker, 0);
 
   const mayorVentaEfectuada = Math.max(
     ...operations.map((op) => op.valor_reserva)
   );
-
   const promedioValorReserva = totalValorReserva / operations.length;
 
-  const puntaCompradora = operations.reduce(
-    (acc, op) =>
-      acc +
-      (typeof op.punta_compradora === "number"
-        ? op.punta_compradora
-        : Number(op.punta_compradora)),
-    0
-  );
+  const closedOperations = operations.filter((op) => op.estado === "Cerrada");
 
-  const puntaVendedora = operations.reduce(
-    (acc, op) =>
-      acc +
-      (typeof op.punta_vendedora === "number"
-        ? op.punta_vendedora
-        : Number(op.punta_vendedora)),
-    0
-  );
+  const puntaCompradora = sumField(closedOperations, "punta_compradora");
+  const puntaVendedora = sumField(closedOperations, "punta_vendedora");
 
   const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
-  const cantidadOperaciones = operations.length;
 
-  //(Sin Alquileres)
+  const cantidadOperaciones = operations.filter(
+    (op) => op.estado === "Cerrada"
+  ).length;
 
-  const filtroOperacionsSinAlquileres = operations.filter(
-    (op) => !op.tipo_operacion.includes("Alquiler")
+  const filtroOperacionsSinAlquileres = filterOperationsExcludingType(
+    operations,
+    "Alquiler"
   );
 
-  const totalPuntaCompradoraPorcentaje = filtroOperacionsSinAlquileres.reduce(
-    (acc, op) => acc + (op.porcentaje_punta_compradora || 0),
-    0
+  const totalPuntaCompradoraPorcentaje = sumField(
+    filtroOperacionsSinAlquileres,
+    "porcentaje_punta_compradora"
   );
-
-  const totalPuntaVendedoraPorcentaje = filtroOperacionsSinAlquileres.reduce(
-    (acc, op) => acc + (op.porcentaje_punta_vendedora || 0),
-    0
+  const totalPuntaVendedoraPorcentaje = sumField(
+    filtroOperacionsSinAlquileres,
+    "porcentaje_punta_vendedora"
   );
 
   const validPuntaCompradoraOperations = filtroOperacionsSinAlquileres.filter(
@@ -137,12 +133,6 @@ export const calculateTotals = (operations: Operation[]) => {
     validPuntaVendedoraOperations.length > 0
       ? totalPuntaVendedoraPorcentaje / validPuntaVendedoraOperations.length
       : 0;
-
-  // console.table({
-  //   promedioPuntaCompradoraPorcentaje,
-  //   promedioPuntaVendedoraPorcentaje,
-  //   filtroOperacionsSinAlquileres,
-  // });
 
   return {
     valor_reserva: totalValorReserva,

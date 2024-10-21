@@ -46,11 +46,11 @@ const Bubbles = () => {
       tooltip: "Este es el monto total de honorarios brutos.",
     },
     {
-      title: "Monto Total de Operaciones Efectuadas",
+      title: "Monto Total de Operaciones Cerradas",
       figure: formatValue(totals.valor_reserva_cerradas ?? 0, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
-      tooltip: "Este es el valor total de las operaciones realizadas.",
+      tooltip: "Este es el valor total de las operaciones cerradas.",
     },
     {
       title: "Cantidad Total de Puntas",
@@ -70,11 +70,11 @@ const Bubbles = () => {
       tooltip: "Promedio del valor de las operaciones efectuadas.",
     },
     {
-      title: "Cantidad de Operaciones Efectuadas",
+      title: "Cantidad de Operaciones Cerradas",
       figure: formatValue(totals.cantidad_operaciones, "none"),
       bgColor: "bg-darkBlue",
       textColor: "text-white",
-      tooltip: "Número total de operaciones efectuadas.",
+      tooltip: "Número total de operaciones efectuadas cerradas.",
     },
   ];
 
