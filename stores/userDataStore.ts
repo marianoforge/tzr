@@ -53,6 +53,8 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
         role: userData.role || null,
         uid: userData.uid || null,
         trialEndsAt: userData.trialEndsAt || null,
+        stripeCustomerId: userData.stripeCustomerId || null,
+        stripeSubscriptionId: userData.stripeSubscriptionId || null,
       };
 
       set({ userData: validatedUserData, isLoading: false });

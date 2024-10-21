@@ -34,6 +34,9 @@ export default async function handler(
       agenciaBroker,
       numeroTelefono,
       objetivoAnual,
+      stripeCustomerId, // Nuevo campo
+      stripeSubscriptionId, // Nuevo campo
+      priceId, // Nuevo campo
     } = req.body;
 
     if (
@@ -42,7 +45,10 @@ export default async function handler(
       !email &&
       !agenciaBroker &&
       !numeroTelefono &&
-      !objetivoAnual
+      !objetivoAnual &&
+      !stripeCustomerId && // Validar también los nuevos campos
+      !stripeSubscriptionId &&
+      !priceId
     ) {
       return res.status(400).json({ message: "No fields to update" });
     }
@@ -56,8 +62,12 @@ export default async function handler(
         ...(agenciaBroker && { agenciaBroker }),
         ...(numeroTelefono && { numeroTelefono }),
         ...(objetivoAnual && { objetivoAnual }),
+        ...(stripeCustomerId && { stripeCustomerId }), // Agregar nuevos campos si están presentes
+        ...(stripeSubscriptionId && { stripeSubscriptionId }),
+        ...(priceId && { priceId }),
         updatedAt: new Date(),
       };
+
       await updateDoc(userRef, updates);
 
       res.status(200).json({ message: "User updated successfully" });

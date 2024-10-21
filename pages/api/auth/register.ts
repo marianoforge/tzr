@@ -31,6 +31,8 @@ export default async function handler(
       googleUser,
       uid,
       priceId,
+      stripeCustomerId,
+      stripeSubscriptionId,
     }: RegisterRequestBody = req.body;
 
     if (
@@ -38,7 +40,8 @@ export default async function handler(
       !agenciaBroker ||
       !numeroTelefono ||
       !firstName ||
-      !lastName
+      !lastName ||
+      !role
     ) {
       return res
         .status(400)
@@ -56,15 +59,9 @@ export default async function handler(
           lastName,
           role,
           priceId,
+          stripeCustomerId,
+          stripeSubscriptionId,
           createdAt: Timestamp.now(), // Timestamp para createdAt
-          // Si no hay priceId, asignar un trial de 7 días usando un Timestamp de Firestore
-          ...(priceId
-            ? {}
-            : {
-                trialEndsAt: Timestamp.fromDate(
-                  new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-                ),
-              }), // Timestamp para trialEndsAt
         });
 
         return res
@@ -95,14 +92,6 @@ export default async function handler(
         priceId,
         uid: user.uid,
         createdAt: Timestamp.now(), // Timestamp para createdAt
-        // Si no hay priceId, asignar un trial de 7 días usando un Timestamp de Firestore
-        ...(priceId
-          ? {}
-          : {
-              trialEndsAt: Timestamp.fromDate(
-                new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-              ),
-            }), // Timestamp para trialEndsAt
       });
 
       return res

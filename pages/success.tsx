@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/TrackerComponents/FormComponents/Button";
@@ -9,44 +9,99 @@ interface SessionType {
   id: string;
   amount_total: number;
   payment_status: string;
-  subscription: string; // Para almacenar el ID de la suscripción
+  subscription: string;
+  customer: string;
   customer_details: {
     email: string;
+  };
+  line_items?: {
+    data: { price: { id: string } }[];
   };
 }
 
 export default function Success() {
   const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchSession = async () => {
+    const fetchUserIdByEmail = async () => {
       const sessionId = router.query.session_id;
+      if (!sessionId) return;
 
-      if (sessionId) {
+      try {
+        // Obtener la sesión de Stripe
+        const res = await fetch(`/api/checkout/${sessionId}`);
+        const session: SessionType = await res.json();
+        const email = session.customer_details.email;
+
+        // Hacer una llamada a tu API para obtener el userID usando el email
+        const userIdRes = await fetch(
+          `/api/users/getUserIdByEmail?email=${email}`
+        );
+        const { userId } = await userIdRes.json();
+
+        // Guardar el userID en localStorage para futuras referencias
+        localStorage.setItem("userID", userId);
+        setUserId(userId);
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+
+    fetchUserIdByEmail();
+  }, [router.query.session_id]);
+
+  useEffect(() => {
+    const updateUserProfile = async (session: SessionType, userId: string) => {
+      if (session && userId) {
         try {
-          // 1. Obtener los detalles de la sesión de Stripe usando el session_id
-          const res = await fetch(`/api/checkout/${sessionId}`);
-          const data: SessionType = await res.json();
+          const stripeCustomerId = session.customer;
+          const stripeSubscriptionId = session.subscription;
 
-          // 2. Verificar el estado de la suscripción si existe
-          if (data.subscription) {
-            const subscriptionRes = await fetch(
-              `/api/stripe/subscription_status?subscription_id=${data.subscription}`
-            );
-            const { status } = await subscriptionRes.json();
-            console.log("Estado de la suscripción:", status);
+          // Hacer PUT para actualizar el perfil del usuario en Firebase
+          const res = await fetch(`/api/users/${userId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              stripeCustomerId,
+              stripeSubscriptionId,
+            }),
+          });
+
+          if (!res.ok) {
+            throw new Error("Failed to update user profile");
           }
+
+          console.log("User profile updated successfully");
         } catch (error) {
-          console.error(
-            "Error al obtener los detalles de la sesión o suscripción:",
-            error
-          );
+          console.error("Error updating user profile:", error);
         }
       }
     };
 
-    fetchSession();
-  }, [router.query.session_id]);
+    const fetchSession = async () => {
+      const sessionId = router.query.session_id;
+
+      if (sessionId && userId) {
+        try {
+          // Obtener los detalles de la sesión de Stripe
+          const res = await fetch(`/api/checkout/${sessionId}`);
+          const session: SessionType = await res.json();
+
+          // Actualizar el perfil del usuario
+          await updateUserProfile(session, userId);
+        } catch (error) {
+          console.error("Error al obtener los detalles de la sesión:", error);
+        }
+      }
+    };
+
+    if (userId) {
+      fetchSession();
+    }
+  }, [userId, router.query.session_id]);
 
   const timestamp = 1729450553;
   const sevenDaysInSeconds = 7 * 24 * 60 * 60; // 7 days in seconds

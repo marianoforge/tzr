@@ -32,7 +32,7 @@ const Bubbles = () => {
   const bubbleData = [
     {
       title: "Honorarios Totales Netos - Asesor / Broker",
-      figure: formatValue(totals.honorarios_asesor, "currency"),
+      figure: formatValue(totals.honorarios_asesor_cerradas ?? 0, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
       tooltip:
@@ -40,14 +40,14 @@ const Bubbles = () => {
     },
     {
       title: "Honorarios Totales Brutos",
-      figure: formatValue(totals.honorarios_broker, "currency"),
+      figure: formatValue(totals.honorarios_broker_cerradas ?? 0, "currency"),
       bgColor: "bg-darkBlue",
       textColor: "text-white",
       tooltip: "Este es el monto total de honorarios brutos.",
     },
     {
       title: "Monto Total de Operaciones Efectuadas",
-      figure: formatValue(totals.valor_reserva, "currency"),
+      figure: formatValue(totals.valor_reserva_cerradas ?? 0, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
       tooltip: "Este es el valor total de las operaciones realizadas.",

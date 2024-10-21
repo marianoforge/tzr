@@ -11,7 +11,7 @@ import { formatNumber } from "@/utils/formatNumber";
 const Settings = () => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
-  const { error } = useUserDataStore();
+  const { error, userData } = useUserDataStore();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [agenciaBroker, setAgenciaBroker] = useState("");
@@ -27,6 +27,8 @@ const Settings = () => {
     objetivoAnual: false,
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cancelMessage, setCancelMessage] = useState<string | null>(null);
+  const [isCanceling, setIsCanceling] = useState(false);
 
   const { data: userDataQuery, isLoading: isLoadingQuery } = useQuery({
     queryKey: ["userData", userID],
@@ -37,6 +39,8 @@ const Settings = () => {
     enabled: !!userID,
   });
 
+  const customerId = userData?.stripeCustomerId;
+  const subscriptionId = userData?.stripeSubscriptionId;
   useEffect(() => {
     if (userDataQuery) {
       setFirstName(userDataQuery.firstName);
@@ -48,6 +52,52 @@ const Settings = () => {
       );
     }
   }, [userDataQuery]);
+
+  const handleCancelSubscription = async () => {
+    if (!subscriptionId) return;
+
+    try {
+      setIsCanceling(true);
+      const response = await axios.post("/api/stripe/cancel_subscription", {
+        subscription_id: subscriptionId,
+      });
+
+      if (response.status === 200) {
+        setCancelMessage("Suscripción cancelada exitosamente.");
+        queryClient.invalidateQueries({ queryKey: ["userData", userID] });
+      } else {
+        setCancelMessage("No se pudo cancelar la suscripción.");
+      }
+    } catch (error) {
+      console.error("Error al cancelar la suscripción:", error);
+      setCancelMessage("Error al cancelar la suscripción.");
+    } finally {
+      setIsCanceling(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchCustomerInfo = async () => {
+      try {
+        const response = await axios.get(`/api/stripe/customer_info`, {
+          params: { customer_id: customerId }, // Asegurarte de pasar el customerId correcto
+        });
+        console.log(
+          "Información del cliente obtenida:",
+          response.data.customer
+        );
+      } catch (error) {
+        console.error("Error fetching customer info:", error);
+      }
+    };
+
+    if (customerId) {
+      fetchCustomerInfo();
+    }
+  }, [customerId]);
+
+  console.log(customerId);
+  console.log(subscriptionId);
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,7 +137,7 @@ const Settings = () => {
           ) : (
             <form
               onSubmit={handleUpdate}
-              className="bg-white p-6 mt-20 rounded shadow-md w-[100%]"
+              className="bg-white p-6 mt-20 rounded-xl shadow-md w-[100%]"
             >
               <h2 className="text-2xl mb-4 text-center font-semibold">
                 Datos Personales
@@ -230,6 +280,36 @@ const Settings = () => {
               </div>
             </form>
           )}
+
+          <div className="bg-white p-6 mt-10 rounded-xl shadow-md w-[100%]">
+            <h3 className="text-xl font-semibold">Manejo de la Suscripción</h3>
+            <div className="flex items-center justify-center gap-4">
+              {/* {subscriptionId && (
+                <>
+                  <button
+                    onClick={handleCancelSubscription}
+                    className="bg-mediumBlue text-white px-4 py-2 rounded hover:bg-lightBlue"
+                    disabled={isCanceling}
+                  >
+                    {isCanceling ? "Actualizando..." : "Actualizar suscripción"}
+                  </button>
+                  {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+                </>
+              )} */}
+              {subscriptionId && (
+                <>
+                  <button
+                    onClick={handleCancelSubscription}
+                    className="bg-redAccent text-white px-4 py-2 rounded hover:bg-redAccent/80"
+                    disabled={isCanceling}
+                  >
+                    {isCanceling ? "Cancelando..." : "Cancelar suscripción"}
+                  </button>
+                  {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+                </>
+              )}
+            </div>
+          </div>
         </PrivateLayout>
       </PrivateRoute>
       {errorMessage && <p className="error">{errorMessage}</p>}

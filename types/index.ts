@@ -149,6 +149,8 @@ export interface UserData {
   role: string | null;
   uid: string | null;
   trialEndsAt: Date | { toDate: () => Date } | null; // Allow for Firestore Timestamp
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
 }
 
 export interface UserDataState extends BaseState<UserData> {
@@ -214,6 +216,8 @@ export interface RegisterRequestBody {
   googleUser?: boolean;
   uid?: string;
   priceId: string;
+  stripeCustomerId: string;
+  stripeSubscriptionId: string;
   trialEndsAt: string;
 }
 
