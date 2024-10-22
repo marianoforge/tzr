@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { TeamMember } from "@/types";
 
 type ModalProps = {
@@ -8,7 +8,7 @@ type ModalProps = {
   onSubmit: (member: TeamMember) => void;
 };
 
-const Modal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
+const EditAgentsModal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
   const [firstName, setFirstName] = useState(member.firstName);
   const [lastName, setLastName] = useState(member.lastName);
   const [email, setEmail] = useState(member.email);
@@ -19,17 +19,20 @@ const Modal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
     setEmail(member.email);
   }, [member]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
 
-    const updatedMember = {
-      ...member,
-      firstName,
-      lastName,
-      email,
-    };
-    onSubmit(updatedMember);
-  };
+      const updatedMember = {
+        ...member,
+        firstName,
+        lastName,
+        email,
+      };
+      onSubmit(updatedMember);
+    },
+    [member, firstName, lastName, email, onSubmit]
+  );
 
   if (!isOpen) return null;
 
@@ -81,4 +84,4 @@ const Modal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
   );
 };
 
-export default Modal;
+export default EditAgentsModal;

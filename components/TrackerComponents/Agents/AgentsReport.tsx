@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import useUsersWithOperations from "@/hooks/useUserWithOperations";
 import Loader from "@/components/TrackerComponents/Loader";
 import { UserData, Operation, TeamMember, UserWithOperations } from "@/types";
@@ -20,6 +20,7 @@ import {
   calculateTotalTips,
   calculateTotalReservationValue,
 } from "@/utils/calculationsAgents";
+import axios from "axios";
 
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
@@ -32,9 +33,9 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
-  const handleAddAdvisorClick = () => {
+  const handleAddAdvisorClick = useCallback(() => {
     setIsAddUserModalOpen(true);
-  };
+  }, []);
 
   useEffect(() => {
     if (data && members) {
@@ -53,46 +54,38 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     }
   }, [data, members]);
 
-  const handleDeleteClick = async (memberId: string) => {
+  const handleDeleteClick = useCallback(async (memberId: string) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este miembro?")) {
       try {
-        const response = await fetch(`/api/teamMembers/${memberId}`, {
-          method: "DELETE",
-        });
-        if (response.ok) {
+        const response = await axios.delete(`/api/teamMembers/${memberId}`);
+        if (response.status === 200) {
           setCombinedData((prevData) =>
             prevData.filter((member) => member.id !== memberId)
           );
           console.log(`Miembro con ID ${memberId} borrado.`);
         } else {
-          console.error("Error al borrar el miembro:", await response.text());
+          console.error("Error al borrar el miembro:", response.data);
         }
       } catch (error) {
         console.error("Error en la petición DELETE:", error);
       }
     }
-  };
+  }, []);
 
-  const handleEditClick = (member: TeamMember) => {
+  const handleEditClick = useCallback((member: TeamMember) => {
     setSelectedMember(member);
     setIsModalOpen(true);
-  };
+  }, []);
 
   const handleSubmit = async (updatedMember: TeamMember) => {
     try {
-      const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: updatedMember.firstName,
-          lastName: updatedMember.lastName,
-          email: updatedMember.email,
-        }),
+      const response = await axios.put(`/api/teamMembers/${updatedMember.id}`, {
+        firstName: updatedMember.firstName,
+        lastName: updatedMember.lastName,
+        email: updatedMember.email,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         setCombinedData((prevData) =>
           prevData.map((member) =>
             member.id === updatedMember.id ? updatedMember : member
@@ -101,7 +94,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         console.log("Miembro actualizado correctamente.");
         setIsModalOpen(false);
       } else {
-        console.error("Error al actualizar el miembro:", await response.text());
+        console.error("Error al actualizar el miembro:", response.data);
       }
     } catch (error) {
       console.error("Error en la petición PUT:", error);
@@ -122,17 +115,18 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Calculate the percentage of honorarios_broker for each agent
-  const sortedData = combinedData
-    .map((agent) => ({
-      ...agent,
-      percentage:
-        agent.operaciones.reduce(
-          (acc: number, op: Operation) => acc + op.honorarios_broker,
-          0
-        ) / honorariosBrokerTotales,
-    }))
-    .sort((a, b) => b.percentage - a.percentage);
+  const sortedData = useMemo(() => {
+    return combinedData
+      .map((agent) => ({
+        ...agent,
+        percentage:
+          agent.operaciones.reduce(
+            (acc: number, op: Operation) => acc + op.honorarios_broker,
+            0
+          ) / honorariosBrokerTotales,
+      }))
+      .sort((a, b) => b.percentage - a.percentage);
+  }, [combinedData, honorariosBrokerTotales]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -140,9 +134,9 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
 
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     setCurrentPage(newPage);
-  };
+  }, []);
 
   if (loading) {
     return <Loader />;

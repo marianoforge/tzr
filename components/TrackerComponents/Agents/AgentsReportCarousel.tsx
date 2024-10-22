@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Slider from "react-slick";
+import axios from "axios";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -53,69 +54,63 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
     }
   }, [data, members]);
 
-  const handleDeleteClick = async (memberId: string) => {
+  const handleDeleteClick = useCallback(async (memberId: string) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este miembro?")) {
       try {
-        const response = await fetch(`/api/teamMembers/${memberId}`, {
-          method: "DELETE",
-        });
-        if (response.ok) {
+        const response = await axios.delete(`/api/teamMembers/${memberId}`);
+        if (response.status === 200) {
           setCombinedData((prevData) =>
             prevData.filter((member) => member.id !== memberId)
           );
           console.log(`Miembro con ID ${memberId} borrado.`);
         } else {
-          console.error("Error al borrar el miembro:", await response.text());
+          console.error("Error al borrar el miembro:", response.data);
         }
       } catch (error) {
         console.error("Error en la petición DELETE:", error);
       }
     }
-  };
+  }, []);
 
-  const honorariosBrokerTotales = combinedData.reduce((acc, usuario) => {
-    return (
-      acc +
-      usuario.operaciones.reduce(
-        (sum: number, op: { honorarios_broker: number }) =>
-          sum + op.honorarios_broker,
-        0
-      )
-    );
-  }, 0);
-
-  const handleEditClick = (member: TeamMember) => {
+  const handleEditClick = useCallback((member: TeamMember) => {
     setSelectedMember(member);
     setIsModalOpen(true);
-  };
+  }, []);
+
+  const honorariosBrokerTotales = useMemo(() => {
+    return combinedData.reduce((acc, usuario) => {
+      return (
+        acc +
+        usuario.operaciones.reduce(
+          (sum: number, op: { honorarios_broker: number }) =>
+            sum + op.honorarios_broker,
+          0
+        )
+      );
+    }, 0);
+  }, [combinedData]);
 
   const handleSubmit = async (updatedMember: TeamMember) => {
     try {
-      const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: updatedMember.firstName,
-          lastName: updatedMember.lastName,
-          email: updatedMember.email,
-        }),
+      const response = await axios.put(`/api/teamMembers/${updatedMember.id}`, {
+        firstName: updatedMember.firstName,
+        lastName: updatedMember.lastName,
+        email: updatedMember.email,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         setCombinedData((prevData) =>
           prevData.map((member) =>
             member.id === updatedMember.id ? updatedMember : member
           )
         );
-        console.log("Member updated successfully.");
+        console.log("Miembro actualizado correctamente.");
         setIsModalOpen(false);
       } else {
-        console.error("Error updating member:", await response.text());
+        console.error("Error al actualizar el miembro:", response.data);
       }
     } catch (error) {
-      console.error("Error in PUT request:", error);
+      console.error("Error en la petición PUT:", error);
     }
   };
 

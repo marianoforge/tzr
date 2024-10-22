@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
@@ -95,9 +95,12 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
     },
   });
 
-  const onSubmit: SubmitHandler<TeamMemberRequestBody> = (data) => {
-    mutation.mutate(data);
-  };
+  const onSubmit: SubmitHandler<TeamMemberRequestBody> = useCallback(
+    (data) => {
+      mutation.mutate(data);
+    },
+    [mutation]
+  );
 
   return (
     <div
