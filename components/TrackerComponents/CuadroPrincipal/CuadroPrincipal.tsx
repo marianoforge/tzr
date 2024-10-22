@@ -15,14 +15,19 @@ const CuadroPrincipal = () => {
     enabled: !!userID, // Solo hace la petición si hay un userID
   });
 
+  // Filtrar operaciones cerradas
+  const closedOperations = operations.filter(
+    (op: Operation) => op.estado === "Cerrada"
+  );
+
   // Use the calculateTotals utility function
-  const totals = calculateTotals(operations);
+  const totals = calculateTotals(closedOperations);
 
   // Calculate the data for each operation type
   const operationData: Record<
     string,
     { cantidad: number; totalHonorarios: number; totalVenta: number }
-  > = operations.reduce(
+  > = closedOperations.reduce(
     (
       acc: Record<
         string,
@@ -52,8 +57,6 @@ const CuadroPrincipal = () => {
     (acc: number, data: { cantidad: number }) => acc + data.cantidad,
     0
   );
-
-  console.log(totals.honorarios_asesor); // Example of using a calculated total
 
   // Calculate the sum of the last column values
   const totalLastColumnSum = Object.entries(operationData).reduce(
