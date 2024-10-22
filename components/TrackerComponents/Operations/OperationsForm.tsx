@@ -250,11 +250,12 @@ const OperationsForm = () => {
                 { value: "", label: "Selecciona el Tipo de Operación" },
                 { value: "Venta", label: "Venta" },
                 { value: "Alquiler temporal", label: "Alquiler temporal" },
-                { value: "Alquiler", label: "Alquiler" },
+                { value: "Alquiler Tradicional", label: "Alquiler" },
                 { value: "Alquiler Comercial", label: "Alquiler Comercial" },
                 { value: "Fondo de Comercio", label: "Fondo de Comercio" },
                 { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
                 { value: "Cochera", label: "Cochera" },
+                { value: "Locales Comerciales", label: "Locales Comerciales" },
               ]}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
@@ -374,7 +375,13 @@ const OperationsForm = () => {
               })}
               error={errors.porcentaje_compartido?.message}
             />
-
+            <p className="text-sm text-mutedBlue mb-5">
+              <span className="font-bold">Importante:</span> Si sos Broker de
+              una oficina o Team leader y comercializar propiedades, cuando
+              cierras una operación con un asesor bajo tu liderazgo, o sea,
+              compartida, primero te pones como asesor participante al 50% y
+              agregas un asesor más con el porcentaje de ganancia de el. Ej: 55%
+            </p>
             {userRole === "team_leader_broker" && (
               <>
                 <Select

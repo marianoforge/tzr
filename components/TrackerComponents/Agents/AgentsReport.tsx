@@ -147,7 +147,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   }
 
   return (
-    <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
+    <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md">
       <div className="flex items-center">
         <h2 className="text-2xl font-bold text-end w-7/12 justify-end mb-4">
           Informe Asesores
@@ -169,12 +169,10 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
               <tr
                 className={`bg-lightBlue/10 ${OPERATIONS_LIST_COLORS.headerText}`}
               >
-                <th className="py-3 px-4 font-semibold text-start w-2/6">
+                <th className="py-3 px-4 font-semibold text-start">
                   Nombre y Apellido
                 </th>
-                <th className="py-3 px-4 font-semibold text-center w-2/6">
-                  Email
-                </th>
+                <th className="py-3 px-4 font-semibold text-center">Email</th>
                 <th className="py-3 px-4 font-semibold text-center">
                   Total Facturación Bruta
                 </th>
@@ -209,13 +207,13 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                     currentPage === 1 && index === 0 ? "bg-green-100" : ""
                   }`}
                 >
-                  <td className="py-3 px-4 font-semibold w-1/6 text-start">
+                  <td className=" font-semibold text-start w-full">
                     {usuario.firstName} {usuario.lastName}
                     {data.some(
                       (user: UserWithOperations) => user.uid === usuario.id
                     ) && " (yo)"}
                   </td>
-                  <td className="py-3 px-4">{usuario.email}</td>
+                  <td className="py-3 px-4 text-sm">{usuario.email}</td>
                   <td className="py-3 px-4">
                     {usuario.operaciones.length > 0 ? (
                       <ul>

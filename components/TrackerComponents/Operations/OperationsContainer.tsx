@@ -30,7 +30,7 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
         <>
           <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
           {operationsLength === 0 ? (
-            <p className="text-center text-gray-600">No existen operaciones</p>
+            <p className="text-center">No existen operaciones</p>
           ) : (
             children
           )}
