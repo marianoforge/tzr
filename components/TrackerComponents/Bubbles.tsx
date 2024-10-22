@@ -8,10 +8,10 @@ import { formatValue } from "@/utils/formatValue";
 import { Operation } from "@/types";
 import { Tooltip } from "react-tooltip";
 import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
+import { currentYearOperations } from "@/utils/currentYearOps";
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
-  const currentYear = new Date().getFullYear();
 
   // Utilizamos Tanstack Query para obtener las operaciones y calcular los totales
   const { data: operations = [], isLoading } = useQuery({
@@ -20,14 +20,8 @@ const Bubbles = () => {
     enabled: !!userID,
   });
 
-  // Filtramos las operaciones para incluir solo las del año corriente
-  const currentYearOperations = operations.filter((operation: Operation) => {
-    const operationYear = new Date(operation.fecha_operacion).getFullYear();
-    return operationYear === currentYear;
-  });
-
   // Calculamos los totales basados en las operaciones filtradas
-  const totals = calculateTotals(currentYearOperations);
+  const totals = calculateTotals(currentYearOperations(operations));
 
   const bubbleData = [
     {

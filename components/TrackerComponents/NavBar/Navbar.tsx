@@ -3,7 +3,6 @@ import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
 import { NavButton } from "@/components/TrackerComponents/NavComponents/NavButton";
 import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
-import useTrialDaysLeft from "@/hooks/useTrialDaysLeft";
 
 interface NavbarProps {
   setActiveView: (view: string) => void;
@@ -12,7 +11,6 @@ interface NavbarProps {
 const Navbar = ({ setActiveView }: NavbarProps) => {
   const { userData, isLoading, fetchUserData } = useUserDataStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const daysLeft = useTrialDaysLeft(userData);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -71,15 +69,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 w-full bg-darkBlue z-50 text-center">
-      <div className="flex items-center justify-center h-4 pt-6">
-        <p className="text-white text-sm font-semibold">
-          {daysLeft !== 0
-            ? `Te quedan ${daysLeft} días de prueba de Realtor Track Pro Agent - Comprar Licencia`
-            : "Bienvenido a Realtor Trackpro"}
-        </p>
-      </div>
-
+    <nav className="fixed top-0 left-0 right-0 w-full bg-darkBlue z-50 text-center h-10">
       <div className="flex items-center justify-between w-full mt-4">
         {/* Hamburger menu icon */}
         <div className="xl:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">

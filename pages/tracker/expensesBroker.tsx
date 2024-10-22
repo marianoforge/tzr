@@ -15,7 +15,7 @@ const ExpensesBroker = () => {
         <div className="block xl:hidden">
           <ExpensesListCards />
         </div>
-        <div className="hidden sm:block mt-8">
+        <div className="hidden sm:block my-8">
           <ExpensesBarchart />
         </div>
       </PrivateLayout>

@@ -19,6 +19,7 @@ import { fetchUserExpenses } from "@/lib/api/expensesApi";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { Expense } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
+import { COLORS } from "@/lib/constants";
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -166,7 +167,7 @@ const ExpensesBarchart: React.FC = () => {
             <Legend wrapperStyle={{ paddingTop: "20px" }} />
             <Bar
               dataKey="amountInDollars"
-              fill="#82ca9d"
+              fill={COLORS[3]}
               name="Monto en Dólares"
               barSize={50} // Adjust barSize to make columns narrower
             />

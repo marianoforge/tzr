@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchUserOperations,
@@ -21,6 +21,7 @@ import { calculateTotals } from "@/utils/calculations";
 import OperationsFullScreenTable from "./OperationsFullScreenTable";
 import { Tooltip } from "react-tooltip";
 import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
+import { filteredOperations } from "@/utils/filteredOperations";
 
 interface OperationsTableProps {
   filter: "all" | "open" | "closed" | "currentYear" | "year2023";
@@ -31,28 +32,29 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   filter,
   totals,
 }) => {
-  const { userID } = useAuthStore();
-  const queryClient = useQueryClient();
-  const { userData } = useUserDataStore();
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
   );
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [viewOperation, setViewOperation] = useState<Operation | null>(null);
-
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
+  const [monthFilter, setMonthFilter] = useState("all");
+
+  const { userID } = useAuthStore();
+  const queryClient = useQueryClient();
+  const { userData } = useUserDataStore();
+
   const itemsPerPage = 10;
 
-  // Obtener las operaciones del usuario usando Tanstack Query
   const { data: operations, isLoading } = useQuery({
     queryKey: ["operations", userID || ""],
     queryFn: () => fetchUserOperations(userID || ""),
-    enabled: !!userID, // Solo ejecuta la consulta si userID está definido
+    enabled: !!userID,
   });
 
-  // Mutación para eliminar operación
   const deleteMutation = useMutation({
     mutationFn: deleteOperation,
     onSuccess: () => {
@@ -62,7 +64,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     },
   });
 
-  // Mutación para actualizar el estado de la operación
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Operation> }) =>
       updateOperation({ id, data }),
@@ -77,73 +78,119 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     return <Loader />;
   }
 
-  const filteredOperations = operations?.filter((operation: Operation) => {
-    const operationYear = new Date(operation.fecha_operacion).getFullYear();
-    const currentYear = new Date().getFullYear();
+  // Calculate filtered operations and totals
+  const { currentOperations, filteredTotals } = useMemo(() => {
+    const filteredOps = filteredOperations(
+      operations,
+      statusFilter,
+      yearFilter,
+      monthFilter
+    );
 
-    if (filter === "all") return true;
-    if (filter === "open") return operation.estado === "En Curso";
-    if (filter === "closed") return operation.estado === "Cerrada";
-    if (filter === "currentYear") return operationYear === currentYear;
-    if (filter === "year2023") return operationYear === 2023;
-  });
+    const totals = calculateTotals(filteredOps || []);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOperations = filteredOperations?.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentOps =
+      filteredOps?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
-  const totalPages = Math.ceil(
-    (filteredOperations?.length || 0) / itemsPerPage
-  );
+    return { currentOperations: currentOps, filteredTotals: totals };
+  }, [
+    operations,
+    statusFilter,
+    yearFilter,
+    monthFilter,
+    currentPage,
+    itemsPerPage,
+  ]);
 
-  const handlePageChange = (newPage: number) => {
+  const totalPages = useMemo(() => {
+    return Math.ceil(
+      (filteredOperations(operations, statusFilter, yearFilter, monthFilter)
+        ?.length || 0) / itemsPerPage
+    );
+  }, [operations, statusFilter, yearFilter, monthFilter, itemsPerPage]);
+
+  const handlePageChange = useCallback((newPage: number) => {
     setCurrentPage(newPage);
-  };
+  }, []);
 
-  const handleEstadoChange = (id: string, currentEstado: string) => {
-    const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
+  const handleEstadoChange = useCallback(
+    (id: string, currentEstado: string) => {
+      const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
 
-    // Buscar la operación existente en la lista de operaciones
-    const existingOperation = operations.find((op: Operation) => op.id === id);
+      const existingOperation = operations.find(
+        (op: Operation) => op.id === id
+      );
 
-    // Si no se encuentra la operación, no hacer nada
-    if (!existingOperation) {
-      console.error("Operación no encontrada");
-      return;
-    }
+      if (!existingOperation) {
+        console.error("Operación no encontrada");
+        return;
+      }
 
-    // Crear un nuevo objeto con todas las propiedades de la operación existente
-    // y actualizar solo el campo "estado"
-    const updatedOperation: Operation = {
-      ...existingOperation, // Mantener todas las propiedades originales
-      estado: newEstado, // Modificar solo el estado
-    };
+      const updatedOperation: Operation = {
+        ...existingOperation,
+        estado: newEstado,
+      };
 
-    // Ejecutar la mutación de actualización con la operación completa
-    updateMutation.mutate({ id: id, data: updatedOperation });
-  };
+      updateMutation.mutate({ id: id, data: updatedOperation });
+    },
+    [operations, updateMutation]
+  );
 
-  const handleDeleteClick = (id: string) => {
-    deleteMutation.mutate(id);
-  };
+  const handleDeleteClick = useCallback(
+    (id: string) => {
+      deleteMutation.mutate(id);
+    },
+    [deleteMutation]
+  );
 
-  const handleEditClick = (operation: Operation) => {
+  const handleEditClick = useCallback((operation: Operation) => {
     setSelectedOperation(operation);
     setIsEditModalOpen(true);
-  };
+  }, []);
 
-  const handleViewClick = (operation: Operation) => {
+  const handleViewClick = useCallback((operation: Operation) => {
     setViewOperation(operation);
     setIsViewModalOpen(true);
-  };
+  }, []);
 
   const styleTotalRow = "py-3 px-4 text-center";
 
   return (
     <div className="overflow-x-auto flex flex-col justify-around">
+      <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
+        <select
+          onChange={(e) => setStatusFilter(e.target.value)}
+          value={statusFilter}
+          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+        >
+          <option value="all">Todas las Operaciones</option>
+          <option value="open">En Curso / Reservas</option>
+          <option value="closed">Operaciones Cerradas</option>
+        </select>
+        <select
+          onChange={(e) => setYearFilter(e.target.value)}
+          value={yearFilter}
+          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+        >
+          <option value="all">Todos los Años</option>
+          <option value="currentYear">Año Actual</option>
+          <option value="year2023">Año 2023</option>
+        </select>
+        <select
+          onChange={(e) => setMonthFilter(e.target.value)}
+          value={monthFilter}
+          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+        >
+          <option value="all">Todos los Meses</option>
+          {Array.from({ length: 12 }, (_, i) => (
+            <option key={i} value={i + 1}>
+              {new Date(0, i).toLocaleString("default", { month: "long" })}
+            </option>
+          ))}
+        </select>
+      </div>
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
@@ -315,14 +362,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               Total
             </td>
             <td className={styleTotalRow}>
-              ${formatNumber(Number(totals.valor_reserva))}
+              ${formatNumber(Number(filteredTotals.valor_reserva))}
             </td>
             <td className={styleTotalRow}>
-              {totals.promedio_punta_compradora_porcentaje !== undefined &&
-              totals.promedio_punta_compradora_porcentaje !== null ? (
+              {filteredTotals.promedio_punta_compradora_porcentaje !==
+                undefined &&
+              filteredTotals.promedio_punta_compradora_porcentaje !== null ? (
                 <>
                   {`${formatNumber(
-                    Number(totals.promedio_punta_compradora_porcentaje)
+                    Number(filteredTotals.promedio_punta_compradora_porcentaje)
                   )}%`}
                   <InformationCircleIcon
                     className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
@@ -336,11 +384,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               )}
             </td>
             <td className={styleTotalRow}>
-              {totals.promedio_punta_vendedora_porcentaje !== undefined &&
-              totals.promedio_punta_vendedora_porcentaje !== null ? (
+              {filteredTotals.promedio_punta_vendedora_porcentaje !==
+                undefined &&
+              filteredTotals.promedio_punta_vendedora_porcentaje !== null ? (
                 <>
                   {`${formatNumber(
-                    Number(totals.promedio_punta_vendedora_porcentaje)
+                    Number(filteredTotals.promedio_punta_vendedora_porcentaje)
                   )}%`}
                   <InformationCircleIcon
                     className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
@@ -355,13 +404,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             </td>
 
             <td className={styleTotalRow}>
-              {formatNumber(Number(totals.suma_total_de_puntas))}
+              {formatNumber(Number(filteredTotals.suma_total_de_puntas))}
             </td>
             <td className={styleTotalRow}>
-              ${formatNumber(Number(totals.honorarios_broker))}
+              ${formatNumber(Number(filteredTotals.honorarios_broker))}
             </td>
             <td className={styleTotalRow}>
-              ${formatNumber(Number(totals.honorarios_asesor))}
+              ${formatNumber(Number(filteredTotals.honorarios_asesor))}
             </td>
             <td className={styleTotalRow} colSpan={4}></td>
           </tr>

@@ -29,7 +29,7 @@ export const UserActions = ({ setActiveView }: UserActionsProps) => {
         className="text-white xl:text-mediumBlue font-semibold rounded cursor-pointer transition duration-150 ease-in-out flex justify-center items-center gap-1 w-1/2"
       >
         <Cog6ToothIcon className="h-5 w-5" />
-        Perfil
+        Perfil Personal
       </Link>
       <Link
         href="/"

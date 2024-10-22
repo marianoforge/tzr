@@ -11,6 +11,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { formatNumber } from "@/utils/formatNumber";
 
 import router from "next/router";
+import { currentYearOperations } from "@/utils/currentYearOps";
 
 const RADIAN = Math.PI / 180;
 
@@ -77,16 +78,9 @@ interface ObjectiveChartProps {
 class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
   render() {
     const { userData, operations } = this.props;
-    const currentYear = new Date().getFullYear();
-
-    // Filtrar operaciones para incluir solo las del año corriente
-    const currentYearOperations = operations.filter((operation: Operation) => {
-      const operationYear = new Date(operation.fecha_operacion).getFullYear();
-      return operationYear === currentYear;
-    });
 
     // Calcular los totales usando las operaciones filtradas
-    const totals = calculateTotals(currentYearOperations);
+    const totals = calculateTotals(currentYearOperations(operations));
 
     const percentage =
       (totals.honorarios_broker * 100) / (userData?.objetivoAnual ?? 1);

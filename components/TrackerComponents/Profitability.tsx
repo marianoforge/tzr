@@ -7,12 +7,12 @@ import Loader from "./Loader";
 import { Expense, Operation } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { calculateTotals } from "@/utils/calculations";
+import { currentYearOperations } from "@/utils/currentYearOps";
 
 const Profitability = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
   const validUserID = userID || ""; // Ensure userID is a string
-  const currentYear = new Date().getFullYear();
 
   const { data: expenses = [], isLoading: isLoadingExpenses } = useQuery({
     queryKey: ["expenses", validUserID],
@@ -25,12 +25,7 @@ const Profitability = () => {
     enabled: !!userID,
   });
 
-  // Filtrar operaciones para incluir solo las del año corriente
-  const currentYearOperations = operations.filter((operation: Operation) => {
-    const operationYear = new Date(operation.fecha_operacion).getFullYear();
-    return operationYear === currentYear;
-  });
-  const totals = calculateTotals(currentYearOperations);
+  const totals = calculateTotals(currentYearOperations(operations));
 
   // Calcular los totales de operaciones y gastos usando las operaciones filtradas
   const totalHonorariosNetosAsesor = totals.honorarios_asesor_cerradas;
