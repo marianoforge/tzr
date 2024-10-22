@@ -2,7 +2,6 @@ import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
 import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
 import React, { useState } from "react";
 import OperationsList from "@/components/TrackerComponents/Operations/OperationsList";
-import OperationsCarouselDash from "@/components/TrackerComponents/Operations/OperationsCarouselDash";
 
 const OperationsPage = () => {
   const [filter] = useState<

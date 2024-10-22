@@ -7,7 +7,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { auth } from "@/lib/firebase";
 import { Operation } from "@/types";
-import { calculateTotals } from "@/utils/calculations";
 
 interface OperationsCarouselDashProps {
   filter: "all" | "open" | "closed" | "currentYear" | "year2023";
