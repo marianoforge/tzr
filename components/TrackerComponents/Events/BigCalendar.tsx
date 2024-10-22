@@ -3,7 +3,7 @@
 import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import EventModal from "./EventModal";
 import { Event } from "@/types";
 import { useAuthStore } from "@/stores/authStore";
@@ -30,37 +30,43 @@ const BigCalendar = () => {
     enabled: !!userID, // Only fetch if userID exists
   });
 
-  // Map the events data into a format compatible with the calendar
-  const calendarEvents = events.map((event: Event) => ({
+  // Utility function to map events
+  const mapEventToCalendarEvent = (event: Event) => ({
     id: event.id,
     title: event.title,
     startTime: new Date(`${event.date}T${event.startTime}`),
     endTime: new Date(`${event.date}T${event.endTime}`),
     description: event.description,
     user_uid: event.user_uid,
-  }));
+  });
 
-  const navigateCalendar = (action: "PREV" | "NEXT" | "TODAY") => {
+  // Memoize the mapped events
+  const calendarEvents = useMemo(
+    () => events.map(mapEventToCalendarEvent),
+    [events]
+  );
+
+  // Utility function for date navigation
+  const adjustDate = (date: Date, days: number) => {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + days);
+    return newDate;
+  };
+
+  // Memoize the navigation function
+  const navigateCalendar = useCallback((action: "PREV" | "NEXT" | "TODAY") => {
     switch (action) {
       case "PREV":
-        setDate((prevDate) => {
-          const newDate = new Date(prevDate);
-          newDate.setDate(newDate.getDate() - 7);
-          return newDate;
-        });
+        setDate((prevDate) => adjustDate(prevDate, -7));
         break;
       case "NEXT":
-        setDate((prevDate) => {
-          const newDate = new Date(prevDate);
-          newDate.setDate(newDate.getDate() + 7);
-          return newDate;
-        });
+        setDate((prevDate) => adjustDate(prevDate, 7));
         break;
       case "TODAY":
         setDate(new Date());
         break;
     }
-  };
+  }, []);
 
   const formatEventTime = (date: Date) => {
     return date.toLocaleTimeString("es-ES", {
@@ -181,40 +187,51 @@ const BigCalendar = () => {
   );
 };
 
+// Generic Button component
+const Button = ({
+  onClick,
+  label,
+  isActive = false,
+}: {
+  onClick: () => void;
+  label: string;
+  isActive?: boolean;
+}) => (
+  <button
+    onClick={onClick}
+    className={`px-2 sm:px-4 py-1 sm:py-2 rounded-xl shadow-md transition-all duration-300 font-semibold text-sm sm:text-base ${
+      isActive
+        ? "bg-mediumBlue text-white hover:bg-lightBlue"
+        : "bg-[#A8E0FF]/10 text-[#5EAAD7] hover:bg-[#A8E0FF]/20"
+    }`}
+  >
+    {label}
+  </button>
+);
+
+// Define NavButton and ViewButton as regular components
 const NavButton = ({
   onClick,
   label,
 }: {
   onClick: () => void;
   label: string;
-}) => (
-  <button
-    onClick={onClick}
-    className="bg-[#A8E0FF]/10 text-[#5EAAD7] px-2 sm:px-4 py-1 sm:py-2 rounded-xl shadow-md hover:bg-[#A8E0FF]/20 transition-all duration-300 font-semibold text-sm sm:text-base"
-  >
-    {label}
-  </button>
-);
+}) => <Button onClick={onClick} label={label} />;
 
 const ViewButton = ({
   view,
   currentView,
   onClick,
 }: {
-  view: View; // Cambiado para usar tipo View, que es compatible
+  view: View;
   currentView: View;
   onClick: () => void;
 }) => (
-  <button
+  <Button
     onClick={onClick}
-    className={`px-2 sm:px-3 py-1 rounded-md transition-all duration-300 text-xs sm:text-sm ${
-      currentView === view
-        ? "bg-mediumBlue text-white font-semibold hover:bg-lightBlue"
-        : "bg-gray-200 text-gray-600 hover:bg-gray-300 font-semibold"
-    }`}
-  >
-    {view === "day" ? "Día" : view === "week" ? "Semana" : "Mes"}
-  </button>
+    label={view === "day" ? "Día" : view === "week" ? "Semana" : "Mes"}
+    isActive={currentView === view}
+  />
 );
 
 export default BigCalendar;

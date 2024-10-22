@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import ModalOK from "../ModalOK";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/stores/authStore";
@@ -47,36 +47,43 @@ const FormularioEvento: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  // Mutación para crear un nuevo evento usando Tanstack Query
-  const mutation = useMutation({
-    mutationFn: createEvent, // Función que crea el evento
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events", userID] }); // Invalidar cache para recargar eventos
-      setModalMessage("Evento guardado exitosamente");
-      setIsModalOpen(true);
-      reset(); // Resetear el formulario tras éxito
+  // Memoize the mutation object to prevent unnecessary re-renders
+  const mutation = useMemo(
+    () =>
+      useMutation({
+        mutationFn: createEvent,
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["events", userID] });
+          setModalMessage("Evento guardado exitosamente");
+          setIsModalOpen(true);
+          reset();
+        },
+        onError: () => {
+          setModalMessage("Error al agendar el evento");
+          setIsModalOpen(true);
+        },
+      }),
+    [queryClient, userID]
+  );
+
+  // Memoize the onSubmit function
+  const onSubmit: SubmitHandler<EventFormData> = useCallback(
+    async (data) => {
+      if (!userID) {
+        setModalMessage("No se proporcionó un ID de usuario válido");
+        setIsModalOpen(true);
+        return;
+      }
+
+      const eventData = {
+        ...data,
+        user_uid: userID,
+      };
+
+      mutation.mutate(eventData);
     },
-    onError: () => {
-      setModalMessage("Error al agendar el evento");
-      setIsModalOpen(true);
-    },
-  });
-
-  // Manejar la presentación del formulario
-  const onSubmit: SubmitHandler<EventFormData> = async (data) => {
-    if (!userID) {
-      setModalMessage("No se proporcionó un ID de usuario válido");
-      setIsModalOpen(true);
-      return;
-    }
-
-    const eventData = {
-      ...data,
-      user_uid: userID,
-    };
-
-    mutation.mutate(eventData);
-  };
+    [userID, mutation]
+  );
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">

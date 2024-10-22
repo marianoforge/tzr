@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import Loader from "../Loader";
 import { useAuthStore } from "@/stores/authStore";
 import { useQuery } from "@tanstack/react-query"; // Importar useQuery
@@ -20,8 +20,13 @@ const EventsList: React.FC = () => {
     enabled: !!userID, // Solo ejecutar la consulta si userID está definido
   });
 
-  // Filtrar los primeros 3 eventos
-  const displayedEvents = events.slice(0, 3);
+  // Memoize the filtered events
+  const displayedEvents = useMemo(() => events.slice(0, 3), [events]);
+
+  // Memoize the navigation function
+  const handleViewCalendar = useCallback(() => {
+    router.push("/calendar");
+  }, []);
 
   if (error) {
     return (
@@ -65,9 +70,7 @@ const EventsList: React.FC = () => {
           )}
           <button
             className="bg-mediumBlue hover:bg-lightBlue text-white p-2 rounded-md font-semibold mt-2"
-            onClick={() => {
-              router.push("/calendar");
-            }}
+            onClick={handleViewCalendar}
           >
             Ver calendario de eventos
           </button>
