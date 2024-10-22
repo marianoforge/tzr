@@ -98,9 +98,6 @@ const Settings = () => {
     }
   }, [customerId]);
 
-  console.log(customerId);
-  console.log(subscriptionId);
-
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);

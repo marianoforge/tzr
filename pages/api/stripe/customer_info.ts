@@ -19,8 +19,6 @@ export default async function handler(
     // Obtener la información del cliente desde Stripe usando el customer_id dinámico
     const customer = await stripe.customers.retrieve(customer_id);
 
-    console.log("Información del cliente:", customer);
-
     res.status(200).json({ customer });
   } catch (error: unknown) {
     console.error("Error al obtener la información del cliente:", error);
