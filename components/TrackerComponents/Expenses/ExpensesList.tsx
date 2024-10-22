@@ -17,7 +17,6 @@ import ExpensesModal from "./ExpensesModal";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import { format } from "date-fns"; // Importa format desde date-fns
-import { toZonedTime } from "date-fns-tz"; // Importa utcToZonedTime desde date-fns-tz
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();

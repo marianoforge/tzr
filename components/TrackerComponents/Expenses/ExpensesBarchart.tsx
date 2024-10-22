@@ -81,17 +81,6 @@ const ExpensesBarchart: React.FC = () => {
     ? teamBrokerExpenses
     : nonTeamBrokerExpenses;
 
-  const formatDate = (date: string) => {
-    if (!date) return "Fecha inválida"; // Verifica si la fecha es válida
-    try {
-      const zonedDate = toZonedTime(date, "UTC");
-      return format(zonedDate, "dd/MM/yyyy");
-    } catch (error) {
-      console.error("Error formateando la fecha:", error);
-      return "Fecha inválida"; // Devuelve un mensaje de error si ocurre un problema
-    }
-  };
-
   const groupExpensesByMonth = (expenses: Expense[]) => {
     const allMonths = [
       "January",
