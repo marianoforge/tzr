@@ -5,7 +5,7 @@ import OperationsList from "@/components/TrackerComponents/Operations/Operations
 import OperationsCarouselDash from "@/components/TrackerComponents/Operations/OperationsCarouselDash";
 
 const OperationsPage = () => {
-  const [filter, setFilter] = useState<
+  const [filter] = useState<
     "all" | "open" | "closed" | "currentYear" | "year2023"
   >("all");
 
@@ -13,11 +13,11 @@ const OperationsPage = () => {
     <PrivateRoute>
       <PrivateLayout>
         <div className="hidden lg:block">
-          <OperationsList filter={filter} setFilter={setFilter} />
+          <OperationsList filter={filter} />
         </div>
-        <div className="block lg:hidden">
+        {/* <div className="block lg:hidden">
           <OperationsCarouselDash filter={filter} setFilter={setFilter} />
-        </div>
+        </div> */}
       </PrivateLayout>
     </PrivateRoute>
   );

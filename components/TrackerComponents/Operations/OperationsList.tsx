@@ -11,15 +11,9 @@ import { calculateTotals } from "@/utils/calculations";
 
 interface OperationsCarouselDashProps {
   filter: "all" | "open" | "closed" | "currentYear" | "year2023";
-  setFilter: React.Dispatch<
-    React.SetStateAction<"all" | "open" | "closed" | "currentYear" | "year2023">
-  >;
 }
 
-const OperationsList: React.FC<OperationsCarouselDashProps> = ({
-  filter,
-  setFilter,
-}) => {
+const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
   const [userUID, setUserUID] = useState<string | null>(null);
   const router = useRouter();
 
@@ -51,9 +45,6 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
     if (filter === "currentYear") return operationYear === currentYear;
     if (filter === "year2023") return operationYear === 2023;
   });
-
-  // Calcular los totales basados en las operaciones filtradas
-  const filteredTotals = calculateTotals(filteredOperations);
 
   return (
     <OperationsContainer

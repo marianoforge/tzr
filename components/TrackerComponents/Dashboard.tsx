@@ -39,9 +39,9 @@ const DashBoard = () => {
         <div className="hidden lg:block">
           <OperationsListDash />
         </div>
-        <div className="block lg:hidden">
+        {/* <div className="block lg:hidden">
           <OperationsCarouselDash filter="all" setFilter={() => {}} />
-        </div>
+        </div> */}
         <div
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
           style={{ marginTop: "2.5rem" }}
