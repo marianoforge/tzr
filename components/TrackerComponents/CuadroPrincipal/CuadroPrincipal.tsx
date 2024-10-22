@@ -4,6 +4,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { Operation } from "@/types";
+import { useState } from "react";
 
 const CuadroPrincipal = () => {
   const { userID } = useAuthStore();
@@ -35,6 +36,19 @@ const CuadroPrincipal = () => {
     }
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOperations = operations.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(operations.length / itemsPerPage);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block">
       {isLoading ? (
@@ -58,7 +72,7 @@ const CuadroPrincipal = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {operations.map((operacion: Operation) => (
+                  {currentOperations.map((operacion: Operation) => (
                     <tr
                       key={operacion.id}
                       className="border-b md:table-row flex flex-col md:flex-row mb-4 text-center "
@@ -92,6 +106,25 @@ const CuadroPrincipal = () => {
                   </tr>
                 </tbody>
               </table>
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
+                >
+                  Anterior
+                </button>
+                <span className="px-4 py-2 mx-1">
+                  Página {currentPage} de {totalPages}
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
+                >
+                  Siguiente
+                </button>
+              </div>
             </div>
           )}
         </div>
