@@ -23,15 +23,7 @@ import { Tooltip } from "react-tooltip";
 import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
 import { filteredOperations } from "@/utils/filteredOperations";
 
-interface OperationsTableProps {
-  filter: "all" | "open" | "closed" | "currentYear" | "year2023";
-  totals: ReturnType<typeof calculateTotals>;
-}
-
-const OperationsTable: React.FC<OperationsTableProps> = ({
-  filter,
-  totals,
-}) => {
+const OperationsTable: React.FC = ({}) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
@@ -73,10 +65,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       });
     },
   });
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   // Calculate filtered operations and totals
   const { currentOperations, filteredTotals } = useMemo(() => {
@@ -156,6 +144,10 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   }, []);
 
   const styleTotalRow = "py-3 px-4 text-center";
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="overflow-x-auto flex flex-col justify-around">

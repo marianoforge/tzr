@@ -46,25 +46,19 @@ const FormularioEvento: React.FC = () => {
   } = useForm<EventFormData>({
     resolver: yupResolver(schema),
   });
-
-  // Memoize the mutation object to prevent unnecessary re-renders
-  const mutation = useMemo(
-    () =>
-      useMutation({
-        mutationFn: createEvent,
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["events", userID] });
-          setModalMessage("Evento guardado exitosamente");
-          setIsModalOpen(true);
-          reset();
-        },
-        onError: () => {
-          setModalMessage("Error al agendar el evento");
-          setIsModalOpen(true);
-        },
-      }),
-    [queryClient, userID]
-  );
+  const mutation = useMutation({
+    mutationFn: createEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events", userID] });
+      setModalMessage("Evento guardado exitosamente");
+      setIsModalOpen(true);
+      reset();
+    },
+    onError: () => {
+      setModalMessage("Error al agendar el evento");
+      setIsModalOpen(true);
+    },
+  });
 
   // Memoize the onSubmit function
   const onSubmit: SubmitHandler<EventFormData> = useCallback(

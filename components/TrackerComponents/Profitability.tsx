@@ -4,7 +4,7 @@ import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { fetchUserExpenses } from "@/lib/api/expensesApi"; // Asume que tienes este método
 import { useAuthStore } from "@/stores/authStore"; // Esto sigue para obtener el userID
 import Loader from "./Loader";
-import { Expense, Operation } from "@/types";
+import { Expense } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { calculateTotals } from "@/utils/calculations";
 import { currentYearOperations } from "@/utils/currentYearOps";

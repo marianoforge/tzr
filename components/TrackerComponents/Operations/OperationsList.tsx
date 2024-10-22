@@ -61,7 +61,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({
       title="Lista de Operaciones"
       operationsLength={filteredOperations.length}
     >
-      <OperationsTable filter={filter} totals={filteredTotals} />
+      <OperationsTable />
     </OperationsContainer>
   );
 };

@@ -5,7 +5,6 @@ import { calculateTotals } from "@/utils/calculations";
 import Loader from "./Loader";
 import { useAuthStore } from "@/stores/authStore";
 import { formatValue } from "@/utils/formatValue";
-import { Operation } from "@/types";
 import { Tooltip } from "react-tooltip";
 import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
 import { currentYearOperations } from "@/utils/currentYearOps";
