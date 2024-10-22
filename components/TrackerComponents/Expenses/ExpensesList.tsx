@@ -111,12 +111,12 @@ const ExpensesList = () => {
 
   const disablePagination = filteredExpenses.length < itemsPerPage;
 
-  // Formatear la fecha usando date-fns y utcToZonedTime
+  // Formatear la fecha usando date-fns
   const formatDate = (date: string) => {
     if (!date) return "Fecha inválida"; // Verifica si la fecha es válida
     try {
-      const zonedDate = toZonedTime(date, "UTC");
-      return format(zonedDate, "dd/MM/yyyy");
+      const parsedDate = new Date(date); // Asegúrate de que la fecha se parsea correctamente
+      return format(parsedDate, "dd/MM/yyyy");
     } catch (error) {
       console.error("Error formateando la fecha:", error);
       return "Fecha inválida"; // Devuelve un mensaje de error si ocurre un problema
