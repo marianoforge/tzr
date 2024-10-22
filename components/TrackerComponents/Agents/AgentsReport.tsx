@@ -11,7 +11,7 @@ import {
   TrashIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import AddUserModal from "../Agents/AddUserModal"; // Importa el modal
+import AddUserModal from "../Agents/AddUserModal";
 
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
@@ -52,7 +52,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
           method: "DELETE",
         });
         if (response.ok) {
-          // Actualizar el estado eliminando el miembro
           setCombinedData((prevData) =>
             prevData.filter((member) => member.id !== memberId)
           );
@@ -127,7 +126,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     }))
     .sort((a, b) => b.percentage - a.percentage);
 
-  // Calculate indices for pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentAgents = sortedData.slice(indexOfFirstItem, indexOfLastItem);
@@ -330,7 +328,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         </div>
       )}
 
-      {/* Pagination Controls */}
       <div className="flex justify-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
@@ -351,18 +348,16 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         </button>
       </div>
 
-      {/* Modal para agregar asesor */}
       {isAddUserModalOpen && (
         <AddUserModal onClose={() => setIsAddUserModalOpen(false)} />
       )}
 
-      {/* Modal para editar */}
       {isModalOpen && selectedMember && (
         <EditAgentsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           member={selectedMember}
-          onSubmit={handleSubmit} // Pasa handleSubmit al modal
+          onSubmit={handleSubmit}
         />
       )}
     </div>

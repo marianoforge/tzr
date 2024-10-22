@@ -43,7 +43,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const [modalMessage, setModalMessage] = useState("");
   const [formError, setFormError] = useState("");
 
-  // Obtener el CSRF token cuando se carga el componente
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
@@ -51,16 +50,15 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           method: "GET",
         });
         const data = await response.json();
-        setCsrfToken(data.csrfToken); // Guardar el CSRF token en el estado
+        setCsrfToken(data.csrfToken);
       } catch (error) {
         console.error("Error fetching CSRF token:", error);
       }
     };
 
-    fetchCsrfToken(); // Llamar a la función para obtener el token
+    fetchCsrfToken();
   }, []);
 
-  // Usar useMutation para manejar la solicitud POST
   const mutation = useMutation<unknown, Error, TeamMemberRequestBody>({
     mutationFn: async (data: TeamMemberRequestBody) => {
       if (!userID) {
@@ -71,10 +69,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "CSRF-Token": csrfToken || "", // Enviar el token CSRF en los headers
+          "CSRF-Token": csrfToken || "",
         },
         body: JSON.stringify({
-          uid: userID, // Incluir el UID del usuario
+          uid: userID,
           ...data,
         }),
       });
@@ -176,7 +174,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
-            onClose(); // Cerrar el modal principal también
+            onClose();
           }}
           message={modalMessage}
           onAccept={() => router.push("/dashboard")}

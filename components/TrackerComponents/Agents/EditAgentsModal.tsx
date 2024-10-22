@@ -9,12 +9,10 @@ type ModalProps = {
 };
 
 const Modal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
-  // Estados locales para controlar los inputs
   const [firstName, setFirstName] = useState(member.firstName);
   const [lastName, setLastName] = useState(member.lastName);
   const [email, setEmail] = useState(member.email);
 
-  // Actualizar los valores si el modal se abre con un nuevo miembro
   useEffect(() => {
     setFirstName(member.firstName);
     setLastName(member.lastName);
@@ -23,14 +21,14 @@ const Modal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Crear un objeto actualizado con los valores del modal
+
     const updatedMember = {
       ...member,
       firstName,
       lastName,
       email,
     };
-    onSubmit(updatedMember); // Llamar a la función de submit que se pasó desde el componente padre
+    onSubmit(updatedMember);
   };
 
   if (!isOpen) return null;

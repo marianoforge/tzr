@@ -39,13 +39,12 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
           numeroTelefono: "",
           operaciones: user.operaciones,
         })),
-        ...(members || []), // Incluye los miembros del equipo si existen
+        ...(members || []),
       ];
       setCombinedData(initialData);
     }
-  }, [data, members]); // Solo se ejecuta cuando 'data' y 'members' cambian
+  }, [data, members]);
 
-  // Borrar miembro
   const handleDeleteClick = async (memberId: string) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este miembro?")) {
       try {
@@ -53,7 +52,6 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
           method: "DELETE",
         });
         if (response.ok) {
-          // Actualizar el estado eliminando el miembro
           setCombinedData((prevData) =>
             prevData.filter((member) => member.id !== memberId)
           );
@@ -66,8 +64,6 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
       }
     }
   };
-
-  // Abrir el modal con los datos del miembro seleccionado
 
   const honorariosBrokerTotales = combinedData.reduce((acc, usuario) => {
     return (
@@ -96,7 +92,6 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
       });
 
       if (response.ok) {
-        // Update the combinedData with the new data
         setCombinedData((prevData) =>
           prevData.map((member) =>
             member.id === updatedMember.id ? updatedMember : member
