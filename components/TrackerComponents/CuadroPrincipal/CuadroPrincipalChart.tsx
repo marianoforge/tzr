@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   PieChart,
   Pie,
@@ -16,34 +16,36 @@ import { fetchUserOperations } from "@/lib/api/operationsApi";
 
 const CuadroPrincipalChart = () => {
   const { userID } = useAuthStore();
-  const [tiposOperaciones, setTiposOperaciones] = useState<
-    { name: string; value: number }[]
-  >([]);
 
   const { data: operations = [], isLoading } = useQuery({
     queryKey: ["operations", userID],
-    queryFn: () => fetchUserOperations(userID || ""),
-    enabled: !!userID, // Solo hacer la petición si hay un userID
+    queryFn: async () => {
+      return await fetchUserOperations(userID || "");
+    },
+    enabled: !!userID,
   });
 
-  useEffect(() => {
-    if (operations.length > 0) {
-      calculateTotals(operations);
-    }
+  const closedOperations = useMemo(() => {
+    return operations.filter((op: Operation) => op.estado === "Cerrada");
   }, [operations]);
 
-  const calculateTotals = (operations: Operation[]) => {
-    const tiposCount = operations.reduce((acc, op) => {
-      acc[op.tipo_operacion] = (acc[op.tipo_operacion] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  const tiposOperaciones = useMemo(() => {
+    if (closedOperations.length > 0) {
+      const tiposCount = closedOperations.reduce(
+        (acc: Record<string, number>, op: Operation) => {
+          acc[op.tipo_operacion] = (acc[op.tipo_operacion] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
-    const tiposData = Object.entries(tiposCount).map(([name, value]) => ({
-      name,
-      value,
-    }));
-    setTiposOperaciones(tiposData);
-  };
+      return Object.entries(tiposCount).map(([name, value]) => ({
+        name,
+        value,
+      }));
+    }
+    return [];
+  }, [closedOperations]);
 
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[550px] overflow-y-auto">

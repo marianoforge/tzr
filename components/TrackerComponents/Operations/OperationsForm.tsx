@@ -249,8 +249,11 @@ const OperationsForm = () => {
               options={[
                 { value: "", label: "Selecciona el Tipo de Operación" },
                 { value: "Venta", label: "Venta" },
-                { value: "Alquiler temporal", label: "Alquiler temporal" },
-                { value: "Alquiler Tradicional", label: "Alquiler" },
+                { value: "Alquiler Temporal", label: "Alquiler Temporal" },
+                {
+                  value: "Alquiler Tradicional",
+                  label: "Alquiler Tradicional",
+                },
                 { value: "Alquiler Comercial", label: "Alquiler Comercial" },
                 { value: "Fondo de Comercio", label: "Fondo de Comercio" },
                 { value: "Desarrollo", label: "Desarrollo Inmobiliario" },

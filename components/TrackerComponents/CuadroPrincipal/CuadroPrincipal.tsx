@@ -4,7 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { Operation } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
-import { calculateTotals } from "@/utils/calculations"; // Import the utility function
+import { calculateTotals } from "@/utils/calculations";
+import { useMemo } from "react";
+import {
+  calculateOperationData,
+  calculateTotalCantidad,
+  calculateTotalLastColumnSum,
+  calculatePercentage,
+} from "@/utils/calculationsPrincipal";
+import { useCallback } from "react";
 
 const CuadroPrincipal = () => {
   const { userID } = useAuthStore();
@@ -12,69 +20,43 @@ const CuadroPrincipal = () => {
   const { data: operations = [], isLoading } = useQuery({
     queryKey: ["operations", userID],
     queryFn: () => fetchUserOperations(userID || ""),
-    enabled: !!userID, // Solo hace la petición si hay un userID
+    enabled: !!userID,
   });
 
-  // Filtrar operaciones cerradas
   const closedOperations = operations.filter(
     (op: Operation) => op.estado === "Cerrada"
   );
 
-  // Use the calculateTotals utility function
   const totals = calculateTotals(closedOperations);
 
-  // Calculate the data for each operation type
-  const operationData: Record<
+  const operationData = useMemo(
+    () => calculateOperationData(closedOperations),
+    [closedOperations]
+  );
+
+  const typedOperationData = operationData as Record<
     string,
     { cantidad: number; totalHonorarios: number; totalVenta: number }
-  > = closedOperations.reduce(
-    (
-      acc: Record<
-        string,
-        { cantidad: number; totalHonorarios: number; totalVenta: number }
-      >,
-      op: Operation
-    ) => {
-      if (!acc[op.tipo_operacion]) {
-        acc[op.tipo_operacion] = {
-          cantidad: 0,
-          totalHonorarios: 0,
-          totalVenta: 0,
-        };
-      }
-      acc[op.tipo_operacion].cantidad += 1;
-      acc[op.tipo_operacion].totalHonorarios += Number(op.honorarios_asesor);
-      acc[op.tipo_operacion].totalVenta += Number(op.valor_reserva);
-      return acc;
-    },
-    {} as Record<
-      string,
-      { cantidad: number; totalHonorarios: number; totalVenta: number }
-    >
+  >;
+
+  const totalCantidad = useMemo(
+    () => calculateTotalCantidad(operationData),
+    [operationData]
+  );
+  const totalLastColumnSum = useMemo(
+    () => calculateTotalLastColumnSum(operationData),
+    [operationData]
+  );
+  const adjustedTotalVentaSum = useMemo(
+    () => totalLastColumnSum / 2,
+    [totalLastColumnSum]
   );
 
-  const totalCantidad = Object.values(operationData).reduce(
-    (acc: number, data: { cantidad: number }) => acc + data.cantidad,
-    0
+  // Ejemplo de uso de useCallback
+  const calculatePercentageCallback = useCallback(
+    (cantidad: number, total: number) => calculatePercentage(cantidad, total),
+    []
   );
-
-  // Calculate the sum of the last column values
-  const totalLastColumnSum = Object.entries(operationData).reduce(
-    (acc, [tipo, data]) => {
-      if (
-        tipo !== "Alquiler" &&
-        tipo !== "Cochera" &&
-        tipo !== "Alquiler temporal"
-      ) {
-        return acc + data.totalVenta / data.cantidad;
-      }
-      return acc;
-    },
-    0
-  );
-
-  // Divide the sum by 2
-  const adjustedTotalVentaSum = totalLastColumnSum / 2;
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[550px] overflow-y-auto">
@@ -92,31 +74,22 @@ const CuadroPrincipal = () => {
               <table className="w-full text-left border-collapse">
                 <thead className="hidden md:table-header-group">
                   <tr className="bg-lightBlue/10 border-b-2 text-center text-sm text-mediumBlue h-16">
-                    <th className="py-3 px-4 text-start font-semibold">
-                      Tipo de Operacion
-                    </th>
-                    <th className="py-3 px-4 font-semibold">
-                      Cantidad de Operaciones
-                    </th>
-                    <th className="py-3 px-4 font-semibold">
-                      Porcentaje Sobre el Total
-                    </th>
-                    <th className="py-3 px-4 font-semibold">
-                      % Ganancias Brutas
-                    </th>
-                    <th className="py-3 px-4 font-semibold">
-                      Promedio Monto Ventas & Desarrollos
-                    </th>
+                    {[
+                      "Tipo de Operacion",
+                      "Cantidad de Operaciones",
+                      "Porcentaje Sobre el Total",
+                      "% Ganancias Brutas",
+                      "Promedio Monto Ventas & Desarrollos",
+                    ].map((header) => (
+                      <th key={header} className="py-3 px-4 font-semibold">
+                        {header}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(operationData).map(([tipo, data], index) => {
-                    const typedData = data as {
-                      cantidad: number;
-                      totalHonorarios: number;
-                      totalVenta: number;
-                    };
-                    return (
+                  {Object.entries(typedOperationData).map(
+                    ([tipo, data], index) => (
                       <tr
                         key={tipo}
                         className={`${
@@ -126,36 +99,36 @@ const CuadroPrincipal = () => {
                         <td className="py-3 px-4 text-start text-base">
                           {tipo}
                         </td>
+                        <td className="py-3 px-4 text-base">{data.cantidad}</td>
                         <td className="py-3 px-4 text-base">
-                          {typedData.cantidad}
-                        </td>
-                        <td className="py-3 px-4 text-base">
-                          {(
-                            (typedData.cantidad / operations.length) *
-                            100
-                          ).toFixed(2)}
+                          {calculatePercentageCallback(
+                            data.cantidad,
+                            operations.length
+                          )}
                           %
                         </td>
                         <td className="py-3 px-4 text-base">
-                          {(
-                            (typedData.totalHonorarios /
-                              totals.honorarios_asesor) *
-                            100
-                          ).toFixed(2)}
+                          {calculatePercentageCallback(
+                            data.totalHonorarios,
+                            totals.honorarios_asesor
+                          )}
                           %
                         </td>
                         <td className="py-3 px-4 text-base">
-                          {tipo === "Alquiler" ||
-                          tipo === "Cochera" ||
-                          tipo === "Alquiler temporal"
+                          {[
+                            "Alquiler",
+                            "Cochera",
+                            "Alquiler temporal",
+                            "Alquiler Tradicional",
+                          ].includes(tipo)
                             ? ""
                             : `$${formatNumber(
-                                typedData.totalVenta / typedData.cantidad
+                                (data.totalVenta ?? 0) / (data.cantidad || 1)
                               )}`}
                         </td>
                       </tr>
-                    );
-                  })}
+                    )
+                  )}
                   <tr className="font-bold bg-lightBlue/10 h-16 text-center">
                     <td className="py-3 px-4 text-start text-base">Total</td>
                     <td className="py-3 px-4 text-base">{totalCantidad}</td>

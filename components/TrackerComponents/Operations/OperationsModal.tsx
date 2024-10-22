@@ -215,12 +215,13 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Tipo de Operación"
             options={[
               { value: "Venta", label: "Venta" },
-              { value: "Alquiler temporal", label: "Alquiler temporal" },
-              { value: "Alquiler", label: "Alquiler" },
+              { value: "Alquiler Temporal", label: "Alquiler Temporal" },
+              { value: "Alquiler Tradicional", label: "Alquiler Tradicional" },
               { value: "Alquiler Comercial", label: "Alquiler Comercial" },
               { value: "Fondo de Comercio", label: "Fondo de Comercio" },
               { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
               { value: "Cochera", label: "Cochera" },
+              { value: "Locales Comerciales", label: "Locales Comerciales" },
             ]}
             register={register}
             name="tipo_operacion"
