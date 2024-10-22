@@ -17,8 +17,6 @@ import Loader from "../Loader";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserExpenses } from "@/lib/api/expensesApi";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
-import { format } from "date-fns"; // Importa format desde date-fns
-import { toZonedTime } from "date-fns-tz"; // Importa utcToZonedTime desde date-fns-tz
 import { Expense } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
 
