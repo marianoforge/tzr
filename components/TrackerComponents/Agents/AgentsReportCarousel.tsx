@@ -62,7 +62,6 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
           setCombinedData((prevData) =>
             prevData.filter((member) => member.id !== memberId)
           );
-          console.log(`Miembro con ID ${memberId} borrado.`);
         } else {
           console.error("Error al borrar el miembro:", response.data);
         }
@@ -104,7 +103,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
             member.id === updatedMember.id ? updatedMember : member
           )
         );
-        console.log("Miembro actualizado correctamente.");
+
         setIsModalOpen(false);
       } else {
         console.error("Error al actualizar el miembro:", response.data);

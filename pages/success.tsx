@@ -73,8 +73,6 @@ export default function Success() {
           if (!res.ok) {
             throw new Error("Failed to update user profile");
           }
-
-          console.log("User profile updated successfully");
         } catch (error) {
           console.error("Error updating user profile:", error);
         }

@@ -84,10 +84,6 @@ const Settings = () => {
         const response = await axios.get(`/api/stripe/customer_info`, {
           params: { customer_id: customerId }, // Asegurarte de pasar el customerId correcto
         });
-        console.log(
-          "Información del cliente obtenida:",
-          response.data.customer
-        );
       } catch (error) {
         console.error("Error fetching customer info:", error);
       }

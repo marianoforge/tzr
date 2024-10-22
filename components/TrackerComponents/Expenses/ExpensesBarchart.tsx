@@ -150,8 +150,6 @@ const ExpensesBarchart: React.FC = () => {
     return <Loader />;
   }
 
-  console.log(filteredExpenses);
-
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
