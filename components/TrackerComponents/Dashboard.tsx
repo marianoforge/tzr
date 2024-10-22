@@ -9,6 +9,7 @@ import Profitability from "@/components/TrackerComponents/Profitability";
 import { UserInfo } from "@/components/TrackerComponents/NavComponents/UserInfo";
 import { UserAvatar } from "@/components/TrackerComponents/NavComponents/UserAvatar";
 import MonthlyBarChart from "./MonthlyBarChart/MonthlyBarChart";
+import MonthlyBarChartGross from "./MonthlyBarChart/MonthlyBarChartGross";
 
 const DashBoard = () => {
   return (
@@ -51,6 +52,10 @@ const DashBoard = () => {
         {/* Sacar el Mocked */}
         <div style={{ marginTop: "2.5rem" }} className="">
           <MonthlyBarChart />
+          {/* <MonthlyMockedBarchart /> */}
+        </div>
+        <div style={{ marginTop: "2.5rem" }} className="">
+          <MonthlyBarChartGross />
           {/* <MonthlyMockedBarchart /> */}
         </div>
       </div>

@@ -38,13 +38,12 @@ const CustomTooltip: React.FC<{
   return null;
 };
 
-const MonthlyBarChart: React.FC = () => {
+const MonthlyBarChartGross: React.FC = () => {
   const { userID } = useAuthStore();
   const [data, setData] = useState<
     { month: string; currentYear: number; previousYear: number }[]
   >([]);
 
-  // Utilizamos useQuery para obtener las operaciones del usuario
   const { data: operations = [], isLoading } = useQuery({
     queryKey: ["operations", userID],
     queryFn: async () => {
@@ -64,7 +63,7 @@ const MonthlyBarChart: React.FC = () => {
       );
       const formattedData = formatOperationsData(
         closedOperations,
-        "honorarios_asesor"
+        "honorarios_broker"
       );
 
       // Verificar que los datos estén correctamente formateados
@@ -83,7 +82,7 @@ const MonthlyBarChart: React.FC = () => {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">
         <h2 className="text-2xl font-bold mb-4 text-center">
-          Honorarios Brutos Mensuales
+          Honorarios Netos Mensuales
         </h2>
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
@@ -97,7 +96,7 @@ const MonthlyBarChart: React.FC = () => {
       ) : (
         <>
           <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
-            Honorarios Netos Mensuales
+            Honorarios Brutos Mensuales
           </h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -130,4 +129,4 @@ const MonthlyBarChart: React.FC = () => {
   );
 };
 
-export default MonthlyBarChart;
+export default MonthlyBarChartGross;

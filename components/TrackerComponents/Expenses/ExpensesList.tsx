@@ -123,6 +123,10 @@ const ExpensesList = () => {
     }
   };
 
+  const pageTitle = router.pathname.includes("expensesBroker")
+    ? "Lista de Gastos Team / Broker"
+    : "Lista de Gastos propios";
+
   if (isLoading) {
     return <Loader />;
   }
@@ -133,9 +137,7 @@ const ExpensesList = () => {
         <Loader />
       ) : (
         <>
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            Lista de Gastos
-          </h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
 
           {currentExpenses.length === 0 ? (
             <p className="text-center text-gray-600">No existen gastos</p>
