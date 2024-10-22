@@ -377,7 +377,7 @@ const OperationsForm = () => {
             />
             <p className="text-sm text-mutedBlue mb-5">
               <span className="font-bold">Importante:</span> Si sos Broker de
-              una oficina o Team leader y comercializar propiedades, cuando
+              una oficina o Team leader y comercializas propiedades, cuando
               cierras una operación con un asesor bajo tu liderazgo, o sea,
               compartida, primero te pones como asesor participante al 50% y
               agregas un asesor más con el porcentaje de ganancia de el. Ej: 55%

@@ -26,8 +26,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const router = useRouter();
   const { userID } = useAuthStore();
   const schema = createSchema();
-
-  // Estado para almacenar el token CSRF
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [formError, setFormError] = useState("");
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
 
   const {
@@ -38,10 +39,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   } = useForm<TeamMemberRequestBody>({
     resolver: yupResolver(schema) as Resolver<TeamMemberRequestBody>,
   });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     const fetchCsrfToken = async () => {

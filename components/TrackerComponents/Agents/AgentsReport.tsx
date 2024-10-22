@@ -12,6 +12,14 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import AddUserModal from "../Agents/AddUserModal";
+import {
+  calculateAdjustedBrokerFees,
+  calculateTotalOperations,
+  calculateTotalBuyerTips,
+  calculateTotalSellerTips,
+  calculateTotalTips,
+  calculateTotalReservationValue,
+} from "@/utils/calculationsAgents";
 
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const { data, loading, error } = useUsersWithOperations(currentUser);
@@ -218,20 +226,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                         <li>
                           $
                           {formatNumber(
-                            usuario.operaciones.reduce(
-                              (acc: number, op: Operation) => {
-                                const isHalfOperation =
-                                  op.user_uid &&
-                                  op.user_uid_adicional &&
-                                  op.user_uid !== op.user_uid_adicional;
-                                return (
-                                  acc +
-                                  op.honorarios_broker *
-                                    (isHalfOperation ? 0.5 : 1)
-                                );
-                              },
-                              0
-                            )
+                            calculateAdjustedBrokerFees(usuario.operaciones)
                           )}
                         </li>
                       </ul>
@@ -251,53 +246,24 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                   <td className="py-3 px-4">
                     {usuario.operaciones.length > 0 ? (
                       <ul>
-                        <li>
-                          {usuario.operaciones.reduce((total, op) => {
-                            const isHalfOperation =
-                              op.user_uid &&
-                              op.user_uid_adicional &&
-                              op.user_uid !== op.user_uid_adicional;
-                            const isSingleOperation =
-                              op.user_uid && !op.user_uid_adicional;
-                            return (
-                              total +
-                              (isHalfOperation ? 0.5 : 0) +
-                              (isSingleOperation ? 1 : 0)
-                            );
-                          }, 0)}
-                        </li>
+                        <li>{calculateTotalOperations(usuario.operaciones)}</li>
                       </ul>
                     ) : (
                       <span>No operations</span>
                     )}
                   </td>
                   <td className="py-3 px-4">
-                    {usuario.operaciones.reduce(
-                      (acc, op) => acc + (op.punta_compradora ? 1 : 0),
-                      0
-                    )}
+                    {calculateTotalBuyerTips(usuario.operaciones)}
                   </td>
                   <td className="py-3 px-4">
-                    {usuario.operaciones.reduce(
-                      (acc, op) => acc + (op.punta_vendedora ? 1 : 0),
-                      0
-                    )}
+                    {calculateTotalSellerTips(usuario.operaciones)}
                   </td>
                   <td className="py-3 px-4">
-                    {usuario.operaciones.reduce(
-                      (acc, op) =>
-                        acc +
-                        (op.punta_compradora ? 1 : 0) +
-                        (op.punta_vendedora ? 1 : 0),
-                      0
-                    )}
+                    {calculateTotalTips(usuario.operaciones)}
                   </td>
                   <td className="py-3 px-4">
                     {formatNumber(
-                      usuario.operaciones.reduce(
-                        (acc, op) => acc + op.valor_reserva,
-                        0
-                      )
+                      calculateTotalReservationValue(usuario.operaciones)
                     )}
                   </td>
                   {/* Columna de acciones */}

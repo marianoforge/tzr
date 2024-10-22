@@ -10,6 +10,14 @@ import { formatNumber } from "@/utils/formatNumber";
 import { useTeamMembersOps } from "@/hooks/useTeamMembersOps";
 import EditAgentsModal from "./EditAgentsModal";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  calculateAdjustedBrokerFees,
+  calculateTotalOperations,
+  calculateTotalBuyerTips,
+  calculateTotalSellerTips,
+  calculateTotalTips,
+  calculateTotalReservationValue,
+} from "@/utils/calculationsAgents";
 
 const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const settings = {
@@ -68,7 +76,11 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const honorariosBrokerTotales = combinedData.reduce((acc, usuario) => {
     return (
       acc +
-      usuario.operaciones.reduce((sum, op) => sum + op.honorarios_broker, 0)
+      usuario.operaciones.reduce(
+        (sum: number, op: { honorarios_broker: number }) =>
+          sum + op.honorarios_broker,
+        0
+      )
     );
   }, 0);
 
@@ -132,9 +144,8 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                 <p>
                   <strong>Total Facturacion Bruta:</strong>{" "}
                   {usuario.operaciones.length > 0 ? (
-                    `$${usuario.operaciones.reduce(
-                      (acc, op) => acc + op.honorarios_asesor,
-                      0
+                    `$${formatNumber(
+                      calculateAdjustedBrokerFees(usuario.operaciones)
                     )}`
                   ) : (
                     <span>No operations</span>
@@ -146,10 +157,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                     <ul>
                       <li>
                         {formatNumber(
-                          (usuario.operaciones.reduce(
-                            (acc, op) => acc + op.honorarios_broker,
-                            0
-                          ) *
+                          (calculateAdjustedBrokerFees(usuario.operaciones) *
                             100) /
                             honorariosBrokerTotales
                         )}
@@ -163,33 +171,27 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                 <p>
                   <strong>Cantidad de Operaciones:</strong>{" "}
                   {usuario.operaciones.length > 0 ? (
-                    usuario.operaciones.length
+                    calculateTotalOperations(usuario.operaciones)
                   ) : (
                     <span>No operations</span>
                   )}
                 </p>
                 <p>
                   <strong>Puntas Compradoras:</strong>{" "}
-                  {usuario.operaciones.reduce(
-                    (acc, op) => acc + (op.punta_compradora ? 1 : 0),
-                    0
-                  )}
+                  {calculateTotalBuyerTips(usuario.operaciones)}
                 </p>
                 <p>
                   <strong>Puntas Vendedoras:</strong>{" "}
-                  {usuario.operaciones.reduce(
-                    (acc, op) => acc + (op.punta_vendedora ? 1 : 0),
-                    0
-                  )}
+                  {calculateTotalSellerTips(usuario.operaciones)}
                 </p>
                 <p>
                   <strong>Puntas totales:</strong>{" "}
-                  {usuario.operaciones.reduce(
-                    (acc, op) =>
-                      acc +
-                      (op.punta_compradora ? 1 : 0) +
-                      (op.punta_vendedora ? 1 : 0),
-                    0
+                  {calculateTotalTips(usuario.operaciones)}
+                </p>
+                <p>
+                  <strong>Monto Total Operaciones:</strong>{" "}
+                  {formatNumber(
+                    calculateTotalReservationValue(usuario.operaciones)
                   )}
                 </p>
                 {data.some(
