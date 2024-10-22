@@ -3,7 +3,6 @@ import OperationsTable from "./OperationsTable";
 import OperationsContainer from "./OperationsContainer";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { useAuthStore } from "@/stores/authStore";
-import { calculateTotals } from "@/utils/calculations";
 
 const OperationsListDash: React.FC = () => {
   const { userID } = useAuthStore();
@@ -20,7 +19,7 @@ const OperationsListDash: React.FC = () => {
       title="Lista de Operaciones"
       operationsLength={operations.length}
     >
-      <OperationsTable filter="all" totals={calculateTotals(operations)} />{" "}
+      <OperationsTable />
     </OperationsContainer>
   );
 };
