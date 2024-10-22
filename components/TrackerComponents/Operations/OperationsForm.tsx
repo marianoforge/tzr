@@ -17,8 +17,6 @@ import { useUserDataStore } from "@/stores/userDataStore";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
 import Select from "@/components/TrackerComponents/FormComponents/Select";
 
-// ... other imports ...
-
 type FormData = InferType<typeof schema>;
 
 const OperationsForm = () => {
@@ -386,7 +384,7 @@ const OperationsForm = () => {
                   options={[
                     {
                       value: "",
-                      label: "Selecciona el asesor que realizó la venta",
+                      label: "Selecciona el asesor que realizó la operación",
                     },
                     ...usersMapped
                       .sort((a, b) => a.name.localeCompare(b.name))
@@ -427,7 +425,8 @@ const OperationsForm = () => {
                   options={[
                     {
                       value: "",
-                      label: "Selecciona el asesor adicional",
+                      label:
+                        "Selecciona el asesor participante en la operación",
                     },
                     ...usersMapped
                       .sort((a, b) => a.name.localeCompare(b.name))

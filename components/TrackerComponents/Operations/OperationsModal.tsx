@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType } from "yup";
@@ -11,6 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateOperation } from "@/lib/api/operationsApi";
 import { TeamMember, UserData } from "@/types";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
+import { useUserDataStore } from "@/stores/userDataStore";
 
 type FormData = InferType<typeof schema>;
 
@@ -44,7 +45,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   const queryClient = useQueryClient();
   const { data: teamMembers } = useTeamMembers();
-
+  const { userData } = useUserDataStore();
+  const userRole = userData?.role;
   const usersMapped = [
     ...(teamMembers?.map((member: TeamMember) => ({
       name: `${member.firstName} ${member.lastName}`,
@@ -73,6 +75,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         porcentaje_punta_vendedora: operation.porcentaje_punta_vendedora || 0,
       };
       reset(formattedOperation);
+
+      // Open additional advisor section if realizador_venta_adicional exists
+      if (operation.realizador_venta_adicional) {
+        setShowAdditionalAdvisor(true);
+      }
     }
   }, [operation, reset]);
 
@@ -105,6 +112,14 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       return;
     }
 
+    // Find the additional advisor by name to get the uid
+    const selectedUserAdicional = usersMapped.find(
+      (user) => user.name === data.realizador_venta_adicional
+    );
+    const selectedUser_idAdicional = selectedUserAdicional
+      ? selectedUserAdicional.uid
+      : null;
+
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
       data.porcentaje_honorarios_asesor,
@@ -116,11 +131,17 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
       user_uid: selectedUser_id,
+      user_uid_adicional: selectedUser_idAdicional, // Add this line
     };
 
     mutation.mutate({ id: operation.id, data: payload });
   };
 
+  const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
+
+  const toggleAdditionalAdvisor = () => {
+    setShowAdditionalAdvisor((prev) => !prev);
+  };
   if (!isOpen || !operation) return null;
 
   return (
@@ -238,17 +259,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           />
 
           <Input
-            label="Porcentaje Honorarios Asesor"
-            type="text"
-            step="any"
-            {...register("porcentaje_honorarios_asesor", {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            error={errors.porcentaje_honorarios_asesor?.message}
-            required
-          />
-
-          <Input
             label="Porcentaje Honorarios Broker"
             type="text"
             step="any"
@@ -329,17 +339,94 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             error={errors.porcentaje_compartido?.message}
           />
 
-          <Select
-            label="Asesor que realizó la venta"
-            options={usersMapped.map((user) => ({
-              value: user.name,
-              label: user.name,
-            }))}
-            register={register}
-            name="realizador_venta"
-            error={errors.realizador_venta?.message}
+          {userRole === "team_leader_broker" && (
+            <>
+              <Select
+                label="Asesor que realizó la venta"
+                register={register}
+                {...register("realizador_venta")}
+                options={[
+                  {
+                    value: "",
+                    label: "Selecciona el asesor que realizó la operación",
+                  },
+                  ...usersMapped
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((member) => ({
+                      value: member.name,
+                      label: member.name,
+                    })),
+                ]}
+                className="w-full p-2 mb-8 border border-gray-300 rounded"
+                required
+              />
+              {errors.realizador_venta && (
+                <p className="text-red-500">
+                  {errors.realizador_venta.message}
+                </p>
+              )}
+            </>
+          )}
+
+          <Input
+            label="Porcentaje Honorarios Asesor"
+            type="text"
+            step="any"
+            {...register("porcentaje_honorarios_asesor", {
+              setValueAs: (value) => parseFloat(value) || 0,
+            })}
+            error={errors.porcentaje_honorarios_asesor?.message}
             required
           />
+
+          {/* Additional advisor input block */}
+          {showAdditionalAdvisor && (
+            <>
+              <Select
+                label="Asesor adicional"
+                register={register}
+                {...register("realizador_venta_adicional")}
+                options={[
+                  {
+                    value: "",
+                    label: "Selecciona el asesor participante en la operación",
+                  },
+                  ...usersMapped
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((member) => ({
+                      value: member.name,
+                      label: member.name,
+                    })),
+                ]}
+                className="w-full p-2 mb-8 border border-gray-300 rounded"
+              />
+              {errors.realizador_venta_adicional && (
+                <p className="text-red-500">
+                  {errors.realizador_venta_adicional.message}
+                </p>
+              )}
+
+              <Input
+                label="Porcentaje honorarios asesor adicional"
+                type="text"
+                placeholder="Por ejemplo: 40%"
+                {...register("porcentaje_honorarios_asesor_adicional", {
+                  setValueAs: (value) => parseFloat(value) || 0,
+                })}
+                error={errors.porcentaje_honorarios_asesor_adicional?.message}
+              />
+            </>
+          )}
+          {userRole === "team_leader_broker" && (
+            <p
+              className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+              onClick={toggleAdditionalAdvisor}
+            >
+              {showAdditionalAdvisor
+                ? "Eliminar Segundo Asesor"
+                : "Agregar Otro Asesor"}
+            </p>
+          )}
 
           <div className="flex justify-around items-center ">
             <div className="flex items-center gap-2 my-4">

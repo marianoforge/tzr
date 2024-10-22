@@ -143,7 +143,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   const styleTotalRow = "py-3 px-4 text-center";
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto flex flex-col justify-around">
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
@@ -218,7 +218,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               key={operacion.id}
               className={`${
                 index % 2 === 0 ? "bg-white" : "bg-mediumBlue/10"
-              } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center`}
+              } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-[75px] max-h-[75px]`}
             >
               <td className="py-3 px-4 before:content-['Fecha:'] md:before:content-none">
                 {new Date(operacion.fecha_operacion).toLocaleDateString()}
@@ -308,7 +308,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               </td>
             </tr>
           ))}
-          <tr className={`font-bold hidden md:table-row bg-lightBlue/10`}>
+          <tr
+            className={`font-bold hidden md:table-row bg-lightBlue/10 h-[75px]`}
+          >
             <td className="py-3 px-4 pl-10" colSpan={3}>
               Total
             </td>
@@ -365,7 +367,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           </tr>
         </tbody>
       </table>
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center mt-4 mb-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}

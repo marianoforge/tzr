@@ -76,8 +76,6 @@ const MonthlyBarChartGross: React.FC = () => {
     }
   }, [operations]);
 
-  console.log(data);
-
   if (data.length === 0) {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">

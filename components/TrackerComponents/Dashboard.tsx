@@ -43,18 +43,22 @@ const DashBoard = () => {
           <OperationsCarouselDash filter="all" setFilter={() => {}} />
         </div>
         <div
-          className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-6"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
           style={{ marginTop: "2.5rem" }}
         >
-          <CuadroPrincipal />
-          <CuadroPrincipalChart />
+          <div className="col-span-1 lg:col-span-2">
+            <CuadroPrincipal />
+          </div>
+          <div className="col-span-1">
+            <CuadroPrincipalChart />
+          </div>
         </div>
         {/* Sacar el Mocked */}
-        <div style={{ marginTop: "2.5rem" }} className="">
+        <div style={{ marginTop: "2.5rem" }}>
           <MonthlyBarChart />
           {/* <MonthlyMockedBarchart /> */}
         </div>
-        <div style={{ marginTop: "2.5rem" }} className="">
+        <div style={{ marginTop: "2.5rem" }}>
           <MonthlyBarChartGross />
           {/* <MonthlyMockedBarchart /> */}
         </div>
