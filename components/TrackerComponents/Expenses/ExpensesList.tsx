@@ -113,8 +113,14 @@ const ExpensesList = () => {
 
   // Formatear la fecha usando date-fns y utcToZonedTime
   const formatDate = (date: string) => {
-    const zonedDate = toZonedTime(date, "UTC");
-    return format(zonedDate, "dd/MM/yyyy");
+    if (!date) return "Fecha inválida"; // Verifica si la fecha es válida
+    try {
+      const zonedDate = toZonedTime(date, "UTC");
+      return format(zonedDate, "dd/MM/yyyy");
+    } catch (error) {
+      console.error("Error formateando la fecha:", error);
+      return "Fecha inválida"; // Devuelve un mensaje de error si ocurre un problema
+    }
   };
 
   if (isLoading) {

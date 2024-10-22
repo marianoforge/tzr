@@ -194,7 +194,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               Honorarios Netos
             </th>
             <th
-              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+              className={`flex items-center gap-1 py-8 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
               Estado
               <InformationCircleIcon
@@ -325,7 +325,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   <InformationCircleIcon
                     className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                     data-tooltip-id="tooltip-compradora"
-                    data-tooltip-content="Promedio del % sin incluir alquileres ni puntas en 0 (no existentes)."
+                    data-tooltip-content="Promedio del % incluyendo solamente ventas y desarrollos. Otras operaciones y puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
                   />
                   <Tooltip id="tooltip-compradora" place="top" />
                 </>
@@ -343,7 +343,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   <InformationCircleIcon
                     className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                     data-tooltip-id="tooltip-vendedora"
-                    data-tooltip-content="Promedio del % sin incluir alquileres ni puntas en 0 (no existentes)."
+                    data-tooltip-content="Promedio del % incluyendo solamente ventas y desarrollos. Otras operaciones y puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
                   />
                   <Tooltip id="tooltip-vendedora" place="top" />
                 </>

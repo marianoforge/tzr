@@ -67,6 +67,7 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     porcentaje_honorarios_asesor,
     porcentaje_honorarios_broker,
     user_uid,
+    user_uid_adicional,
     teamId, // Añadir teamId aquí
     ...rest
   } = req.body;
@@ -105,7 +106,8 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
       porcentaje_honorarios_asesor,
       porcentaje_honorarios_broker,
       user_uid,
-      teamId, // Añadir teamId aquí
+      user_uid_adicional: user_uid_adicional || null, // Asigna null si es undefined
+      teamId,
       ...rest,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

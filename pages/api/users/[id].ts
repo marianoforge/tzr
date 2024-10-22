@@ -1,6 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  FieldValue,
+} from "firebase/firestore";
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,51 +34,64 @@ export default async function handler(
     }
   } else if (req.method === "PUT") {
     const {
-      name,
+      firstName,
       lastName,
       email,
       agenciaBroker,
       numeroTelefono,
       objetivoAnual,
-      stripeCustomerId, // Nuevo campo
-      stripeSubscriptionId, // Nuevo campo
-      priceId, // Nuevo campo
+      stripeCustomerId,
+      stripeSubscriptionId,
+      priceId,
     } = req.body;
 
+    // Check if at least one field is present in the request body
     if (
-      !name &&
-      !lastName &&
-      !email &&
-      !agenciaBroker &&
-      !numeroTelefono &&
-      !objetivoAnual &&
-      !stripeCustomerId && // Validar también los nuevos campos
-      !stripeSubscriptionId &&
-      !priceId
+      firstName === undefined &&
+      lastName === undefined &&
+      email === undefined &&
+      agenciaBroker === undefined &&
+      numeroTelefono === undefined &&
+      objetivoAnual === undefined &&
+      stripeCustomerId === undefined &&
+      stripeSubscriptionId === undefined &&
+      priceId === undefined
     ) {
       return res.status(400).json({ message: "No fields to update" });
     }
 
     try {
       const userRef = doc(db, "usuarios", id);
-      const updates = {
-        ...(name && { name }),
-        ...(lastName && { lastName }),
-        ...(email && { email }),
-        ...(agenciaBroker && { agenciaBroker }),
-        ...(numeroTelefono && { numeroTelefono }),
-        ...(objetivoAnual && { objetivoAnual }),
-        ...(stripeCustomerId && { stripeCustomerId }), // Agregar nuevos campos si están presentes
-        ...(stripeSubscriptionId && { stripeSubscriptionId }),
-        ...(priceId && { priceId }),
-        updatedAt: new Date(),
-      };
+      const updates: Record<string, unknown> = {};
 
-      await updateDoc(userRef, updates);
+      // Add fields to updates object if they are present in the request body
+      if (firstName !== undefined) updates.firstName = firstName;
+      if (lastName !== undefined) updates.lastName = lastName;
+      if (email !== undefined) updates.email = email;
+      if (agenciaBroker !== undefined) updates.agenciaBroker = agenciaBroker;
+      if (numeroTelefono !== undefined) updates.numeroTelefono = numeroTelefono;
+      if (objetivoAnual !== undefined) updates.objetivoAnual = objetivoAnual;
+      if (stripeCustomerId !== undefined)
+        updates.stripeCustomerId = stripeCustomerId;
+      if (stripeSubscriptionId !== undefined)
+        updates.stripeSubscriptionId = stripeSubscriptionId;
+      if (priceId !== undefined) updates.priceId = priceId;
+
+      updates.updatedAt = new Date();
+
+      await updateDoc(
+        userRef,
+        updates as { [x: string]: FieldValue | Partial<unknown> | undefined }
+      );
 
       res.status(200).json({ message: "User updated successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Error updating user", error });
+      res
+        .status(500)
+        .json({
+          message: "Error updating user",
+          error: error instanceof Error ? error.message : String(error),
+        });
     }
   } else if (req.method === "DELETE") {
     try {

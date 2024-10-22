@@ -49,7 +49,7 @@ const DashBoard = () => {
           <CuadroPrincipalChart />
         </div>
         {/* Sacar el Mocked */}
-        <div style={{ marginTop: "2.5rem" }}>
+        <div style={{ marginTop: "2.5rem" }} className="">
           <MonthlyBarChart />
           {/* <MonthlyMockedBarchart /> */}
         </div>

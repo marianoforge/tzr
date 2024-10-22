@@ -47,8 +47,14 @@ export const calculateTotals = (operations: Operation[]) => {
       punta_vendedora: 0,
       suma_total_de_puntas: 0,
       cantidad_operaciones: 0,
+      honorarios_asesor_adicional: 0,
+      porcentaje_honorarios_asesor_adicional: 0,
     };
   }
+
+  //Calculos Doblete
+
+  //Fin Calculos Doblete
 
   const totalValorReserva = sumField(operations, "valor_reserva");
   const totalValorReservaCerradas = sumField(
@@ -134,6 +140,17 @@ export const calculateTotals = (operations: Operation[]) => {
       ? totalPuntaVendedoraPorcentaje / validPuntaVendedoraOperations.length
       : 0;
 
+  const totalHonorariosBrokerAdjusted = operations.reduce(
+    (acc: number, op: Operation) => {
+      const isHalfOperation =
+        op.user_uid &&
+        op.user_uid_adicional &&
+        op.user_uid !== op.user_uid_adicional;
+      return acc + op.honorarios_broker * (isHalfOperation ? 0.5 : 1);
+    },
+    0
+  );
+
   return {
     valor_reserva: totalValorReserva,
     porcentaje_honorarios_asesor: totalPorcentajeHonorariosAsesor,
@@ -154,5 +171,6 @@ export const calculateTotals = (operations: Operation[]) => {
     promedio_punta_vendedora_porcentaje: promedioPuntaVendedoraPorcentaje,
     total_valor_ventas_desarrollos: totalValorReservaFiltered,
     valor_reserva_cerradas: totalValorReservaCerradas,
+    total_honorarios_broker_adjusted: totalHonorariosBrokerAdjusted,
   };
 };

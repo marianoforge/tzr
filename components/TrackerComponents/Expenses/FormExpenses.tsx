@@ -146,7 +146,7 @@ const FormularioExpenses: React.FC = () => {
       {userRole ? (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
+          className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%] "
         >
           <h2 className="text-2xl mb-4 font-semibold">Registrar Gasto</h2>
 
@@ -154,6 +154,7 @@ const FormularioExpenses: React.FC = () => {
             <Select
               label="Asociación del Gasto"
               options={[
+                { value: "", label: "Selecciona una opción" }, // Added default option
                 {
                   value: "team_broker",
                   label: "Gasto Asociado al Team / Broker",

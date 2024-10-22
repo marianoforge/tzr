@@ -105,8 +105,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 pt-4 rounded-xl shadow-lg text-center font-bold w-auto  h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center items-center">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      style={{ zIndex: 1000 }}
+    >
+      <div className="bg-white p-6 pt-4 rounded-xl shadow-lg text-center font-bold w-auto h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center items-center z-60">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white p-6 pt-4 w-11/12 max-w-lg rounded-lg"

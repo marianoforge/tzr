@@ -67,8 +67,6 @@ const OperationsForm = () => {
       : []),
   ];
 
-  console.log("usersMapped", usersMapped);
-
   // Fetch the user ID from Firebase authentication
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -132,12 +130,22 @@ const OperationsForm = () => {
     const assignedUserUID =
       selectedUser && selectedUser.uid !== userUID ? selectedUser.uid : userUID;
 
+    const selectedUserAdicional = usersMapped.find(
+      (member: { name: string }) =>
+        member.name === data.realizador_venta_adicional
+    );
+    const assignedUserUIDAdicional =
+      selectedUserAdicional && selectedUserAdicional.uid !== userUID
+        ? selectedUserAdicional.uid
+        : "";
+
     const dataToSubmit = {
       ...data,
       fecha_operacion: new Date(data.fecha_operacion).toISOString(),
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
       user_uid: assignedUserUID, // Use the determined user UID
+      user_uid_adicional: assignedUserUIDAdicional,
       teamId: userUID, // Add the logged-in user's ID as teamId
       punta_compradora: data.punta_compradora ? 1 : 0,
       punta_vendedora: data.punta_vendedora ? 1 : 0,
@@ -154,6 +162,12 @@ const OperationsForm = () => {
     router.push("/dashboard");
   };
 
+  const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
+
+  const toggleAdditionalAdvisor = () => {
+    setShowAdditionalAdvisor((prev) => !prev);
+  };
+
   return (
     <div className="flex justify-center items-center w-full mt-20">
       <form
@@ -167,7 +181,7 @@ const OperationsForm = () => {
           <div className="w-50% md:w-[40%] px-2">
             {/* Left column */}
             <Input
-              label="Fecha de la Operación"
+              label="Fecha de la Operación*"
               type="date"
               {...register("fecha_operacion")}
               error={errors.fecha_operacion?.message}
@@ -175,7 +189,7 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Dirección de la operación"
+              label="Dirección de la operación*"
               type="text"
               placeholder="Dirección de la Reserva"
               {...register("direccion_reserva")}
@@ -184,7 +198,7 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Localidad"
+              label="Localidad*"
               type="text"
               placeholder="Por ejemplo: San Isidro"
               {...register("localidad_reserva")}
@@ -193,7 +207,7 @@ const OperationsForm = () => {
             />
 
             <Select
-              label="Provincia" // Add the missing label prop
+              label="Provincia*" // Add the missing label prop
               register={register} // Add the missing register prop
               {...register("provincia_reserva")}
               options={[
@@ -231,7 +245,7 @@ const OperationsForm = () => {
             )}
 
             <Select
-              label="Tipo de operación" // Add the missing label prop
+              label="Tipo de operación*" // Add the missing label prop
               register={register} // Add the missing register prop
               {...register("tipo_operacion")}
               options={[
@@ -252,7 +266,7 @@ const OperationsForm = () => {
             )}
 
             <Input
-              label="Porcentaje punta compradora"
+              label="Porcentaje punta compradora*"
               type="text"
               placeholder="Por ejemplo: 4%"
               {...register("porcentaje_punta_compradora", {
@@ -263,7 +277,7 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Porcentaje punta vendedora"
+              label="Porcentaje punta vendedora*"
               type="text"
               placeholder="Por ejemplo: 3%"
               {...register("porcentaje_punta_vendedora", {
@@ -274,18 +288,7 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Porcentaje honorarios asesor"
-              type="text"
-              placeholder="Por ejemplo: 40%"
-              {...register("porcentaje_honorarios_asesor", {
-                setValueAs: (value) => parseFloat(value) || 0,
-              })}
-              error={errors.porcentaje_honorarios_asesor?.message}
-              required
-            />
-
-            <Input
-              label="Porcentaje honorarios totales"
+              label="Porcentaje honorarios totales*"
               type="text"
               placeholder="Por ejemplo: 7%"
               {...register("porcentaje_honorarios_broker", {
@@ -295,18 +298,13 @@ const OperationsForm = () => {
               required
             />
             <Input
-              label="Valor de reserva / operación"
+              label="Valor de reserva / operación*"
               type="number"
               placeholder="Por ejemplo: 200000"
               {...register("valor_reserva")}
               error={errors.valor_reserva?.message}
               required
             />
-          </div>
-
-          <div className="w-full md:w-[40%] px-2">
-            {/* Right column */}
-
             <Input
               label="Número sobre de reserva"
               type="text"
@@ -322,6 +320,10 @@ const OperationsForm = () => {
               {...register("monto_sobre_reserva")}
               error={errors.monto_sobre_reserva?.message}
             />
+          </div>
+
+          <div className="w-full md:w-[40%] px-2">
+            {/* Right column */}
 
             <Input
               label="Número sobre de refuerzo"
@@ -378,18 +380,20 @@ const OperationsForm = () => {
             {userRole === "team_leader_broker" && (
               <>
                 <Select
-                  label="Asesor que realizó la venta" // Add the missing label prop
-                  register={register} // Add the missing register prop
+                  label="Asesor que realizó la venta"
+                  register={register}
                   {...register("realizador_venta")}
                   options={[
                     {
                       value: "",
                       label: "Selecciona el asesor que realizó la venta",
                     },
-                    ...usersMapped.map((member) => ({
-                      value: member.name,
-                      label: member.name,
-                    })),
+                    ...usersMapped
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((member) => ({
+                        value: member.name,
+                        label: member.name,
+                      })),
                   ]}
                   className="w-full p-2 mb-8 border border-gray-300 rounded"
                   required
@@ -402,6 +406,65 @@ const OperationsForm = () => {
               </>
             )}
 
+            <Input
+              label="Porcentaje honorarios asesor*"
+              type="text"
+              placeholder="Por ejemplo: 40%"
+              {...register("porcentaje_honorarios_asesor", {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_honorarios_asesor?.message}
+              required
+            />
+
+            {/* Additional advisor input block */}
+            {showAdditionalAdvisor && (
+              <>
+                <Select
+                  label="Asesor adicional"
+                  register={register}
+                  {...register("realizador_venta_adicional")}
+                  options={[
+                    {
+                      value: "",
+                      label: "Selecciona el asesor adicional",
+                    },
+                    ...usersMapped
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((member) => ({
+                        value: member.name,
+                        label: member.name,
+                      })),
+                  ]}
+                  className="w-full p-2 mb-8 border border-gray-300 rounded"
+                />
+                {errors.realizador_venta_adicional && (
+                  <p className="text-red-500">
+                    {errors.realizador_venta_adicional.message}
+                  </p>
+                )}
+
+                <Input
+                  label="Porcentaje honorarios asesor adicional"
+                  type="text"
+                  placeholder="Por ejemplo: 40%"
+                  {...register("porcentaje_honorarios_asesor_adicional", {
+                    setValueAs: (value) => parseFloat(value) || 0,
+                  })}
+                  error={errors.porcentaje_honorarios_asesor_adicional?.message}
+                />
+              </>
+            )}
+            {userRole === "team_leader_broker" && (
+              <p
+                className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                onClick={toggleAdditionalAdvisor}
+              >
+                {showAdditionalAdvisor
+                  ? "Eliminar Segundo Asesor"
+                  : "Agregar Otro Asesor"}
+              </p>
+            )}
             <label className="font-semibold text-mediumBlue">
               Cantidad de puntas*
             </label>

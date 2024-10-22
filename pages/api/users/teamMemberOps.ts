@@ -30,18 +30,28 @@ export default async function handler(
         ...doc.data(),
       }));
 
-      // Obtener las operaciones para cada miembro del equipo
       const membersWithOperations = await Promise.all(
         teamMembers.map(async (member) => {
-          const operationsQuery = query(
+          // Query for operations where the member is the primary user
+          const primaryQuery = query(
             collection(db, "operations"),
             where("user_uid", "==", member.id)
           );
-          const operationsSnapshot = await getDocs(operationsQuery);
+          const primarySnapshot = await getDocs(primaryQuery);
 
-          const operaciones = operationsSnapshot.docs.map((opDoc) =>
-            opDoc.data()
+          // Query for operations where the member is the additional user
+          const additionalQuery = query(
+            collection(db, "operations"),
+            where("user_uid_adicional", "==", member.id)
           );
+          const additionalSnapshot = await getDocs(additionalQuery);
+
+          // Combine operations from both queries
+          const operaciones = [
+            ...primarySnapshot.docs.map((opDoc) => opDoc.data()),
+            ...additionalSnapshot.docs.map((opDoc) => opDoc.data()),
+          ];
+
           return { ...member, operaciones };
         })
       );

@@ -44,8 +44,11 @@ export interface Operation {
   referido?: string | null;
   compartido?: string | null;
   realizador_venta: string;
+  realizador_venta_adicional?: string | null;
+  porcentaje_honorarios_asesor_adicional?: number | null;
   estado: string;
   user_uid: string;
+  user_uid_adicional?: string | null;
   teamId: string;
 }
 

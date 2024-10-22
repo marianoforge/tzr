@@ -17,11 +17,7 @@ export const schema = yup.object().shape({
     .typeError("El valor de reserva debe ser un número")
     .positive("El valor de reserva debe ser positivo")
     .required("El valor de reserva es requerido"),
-  porcentaje_honorarios_asesor: yup
-    .number()
-    .typeError("Debe ser un número")
-    .min(0, "No puede ser negativo")
-    .required("Porcentaje de honorarios asesor es requerido"),
+
   porcentaje_honorarios_broker: yup
     .number()
     .typeError("Debe ser un número")
@@ -78,5 +74,16 @@ export const schema = yup.object().shape({
   realizador_venta: yup
     .string()
     .required("El realizador de la venta es requerido"),
+  porcentaje_honorarios_asesor: yup
+    .number()
+    .typeError("Debe ser un número")
+    .min(0, "No puede ser negativo")
+    .required("Porcentaje de honorarios asesor es requerido"),
+  realizador_venta_adicional: yup.string().nullable(),
+  porcentaje_honorarios_asesor_adicional: yup
+    .number()
+    .typeError("Debe ser un número")
+    .min(0, "No puede ser negativo")
+    .nullable(),
   estado: yup.string().required("El estado es requerido"),
 });

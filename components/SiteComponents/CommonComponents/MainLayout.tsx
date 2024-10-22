@@ -1,3 +1,4 @@
+import Footer from "@/components/TrackerComponents/Footer";
 import HeroSection from "../HeroSections";
 import Navbar from "./Navbar";
 
@@ -10,6 +11,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="relative flex flex-col justify-center items-center w-full px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-48">
           <Navbar />
           <HeroSection />
+          <Footer setActiveView={() => {}} />
         </div>
       </div>
       <main className=" flex flex-col justify-center items-center">
