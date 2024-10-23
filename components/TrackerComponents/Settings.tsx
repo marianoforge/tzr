@@ -78,22 +78,6 @@ const Settings = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchCustomerInfo = async () => {
-      try {
-        const response = await axios.get(`/api/stripe/customer_info`, {
-          params: { customer_id: customerId }, // Asegurarte de pasar el customerId correcto
-        });
-      } catch (error) {
-        console.error("Error fetching customer info:", error);
-      }
-    };
-
-    if (customerId) {
-      fetchCustomerInfo();
-    }
-  }, [customerId]);
-
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage(null);
