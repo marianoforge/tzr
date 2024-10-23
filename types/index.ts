@@ -116,7 +116,7 @@ export interface ExpenseFormData {
   description?: string;
   dollarRate: number;
   otherType?: string;
-  expenseAssociationType?: string;
+  expenseAssociationType: string;
 }
 
 export interface ExpensesState extends BaseState<Expense> {

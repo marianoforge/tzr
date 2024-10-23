@@ -62,10 +62,19 @@ const FormularioExpenses: React.FC = () => {
   const schema = yup.object().shape({
     expenseType: yup.string().required(),
     date: yup.string().required("La fecha es requerida"),
-    amount: yup.number().required("El monto es requerido").positive(),
+    amount: yup
+      .number()
+      .transform((value, originalValue) => {
+        return originalValue.trim() === "" ? undefined : value;
+      })
+      .required("El monto es requerido")
+      .positive("El monto debe ser un número positivo"),
     dollarRate: yup
       .number()
-      .positive()
+      .transform((value, originalValue) => {
+        return originalValue.trim() === "" ? undefined : value;
+      })
+      .positive("La cotización del dólar debe ser un número positivo")
       .required("La cotización del dólar es requerida"),
     description: yup.string(),
     otherType: yup
@@ -75,6 +84,10 @@ const FormularioExpenses: React.FC = () => {
           ? schema.required("Debes especificar el tipo de gasto")
           : schema;
       }),
+    expenseAssociationType: yup
+      .string()
+      .required("Debes seleccionar una asociación de gasto")
+      .notOneOf([""], "Debes seleccionar una opción válida"),
   });
 
   const {
@@ -151,40 +164,50 @@ const FormularioExpenses: React.FC = () => {
           <h2 className="text-2xl mb-4 font-semibold">Registrar Gasto</h2>
 
           {userRole === "team_leader_broker" && (
-            <Select
-              label="Asociación del Gasto"
-              options={[
-                { value: "", label: "Selecciona una opción" }, // Added default option
-                {
-                  value: "team_broker",
-                  label: "Gasto Asociado al Team / Broker",
-                },
-                { value: "agent", label: "Gasto Asociado como Asesor" },
-              ]}
-              register={register}
-              name="expenseAssociationType"
-              className="w-full p-2 border"
-              required
-              onChange={(e) => handleAssociationTypeChange(e.target.value)}
-            />
+            <div>
+              <Select
+                label="Asociación del Gasto"
+                options={[
+                  { value: "", label: "Selecciona una opción" }, // Default option
+                  {
+                    value: "team_broker",
+                    label: "Gasto Asociado al Team / Broker",
+                  },
+                  { value: "agent", label: "Gasto Asociado como Asesor" },
+                ]}
+                register={register}
+                name="expenseAssociationType"
+                className="w-full p-2 border mb-[8px]"
+                onChange={(e) => handleAssociationTypeChange(e.target.value)}
+              />
+              {errors.expenseAssociationType && (
+                <p className="text-red-500 mb-4">
+                  {errors.expenseAssociationType.message}
+                </p>
+              )}
+            </div>
           )}
 
           <Input
             label="Fecha del Gasto"
             type="date"
             {...register("date")}
-            error={errors.date?.message}
-            required
+            marginBottom="0"
           />
+          {errors.date && (
+            <p className="text-red-500 mb-4">{errors.date.message}</p>
+          )}
 
           <Input
             label="Monto"
             type="number"
             placeholder="1000000"
             {...register("amount")}
-            error={errors.amount?.message}
-            required
+            marginBottom="0"
           />
+          {errors.amount && (
+            <p className="text-red-500 mb-4">{errors.amount.message}</p>
+          )}
 
           <div className="flex gap-4 items-center">
             <div className="w-1/2">
@@ -193,9 +216,11 @@ const FormularioExpenses: React.FC = () => {
                 type="number"
                 placeholder="1250"
                 {...register("dollarRate")}
-                error={errors.dollarRate?.message}
-                required
+                marginBottom="0"
               />
+              {errors.dollarRate && (
+                <p className="text-red-500 mb-4">{errors.dollarRate.message}</p>
+              )}
             </div>
             <div className="w-1/2 ">
               <Input
@@ -213,11 +238,10 @@ const FormularioExpenses: React.FC = () => {
             options={expenseTypes}
             register={register}
             name="expenseType"
-            required
             mb="mb-4"
           />
           {errors.expenseType && (
-            <p className="text-red-500">{errors.expenseType.message}</p>
+            <p className="text-red-500 mb-4">{errors.expenseType.message}</p>
           )}
 
           {selectedExpenseType === "Otros" && (
@@ -228,12 +252,18 @@ const FormularioExpenses: React.FC = () => {
               error={errors.otherType?.message}
             />
           )}
+          {errors.otherType && (
+            <p className="text-red-500">{errors.otherType.message}</p>
+          )}
 
           <TextArea
             label="Descripción"
             {...register("description")}
             error={errors.description?.message}
           />
+          {errors.description && (
+            <p className="text-red-500">{errors.description.message}</p>
+          )}
 
           <div className="flex justify-center items-center mt-8 w-full">
             <button
