@@ -123,7 +123,7 @@ const ExpensesListCards: React.FC = () => {
           <Slider {...settings}>
             {filteredExpenses.map((expense) => (
               <div key={expense.id} className="p-4 expense-card">
-                <div className="bg-[#5DADE2]/10 text-[#2E86C1] p-4 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
+                <div className="bg-mediumBlue text-white p-4 mb-52 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
                   <p>
                     <strong>Fecha:</strong>{" "}
                     {new Date(expense.date).toLocaleDateString()}

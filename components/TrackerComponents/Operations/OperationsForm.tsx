@@ -170,7 +170,7 @@ const OperationsForm = () => {
     <div className="flex justify-center items-center w-full mt-20">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[90%] justify-center items-center"
+        className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[90%] justify-center items-center mb-20"
       >
         <h2 className="text-2xl mb-4 justify-center font-semibold">
           Agregar Reserva / Operación

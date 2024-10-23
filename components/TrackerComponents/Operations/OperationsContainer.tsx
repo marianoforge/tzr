@@ -23,7 +23,9 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
     : "mt-20";
 
   return (
-    <div className={`bg-white p-4 ${marginTopClass} rounded-xl shadow-md`}>
+    <div
+      className={`bg-white p-4 mb-20 ${marginTopClass} rounded-xl shadow-md`}
+    >
       {isLoading ? (
         <Loader />
       ) : (

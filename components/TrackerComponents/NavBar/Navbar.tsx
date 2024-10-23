@@ -3,7 +3,7 @@ import { useUserDataStore } from "@/stores/userDataStore";
 import { auth } from "@/lib/firebase";
 import { NavButton } from "@/components/TrackerComponents/NavComponents/NavButton";
 import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
-
+import Image from "next/image";
 interface NavbarProps {
   setActiveView: (view: string) => void;
 }
@@ -31,8 +31,8 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     <>
       <NavButton href="/dashboard" label="Dashboard" fullWidth />
       <NavButton href="/calendar" label="Calendario" fullWidth />
-      <NavButton href="/operationsList" label="Operaciones" fullWidth />
-      <NavButton href="/expensesList" label="Gastos" fullWidth />
+      {/* <NavButton href="/operationsList" label="Operaciones" fullWidth /> */}
+      {/* <NavButton href="/expensesList" label="Gastos" fullWidth /> */}
       <NavButton
         href="/reservationInput"
         label="Form de Operaciones"
@@ -47,11 +47,11 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     <>
       {renderNavButtons()}
       <NavButton href="/agents" label="Informe Agentes / Asesores" fullWidth />
-      <NavButton
+      {/* <NavButton
         href="/expensesBroker"
         label="Gastos Team / Broker"
         fullWidth
-      />
+      /> */}
     </>
   );
 
@@ -69,10 +69,10 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 w-full bg-darkBlue z-50 text-center h-10">
+    <nav className="fixed top-0 left-0 right-0 w-full bg-darkBlue z-50 text-center xl:h-10">
       <div className="flex items-center justify-between w-full mt-4">
         {/* Hamburger menu icon */}
-        <div className="xl:hidden ml-3 sm:ml-4 md:ml-10 space-x-3 flex">
+        <div className="xl:hidden pl-12 space-x-3 flex w-1/6">
           <button
             className="text-white focus:outline-none"
             onClick={toggleMenu}
@@ -92,19 +92,18 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
               />
             </svg>
           </button>
-          <div className="text-white text-xl font-bold lg:w-[150px] pb-1">
-            {/* <Image
-              src="/trackProLogo.png"
-              alt="Logo"
-              width={350}
-              height={350}
-            /> */}
-            realtor trackpro
-          </div>
+        </div>
+        <div className="hidden lg:block text-xl font-bold w-1/6 h-3 ml-12 bg-darkBlue"></div>
+        <div className="pr-4 sm:pr-0 md:pl-10 font-bold w-4/6 xl:hidden">
+          <Image
+            src="/trackproLogoWhite.png"
+            alt="Logo"
+            width={250}
+            height={250}
+          />
         </div>
 
         {/* Desktop user info */}
-        <div className="hidden lg:block text-xl font-bold w-full h-3 ml-12 bg-darkBlue"></div>
       </div>
 
       {/* Mobile menu */}

@@ -20,10 +20,10 @@ const ExpensesFormPage = () => {
   return (
     <PrivateRoute>
       <PrivateLayout>
-        <div className="hidden xl:block">
+        <div className="hidden sm:block">
           <ExpensesList />
         </div>
-        <div className="block xl:hidden">
+        <div className="block sm:hidden">
           <ExpensesListCards />
         </div>
         <div className="hidden sm:block mt-8">
