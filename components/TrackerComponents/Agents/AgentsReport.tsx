@@ -28,10 +28,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const teamLeadId = currentUser.uid || "";
   const { members } = useTeamMembersOps(teamLeadId);
 
-  // Log the data fetched by hooks
-  console.log("Users with operations:", data);
-  console.log("Team members:", members);
-
   const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +50,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         })),
         ...(members || []),
       ];
-      console.log("Combined data:", initialData); // Log the combined data
       setCombinedData(initialData);
     }
   }, [data, members]);
@@ -133,7 +128,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
           ) / honorariosBrokerTotales,
       }))
       .sort((a, b) => b.percentage - a.percentage);
-    console.log("Sorted data:", sorted); // Log the sorted data
     return sorted;
   }, [combinedData, honorariosBrokerTotales]);
 
