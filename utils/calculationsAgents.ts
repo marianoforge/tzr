@@ -7,9 +7,11 @@ export const calculateAdjustedBrokerFees = (operations: Operation[]) =>
       op.user_uid &&
       op.user_uid_adicional &&
       op.user_uid !== op.user_uid_adicional;
+
     return acc + op.honorarios_broker * (isHalfOperation ? 0.5 : 1);
   }, 0);
 
+console.log();
 // Function to calculate total operations
 export const calculateTotalOperations = (operations: Operation[]) =>
   operations.reduce((total, op) => {

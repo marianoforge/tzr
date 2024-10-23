@@ -100,6 +100,17 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     }
   }, []);
 
+  const handleLogOperationsClick = useCallback((member: TeamMember) => {
+    const totalHonorariosBroker = member.operaciones.reduce(
+      (sum: number, op: { honorarios_broker: number }) =>
+        sum + op.honorarios_broker,
+      0
+    );
+    console.log(
+      `Total Honorarios Broker for ${member.firstName} ${member.lastName}: $${totalHonorariosBroker}`
+    );
+  }, []);
+
   const honorariosBrokerTotales = useMemo(() => {
     return combinedData.reduce((acc, usuario) => {
       return (
@@ -121,11 +132,8 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
       .map((agent) => ({
         ...agent,
         percentage:
-          agent.operaciones.reduce(
-            (acc: number, op: { honorarios_broker: number }) =>
-              acc + op.honorarios_broker,
-            0
-          ) / honorariosBrokerTotales,
+          calculateAdjustedBrokerFees(agent.operaciones) /
+          honorariosBrokerTotales,
       }))
       .sort((a, b) => b.percentage - a.percentage);
     return sorted;
@@ -134,7 +142,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentAgents = sortedData.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
 
   const handlePageChange = useCallback((newPage: number) => {
@@ -175,9 +182,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                     <th className="py-3 px-4 font-semibold text-start">
                       Nombre y Apellido
                     </th>
-                    <th className="py-3 px-4 font-semibold text-center">
-                      Email
-                    </th>
+
                     <th className="py-3 px-4 font-semibold text-center">
                       Total Facturación Bruta
                     </th>
@@ -212,13 +217,12 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                         currentPage === 1 && index === 0 ? "bg-green-100" : ""
                       }`}
                     >
-                      <td className=" font-semibold text-start w-full">
+                      <td className="py-3 px-4 font-semibold text-start w-1/5">
                         {usuario.firstName} {usuario.lastName}
                         {data.some(
                           (user: UserWithOperations) => user.uid === usuario.id
                         ) && " (yo)"}
                       </td>
-                      <td className="py-3 px-4 text-sm">{usuario.email}</td>
                       <td className="py-3 px-4">
                         {usuario.operaciones.length > 0 ? (
                           <ul>
@@ -284,6 +288,12 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                               className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
                             >
                               <TrashIcon className="h-5 w-5" />
+                            </button>
+                            <button
+                              onClick={() => handleLogOperationsClick(usuario)}
+                              className="text-green-500 hover:text-green-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
+                            >
+                              Log Ops
                             </button>
                           </>
                         )}
