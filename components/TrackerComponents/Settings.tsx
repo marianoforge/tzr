@@ -37,7 +37,6 @@ const Settings = () => {
     enabled: !!userID,
   });
 
-  const customerId = userData?.stripeCustomerId;
   const subscriptionId = userData?.stripeSubscriptionId;
   useEffect(() => {
     if (userDataQuery) {
