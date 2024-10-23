@@ -22,7 +22,7 @@ const DashBoard = () => {
           <UserInfo />
         </div>
       </div>
-      <div className="grid grid-cols-1 mt-32 sm:mt-24  lg:mt-36 xl:mt-0 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
+      <div className="grid grid-cols-1 mt-32 sm:mt-20 xl:mt-2 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
         <div className="md:col-span-2 lg:col-span-1 2xl:col-span-4">
           <Bubbles />
         </div>

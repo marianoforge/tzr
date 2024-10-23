@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Slider from "react-slick";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import Loader from "../Loader";
 import { TeamMember, UserData, UserWithOperations } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
