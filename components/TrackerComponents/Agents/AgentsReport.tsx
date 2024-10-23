@@ -27,7 +27,10 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const teamLeadId = currentUser.uid || "";
   const { members } = useTeamMembersOps(teamLeadId);
 
-  // Estado para almacenar los miembros combinados
+  // Log the data fetched by hooks
+  console.log("Users with operations:", data);
+  console.log("Team members:", members);
+
   const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,6 +53,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         })),
         ...(members || []),
       ];
+      console.log("Combined data:", initialData); // Log the combined data
       setCombinedData(initialData);
     }
   }, [data, members]);
@@ -76,7 +80,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     setIsModalOpen(true);
   }, []);
 
-  const handleSubmit = async (updatedMember: TeamMember) => {
+  const handleSubmit = useCallback(async (updatedMember: TeamMember) => {
     try {
       const response = await axios.put(`/api/teamMembers/${updatedMember.id}`, {
         firstName: updatedMember.firstName,
@@ -98,33 +102,38 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     } catch (error) {
       console.error("Error en la petición PUT:", error);
     }
-  };
+  }, []);
 
-  const honorariosBrokerTotales = combinedData.reduce((acc, usuario) => {
-    return (
-      acc +
-      usuario.operaciones.reduce(
-        (sum: number, op: { honorarios_broker: number }) =>
-          sum + op.honorarios_broker,
-        0
-      )
-    );
-  }, 0);
+  const honorariosBrokerTotales = useMemo(() => {
+    return combinedData.reduce((acc, usuario) => {
+      return (
+        acc +
+        usuario.operaciones.reduce(
+          (sum: number, op: { honorarios_broker: number }) =>
+            sum + op.honorarios_broker,
+          0
+        )
+      );
+    }, 0);
+  }, [combinedData]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const sortedData = useMemo(() => {
-    return combinedData
+    const sorted = combinedData
       .map((agent) => ({
         ...agent,
         percentage:
           agent.operaciones.reduce(
-            (acc: number, op: Operation) => acc + op.honorarios_broker,
+            (acc: number, op: { honorarios_broker: number }) =>
+              acc + op.honorarios_broker,
             0
           ) / honorariosBrokerTotales,
       }))
       .sort((a, b) => b.percentage - a.percentage);
+    console.log("Sorted data:", sorted); // Log the sorted data
+    return sorted;
   }, [combinedData, honorariosBrokerTotales]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
