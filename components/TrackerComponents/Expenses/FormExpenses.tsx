@@ -7,12 +7,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Input from "@/components/TrackerComponents/FormComponents/Input";
 import TextArea from "@/components/TrackerComponents/FormComponents/TextArea";
-import Select from "@/components/TrackerComponents/FormComponents/Select"; // Select importado
+import Select from "@/components/TrackerComponents/FormComponents/Select";
 import { Expense, ExpenseFormData } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createExpense } from "@/lib/api/expensesApi";
 import { AxiosError } from "axios";
+import { toZonedTime } from "date-fns-tz";
+import { formatISO } from "date-fns";
 
 // Tipos de gastos
 export const expenseTypes = [
@@ -128,11 +130,16 @@ const FormularioExpenses: React.FC = () => {
       return;
     }
 
+    // Convertimos la fecha ingresada a UTC
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const zonedDate = toZonedTime(data.date, userTimeZone);
+    const utcDate = formatISO(zonedDate, { representation: "date" });
+
     const amountInDollars =
       data.amount && data.dollarRate ? data.amount / data.dollarRate : 0;
 
     const expenseData: Expense = {
-      date: data.date,
+      date: utcDate,
       amount: data.amount ?? 0,
       amountInDollars,
       otherType: data.otherType ?? "",
@@ -149,7 +156,6 @@ const FormularioExpenses: React.FC = () => {
   const amountInDollars =
     amount && dollarRate ? (amount / dollarRate).toFixed(2) : 0;
 
-  // Example usage of setExpenseAssociationType
   const handleAssociationTypeChange = (newType: string) => {
     setExpenseAssociationType(newType);
   };
@@ -168,7 +174,7 @@ const FormularioExpenses: React.FC = () => {
               <Select
                 label="Asociación del Gasto"
                 options={[
-                  { value: "", label: "Selecciona una opción" }, // Default option
+                  { value: "", label: "Selecciona una opción" },
                   {
                     value: "team_broker",
                     label: "Gasto Asociado al Team / Broker",
