@@ -1,19 +1,21 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { calculateTotals } from "@/utils/calculations";
 import SkeletonLoader from "@/components/TrackerComponents/SkeletonLoader";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useAuthStore } from "@/stores/authStore";
 import { formatValue } from "@/utils/formatValue";
+
 import { Tooltip } from "react-tooltip";
 import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
+
 import { currentYearOperations } from "@/utils/currentYearOps";
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
 
-  // Utilizamos Tanstack Query para obtener las operaciones y calcular los totales
   const {
     data: operations = [],
     isLoading,
@@ -29,7 +31,7 @@ const Bubbles = () => {
 
   const bubbleData = [
     {
-      title: "Honorarios Totales Netos - Asesor / Broker",
+      title: "Honorarios Netos",
       figure: formatValue(totals.honorarios_asesor_cerradas ?? 0, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
@@ -37,14 +39,14 @@ const Bubbles = () => {
         "Este es el monto total de honorarios netos obtenidos por el asesor o broker.",
     },
     {
-      title: "Honorarios Totales Brutos",
+      title: "Honorarios Brutos",
       figure: formatValue(totals.honorarios_broker_cerradas ?? 0, "currency"),
       bgColor: "bg-darkBlue",
       textColor: "text-white",
       tooltip: "Este es el monto total de honorarios brutos.",
     },
     {
-      title: "Monto Total de Operaciones Cerradas",
+      title: "Monto Sobre Operaciones Cerradas",
       figure: formatValue(totals.valor_reserva_cerradas ?? 0, "currency"),
       bgColor: "bg-lightBlue",
       textColor: "text-white",
@@ -74,6 +76,30 @@ const Bubbles = () => {
       textColor: "text-white",
       tooltip: "Número total de operaciones efectuadas cerradas.",
     },
+    {
+      title: "Promedio Mensual Honorarios Netos",
+      figure: formatValue(
+        totals.promedio_mensual_honorarios_asesor ?? 0,
+        "currency"
+      ),
+      bgColor: "bg-lightBlue",
+      textColor: "text-white",
+      tooltip: "Promedio de Honorarios netos totales por mes.",
+    },
+    {
+      title: "Suma de las Operaciones en Curso.",
+      figure: formatValue(totals.valor_reserva_en_curso ?? 0, "currency"),
+      bgColor: "bg-darkBlue",
+      textColor: "text-white",
+      tooltip: "Monto total de las Operaciones en Curso",
+    },
+    {
+      title: "TBD",
+      figure: formatValue("", "none"),
+      bgColor: "bg-lightBlue",
+      textColor: "text-white",
+      tooltip: "TBD",
+    },
   ];
 
   if (isLoading) {
@@ -91,11 +117,11 @@ const Bubbles = () => {
         {bubbleData.map((data, index) => (
           <div
             key={index}
-            className={`${data.bgColor} rounded-xl py-6 text-center shadow-md flex flex-col justify-around items-center h-[200px] relative`}
+            className={`${data.bgColor} rounded-xl py-6 text-center shadow-md flex flex-col justify-around items-center h-[120px] relative gap-4`}
           >
             {/* Heroicons Info icon with tooltip */}
             <InformationCircleIcon
-              className="absolute top-2 right-2 text-white h-5 w-5 cursor-pointer"
+              className="absolute top-1 right-1 text-white h-5 w-5 cursor-pointer"
               data-tooltip-id={`tooltip-${index}`}
               data-tooltip-content={data.tooltip}
             />
@@ -104,7 +130,7 @@ const Bubbles = () => {
               {data.title}
             </p>
             <p
-              className={`text-[40px] lg:text-[30px] xl:text-[20px] 2xl:text-[24px] font-bold ${data.textColor} h-1/2 items-center justify-center flex`}
+              className={`text-[40px] lg:text-[30px] xl:text-[20px] 2xl:text-[22px] font-bold ${data.textColor} h-1/2 items-center justify-center flex`}
             >
               {data.figure}
             </p>
