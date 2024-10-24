@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 import {
   PieChart,
   Pie,
@@ -6,14 +6,16 @@ import {
   ResponsiveContainer,
   Legend,
   Tooltip,
-} from "recharts";
-import Loader from "../Loader";
-import { useAuthStore } from "@/stores/authStore";
-import { useQuery } from "@tanstack/react-query";
-import { Operation } from "@/types";
-import { COLORS } from "@/lib/constants";
-import { fetchUserOperations } from "@/lib/api/operationsApi";
-import SkeletonLoader from "../SkeletonLoader";
+} from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+
+import { useAuthStore } from '@/stores/authStore';
+import { Operation } from '@/types';
+import { COLORS } from '@/lib/constants';
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+
+import Loader from '../Loader';
+import SkeletonLoader from '../SkeletonLoader';
 
 const CuadroPrincipalChart = () => {
   const { userID } = useAuthStore();
@@ -23,15 +25,15 @@ const CuadroPrincipalChart = () => {
     isLoading,
     error: operationsError,
   } = useQuery({
-    queryKey: ["operations", userID],
+    queryKey: ['operations', userID],
     queryFn: async () => {
-      return await fetchUserOperations(userID || "");
+      return await fetchUserOperations(userID || '');
     },
     enabled: !!userID,
   });
 
   const closedOperations = useMemo(() => {
-    return operations.filter((op: Operation) => op.estado === "Cerrada");
+    return operations.filter((op: Operation) => op.estado === 'Cerrada');
   }, [operations]);
 
   const tiposOperaciones = useMemo(() => {
@@ -57,7 +59,7 @@ const CuadroPrincipalChart = () => {
   }
   if (operationsError) {
     return (
-      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
 
@@ -99,9 +101,9 @@ const CuadroPrincipalChart = () => {
                   <Tooltip />
                   <Legend
                     wrapperStyle={{
-                      paddingTop: "20px",
-                      fontSize: "14px",
-                      fontWeight: "bold",
+                      paddingTop: '20px',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
                     }}
                   />
                 </PieChart>

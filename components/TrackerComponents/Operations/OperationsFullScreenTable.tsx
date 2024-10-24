@@ -1,7 +1,9 @@
-import React from "react";
-import { Operation } from "@/types";
-import { formatNumber } from "@/utils/formatNumber";
-import Button from "../FormComponents/Button";
+import React from 'react';
+
+import { Operation } from '@/types';
+import { formatNumber } from '@/utils/formatNumber';
+
+import Button from '../FormComponents/Button';
 
 interface FullScreenModalProps {
   isOpen: boolean;
@@ -24,23 +26,23 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
         </h2>
         <div className="grid grid-cols-2 gap-6">
           <p>
-            <span className="font-semibold">Fecha:</span>{" "}
+            <span className="font-semibold">Fecha:</span>{' '}
             {new Date(operation.fecha_operacion).toLocaleDateString()}
           </p>
           <p>
-            <span className="font-semibold">Operación:</span>{" "}
+            <span className="font-semibold">Operación:</span>{' '}
             {operation.direccion_reserva}
           </p>
           <p>
-            <span className="font-semibold">Localidad:</span>{" "}
+            <span className="font-semibold">Localidad:</span>{' '}
             {operation.localidad_reserva}
           </p>
           <p>
-            <span className="font-semibold">Provincia:</span>{" "}
+            <span className="font-semibold">Provincia:</span>{' '}
             {operation.provincia_reserva}
           </p>
           <p>
-            <span className="font-semibold">Tipo: </span>{" "}
+            <span className="font-semibold">Tipo: </span>{' '}
             {operation.tipo_operacion}
           </p>
           <p>
@@ -48,15 +50,15 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {formatNumber(operation.valor_reserva)}
           </p>
           <p>
-            <span className="font-semibold">Porcentaje Punta Compradora:</span>{" "}
+            <span className="font-semibold">Porcentaje Punta Compradora:</span>{' '}
             {operation.porcentaje_punta_compradora}%
           </p>
           <p>
-            <span className="font-semibold">Porcentaje Punta Vendedora:</span>{" "}
+            <span className="font-semibold">Porcentaje Punta Vendedora:</span>{' '}
             {operation.porcentaje_punta_vendedora}%
           </p>
           <p>
-            <span className="font-semibold">Cantidad de Puntas:</span>{" "}
+            <span className="font-semibold">Cantidad de Puntas:</span>{' '}
             {formatNumber(
               Number(operation.punta_vendedora) +
                 Number(operation.punta_compradora)
@@ -71,49 +73,49 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {formatNumber(operation.honorarios_asesor)}
           </p>
           <p>
-            <span className="font-semibold">Porcentaje Honorarios Asesor:</span>{" "}
+            <span className="font-semibold">Porcentaje Honorarios Asesor:</span>{' '}
             {formatNumber(operation.porcentaje_honorarios_asesor)}%
           </p>
           <p>
             <span className="font-semibold">
-              Porcentaje Honorarios Broker / Team Leader:{" "}
+              Porcentaje Honorarios Broker / Team Leader:{' '}
             </span>
             {formatNumber(operation.porcentaje_honorarios_broker)}%
           </p>
           <p>
-            <span className="font-semibold">Sobre de Reserva: </span>{" "}
+            <span className="font-semibold">Sobre de Reserva: </span>{' '}
             {operation.numero_sobre_reserva}
           </p>
           <p>
-            <span className="font-semibold">Monto Sobre de Reserva:</span>{" "}
+            <span className="font-semibold">Monto Sobre de Reserva:</span>{' '}
             {formatNumber(operation.monto_sobre_reserva ?? 0)}
           </p>
           <p>
-            <span className="font-semibold">Sobre de Refuerzo:</span>{" "}
+            <span className="font-semibold">Sobre de Refuerzo:</span>{' '}
             {operation.numero_sobre_refuerzo}
           </p>
           <p>
-            <span className="font-semibold">Monto Sobre de Refuerzo:</span>{" "}
+            <span className="font-semibold">Monto Sobre de Refuerzo:</span>{' '}
             {formatNumber(operation.monto_sobre_refuerzo ?? 0)}
           </p>
           <p>
-            <span className="font-semibold">Referido:</span>{" "}
+            <span className="font-semibold">Referido:</span>{' '}
             {operation.referido}
           </p>
           <p>
-            <span className="font-semibold">Porcentaje Referido:</span>{" "}
+            <span className="font-semibold">Porcentaje Referido:</span>{' '}
             {operation.porcentaje_referido}%
           </p>
           <p>
-            <span className="font-semibold">Porcentaje Compartido:</span>{" "}
+            <span className="font-semibold">Porcentaje Compartido:</span>{' '}
             {operation.porcentaje_compartido}%
           </p>
           <p>
-            <span className="font-semibold">Compartido:</span>{" "}
+            <span className="font-semibold">Compartido:</span>{' '}
             {operation.compartido}
           </p>
           <p>
-            <span className="font-semibold">Estado de la Operacion: </span>{" "}
+            <span className="font-semibold">Estado de la Operacion: </span>{' '}
             {operation.estado}
           </p>
         </div>

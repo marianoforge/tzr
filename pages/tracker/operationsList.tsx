@@ -1,12 +1,13 @@
-import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
-import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
-import React, { useState } from "react";
-import OperationsList from "@/components/TrackerComponents/Operations/OperationsList";
+import React, { useState } from 'react';
+
+import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
+import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
+import OperationsList from '@/components/TrackerComponents/Operations/OperationsList';
 
 const OperationsPage = () => {
   const [filter] = useState<
-    "all" | "open" | "closed" | "currentYear" | "year2023"
-  >("all");
+    'all' | 'open' | 'closed' | 'currentYear' | 'year2023'
+  >('all');
 
   return (
     <PrivateRoute>

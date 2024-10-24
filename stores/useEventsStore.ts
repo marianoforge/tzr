@@ -1,6 +1,7 @@
-import { create } from "zustand";
-import axios from "axios";
-import { EventsState, Event } from "@/types";
+import { create } from 'zustand';
+import axios from 'axios';
+
+import { EventsState, Event } from '@/types';
 
 export const useEventsStore = create<EventsState>((set) => ({
   events: [],

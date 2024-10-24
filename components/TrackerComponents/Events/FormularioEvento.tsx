@@ -1,24 +1,25 @@
-import React, { useState, useCallback } from "react";
-import ModalOK from "../ModalOK";
-import { useRouter } from "next/router";
-import { useAuthStore } from "@/stores/authStore";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import TextArea from "@/components/TrackerComponents/FormComponents/TextArea";
-import Button from "@/components/TrackerComponents/FormComponents/Button";
+import React, { useState, useCallback } from 'react';
+import { useRouter } from 'next/router';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query'; // Import Tanstack Query
 
-import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query"; // Import Tanstack Query
-import { createEvent } from "@/lib/api/eventsApi"; // Import the createEvent function from the events API
+import { useAuthStore } from '@/stores/authStore';
+import Input from '@/components/TrackerComponents/FormComponents/Input';
+import TextArea from '@/components/TrackerComponents/FormComponents/TextArea';
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import { createEvent } from '@/lib/api/eventsApi'; // Import the createEvent function from the events API
+
+import ModalOK from '../ModalOK';
 
 // Esquema de validación con Yup
 const schema = yup.object().shape({
-  title: yup.string().required("El título es requerido"),
-  date: yup.string().required("La fecha es requerida"),
-  startTime: yup.string().required("La hora de inicio es requerida"),
-  endTime: yup.string().required("La hora de fin es requerida"),
-  description: yup.string().required("La descripción es requerida"),
+  title: yup.string().required('El título es requerido'),
+  date: yup.string().required('La fecha es requerida'),
+  startTime: yup.string().required('La hora de inicio es requerida'),
+  endTime: yup.string().required('La hora de fin es requerida'),
+  description: yup.string().required('La descripción es requerida'),
 });
 
 // Interfaz para el formulario de eventos
@@ -34,7 +35,7 @@ const FormularioEvento: React.FC = () => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [modalMessage, setModalMessage] = useState('');
   const router = useRouter();
 
   // Configuración de react-hook-form
@@ -49,13 +50,13 @@ const FormularioEvento: React.FC = () => {
   const mutation = useMutation({
     mutationFn: createEvent,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events", userID] });
-      setModalMessage("Evento guardado exitosamente");
+      queryClient.invalidateQueries({ queryKey: ['events', userID] });
+      setModalMessage('Evento guardado exitosamente');
       setIsModalOpen(true);
       reset();
     },
     onError: () => {
-      setModalMessage("Error al agendar el evento");
+      setModalMessage('Error al agendar el evento');
       setIsModalOpen(true);
     },
   });
@@ -64,7 +65,7 @@ const FormularioEvento: React.FC = () => {
   const onSubmit: SubmitHandler<EventFormData> = useCallback(
     async (data) => {
       if (!userID) {
-        setModalMessage("No se proporcionó un ID de usuario válido");
+        setModalMessage('No se proporcionó un ID de usuario válido');
         setIsModalOpen(true);
         return;
       }
@@ -92,7 +93,7 @@ const FormularioEvento: React.FC = () => {
               label="Título del evento"
               type="text"
               placeholder="Título del evento"
-              {...register("title")}
+              {...register('title')}
               error={errors.title?.message}
               required
             />
@@ -100,7 +101,7 @@ const FormularioEvento: React.FC = () => {
             <Input
               label="Fecha del evento"
               type="date"
-              {...register("date")}
+              {...register('date')}
               error={errors.date?.message}
               required
             />
@@ -110,7 +111,7 @@ const FormularioEvento: React.FC = () => {
                 <Input
                   label="Hora de inicio"
                   type="time"
-                  {...register("startTime")}
+                  {...register('startTime')}
                   error={errors.startTime?.message}
                   required
                 />
@@ -119,7 +120,7 @@ const FormularioEvento: React.FC = () => {
                 <Input
                   label="Hora de fin"
                   type="time"
-                  {...register("endTime")}
+                  {...register('endTime')}
                   error={errors.endTime?.message}
                   required
                 />
@@ -129,7 +130,7 @@ const FormularioEvento: React.FC = () => {
             <TextArea
               label="Descripción del evento"
               placeholder="Descripción del evento"
-              {...register("description")}
+              {...register('description')}
               error={errors.description?.message}
               required
             />
@@ -147,7 +148,7 @@ const FormularioEvento: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           message={modalMessage}
-          onAccept={() => router.push("/dashboard")}
+          onAccept={() => router.push('/dashboard')}
         />
       </form>
     </div>

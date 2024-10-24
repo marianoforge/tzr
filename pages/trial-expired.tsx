@@ -1,12 +1,12 @@
 // pages/trial-expired.tsx
 
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 
 const TrialExpired = () => {
   const router = useRouter();
 
   const handleCheckout = () => {
-    router.push("/checkout");
+    router.push('/checkout');
   };
 
   return (

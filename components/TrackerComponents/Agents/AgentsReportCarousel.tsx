@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import Slider from "react-slick";
-import { useQueryClient } from "@tanstack/react-query";
-import Loader from "../Loader";
-import { TeamMember, UserData, UserWithOperations } from "@/types";
-import { formatNumber } from "@/utils/formatNumber";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import Slider from 'react-slick';
+import { useQueryClient } from '@tanstack/react-query';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+
+import { TeamMember, UserData, UserWithOperations } from '@/types';
+import { formatNumber } from '@/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
   calculateTotalOperations,
@@ -12,12 +12,15 @@ import {
   calculateTotalSellerTips,
   calculateTotalTips,
   calculateTotalReservationValue,
-} from "@/utils/calculationsAgents";
-import useUsersWithOperations from "@/hooks/useUserWithOperations";
-import { useTeamMembersOps } from "@/hooks/useTeamMembersOps";
-import EditAgentsModal from "./EditAgentsModal";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+} from '@/utils/calculationsAgents';
+import useUsersWithOperations from '@/hooks/useUserWithOperations';
+import { useTeamMembersOps } from '@/hooks/useTeamMembersOps';
+
+import Loader from '../Loader';
+
+import EditAgentsModal from './EditAgentsModal';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 // Configuración del slider
 const settings = {
@@ -42,7 +45,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
     data: membersData,
     isLoading: isLoadingMembers,
     error: membersError,
-  } = useTeamMembersOps(currentUser.uid ?? "");
+  } = useTeamMembersOps(currentUser.uid ?? '');
 
   const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
@@ -57,7 +60,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          numeroTelefono: "",
+          numeroTelefono: '',
           operaciones: user.operaciones,
         })),
         ...membersData.membersWithOperations,
@@ -70,11 +73,11 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const handleDeleteClick = useCallback(
     async (memberId: string) => {
       if (
-        window.confirm("¿Estás seguro de que deseas eliminar este miembro?")
+        window.confirm('¿Estás seguro de que deseas eliminar este miembro?')
       ) {
         try {
           const response = await fetch(`/api/teamMembers/${memberId}`, {
-            method: "DELETE",
+            method: 'DELETE',
           });
 
           if (response.ok) {
@@ -82,13 +85,13 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
               prevData.filter((member) => member.id !== memberId)
             );
             queryClient.invalidateQueries({
-              queryKey: ["teamMembersOps", currentUser.uid],
+              queryKey: ['teamMembersOps', currentUser.uid],
             });
           } else {
-            console.error("Error al borrar el miembro");
+            console.error('Error al borrar el miembro');
           }
         } catch (error) {
-          console.error("Error en la petición DELETE:", error);
+          console.error('Error en la petición DELETE:', error);
         }
       }
     },
@@ -105,9 +108,9 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const handleSubmit = async (updatedMember: TeamMember) => {
     try {
       const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedMember),
       });
@@ -120,13 +123,13 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
         );
         setIsModalOpen(false);
         queryClient.invalidateQueries({
-          queryKey: ["teamMembersOps", currentUser.uid],
+          queryKey: ['teamMembersOps', currentUser.uid],
         });
       } else {
-        console.error("Error al actualizar el miembro");
+        console.error('Error al actualizar el miembro');
       }
     } catch (error) {
-      console.error("Error en la petición PUT:", error);
+      console.error('Error en la petición PUT:', error);
     }
   };
 
@@ -150,10 +153,10 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   if (usersError || membersError) {
     return (
       <p>
-        Error:{" "}
+        Error:{' '}
         {usersError?.message ||
           membersError?.message ||
-          "An unknown error occurred"}
+          'An unknown error occurred'}
       </p>
     );
   }
@@ -166,14 +169,14 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
             <div className="bg-mediumBlue mb-4 text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-auto min-h-[300px]">
               <div className="space-y-2 sm:space-y-4 flex flex-col w-[100%]">
                 <p>
-                  <strong>Nombre:</strong> {usuario.firstName}{" "}
+                  <strong>Nombre:</strong> {usuario.firstName}{' '}
                   {usuario.lastName}
                 </p>
                 <p>
                   <strong>Email:</strong> {usuario.email}
                 </p>
                 <p>
-                  <strong>Total Facturación Bruta:</strong>{" "}
+                  <strong>Total Facturación Bruta:</strong>{' '}
                   {usuario.operaciones.length > 0 ? (
                     `$${formatNumber(
                       calculateAdjustedBrokerFees(usuario.operaciones)
@@ -183,7 +186,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   )}
                 </p>
                 <p>
-                  <strong>Aporte a la Facturación Bruta:</strong>{" "}
+                  <strong>Aporte a la Facturación Bruta:</strong>{' '}
                   {usuario.operaciones.length > 0 ? (
                     <ul>
                       <li>
@@ -200,7 +203,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   )}
                 </p>
                 <p>
-                  <strong>Cantidad de Operaciones:</strong>{" "}
+                  <strong>Cantidad de Operaciones:</strong>{' '}
                   {usuario.operaciones.length > 0 ? (
                     calculateTotalOperations(usuario.operaciones)
                   ) : (
@@ -208,19 +211,19 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   )}
                 </p>
                 <p>
-                  <strong>Puntas Compradoras:</strong>{" "}
+                  <strong>Puntas Compradoras:</strong>{' '}
                   {calculateTotalBuyerTips(usuario.operaciones)}
                 </p>
                 <p>
-                  <strong>Puntas Vendedoras:</strong>{" "}
+                  <strong>Puntas Vendedoras:</strong>{' '}
                   {calculateTotalSellerTips(usuario.operaciones)}
                 </p>
                 <p>
-                  <strong>Puntas Totales:</strong>{" "}
+                  <strong>Puntas Totales:</strong>{' '}
                   {calculateTotalTips(usuario.operaciones)}
                 </p>
                 <p>
-                  <strong>Monto Total Operaciones:</strong>{" "}
+                  <strong>Monto Total Operaciones:</strong>{' '}
                   {formatNumber(
                     calculateTotalReservationValue(usuario.operaciones)
                   )}

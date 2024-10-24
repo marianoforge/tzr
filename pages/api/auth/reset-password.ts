@@ -1,6 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { sendPasswordResetEmail } from 'firebase/auth';
+
+import { auth } from '@/lib/firebase';
 
 interface ResetPasswordRequestBody {
   email: string;
@@ -10,8 +11,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Método no permitido" });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Método no permitido' });
   }
 
   const { email }: ResetPasswordRequestBody = req.body;
@@ -19,7 +20,7 @@ export default async function handler(
   if (!email) {
     return res
       .status(400)
-      .json({ message: "El correo electrónico es requerido" });
+      .json({ message: 'El correo electrónico es requerido' });
   }
 
   try {
@@ -30,7 +31,7 @@ export default async function handler(
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      message: "Error al enviar el correo de restablecimiento de contraseña.",
+      message: 'Error al enviar el correo de restablecimiento de contraseña.',
     });
   }
 }

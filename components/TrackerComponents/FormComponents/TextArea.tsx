@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -20,7 +20,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         <textarea
           ref={ref}
           className={
-            className || "w-full p-2 mb-4 border border-gray-300 rounded"
+            className || 'w-full p-2 mb-4 border border-gray-300 rounded'
           }
           rows={rows}
           {...props}
@@ -31,6 +31,6 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
   }
 );
 
-TextArea.displayName = "TextArea";
+TextArea.displayName = 'TextArea';
 
 export default TextArea;

@@ -1,6 +1,7 @@
-import { useAuthStore } from "@/stores/authStore";
-import { UserInfoProps } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+
+import { useAuthStore } from '@/stores/authStore';
+import { UserInfoProps } from '@/types';
 
 export const UserInfo = () => {
   const [userData, setUserData] = useState<UserInfoProps | null>(null);
@@ -13,7 +14,7 @@ export const UserInfo = () => {
         setIsLoading(true);
         const response = await fetch(`/api/users/${userID}`);
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error('Network response was not ok');
         }
         const data = await response.json();
         setUserData(data);
@@ -22,7 +23,7 @@ export const UserInfo = () => {
         if (error instanceof Error) {
           setError(error.message);
         } else {
-          setError("An unknown error occurred");
+          setError('An unknown error occurred');
         }
       }
     };

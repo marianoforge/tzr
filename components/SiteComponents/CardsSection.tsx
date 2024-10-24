@@ -1,4 +1,4 @@
-import BounceCard from "./BounceCard";
+import BounceCard from './BounceCard';
 
 const CardsSection = () => {
   return (

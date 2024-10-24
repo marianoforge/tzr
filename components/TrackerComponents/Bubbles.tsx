@@ -1,17 +1,15 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Tooltip } from 'react-tooltip';
+import { InformationCircleIcon } from '@heroicons/react/24/solid';
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+import { calculateTotals } from '@/utils/calculations';
+import SkeletonLoader from '@/components/TrackerComponents/SkeletonLoader';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { useAuthStore } from '@/stores/authStore';
+import { formatValue } from '@/utils/formatValue';
 
-import { fetchUserOperations } from "@/lib/api/operationsApi";
-import { calculateTotals } from "@/utils/calculations";
-import SkeletonLoader from "@/components/TrackerComponents/SkeletonLoader";
-import "react-loading-skeleton/dist/skeleton.css";
-import { useAuthStore } from "@/stores/authStore";
-import { formatValue } from "@/utils/formatValue";
-
-import { Tooltip } from "react-tooltip";
-import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
-
-import { currentYearOperations } from "@/utils/currentYearOps";
+import { currentYearOperations } from '@/utils/currentYearOps';
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
@@ -21,8 +19,8 @@ const Bubbles = () => {
     isLoading,
     error: operationsError,
   } = useQuery({
-    queryKey: ["operations", userID],
-    queryFn: () => fetchUserOperations(userID || ""),
+    queryKey: ['operations', userID],
+    queryFn: () => fetchUserOperations(userID || ''),
     enabled: !!userID,
   });
 
@@ -31,74 +29,74 @@ const Bubbles = () => {
 
   const bubbleData = [
     {
-      title: "Honorarios Netos",
-      figure: formatValue(totals.honorarios_asesor_cerradas ?? 0, "currency"),
-      bgColor: "bg-lightBlue",
-      textColor: "text-white",
+      title: 'Honorarios Netos',
+      figure: formatValue(totals.honorarios_asesor_cerradas ?? 0, 'currency'),
+      bgColor: 'bg-lightBlue',
+      textColor: 'text-white',
       tooltip:
-        "Este es el monto total de honorarios netos obtenidos por el asesor o broker.",
+        'Este es el monto total de honorarios netos obtenidos por el asesor o broker.',
     },
     {
-      title: "Honorarios Brutos",
-      figure: formatValue(totals.honorarios_broker_cerradas ?? 0, "currency"),
-      bgColor: "bg-darkBlue",
-      textColor: "text-white",
-      tooltip: "Este es el monto total de honorarios brutos.",
+      title: 'Honorarios Brutos',
+      figure: formatValue(totals.honorarios_broker_cerradas ?? 0, 'currency'),
+      bgColor: 'bg-darkBlue',
+      textColor: 'text-white',
+      tooltip: 'Este es el monto total de honorarios brutos.',
     },
     {
-      title: "Monto Sobre Operaciones Cerradas",
-      figure: formatValue(totals.valor_reserva_cerradas ?? 0, "currency"),
-      bgColor: "bg-lightBlue",
-      textColor: "text-white",
-      tooltip: "Este es el valor total de las operaciones cerradas.",
+      title: 'Monto Sobre Operaciones Cerradas',
+      figure: formatValue(totals.valor_reserva_cerradas ?? 0, 'currency'),
+      bgColor: 'bg-lightBlue',
+      textColor: 'text-white',
+      tooltip: 'Este es el valor total de las operaciones cerradas.',
     },
     {
-      title: "Cantidad Total de Puntas",
-      figure: formatValue(totals.suma_total_de_puntas, "none"),
-      bgColor: "bg-darkBlue",
-      textColor: "text-white",
-      tooltip: "Número total de puntas realizadas.",
+      title: 'Cantidad Total de Puntas',
+      figure: formatValue(totals.suma_total_de_puntas, 'none'),
+      bgColor: 'bg-darkBlue',
+      textColor: 'text-white',
+      tooltip: 'Número total de puntas realizadas.',
     },
     {
-      title: "Promedio Valor Operación",
+      title: 'Promedio Valor Operación',
       figure: formatValue(
         totals.total_valor_ventas_desarrollos ?? 0,
-        "currency"
+        'currency'
       ),
-      bgColor: "bg-lightBlue",
-      textColor: "text-white",
-      tooltip: "Promedio del valor de las operaciones efectuadas.",
+      bgColor: 'bg-lightBlue',
+      textColor: 'text-white',
+      tooltip: 'Promedio del valor de las operaciones efectuadas.',
     },
     {
-      title: "Cantidad de Operaciones Cerradas",
-      figure: formatValue(totals.cantidad_operaciones, "none"),
-      bgColor: "bg-darkBlue",
-      textColor: "text-white",
-      tooltip: "Número total de operaciones efectuadas cerradas.",
+      title: 'Cantidad de Operaciones Cerradas',
+      figure: formatValue(totals.cantidad_operaciones, 'none'),
+      bgColor: 'bg-darkBlue',
+      textColor: 'text-white',
+      tooltip: 'Número total de operaciones efectuadas cerradas.',
     },
     {
-      title: "Promedio Mensual Honorarios Netos",
+      title: 'Promedio Mensual Honorarios Netos',
       figure: formatValue(
         totals.promedio_mensual_honorarios_asesor ?? 0,
-        "currency"
+        'currency'
       ),
-      bgColor: "bg-lightBlue",
-      textColor: "text-white",
-      tooltip: "Promedio de Honorarios netos totales por mes.",
+      bgColor: 'bg-lightBlue',
+      textColor: 'text-white',
+      tooltip: 'Promedio de Honorarios netos totales por mes.',
     },
     {
-      title: "Suma de las Operaciones en Curso.",
-      figure: formatValue(totals.valor_reserva_en_curso ?? 0, "currency"),
-      bgColor: "bg-darkBlue",
-      textColor: "text-white",
-      tooltip: "Monto total de las Operaciones en Curso",
+      title: 'Suma de las Operaciones en Curso.',
+      figure: formatValue(totals.valor_reserva_en_curso ?? 0, 'currency'),
+      bgColor: 'bg-darkBlue',
+      textColor: 'text-white',
+      tooltip: 'Monto total de las Operaciones en Curso',
     },
     {
-      title: "TBD",
-      figure: formatValue("", "none"),
-      bgColor: "bg-lightBlue",
-      textColor: "text-white",
-      tooltip: "TBD",
+      title: 'TBD',
+      figure: formatValue('', 'none'),
+      bgColor: 'bg-lightBlue',
+      textColor: 'text-white',
+      tooltip: 'TBD',
     },
   ];
 
@@ -107,7 +105,7 @@ const Bubbles = () => {
   }
   if (operationsError) {
     return (
-      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
 

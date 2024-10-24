@@ -1,16 +1,19 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
-import OperationsContainer from "./OperationsContainer";
-import OperationsTable from "./OperationsTable";
-import { onAuthStateChanged } from "firebase/auth";
-import { fetchUserOperations } from "@/lib/api/operationsApi";
-import { auth } from "@/lib/firebase";
-import { Operation } from "@/types";
-import SkeletonLoader from "../SkeletonLoader";
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
+import { onAuthStateChanged } from 'firebase/auth';
+
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+import { auth } from '@/lib/firebase';
+import { Operation } from '@/types';
+
+import SkeletonLoader from '../SkeletonLoader';
+
+import OperationsTable from './OperationsTable';
+import OperationsContainer from './OperationsContainer';
 
 interface OperationsCarouselDashProps {
-  filter: "all" | "open" | "closed" | "currentYear" | "year2023";
+  filter: 'all' | 'open' | 'closed' | 'currentYear' | 'year2023';
 }
 
 const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
@@ -23,7 +26,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
         setUserUID(user.uid);
       } else {
         setUserUID(null);
-        router.push("/login");
+        router.push('/login');
       }
     });
     return () => unsubscribe();
@@ -34,8 +37,8 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
     isLoading,
     error: operationsError,
   } = useQuery({
-    queryKey: ["operations", userUID],
-    queryFn: () => fetchUserOperations(userUID || ""),
+    queryKey: ['operations', userUID],
+    queryFn: () => fetchUserOperations(userUID || ''),
     enabled: !!userUID,
   });
 
@@ -43,11 +46,11 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
     const operationYear = new Date(operation.fecha_operacion).getFullYear();
     const currentYear = new Date().getFullYear();
 
-    if (filter === "all") return true;
-    if (filter === "open") return operation.estado === "En Curso";
-    if (filter === "closed") return operation.estado === "Cerrada";
-    if (filter === "currentYear") return operationYear === currentYear;
-    if (filter === "year2023") return operationYear === 2023;
+    if (filter === 'all') return true;
+    if (filter === 'open') return operation.estado === 'En Curso';
+    if (filter === 'closed') return operation.estado === 'Cerrada';
+    if (filter === 'currentYear') return operationYear === currentYear;
+    if (filter === 'year2023') return operationYear === 2023;
   });
 
   if (isLoading) {
@@ -59,7 +62,7 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
   }
   if (operationsError) {
     return (
-      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
 

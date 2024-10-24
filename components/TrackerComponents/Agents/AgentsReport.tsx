@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import SkeletonLoader from "@/components/TrackerComponents/SkeletonLoader";
-import { UserData, TeamMember, UserWithOperations } from "@/types";
-import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import { formatNumber } from "@/utils/formatNumber";
-import EditAgentsModal from "./EditAgentsModal";
-import AddUserModal from "../Agents/AddUserModal";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   PencilIcon,
   TrashIcon,
   UserPlusIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
+
+import SkeletonLoader from '@/components/TrackerComponents/SkeletonLoader';
+import { UserData, TeamMember, UserWithOperations } from '@/types';
+import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
+import { formatNumber } from '@/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
   calculateTotalOperations,
@@ -18,9 +17,13 @@ import {
   calculateTotalSellerTips,
   calculateTotalTips,
   calculateTotalReservationValue,
-} from "@/utils/calculationsAgents";
-import useUsersWithOperations from "@/hooks/useUserWithOperations";
-import { useTeamMembersOps } from "@/hooks/useTeamMembersOps";
+} from '@/utils/calculationsAgents';
+import useUsersWithOperations from '@/hooks/useUserWithOperations';
+import { useTeamMembersOps } from '@/hooks/useTeamMembersOps';
+
+import AddUserModal from '../Agents/AddUserModal';
+
+import EditAgentsModal from './EditAgentsModal';
 
 // Utiliza los hooks adaptados a Tanstack Query
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
@@ -36,7 +39,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     data: membersData,
     isLoading: isLoadingMembers,
     error: membersError,
-  } = useTeamMembersOps(currentUser.uid ?? "");
+  } = useTeamMembersOps(currentUser.uid ?? '');
 
   const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
@@ -55,7 +58,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          numeroTelefono: "",
+          numeroTelefono: '',
           operaciones: user.operaciones,
         })),
         ...membersData.membersWithOperations,
@@ -67,11 +70,11 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const handleDeleteClick = useCallback(
     async (memberId: string) => {
       if (
-        window.confirm("¿Estás seguro de que deseas eliminar este miembro?")
+        window.confirm('¿Estás seguro de que deseas eliminar este miembro?')
       ) {
         try {
           const response = await fetch(`/api/teamMembers/${memberId}`, {
-            method: "DELETE",
+            method: 'DELETE',
           });
 
           if (response.ok) {
@@ -79,13 +82,13 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
               prevData.filter((member) => member.id !== memberId)
             );
             queryClient.invalidateQueries({
-              queryKey: ["teamMembersOps", currentUser.uid],
+              queryKey: ['teamMembersOps', currentUser.uid],
             });
           } else {
-            console.error("Error al borrar el miembro");
+            console.error('Error al borrar el miembro');
           }
         } catch (error) {
-          console.error("Error en la petición DELETE:", error);
+          console.error('Error en la petición DELETE:', error);
         }
       }
     },
@@ -101,9 +104,9 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     async (updatedMember: TeamMember) => {
       try {
         const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(updatedMember),
         });
@@ -116,13 +119,13 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
           );
           setIsModalOpen(false);
           queryClient.invalidateQueries({
-            queryKey: ["teamMembersOps", currentUser.uid],
+            queryKey: ['teamMembersOps', currentUser.uid],
           });
         } else {
-          console.error("Error al actualizar el miembro");
+          console.error('Error al actualizar el miembro');
         }
       } catch (error) {
-        console.error("Error en la petición PUT:", error);
+        console.error('Error en la petición PUT:', error);
       }
     },
     [queryClient, currentUser.uid]
@@ -171,10 +174,10 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   if (usersError || membersError) {
     return (
       <p>
-        Error:{" "}
+        Error:{' '}
         {usersError?.message ||
           membersError?.message ||
-          "An unknown error occurred"}
+          'An unknown error occurred'}
       </p>
     );
   }
@@ -236,7 +239,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                 <tr
                   key={usuario.id}
                   className={`border-b text-center h-[75px] ${
-                    currentPage === 1 && index === 0 ? "bg-green-100" : ""
+                    currentPage === 1 && index === 0 ? 'bg-green-100' : ''
                   }`}
                 >
                   <td className="py-3 px-4 font-semibold text-start w-1/5">

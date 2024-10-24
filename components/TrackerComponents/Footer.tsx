@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface FooterProps {
   setActiveView: (view: string) => void;
@@ -13,13 +13,13 @@ const Footer = ({ setActiveView }: FooterProps) => {
         </div>
         <div className="flex space-x-4">
           <button
-            onClick={() => setActiveView("about")}
+            onClick={() => setActiveView('about')}
             className="text-white hover:bg-[#3A6D8A]  py-2 rounded text-sm transition duration-150 ease-in-out"
           >
             Acerca de TrackPro
           </button>
           <button
-            onClick={() => setActiveView("contact")}
+            onClick={() => setActiveView('contact')}
             className="text-white hover:bg-[#3A6D8A]  py-2 rounded text-sm transition duration-150 ease-in-out"
           >
             Contact

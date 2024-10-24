@@ -1,8 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import Stripe from "stripe";
+import { NextApiRequest, NextApiResponse } from 'next';
+import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-09-30.acacia",
+  apiVersion: '2024-09-30.acacia',
 });
 
 export default async function handler(
@@ -11,10 +11,10 @@ export default async function handler(
 ) {
   const { session_id } = req.query; // Obtener el session_id desde la URL
 
-  if (req.method === "GET") {
+  if (req.method === 'GET') {
     try {
-      if (!session_id || typeof session_id !== "string") {
-        res.status(400).json({ error: "Session ID inválido" });
+      if (!session_id || typeof session_id !== 'string') {
+        res.status(400).json({ error: 'Session ID inválido' });
         return;
       }
 
@@ -25,11 +25,11 @@ export default async function handler(
       res.status(200).json(session);
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Error desconocido";
+        err instanceof Error ? err.message : 'Error desconocido';
       res.status(500).json({ error: errorMessage });
     }
   } else {
-    res.setHeader("Allow", "GET");
-    res.status(405).end("Method Not Allowed");
+    res.setHeader('Allow', 'GET');
+    res.status(405).end('Method Not Allowed');
   }
 }

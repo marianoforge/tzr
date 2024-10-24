@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { TeamMember } from "@/types";
+import React, { useState, useEffect, useCallback } from 'react';
+
+import { TeamMember } from '@/types';
 
 type ModalProps = {
   isOpen: boolean;

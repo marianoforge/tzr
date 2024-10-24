@@ -1,7 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import AgentsReportCarousel from "./AgentsReportCarousel";
-import { UserData } from "@/types";
+import { UserData } from '@/types';
+
+import AgentsReportCarousel from './AgentsReportCarousel';
 
 const AgentsReportCarouselDash = ({
   currentUser,

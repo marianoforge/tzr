@@ -1,6 +1,7 @@
-import { ReactNode } from "react";
-import { useRouter } from "next/router"; // Importa useRouter de next/router
-import SkeletonLoader from "../SkeletonLoader";
+import { ReactNode } from 'react';
+import { useRouter } from 'next/router'; // Importa useRouter de next/router
+
+import SkeletonLoader from '../SkeletonLoader';
 
 interface OperationsContainerProps {
   isLoading: boolean;
@@ -20,16 +21,16 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
   const router = useRouter(); // Obtén el objeto router
 
   // Define la clase de margen superior basada en la ruta actual
-  const marginTopClass = router.pathname.includes("dashboard")
-    ? "mt-10"
-    : "mt-20";
+  const marginTopClass = router.pathname.includes('dashboard')
+    ? 'mt-10'
+    : 'mt-20';
 
   if (isLoading) {
     return <SkeletonLoader height={1100} count={1} />;
   }
   if (operationsError) {
     return (
-      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
 

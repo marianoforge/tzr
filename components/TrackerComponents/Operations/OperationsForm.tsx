@@ -1,22 +1,24 @@
-import { useState, useEffect } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import ModalOK from "../ModalOK";
-import { useRouter } from "next/router";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import Button from "@/components/TrackerComponents/FormComponents/Button";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { InferType } from "yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createOperation } from "@/lib/api/operationsApi";
-import { calculateHonorarios } from "@/utils/calculations";
-import { schema } from "@/schemas/operationsFormSchema";
-import { Operation, TeamMember } from "@/types";
-import { useUserDataStore } from "@/stores/userDataStore";
-import { useTeamMembers } from "@/hooks/useTeamMembers";
-import Select from "@/components/TrackerComponents/FormComponents/Select";
-import { formatDateForUser } from "@/utils/formatDateForUser";
+import { useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { InferType } from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import Input from '@/components/TrackerComponents/FormComponents/Input';
+import { auth } from '@/lib/firebase';
+import { createOperation } from '@/lib/api/operationsApi';
+import { calculateHonorarios } from '@/utils/calculations';
+import { schema } from '@/schemas/operationsFormSchema';
+import { Operation, TeamMember } from '@/types';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
+import Select from '@/components/TrackerComponents/FormComponents/Select';
+import { formatDateForUser } from '@/utils/formatDateForUser';
+
+import ModalOK from '../ModalOK';
 
 type FormData = InferType<typeof schema>;
 
@@ -30,19 +32,19 @@ const OperationsForm = () => {
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      estado: "En Curso",
+      estado: 'En Curso',
       punta_compradora: false,
       punta_vendedora: false,
-      fecha_operacion: "", // Set a default value for the date field
+      fecha_operacion: '', // Set a default value for the date field
     },
   });
 
   const { data: teamMembers } = useTeamMembers();
   const [userUID, setUserUID] = useState<string | null>(null);
   const { userData } = useUserDataStore();
-  const [userTimeZone, setUserTimeZone] = useState<string>("");
+  const [userTimeZone, setUserTimeZone] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
+  const [modalMessage, setModalMessage] = useState('');
   const [honorariosBroker, setHonorariosBroker] = useState(0);
   const [honorariosAsesor, setHonorariosAsesor] = useState(0);
 
@@ -59,7 +61,7 @@ const OperationsForm = () => {
       ? [
           {
             name:
-              `${userData?.firstName} ${userData?.lastName}` || "Logged User",
+              `${userData?.firstName} ${userData?.lastName}` || 'Logged User',
             uid: userUID,
           },
         ]
@@ -80,12 +82,12 @@ const OperationsForm = () => {
   }, []);
 
   const watchAllFields = watch();
-  const date = watch("fecha_operacion");
+  const date = watch('fecha_operacion');
 
   // Debugging log
   console.log(`Watched fecha_operacion: ${date}`);
 
-  const formattedDate = date ? formatDateForUser(date, userTimeZone) : "";
+  const formattedDate = date ? formatDateForUser(date, userTimeZone) : '';
 
   // Calculate honorarios based on form values
   useEffect(() => {
@@ -113,14 +115,14 @@ const OperationsForm = () => {
     mutationFn: createOperation,
     onSuccess: () => {
       if (userUID) {
-        queryClient.invalidateQueries({ queryKey: ["operations", userUID] });
+        queryClient.invalidateQueries({ queryKey: ['operations', userUID] });
       }
-      setModalMessage("Operación guardada exitosamente");
+      setModalMessage('Operación guardada exitosamente');
       setShowModal(true);
       reset();
     },
     onError: () => {
-      setModalMessage("Error al guardar la operación");
+      setModalMessage('Error al guardar la operación');
       setShowModal(true);
     },
   });
@@ -128,7 +130,7 @@ const OperationsForm = () => {
   // Handle form submission
   const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!userUID) {
-      setModalMessage("Usuario no autenticado. Por favor, inicia sesión.");
+      setModalMessage('Usuario no autenticado. Por favor, inicia sesión.');
       setShowModal(true);
       return;
     }
@@ -147,7 +149,7 @@ const OperationsForm = () => {
     const assignedUserUIDAdicional =
       selectedUserAdicional && selectedUserAdicional.uid !== userUID
         ? selectedUserAdicional.uid
-        : "";
+        : '';
 
     const dataToSubmit = {
       ...data,
@@ -159,7 +161,7 @@ const OperationsForm = () => {
       teamId: userUID,
       punta_compradora: data.punta_compradora ? 1 : 0,
       punta_vendedora: data.punta_vendedora ? 1 : 0,
-      estado: "En Curso",
+      estado: 'En Curso',
       porcentaje_punta_compradora: data.porcentaje_punta_compradora || 0,
       porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
     };
@@ -169,7 +171,7 @@ const OperationsForm = () => {
   };
 
   const handleModalAccept = () => {
-    router.push("/dashboard");
+    router.push('/dashboard');
   };
 
   const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
@@ -194,7 +196,7 @@ const OperationsForm = () => {
               label="Fecha de la Operación*"
               type="date"
               defaultValue={formattedDate} // Se usa la fecha como string
-              {...register("fecha_operacion")}
+              {...register('fecha_operacion')}
               error={errors.fecha_operacion?.message}
               required
             />
@@ -203,7 +205,7 @@ const OperationsForm = () => {
               label="Dirección de la operación*"
               type="text"
               placeholder="Dirección de la Reserva"
-              {...register("direccion_reserva")}
+              {...register('direccion_reserva')}
               error={errors.direccion_reserva?.message}
               required
             />
@@ -212,7 +214,7 @@ const OperationsForm = () => {
               label="Localidad*"
               type="text"
               placeholder="Por ejemplo: San Isidro"
-              {...register("localidad_reserva")}
+              {...register('localidad_reserva')}
               error={errors.localidad_reserva?.message}
               required
             />
@@ -220,33 +222,33 @@ const OperationsForm = () => {
             <Select
               label="Provincia*" // Add the missing label prop
               register={register} // Add the missing register prop
-              {...register("provincia_reserva")}
+              {...register('provincia_reserva')}
               options={[
-                { value: "", label: "Selecciona la Provincia" },
-                { value: "Buenos Aires", label: "Buenos Aires" },
-                { value: "CABA", label: "CABA" },
-                { value: "Catamarca", label: "Catamarca" },
-                { value: "Chaco", label: "Chaco" },
-                { value: "Chubut", label: "Chubut" },
-                { value: "Córdoba", label: "Córdoba" },
-                { value: "Corrientes", label: "Corrientes" },
-                { value: "Entre Ríos", label: "Entre Ríos" },
-                { value: "Formosa", label: "Formosa" },
-                { value: "Jujuy", label: "Jujuy" },
-                { value: "La Pampa", label: "La Pampa" },
-                { value: "La Rioja", label: "La Rioja" },
-                { value: "Mendoza", label: "Mendoza" },
-                { value: "Misiones", label: "Misiones" },
-                { value: "Neuquén", label: "Neuquén" },
-                { value: "Río Negro", label: "Río Negro" },
-                { value: "Salta", label: "Salta" },
-                { value: "San Juan", label: "San Juan" },
-                { value: "San Luis", label: "San Luis" },
-                { value: "Santa Cruz", label: "Santa Cruz" },
-                { value: "Santa Fe", label: "Santa Fe" },
-                { value: "Santiago del Estero", label: "Santiago del Estero" },
-                { value: "Tierra del Fuego", label: "Tierra del Fuego" },
-                { value: "Tucumán", label: "Tucumán" },
+                { value: '', label: 'Selecciona la Provincia' },
+                { value: 'Buenos Aires', label: 'Buenos Aires' },
+                { value: 'CABA', label: 'CABA' },
+                { value: 'Catamarca', label: 'Catamarca' },
+                { value: 'Chaco', label: 'Chaco' },
+                { value: 'Chubut', label: 'Chubut' },
+                { value: 'Córdoba', label: 'Córdoba' },
+                { value: 'Corrientes', label: 'Corrientes' },
+                { value: 'Entre Ríos', label: 'Entre Ríos' },
+                { value: 'Formosa', label: 'Formosa' },
+                { value: 'Jujuy', label: 'Jujuy' },
+                { value: 'La Pampa', label: 'La Pampa' },
+                { value: 'La Rioja', label: 'La Rioja' },
+                { value: 'Mendoza', label: 'Mendoza' },
+                { value: 'Misiones', label: 'Misiones' },
+                { value: 'Neuquén', label: 'Neuquén' },
+                { value: 'Río Negro', label: 'Río Negro' },
+                { value: 'Salta', label: 'Salta' },
+                { value: 'San Juan', label: 'San Juan' },
+                { value: 'San Luis', label: 'San Luis' },
+                { value: 'Santa Cruz', label: 'Santa Cruz' },
+                { value: 'Santa Fe', label: 'Santa Fe' },
+                { value: 'Santiago del Estero', label: 'Santiago del Estero' },
+                { value: 'Tierra del Fuego', label: 'Tierra del Fuego' },
+                { value: 'Tucumán', label: 'Tucumán' },
               ]}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
@@ -258,20 +260,20 @@ const OperationsForm = () => {
             <Select
               label="Tipo de operación*"
               register={register}
-              {...register("tipo_operacion")}
+              {...register('tipo_operacion')}
               options={[
-                { value: "", label: "Selecciona el Tipo de Operación" },
-                { value: "Venta", label: "Venta" },
-                { value: "Alquiler Temporal", label: "Alquiler Temporal" },
+                { value: '', label: 'Selecciona el Tipo de Operación' },
+                { value: 'Venta', label: 'Venta' },
+                { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
                 {
-                  value: "Alquiler Tradicional",
-                  label: "Alquiler Tradicional",
+                  value: 'Alquiler Tradicional',
+                  label: 'Alquiler Tradicional',
                 },
-                { value: "Alquiler Comercial", label: "Alquiler Comercial" },
-                { value: "Fondo de Comercio", label: "Fondo de Comercio" },
-                { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
-                { value: "Cochera", label: "Cochera" },
-                { value: "Locales Comerciales", label: "Locales Comerciales" },
+                { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
+                { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
+                { value: 'Desarrollo', label: 'Desarrollo Inmobiliario' },
+                { value: 'Cochera', label: 'Cochera' },
+                { value: 'Locales Comerciales', label: 'Locales Comerciales' },
               ]}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
@@ -284,7 +286,7 @@ const OperationsForm = () => {
               label="Porcentaje punta compradora*"
               type="text"
               placeholder="Por ejemplo: 4%"
-              {...register("porcentaje_punta_compradora", {
+              {...register('porcentaje_punta_compradora', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_punta_compradora?.message}
@@ -295,7 +297,7 @@ const OperationsForm = () => {
               label="Porcentaje punta vendedora*"
               type="text"
               placeholder="Por ejemplo: 3%"
-              {...register("porcentaje_punta_vendedora", {
+              {...register('porcentaje_punta_vendedora', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_punta_vendedora?.message}
@@ -306,7 +308,7 @@ const OperationsForm = () => {
               label="Porcentaje honorarios totales*"
               type="text"
               placeholder="Por ejemplo: 7%"
-              {...register("porcentaje_honorarios_broker", {
+              {...register('porcentaje_honorarios_broker', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_honorarios_broker?.message}
@@ -316,7 +318,7 @@ const OperationsForm = () => {
               label="Valor de reserva / operación*"
               type="number"
               placeholder="Por ejemplo: 200000"
-              {...register("valor_reserva")}
+              {...register('valor_reserva')}
               error={errors.valor_reserva?.message}
               required
             />
@@ -324,7 +326,7 @@ const OperationsForm = () => {
               label="Número sobre de reserva"
               type="text"
               placeholder="Por ejemplo: E12549"
-              {...register("numero_sobre_reserva")}
+              {...register('numero_sobre_reserva')}
               error={errors.numero_sobre_reserva?.message}
             />
 
@@ -332,7 +334,7 @@ const OperationsForm = () => {
               label="Monto sobre de reserva"
               type="number"
               placeholder="Por ejemplo: 2000"
-              {...register("monto_sobre_reserva")}
+              {...register('monto_sobre_reserva')}
               error={errors.monto_sobre_reserva?.message}
             />
           </div>
@@ -343,7 +345,7 @@ const OperationsForm = () => {
               label="Número sobre de refuerzo"
               type="text"
               placeholder="Por ejemplo: E12549"
-              {...register("numero_sobre_refuerzo")}
+              {...register('numero_sobre_refuerzo')}
               error={errors.numero_sobre_refuerzo?.message}
             />
 
@@ -351,7 +353,7 @@ const OperationsForm = () => {
               label="Monto sobre refuerzo"
               type="number"
               placeholder="Por ejemplo: 4000"
-              {...register("monto_sobre_refuerzo")}
+              {...register('monto_sobre_refuerzo')}
               error={errors.monto_sobre_refuerzo?.message}
             />
 
@@ -359,7 +361,7 @@ const OperationsForm = () => {
               label="Referido"
               type="text"
               placeholder="Por ejemplo: Juan Pérez"
-              {...register("referido")}
+              {...register('referido')}
               error={errors.referido?.message}
             />
 
@@ -367,7 +369,7 @@ const OperationsForm = () => {
               label="Porcentaje Referido"
               type="text"
               placeholder="Por ejemplo: 25%"
-              {...register("porcentaje_referido", {
+              {...register('porcentaje_referido', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_referido?.message}
@@ -377,7 +379,7 @@ const OperationsForm = () => {
               label="Compartido"
               type="text"
               placeholder="Por ejemplo: Juana Pérez"
-              {...register("compartido")}
+              {...register('compartido')}
               error={errors.compartido?.message}
             />
 
@@ -385,7 +387,7 @@ const OperationsForm = () => {
               label="Porcentaje Compartido"
               type="text"
               placeholder="Por ejemplo: 2%"
-              {...register("porcentaje_compartido", {
+              {...register('porcentaje_compartido', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_compartido?.message}
@@ -397,16 +399,16 @@ const OperationsForm = () => {
               compartida, primero te pones como asesor participante al 50% y
               agregas un asesor más con el porcentaje de ganancia de el. Ej: 55%
             </p>
-            {userRole === "team_leader_broker" && (
+            {userRole === 'team_leader_broker' && (
               <>
                 <Select
                   label="Asesor que realizó la venta"
                   register={register}
-                  {...register("realizador_venta")}
+                  {...register('realizador_venta')}
                   options={[
                     {
-                      value: "",
-                      label: "Selecciona el asesor que realizó la operación",
+                      value: '',
+                      label: 'Selecciona el asesor que realizó la operación',
                     },
                     ...usersMapped
                       .sort((a, b) => a.name.localeCompare(b.name))
@@ -430,7 +432,7 @@ const OperationsForm = () => {
               label="Porcentaje honorarios asesor*"
               type="text"
               placeholder="Por ejemplo: 40%"
-              {...register("porcentaje_honorarios_asesor", {
+              {...register('porcentaje_honorarios_asesor', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_honorarios_asesor?.message}
@@ -443,12 +445,12 @@ const OperationsForm = () => {
                 <Select
                   label="Asesor adicional"
                   register={register}
-                  {...register("realizador_venta_adicional")}
+                  {...register('realizador_venta_adicional')}
                   options={[
                     {
-                      value: "",
+                      value: '',
                       label:
-                        "Selecciona el asesor participante en la operación",
+                        'Selecciona el asesor participante en la operación',
                     },
                     ...usersMapped
                       .sort((a, b) => a.name.localeCompare(b.name))
@@ -469,21 +471,21 @@ const OperationsForm = () => {
                   label="Porcentaje honorarios asesor adicional"
                   type="text"
                   placeholder="Por ejemplo: 40%"
-                  {...register("porcentaje_honorarios_asesor_adicional", {
+                  {...register('porcentaje_honorarios_asesor_adicional', {
                     setValueAs: (value) => parseFloat(value) || 0,
                   })}
                   error={errors.porcentaje_honorarios_asesor_adicional?.message}
                 />
               </>
             )}
-            {userRole === "team_leader_broker" && (
+            {userRole === 'team_leader_broker' && (
               <p
                 className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
                 onClick={toggleAdditionalAdvisor}
               >
                 {showAdditionalAdvisor
-                  ? "Eliminar Segundo Asesor"
-                  : "Agregar Otro Asesor"}
+                  ? 'Eliminar Segundo Asesor'
+                  : 'Agregar Otro Asesor'}
               </p>
             )}
             <label className="font-semibold text-mediumBlue">
@@ -491,7 +493,7 @@ const OperationsForm = () => {
             </label>
             <div className="flex gap-10 mt-2">
               <div className="flex items-center gap-2">
-                <input type="checkbox" {...register("punta_vendedora")} />
+                <input type="checkbox" {...register('punta_vendedora')} />
                 <label>Punta Vendedora</label>
               </div>
               {errors.punta_vendedora && (
@@ -499,7 +501,7 @@ const OperationsForm = () => {
               )}
 
               <div className="flex items-center gap-2">
-                <input type="checkbox" {...register("punta_compradora")} />
+                <input type="checkbox" {...register('punta_compradora')} />
                 <label>Punta Compradora</label>
               </div>
               {errors.punta_compradora && (

@@ -1,18 +1,19 @@
 /* eslint-disable no-shadow */
-import React, { PureComponent } from "react";
-import { PieChart, Pie, Cell } from "recharts";
-import { useUserDataStore } from "@/stores/userDataStore"; // Import the store
-import { OBJECTIVE_CHART_COLORS } from "@/lib/constants";
-import { Operation, UserData } from "@/types";
-import { calculateTotals } from "@/utils/calculations";
-import { fetchUserOperations } from "@/utils/operationsApi";
-import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "@/stores/authStore";
-import { formatNumber } from "@/utils/formatNumber";
+import React, { PureComponent } from 'react';
+import { PieChart, Pie, Cell } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+import router from 'next/router';
 
-import router from "next/router";
-import { currentYearOperations } from "@/utils/currentYearOps";
-import SkeletonLoader from "./SkeletonLoader";
+import { useUserDataStore } from '@/stores/userDataStore'; // Import the store
+import { OBJECTIVE_CHART_COLORS } from '@/lib/constants';
+import { Operation, UserData } from '@/types';
+import { calculateTotals } from '@/utils/calculations';
+import { fetchUserOperations } from '@/utils/operationsApi';
+import { useAuthStore } from '@/stores/authStore';
+import { formatNumber } from '@/utils/formatNumber';
+import { currentYearOperations } from '@/utils/currentYearOps';
+
+import SkeletonLoader from './SkeletonLoader';
 
 const RADIAN = Math.PI / 180;
 
@@ -63,8 +64,8 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
       isLoading: isLoadingOperations,
       error: operationsError,
     } = useQuery({
-      queryKey: ["operations", userID],
-      queryFn: () => fetchUserOperations(userID || ""),
+      queryKey: ['operations', userID],
+      queryFn: () => fetchUserOperations(userID || ''),
       enabled: !!userID,
     });
     if (isLoadingOperations) {
@@ -72,7 +73,7 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
     }
     if (operationsError) {
       return (
-        <p>Error: {operationsError?.message || "An unknown error occurred"}</p>
+        <p>Error: {operationsError?.message || 'An unknown error occurred'}</p>
       );
     }
     return (
@@ -100,7 +101,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
     return (
       <div
         className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center"
-        style={{ height: "225px" }}
+        style={{ height: '225px' }}
       >
         <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold pt-2 pb-2">
           Objetivo Anual de Ventas
@@ -110,7 +111,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
             <button
               className="bg-mediumBlue text-white p-2 rounded-md font-semibold mt-2"
               onClick={() => {
-                router.push("/settings");
+                router.push('/settings');
               }}
             >
               Agrega tu objetivo anual de ventas
@@ -144,15 +145,15 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
                   85,
                   55,
                   75,
-                  "#7ED994"
+                  '#7ED994'
                 )}
               </PieChart>
             </div>
             <h3 className="font-semibold text-mediumBlue text-base">
               {`Objetivo Anual de Ventas: $${formatNumber(
-                userData?.role === "team_leader_broker"
-                  ? totals.honorarios_broker_cerradas ?? 0
-                  : totals.honorarios_asesor_cerradas ?? 0
+                userData?.role === 'team_leader_broker'
+                  ? (totals.honorarios_broker_cerradas ?? 0)
+                  : (totals.honorarios_asesor_cerradas ?? 0)
               )} / $${formatNumber(userData?.objetivoAnual ?? 0)}`}
             </h3>
           </>

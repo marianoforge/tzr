@@ -1,4 +1,4 @@
-import { Operation } from "@/types";
+import { Operation } from '@/types';
 
 // Funcion para sumatoria de un campo en operaciones
 const sumField = (operations: Operation[], field: keyof Operation) =>
@@ -53,55 +53,55 @@ export const calculateTotals = (operations: Operation[]) => {
   }
 
   // Total Valores Ventas y Ventas Cerradas
-  const totalValorReserva = sumField(operations, "valor_reserva");
+  const totalValorReserva = sumField(operations, 'valor_reserva');
   const totalValorReservaCerradas = sumField(
-    operations.filter((op) => op.estado === "Cerrada"),
-    "valor_reserva"
+    operations.filter((op) => op.estado === 'Cerrada'),
+    'valor_reserva'
   );
   const totalValorReservaEnCurso = sumField(
-    operations.filter((op) => op.estado === "En Curso"),
-    "valor_reserva"
+    operations.filter((op) => op.estado === 'En Curso'),
+    'valor_reserva'
   );
 
   // Total Valores Ventas y Desarrollos Cerrados
-  const filteredOperations = filterOperationsByType(operations, "Venta")
-    .concat(filterOperationsByType(operations, "Desarrollo"))
-    .filter((op) => op.estado === "Cerrada");
+  const filteredOperations = filterOperationsByType(operations, 'Venta')
+    .concat(filterOperationsByType(operations, 'Desarrollo'))
+    .filter((op) => op.estado === 'Cerrada');
 
   // Total Promedio Valor Reservas Filtradas
   const totalValorReservaFiltered = averageField(
     filteredOperations,
-    "valor_reserva"
+    'valor_reserva'
   );
 
   // Total Promedio Porcentaje Honorarios Asesor
   const totalPorcentajeHonorariosAsesor = averageField(
     operations,
-    "porcentaje_honorarios_asesor"
+    'porcentaje_honorarios_asesor'
   );
 
   // Total Promedio Porcentaje Honorarios Broker
   const totalPorcentajeHonorariosBroker = averageField(
     operations,
-    "porcentaje_honorarios_broker"
+    'porcentaje_honorarios_broker'
   );
 
   // Total Honorarios Broker
-  const totalHonorariosBroker = sumField(operations, "honorarios_broker");
+  const totalHonorariosBroker = sumField(operations, 'honorarios_broker');
 
   // Total Honorarios Asesor
-  const totalHonorariosAsesor = sumField(operations, "honorarios_asesor");
+  const totalHonorariosAsesor = sumField(operations, 'honorarios_asesor');
 
   // Total Honorarios Asesor Cerradas
   const totalHonorariosAsesorCerradas = sumField(
-    operations.filter((op) => op.estado === "Cerrada"),
-    "honorarios_asesor"
+    operations.filter((op) => op.estado === 'Cerrada'),
+    'honorarios_asesor'
   );
 
   // Total Honorarios Broker Cerradas
   const totalHonorariosBrokerCerradas = sumField(
-    operations.filter((op) => op.estado === "Cerrada"),
-    "honorarios_broker"
+    operations.filter((op) => op.estado === 'Cerrada'),
+    'honorarios_broker'
   );
 
   // Mayor Valor Reserva Efectuada
@@ -113,36 +113,36 @@ export const calculateTotals = (operations: Operation[]) => {
   const promedioValorReserva = totalValorReserva / operations.length;
 
   // Operaciones Cerradas
-  const closedOperations = operations.filter((op) => op.estado === "Cerrada");
+  const closedOperations = operations.filter((op) => op.estado === 'Cerrada');
 
   // Total Punta Compradora
-  const puntaCompradora = sumField(closedOperations, "punta_compradora");
-  const puntaVendedora = sumField(closedOperations, "punta_vendedora");
+  const puntaCompradora = sumField(closedOperations, 'punta_compradora');
+  const puntaVendedora = sumField(closedOperations, 'punta_vendedora');
 
   // Total Suma Total de Puntas
   const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
 
   // Cantidad Operaciones Cerradas
   const cantidadOperaciones = operations.filter(
-    (op) => op.estado === "Cerrada"
+    (op) => op.estado === 'Cerrada'
   ).length;
 
   // Operaciones sin Alquileres
   const filtroOperacionsSinAlquileres = filterOperationsExcludingType(
     operations,
-    "Alquiler"
+    'Alquiler'
   );
 
   // Total Punta Compradora Porcentaje
   const totalPuntaCompradoraPorcentaje = sumField(
     filtroOperacionsSinAlquileres,
-    "porcentaje_punta_compradora"
+    'porcentaje_punta_compradora'
   );
 
   // Total Punta Vendedora Porcentaje
   const totalPuntaVendedoraPorcentaje = sumField(
     filtroOperacionsSinAlquileres,
-    "porcentaje_punta_vendedora"
+    'porcentaje_punta_vendedora'
   );
 
   // Operaciones Punta Compradora Valida !== null && !== 0

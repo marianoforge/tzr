@@ -1,9 +1,10 @@
-import React from "react";
-import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
-import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
-import ExpensesList from "@/components/TrackerComponents/Expenses/ExpensesList";
-import ExpensesListCards from "@/components/TrackerComponents/Expenses/ExpensesListCards";
-import ExpensesBarchart from "@/components/TrackerComponents/Expenses/ExpensesBarchart";
+import React from 'react';
+
+import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
+import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
+import ExpensesList from '@/components/TrackerComponents/Expenses/ExpensesList';
+import ExpensesListCards from '@/components/TrackerComponents/Expenses/ExpensesListCards';
+import ExpensesBarchart from '@/components/TrackerComponents/Expenses/ExpensesBarchart';
 
 const ExpensesBroker = () => {
   return (

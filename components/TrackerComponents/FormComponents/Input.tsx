@@ -1,5 +1,5 @@
-import React from "react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import React from 'react';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
@@ -16,8 +16,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
       className,
-      marginBottom = "mb-6",
-      marginTop = "mt-1",
+      marginBottom = 'mb-6',
+      marginTop = 'mt-1',
       label,
       error,
       showPasswordToggle,
@@ -36,10 +36,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={`${
-              className || "w-full p-2 border border-gray-300 rounded"
+              className || 'w-full p-2 border border-gray-300 rounded'
             }`}
             {...props}
-            type={showPasswordToggle && isPasswordVisible ? "text" : props.type}
+            type={showPasswordToggle && isPasswordVisible ? 'text' : props.type}
           />
           {showPasswordToggle && (
             <button
@@ -61,6 +61,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-Input.displayName = "Input";
+Input.displayName = 'Input';
 
 export default Input;

@@ -1,6 +1,7 @@
-import { UserDataState, UserData } from "@/types";
-import axios from "axios";
-import { create } from "zustand";
+import axios from 'axios';
+import { create } from 'zustand';
+
+import { UserDataState, UserData } from '@/types';
 
 export const useUserDataStore = create<UserDataState>((set, get) => ({
   items: [],
@@ -24,14 +25,14 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
 
     try {
       if (!user_uid) {
-        throw new Error("No hay usuario autenticado");
+        throw new Error('No hay usuario autenticado');
       }
 
       const response = await axios(`/api/users/${user_uid}`);
 
       if (response.status !== 200) {
         const errorText = await response.data;
-        console.error("Error response:", errorText);
+        console.error('Error response:', errorText);
         throw new Error(
           `Error al obtener los datos del usuario: ${response.status} ${response.statusText}`
         );
@@ -39,8 +40,8 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
 
       const userData = response.data;
 
-      if (!userData || typeof userData !== "object") {
-        throw new Error("Datos de usuario inválidos recibidos del servidor");
+      if (!userData || typeof userData !== 'object') {
+        throw new Error('Datos de usuario inválidos recibidos del servidor');
       }
 
       const validatedUserData: UserData = {
@@ -59,7 +60,7 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
 
       set({ userData: validatedUserData, isLoading: false });
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error('Error fetching user data:', error);
       set({ error: (error as Error).message, isLoading: false });
     }
   },
@@ -78,14 +79,14 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
 
     try {
       if (!userID) {
-        throw new Error("No hay usuario autenticado");
+        throw new Error('No hay usuario autenticado');
       }
 
       const response = await axios(`/api/users/${userID}`);
 
       if (response.status !== 200) {
         const errorText = await response.data;
-        console.error("Error response:", errorText);
+        console.error('Error response:', errorText);
         throw new Error(
           `Error al obtener los datos del usuario: ${response.status} ${response.statusText}`
         );
@@ -93,13 +94,13 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
 
       const userData = response.data;
 
-      if (!userData || typeof userData !== "object") {
-        throw new Error("Datos de usuario inválidos recibidos del servidor");
+      if (!userData || typeof userData !== 'object') {
+        throw new Error('Datos de usuario inválidos recibidos del servidor');
       }
 
       set({ userData: userData, isLoading: false });
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error('Error fetching user data:', error);
       set({ error: (error as Error).message, isLoading: false });
     }
   },

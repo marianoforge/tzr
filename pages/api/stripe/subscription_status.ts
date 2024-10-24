@@ -1,8 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import Stripe from "stripe";
+import { NextApiRequest, NextApiResponse } from 'next';
+import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-09-30.acacia",
+  apiVersion: '2024-09-30.acacia',
 });
 
 export default async function handler(
@@ -11,8 +11,8 @@ export default async function handler(
 ) {
   const { subscription_id } = req.query;
 
-  if (!subscription_id || typeof subscription_id !== "string") {
-    return res.status(400).json({ error: "Falta el ID de la suscripción" });
+  if (!subscription_id || typeof subscription_id !== 'string') {
+    return res.status(400).json({ error: 'Falta el ID de la suscripción' });
   }
 
   try {
@@ -22,9 +22,9 @@ export default async function handler(
     // Devolver el estado de la suscripción (trialing, active, etc.)
     res.status(200).json({ status: subscription.status });
   } catch (error: unknown) {
-    console.error("Error al obtener el estado de la suscripción:", error);
+    console.error('Error al obtener el estado de la suscripción:', error);
     res
       .status(500)
-      .json({ error: "Error al obtener el estado de la suscripción" });
+      .json({ error: 'Error al obtener el estado de la suscripción' });
   }
 }

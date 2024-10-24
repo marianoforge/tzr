@@ -1,15 +1,18 @@
-"use client";
+'use client';
 
-import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
-import moment from "moment";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import EventModal from "./EventModal";
-import { Event } from "@/types";
-import { useAuthStore } from "@/stores/authStore";
-import { useQuery } from "@tanstack/react-query"; // Import Tanstack Query
-import { fetchUserEvents } from "@/lib/api/eventsApi"; // Import fetchUserEvents API function
-import SkeletonLoader from "../SkeletonLoader";
+import { Calendar, momentLocalizer, View, Views } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query'; // Import Tanstack Query
+
+import { Event } from '@/types';
+import { useAuthStore } from '@/stores/authStore';
+import { fetchUserEvents } from '@/lib/api/eventsApi'; // Import fetchUserEvents API function
+
+import SkeletonLoader from '../SkeletonLoader';
+
+import EventModal from './EventModal';
 
 const localizer = momentLocalizer(moment);
 
@@ -26,7 +29,7 @@ const BigCalendar = () => {
     isLoading,
     error: eventsError,
   } = useQuery({
-    queryKey: ["events", userID],
+    queryKey: ['events', userID],
     queryFn: () => fetchUserEvents(userID as string),
     enabled: !!userID, // Only fetch if userID exists
   });
@@ -55,24 +58,24 @@ const BigCalendar = () => {
   };
 
   // Memoize the navigation function
-  const navigateCalendar = useCallback((action: "PREV" | "NEXT" | "TODAY") => {
+  const navigateCalendar = useCallback((action: 'PREV' | 'NEXT' | 'TODAY') => {
     switch (action) {
-      case "PREV":
+      case 'PREV':
         setDate((prevDate) => adjustDate(prevDate, -7));
         break;
-      case "NEXT":
+      case 'NEXT':
         setDate((prevDate) => adjustDate(prevDate, 7));
         break;
-      case "TODAY":
+      case 'TODAY':
         setDate(new Date());
         break;
     }
   }, []);
 
   const formatEventTime = (date: Date) => {
-    return date.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -98,9 +101,9 @@ const BigCalendar = () => {
     };
 
     updateView();
-    window.addEventListener("resize", updateView);
+    window.addEventListener('resize', updateView);
 
-    return () => window.removeEventListener("resize", updateView);
+    return () => window.removeEventListener('resize', updateView);
   }, []);
 
   if (isLoading) {
@@ -111,25 +114,25 @@ const BigCalendar = () => {
     );
   }
   if (eventsError) {
-    return <p>Error: {eventsError.message || "An unknown error occurred"}</p>;
+    return <p>Error: {eventsError.message || 'An unknown error occurred'}</p>;
   }
 
   return (
     <div className="bg-white rounded-xl shadow-md p-2 sm:p-4 md:p-6 mb-20">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
         <div className="flex space-x-2 sm:space-x-4 mb-2 sm:mb-0">
-          <NavButton onClick={() => navigateCalendar("PREV")} label="<" />
-          <NavButton onClick={() => navigateCalendar("TODAY")} label="Hoy" />
-          <NavButton onClick={() => navigateCalendar("NEXT")} label=">" />
+          <NavButton onClick={() => navigateCalendar('PREV')} label="<" />
+          <NavButton onClick={() => navigateCalendar('TODAY')} label="Hoy" />
+          <NavButton onClick={() => navigateCalendar('NEXT')} label=">" />
         </div>
         <div className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-0">
-          {moment(date).format("MMMM YYYY")}
+          {moment(date).format('MMMM YYYY')}
         </div>
         <div className="flex flex-wrap justify-center sm:justify-end space-x-2">
           {[
-            { label: "Día", value: Views.DAY },
-            { label: "Semana", value: Views.WEEK },
-            { label: "Mes", value: Views.MONTH },
+            { label: 'Día', value: Views.DAY },
+            { label: 'Semana', value: Views.WEEK },
+            { label: 'Mes', value: Views.MONTH },
           ].map((viewOption) => (
             <ViewButton
               key={viewOption.value}
@@ -145,7 +148,7 @@ const BigCalendar = () => {
         events={calendarEvents}
         startAccessor="startTime"
         endAccessor="endTime"
-        views={["day", "week", "month"]}
+        views={['day', 'week', 'month']}
         view={view}
         date={date}
         onNavigate={setDate}
@@ -153,11 +156,11 @@ const BigCalendar = () => {
         min={new Date(2024, 0, 1, 8, 0, 0)}
         max={new Date(2024, 11, 31, 22, 0, 0)}
         className="rounded-xl overflow-hidden"
-        style={{ height: "calc(100vh - 200px)" }}
+        style={{ height: 'calc(100vh - 200px)' }}
         formats={{
           dayFormat: (date, culture, localizer) =>
-            localizer?.format(date, "ddd DD", culture) ?? "",
-          eventTimeRangeFormat: () => "",
+            localizer?.format(date, 'ddd DD', culture) ?? '',
+          eventTimeRangeFormat: () => '',
         }}
         components={{
           event: (props: { event: Event }) => (
@@ -176,7 +179,7 @@ const BigCalendar = () => {
               }
             >
               <span>{formatEventTime(new Date(props.event.startTime))}</span>
-              {" - "}
+              {' - '}
               {props.event.title}
             </div>
           ),
@@ -205,8 +208,8 @@ const Button = ({
     onClick={onClick}
     className={`px-2 sm:px-4 py-1 sm:py-2 rounded-xl shadow-md transition-all duration-300 font-semibold text-sm sm:text-base ${
       isActive
-        ? "bg-mediumBlue text-white hover:bg-lightBlue"
-        : "bg-[#A8E0FF]/10 text-[#5EAAD7] hover:bg-[#A8E0FF]/20"
+        ? 'bg-mediumBlue text-white hover:bg-lightBlue'
+        : 'bg-[#A8E0FF]/10 text-[#5EAAD7] hover:bg-[#A8E0FF]/20'
     }`}
   >
     {label}
@@ -233,7 +236,7 @@ const ViewButton = ({
 }) => (
   <Button
     onClick={onClick}
-    label={view === "day" ? "Día" : view === "week" ? "Semana" : "Mes"}
+    label={view === 'day' ? 'Día' : view === 'week' ? 'Semana' : 'Mes'}
     isActive={currentView === view}
   />
 );

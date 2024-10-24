@@ -1,6 +1,6 @@
-import CardsSection from "@/components/SiteComponents/CardsSection";
-import LicenseSection from "@/components/SiteComponents/LicensesSection";
-import MainLayout from "@/components/SiteComponents/CommonComponents/MainLayout";
+import CardsSection from '@/components/SiteComponents/CardsSection';
+import LicenseSection from '@/components/SiteComponents/LicensesSection';
+import MainLayout from '@/components/SiteComponents/CommonComponents/MainLayout';
 
 const Home = () => {
   return (

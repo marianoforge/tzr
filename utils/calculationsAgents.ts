@@ -1,4 +1,4 @@
-import { Operation } from "@/types";
+import { Operation } from '@/types';
 
 // Function to calculate adjusted broker fees
 export const calculateAdjustedBrokerFees = (operations: Operation[]) =>

@@ -1,6 +1,4 @@
-import { useUserDataStore } from "@/stores/userDataStore";
-import { useEffect } from "react";
-import { auth } from "@/lib/firebase";
+import { useEffect } from 'react';
 import {
   HomeIcon,
   ClipboardDocumentListIcon,
@@ -8,10 +6,14 @@ import {
   TableCellsIcon,
   ClipboardDocumentCheckIcon,
   CurrencyDollarIcon,
-} from "@heroicons/react/24/outline";
-import Image from "next/image";
-import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
-import { NavLink } from "../NavComponents/NavLink";
+} from '@heroicons/react/24/outline';
+import Image from 'next/image';
+
+import { auth } from '@/lib/firebase';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { UserActions } from '@/components/TrackerComponents/NavComponents/UserActions';
+
+import { NavLink } from '../NavComponents/NavLink';
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
@@ -25,7 +27,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
       if (user) {
         fetchItems(user.uid);
       } else {
-        console.log("No authenticated user");
+        console.log('No authenticated user');
       }
     });
 
@@ -108,9 +110,9 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     if (isLoading || !userData) return null;
 
     switch (userData.role) {
-      case "team_leader_broker":
+      case 'team_leader_broker':
         return renderAdminNavButtons();
-      case "agente_asesor":
+      case 'agente_asesor':
         return renderNavButtons();
       default:
         return (

@@ -1,26 +1,28 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  fetchUserOperations,
-  deleteOperation,
-  updateOperation,
-} from "@/lib/api/operationsApi";
-import { formatNumber } from "@/utils/formatNumber";
-import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import OperationsModal from "./OperationsModal";
+import React, { useState, useCallback, useMemo } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   PencilIcon,
   TrashIcon,
   MagnifyingGlassPlusIcon,
-} from "@heroicons/react/24/outline";
-import { useAuthStore } from "@/stores/authStore";
-import { Operation } from "@/types";
-import { useUserDataStore } from "@/stores/userDataStore";
-import { calculateTotals } from "@/utils/calculations";
-import OperationsFullScreenTable from "./OperationsFullScreenTable";
-import { Tooltip } from "react-tooltip";
-import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import Heroicons icon
-import { filteredOperations } from "@/utils/filteredOperations";
+} from '@heroicons/react/24/outline';
+import { Tooltip } from 'react-tooltip';
+import { InformationCircleIcon } from '@heroicons/react/24/solid'; // Import Heroicons icon
+
+import {
+  fetchUserOperations,
+  deleteOperation,
+  updateOperation,
+} from '@/lib/api/operationsApi';
+import { formatNumber } from '@/utils/formatNumber';
+import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
+import { useAuthStore } from '@/stores/authStore';
+import { Operation } from '@/types';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { calculateTotals } from '@/utils/calculations';
+import { filteredOperations } from '@/utils/filteredOperations';
+
+import OperationsFullScreenTable from './OperationsFullScreenTable';
+import OperationsModal from './OperationsModal';
 
 const OperationsTable: React.FC = ({}) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -30,9 +32,9 @@ const OperationsTable: React.FC = ({}) => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [viewOperation, setViewOperation] = useState<Operation | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [yearFilter, setYearFilter] = useState("all");
-  const [monthFilter, setMonthFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [yearFilter, setYearFilter] = useState('all');
+  const [monthFilter, setMonthFilter] = useState('all');
 
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
@@ -41,8 +43,8 @@ const OperationsTable: React.FC = ({}) => {
   const itemsPerPage = 10;
 
   const { data: operations } = useQuery({
-    queryKey: ["operations", userID || ""],
-    queryFn: () => fetchUserOperations(userID || ""),
+    queryKey: ['operations', userID || ''],
+    queryFn: () => fetchUserOperations(userID || ''),
     enabled: !!userID,
   });
 
@@ -50,7 +52,7 @@ const OperationsTable: React.FC = ({}) => {
     mutationFn: deleteOperation,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["operations", userID],
+        queryKey: ['operations', userID],
       });
     },
   });
@@ -60,7 +62,7 @@ const OperationsTable: React.FC = ({}) => {
       updateOperation({ id, data }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["operations", userID],
+        queryKey: ['operations', userID],
       });
     },
   });
@@ -104,14 +106,14 @@ const OperationsTable: React.FC = ({}) => {
 
   const handleEstadoChange = useCallback(
     (id: string, currentEstado: string) => {
-      const newEstado = currentEstado === "En Curso" ? "Cerrada" : "En Curso";
+      const newEstado = currentEstado === 'En Curso' ? 'Cerrada' : 'En Curso';
 
       const existingOperation = operations.find(
         (op: Operation) => op.id === id
       );
 
       if (!existingOperation) {
-        console.error("Operación no encontrada");
+        console.error('Operación no encontrada');
         return;
       }
 
@@ -142,17 +144,17 @@ const OperationsTable: React.FC = ({}) => {
     setIsViewModalOpen(true);
   }, []);
 
-  const styleTotalRow = "py-3 px-4 text-center";
+  const styleTotalRow = 'py-3 px-4 text-center';
 
   const formatDate = (date: string | null) => {
-    if (!date) return "Fecha inválida";
+    if (!date) return 'Fecha inválida';
 
     try {
-      const [year, month, day] = date.split("-");
+      const [year, month, day] = date.split('-');
       return `${day}/${month}/${year}`;
     } catch (error) {
-      console.error("Error formateando la fecha:", error);
-      return "Fecha inválida";
+      console.error('Error formateando la fecha:', error);
+      return 'Fecha inválida';
     }
   };
 
@@ -185,7 +187,7 @@ const OperationsTable: React.FC = ({}) => {
           <option value="all">Todos los Meses</option>
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i} value={i + 1}>
-              {new Date(0, i).toLocaleString("default", { month: "long" })}
+              {new Date(0, i).toLocaleString('default', { month: 'long' })}
             </option>
           ))}
         </select>
@@ -263,7 +265,7 @@ const OperationsTable: React.FC = ({}) => {
             <tr
               key={operacion.id}
               className={`${
-                index % 2 === 0 ? "bg-white" : "bg-mediumBlue/10"
+                index % 2 === 0 ? 'bg-white' : 'bg-mediumBlue/10'
               } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-[75px] max-h-[75px]`}
             >
               <td className="py-3 px-4 before:content-['Fecha:'] md:before:content-none">
@@ -304,19 +306,19 @@ const OperationsTable: React.FC = ({}) => {
                     handleEstadoChange(operacion.id, operacion.estado)
                   }
                   className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
-                    operacion.estado === "En Curso"
+                    operacion.estado === 'En Curso'
                       ? `bg-mediumBlue`
                       : `bg-lightBlue`
                   }`}
                 >
                   <span
                     className={`${
-                      operacion.estado === "En Curso"
-                        ? "translate-x-6"
-                        : "translate-x-1"
+                      operacion.estado === 'En Curso'
+                        ? 'translate-x-6'
+                        : 'translate-x-1'
                     } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
                   >
-                    {operacion.estado === "En Curso" ? (
+                    {operacion.estado === 'En Curso' ? (
                       <p className="h-4 w-4 text-mediumBlue flex justify-center items-center">
                         A
                       </p>
@@ -379,7 +381,7 @@ const OperationsTable: React.FC = ({}) => {
                   <Tooltip id="tooltip-compradora" place="top" />
                 </>
               ) : (
-                "Cálculo no disponible"
+                'Cálculo no disponible'
               )}
             </td>
             <td className={styleTotalRow}>
@@ -398,7 +400,7 @@ const OperationsTable: React.FC = ({}) => {
                   <Tooltip id="tooltip-vendedora" place="top" />
                 </>
               ) : (
-                "Cálculo no disponible"
+                'Cálculo no disponible'
               )}
             </td>
 
@@ -440,7 +442,7 @@ const OperationsTable: React.FC = ({}) => {
           onClose={() => setIsEditModalOpen(false)}
           operation={selectedOperation}
           onUpdate={() =>
-            queryClient.invalidateQueries({ queryKey: ["operations", userID] })
+            queryClient.invalidateQueries({ queryKey: ['operations', userID] })
           }
           currentUser={userData!}
         />

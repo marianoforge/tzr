@@ -1,8 +1,9 @@
-import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
-import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
-import FormularioEvento from "@/components/TrackerComponents/Events/FormularioEvento";
-import { useAuthStore } from "@/stores/authStore";
-import { useEffect } from "react";
+import { useEffect } from 'react';
+
+import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
+import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
+import FormularioEvento from '@/components/TrackerComponents/Events/FormularioEvento';
+import { useAuthStore } from '@/stores/authStore';
 
 const ReservationInput = () => {
   const { userID, initializeAuthListener } = useAuthStore();

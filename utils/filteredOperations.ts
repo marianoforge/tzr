@@ -1,4 +1,4 @@
-import { Operation } from "@/types";
+import { Operation } from '@/types';
 
 export function filteredOperations(
   operations: Operation[] | undefined,
@@ -12,17 +12,17 @@ export function filteredOperations(
     const operationMonth = new Date(operation.fecha_operacion).getMonth() + 1;
 
     const statusMatch =
-      statusFilter === "all" ||
-      (statusFilter === "open" && operation.estado === "En Curso") ||
-      (statusFilter === "closed" && operation.estado === "Cerrada");
+      statusFilter === 'all' ||
+      (statusFilter === 'open' && operation.estado === 'En Curso') ||
+      (statusFilter === 'closed' && operation.estado === 'Cerrada');
 
     const yearMatch =
-      yearFilter === "all" ||
-      (yearFilter === "currentYear" && operationYear === currentYear) ||
-      (yearFilter === "year2023" && operationYear === 2023);
+      yearFilter === 'all' ||
+      (yearFilter === 'currentYear' && operationYear === currentYear) ||
+      (yearFilter === 'year2023' && operationYear === 2023);
 
     const monthMatch =
-      monthFilter === "all" || operationMonth === parseInt(monthFilter);
+      monthFilter === 'all' || operationMonth === parseInt(monthFilter);
 
     return statusMatch && yearMatch && monthMatch;
   });

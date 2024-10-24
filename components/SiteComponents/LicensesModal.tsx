@@ -1,5 +1,6 @@
-import React from "react";
-import LicensesSection from "./LicensesSection";
+import React from 'react';
+
+import LicensesSection from './LicensesSection';
 
 interface LicensesModalProps {
   isOpen: boolean;

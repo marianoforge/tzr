@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from "react";
-import Slider from "react-slick";
-import { formatNumber } from "@/utils/formatNumber";
-import { Expense } from "@/types";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useExpensesStore } from "@/stores/useExpensesStore";
-import { useRouter } from "next/router";
-import Loader from "../Loader";
-import ExpensesModal from "./ExpensesModal";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import useFilteredExpenses from "@/hooks/useFilteredExpenses";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useEffect, useState } from 'react';
+import Slider from 'react-slick';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { onAuthStateChanged } from 'firebase/auth';
+import { formatNumber } from '@/utils/formatNumber';
+import { Expense } from '@/types';
+
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { auth } from '@/lib/firebase';
+import { useExpensesStore } from '@/stores/useExpensesStore';
+import useFilteredExpenses from '@/hooks/useFilteredExpenses';
 import {
   fetchUserExpenses,
   deleteExpense,
   updateExpense,
-} from "@/lib/api/expensesApi";
+} from '@/lib/api/expensesApi';
+
+import Loader from '../Loader';
+
+import ExpensesModal from './ExpensesModal';
 
 const ExpensesListCards: React.FC = () => {
   const settings = {
@@ -43,7 +46,7 @@ const ExpensesListCards: React.FC = () => {
         setUserUID(user.uid);
       } else {
         setUserUID(null);
-        router.push("/login");
+        router.push('/login');
       }
     });
     return () => unsubscribe();
@@ -51,7 +54,7 @@ const ExpensesListCards: React.FC = () => {
 
   // Obtener los gastos basados en el UID del usuario
   const { data: expenses, isLoading } = useQuery({
-    queryKey: ["expenses", userUID],
+    queryKey: ['expenses', userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
@@ -67,7 +70,7 @@ const ExpensesListCards: React.FC = () => {
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] });
+      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
       calculateTotals();
     },
   });
@@ -76,7 +79,7 @@ const ExpensesListCards: React.FC = () => {
   const mutationUpdate = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] });
+      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
       calculateTotals();
     },
   });
@@ -102,12 +105,12 @@ const ExpensesListCards: React.FC = () => {
     expenses || []
   );
 
-  const filteredExpenses = router.pathname.includes("expensesBroker")
+  const filteredExpenses = router.pathname.includes('expensesBroker')
     ? teamBrokerExpenses
     : nonTeamBrokerExpenses;
 
   const splitTextIntoLines = (text: string, maxLength: number) => {
-    const regex = new RegExp(`.{1,${maxLength}}`, "g");
+    const regex = new RegExp(`.{1,${maxLength}}`, 'g');
     return text.match(regex) || [];
   };
 
@@ -125,7 +128,7 @@ const ExpensesListCards: React.FC = () => {
               <div key={expense.id} className="p-4 expense-card">
                 <div className="bg-mediumBlue text-white p-4 mb-52 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
                   <p>
-                    <strong>Fecha:</strong>{" "}
+                    <strong>Fecha:</strong>{' '}
                     {new Date(expense.date).toLocaleDateString()}
                   </p>
                   <p>

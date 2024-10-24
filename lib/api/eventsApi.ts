@@ -1,10 +1,11 @@
-import axios from "axios";
-import { Event } from "@/types";
-import { EventFormData } from "@/components/TrackerComponents/Events/FormularioEvento";
+import axios from 'axios';
+
+import { Event } from '@/types';
+import { EventFormData } from '@/components/TrackerComponents/Events/FormularioEvento';
 
 // Crear un nuevo evento
 export const createEvent = async (eventData: EventFormData) => {
-  const response = await axios.post("/api/events", eventData);
+  const response = await axios.post('/api/events', eventData);
   return response.data;
 };
 

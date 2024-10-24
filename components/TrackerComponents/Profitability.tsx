@@ -1,26 +1,27 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserOperations } from "@/lib/api/operationsApi";
-import { fetchUserExpenses } from "@/lib/api/expensesApi"; // Asume que tienes este método
-import { useAuthStore } from "@/stores/authStore"; // Esto sigue para obtener el userID
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 
-import { Expense } from "@/types";
-import { useUserDataStore } from "@/stores/userDataStore";
-import { calculateTotals } from "@/utils/calculations";
-import { currentYearOperations } from "@/utils/currentYearOps";
-import SkeletonLoader from "./SkeletonLoader";
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+import { fetchUserExpenses } from '@/lib/api/expensesApi'; // Asume que tienes este método
+import { useAuthStore } from '@/stores/authStore'; // Esto sigue para obtener el userID
+import { Expense } from '@/types';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { calculateTotals } from '@/utils/calculations';
+import { currentYearOperations } from '@/utils/currentYearOps';
+
+import SkeletonLoader from './SkeletonLoader';
 
 const Profitability = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
-  const validUserID = userID || ""; // Ensure userID is a string
+  const validUserID = userID || ''; // Ensure userID is a string
 
   const {
     data: expenses = [],
     isLoading: isLoadingExpenses,
     error: expensesError,
   } = useQuery({
-    queryKey: ["expenses", validUserID],
+    queryKey: ['expenses', validUserID],
     queryFn: () => fetchUserExpenses(validUserID),
   });
 
@@ -29,7 +30,7 @@ const Profitability = () => {
     isLoading: isLoadingOperations,
     error: operationsError,
   } = useQuery({
-    queryKey: ["operations", validUserID],
+    queryKey: ['operations', validUserID],
     queryFn: () => fetchUserOperations(validUserID),
     enabled: !!userID,
   });
@@ -69,10 +70,10 @@ const Profitability = () => {
   if (operationsError || expensesError) {
     return (
       <p>
-        Error:{" "}
+        Error:{' '}
         {operationsError?.message ||
           expensesError?.message ||
-          "An unknown error occurred"}
+          'An unknown error occurred'}
       </p>
     );
   }
@@ -87,7 +88,7 @@ const Profitability = () => {
         </p>
       </div>
       {/* Asume que `userData` viene desde `useAuthStore` o similar */}
-      {userData?.role === "team_leader_broker" && (
+      {userData?.role === 'team_leader_broker' && (
         <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center justify-center h-[208px] w-full">
           <p className="text-xl font-semibold flex justify-center items-center h-2/5 pt-6">
             Rentabilidad Total

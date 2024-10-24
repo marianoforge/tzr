@@ -1,5 +1,5 @@
 // utils/formatDate.ts
-import { toZonedTime, format } from "date-fns-tz";
+import { toZonedTime, format } from 'date-fns-tz';
 
 export const formatDateForUser = (
   utcDateString: string,
@@ -12,9 +12,9 @@ export const formatDateForUser = (
   // Check if the date is valid
   if (isNaN(utcDate.getTime())) {
     console.error(`Invalid date string: ${utcDateString}`);
-    throw new RangeError("Invalid time value");
+    throw new RangeError('Invalid time value');
   }
 
   const zonedDate = toZonedTime(utcDate, userTimeZone);
-  return format(zonedDate, "dd/MM/yyyy HH:mm:ss");
+  return format(zonedDate, 'dd/MM/yyyy HH:mm:ss');
 };

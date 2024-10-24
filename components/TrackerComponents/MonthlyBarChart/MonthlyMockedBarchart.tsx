@@ -1,5 +1,4 @@
-import { useAuthStore } from "@/stores/authStore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -10,7 +9,9 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-} from "recharts";
+} from 'recharts';
+
+import { useAuthStore } from '@/stores/authStore';
 
 const MonthlyMockedBarchart: React.FC = () => {
   const { userID } = useAuthStore();
@@ -24,23 +25,23 @@ const MonthlyMockedBarchart: React.FC = () => {
       currentYear: number;
       previousYear: number;
     }[] = [
-      { month: "Ene", currentYear: 4000, previousYear: 2400 },
-      { month: "Feb", currentYear: 3000, previousYear: 1398 },
-      { month: "Mar", currentYear: 2000, previousYear: 9800 },
-      { month: "Abr", currentYear: 2780, previousYear: 3908 },
-      { month: "May", currentYear: 1890, previousYear: 4800 },
-      { month: "Jun", currentYear: 2390, previousYear: 3800 },
-      { month: "Jul", currentYear: 3490, previousYear: 4300 },
-      { month: "Ago", currentYear: 3490, previousYear: 4300 },
-      { month: "Sep", currentYear: 3490, previousYear: 4300 },
-      { month: "Oct", currentYear: 3490, previousYear: 4300 },
-      { month: "Nov", currentYear: 3490, previousYear: 4300 },
-      { month: "Dic", currentYear: 3490, previousYear: 4300 },
+      { month: 'Ene', currentYear: 4000, previousYear: 2400 },
+      { month: 'Feb', currentYear: 3000, previousYear: 1398 },
+      { month: 'Mar', currentYear: 2000, previousYear: 9800 },
+      { month: 'Abr', currentYear: 2780, previousYear: 3908 },
+      { month: 'May', currentYear: 1890, previousYear: 4800 },
+      { month: 'Jun', currentYear: 2390, previousYear: 3800 },
+      { month: 'Jul', currentYear: 3490, previousYear: 4300 },
+      { month: 'Ago', currentYear: 3490, previousYear: 4300 },
+      { month: 'Sep', currentYear: 3490, previousYear: 4300 },
+      { month: 'Oct', currentYear: 3490, previousYear: 4300 },
+      { month: 'Nov', currentYear: 3490, previousYear: 4300 },
+      { month: 'Dic', currentYear: 3490, previousYear: 4300 },
     ];
     setData(mockData);
   }, [userID]);
 
-  const COLORS = ["#00b4d8", "#0077b6"];
+  const COLORS = ['#00b4d8', '#0077b6'];
   const MAX_BAR_SIZE = 40;
 
   if (data.length === 0) {
@@ -66,7 +67,7 @@ const MonthlyMockedBarchart: React.FC = () => {
             <XAxis dataKey="month" axisLine={false} tickLine={false} />
             <YAxis axisLine={false} tickLine={false} />
             <Tooltip />
-            <Legend wrapperStyle={{ paddingTop: "20px" }} />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <Bar
               dataKey="currentYear"
               fill={COLORS[0]}

@@ -1,35 +1,36 @@
-import React, { useState, useEffect } from "react";
-import ModalOK from "@/components/TrackerComponents/ModalOK";
-import { useRouter } from "next/router";
-import { useAuthStore } from "@/stores/authStore";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import TextArea from "@/components/TrackerComponents/FormComponents/TextArea";
-import Select from "@/components/TrackerComponents/FormComponents/Select";
-import { Expense, ExpenseFormData } from "@/types";
-import { useUserDataStore } from "@/stores/userDataStore";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createExpense } from "@/lib/api/expensesApi";
-import { AxiosError } from "axios";
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+
+import ModalOK from '@/components/TrackerComponents/ModalOK';
+import { useAuthStore } from '@/stores/authStore';
+import Input from '@/components/TrackerComponents/FormComponents/Input';
+import TextArea from '@/components/TrackerComponents/FormComponents/TextArea';
+import Select from '@/components/TrackerComponents/FormComponents/Select';
+import { Expense, ExpenseFormData } from '@/types';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { createExpense } from '@/lib/api/expensesApi';
 
 // Tipos de gastos
 export const expenseTypes = [
-  { value: "Fee (Franquicia)", label: "Fee (Franquicia)" },
-  { value: "Carteleria", label: "Carteleria" },
-  { value: "Marketing", label: "Marketing" },
-  { value: "Varios", label: "Varios" },
-  { value: "Contador", label: "Contador" },
-  { value: "Matricula", label: "Matricula" },
-  { value: "ABAO", label: "ABAO" },
-  { value: "Fianza", label: "Fianza" },
-  { value: "Alquiler Oficina", label: "Alquiler Oficina" },
-  { value: "Portales Inmobiliarios", label: "Portales Inmobiliarios" },
-  { value: "CRM", label: "CRM" },
-  { value: "Viaticos", label: "Viaticos" },
-  { value: "Expensas", label: "Expensas" },
-  { value: "Otros", label: "Otros" },
+  { value: 'Fee (Franquicia)', label: 'Fee (Franquicia)' },
+  { value: 'Carteleria', label: 'Carteleria' },
+  { value: 'Marketing', label: 'Marketing' },
+  { value: 'Varios', label: 'Varios' },
+  { value: 'Contador', label: 'Contador' },
+  { value: 'Matricula', label: 'Matricula' },
+  { value: 'ABAO', label: 'ABAO' },
+  { value: 'Fianza', label: 'Fianza' },
+  { value: 'Alquiler Oficina', label: 'Alquiler Oficina' },
+  { value: 'Portales Inmobiliarios', label: 'Portales Inmobiliarios' },
+  { value: 'CRM', label: 'CRM' },
+  { value: 'Viaticos', label: 'Viaticos' },
+  { value: 'Expensas', label: 'Expensas' },
+  { value: 'Otros', label: 'Otros' },
 ];
 
 const FormularioExpenses: React.FC = () => {
@@ -38,8 +39,8 @@ const FormularioExpenses: React.FC = () => {
   const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [expenseAssociationType, setExpenseAssociationType] = useState("agent");
+  const [modalMessage, setModalMessage] = useState('');
+  const [expenseAssociationType, setExpenseAssociationType] = useState('agent');
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
@@ -50,8 +51,8 @@ const FormularioExpenses: React.FC = () => {
       try {
         setUserRole(role ?? null);
       } catch (error) {
-        console.error("Error fetching user role:", error);
-        setModalMessage("Error fetching user role");
+        console.error('Error fetching user role:', error);
+        setModalMessage('Error fetching user role');
         setIsModalOpen(true);
       }
     };
@@ -62,33 +63,33 @@ const FormularioExpenses: React.FC = () => {
 
   const schema = yup.object().shape({
     expenseType: yup.string().required(),
-    date: yup.string().required("La fecha es requerida"),
+    date: yup.string().required('La fecha es requerida'),
     amount: yup
       .number()
       .transform((value, originalValue) => {
-        return originalValue.trim() === "" ? undefined : value;
+        return originalValue.trim() === '' ? undefined : value;
       })
-      .required("El monto es requerido")
-      .positive("El monto debe ser un número positivo"),
+      .required('El monto es requerido')
+      .positive('El monto debe ser un número positivo'),
     dollarRate: yup
       .number()
       .transform((value, originalValue) => {
-        return originalValue.trim() === "" ? undefined : value;
+        return originalValue.trim() === '' ? undefined : value;
       })
-      .positive("La cotización del dólar debe ser un número positivo")
-      .required("La cotización del dólar es requerida"),
+      .positive('La cotización del dólar debe ser un número positivo')
+      .required('La cotización del dólar es requerida'),
     description: yup.string(),
     otherType: yup
       .string()
-      .when("expenseType", ([expenseType], schema: yup.StringSchema) => {
-        return expenseType === "Otros"
-          ? schema.required("Debes especificar el tipo de gasto")
+      .when('expenseType', ([expenseType], schema: yup.StringSchema) => {
+        return expenseType === 'Otros'
+          ? schema.required('Debes especificar el tipo de gasto')
           : schema;
       }),
     expenseAssociationType: yup
       .string()
-      .required("Debes seleccionar una asociación de gasto")
-      .notOneOf([""], "Debes seleccionar una opción válida"),
+      .required('Debes seleccionar una asociación de gasto')
+      .notOneOf([''], 'Debes seleccionar una opción válida'),
   });
 
   const {
@@ -100,27 +101,27 @@ const FormularioExpenses: React.FC = () => {
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      date: "", // Set a default value for the date field
+      date: '', // Set a default value for the date field
     },
   });
 
-  const selectedExpenseType = watch("expenseType");
-  const amount = watch("amount");
-  const dollarRate = watch("dollarRate");
-  const date = watch("date");
+  const selectedExpenseType = watch('expenseType');
+  const amount = watch('amount');
+  const dollarRate = watch('dollarRate');
+  const date = watch('date');
 
   const mutation = useMutation({
     mutationFn: (expenseData: Expense) => createExpense(expenseData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses"] });
-      setModalMessage("Gasto guardado exitosamente");
+      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      setModalMessage('Gasto guardado exitosamente');
       setIsModalOpen(true);
       reset();
     },
     onError: (error) => {
       const axiosError = error as AxiosError;
       console.error(
-        "Mutation error:",
+        'Mutation error:',
         axiosError.response?.data || axiosError.message
       );
     },
@@ -128,7 +129,7 @@ const FormularioExpenses: React.FC = () => {
 
   const onSubmit: SubmitHandler<ExpenseFormData> = (data) => {
     if (!userID) {
-      setModalMessage("No se proporcionó un ID de usuario válido");
+      setModalMessage('No se proporcionó un ID de usuario válido');
       setIsModalOpen(true);
       return;
     }
@@ -141,11 +142,11 @@ const FormularioExpenses: React.FC = () => {
       date: data.date, // Guardamos la fecha tal cual, sin conversión a Date
       amount: data.amount ?? 0,
       amountInDollars,
-      otherType: data.otherType ?? "",
+      otherType: data.otherType ?? '',
       expenseType: data.expenseType,
-      description: data.description ?? "",
+      description: data.description ?? '',
       dollarRate: data.dollarRate,
-      user_uid: userID ?? "",
+      user_uid: userID ?? '',
       expenseAssociationType,
     };
 
@@ -168,17 +169,17 @@ const FormularioExpenses: React.FC = () => {
         >
           <h2 className="text-2xl mb-4 font-semibold">Registrar Gasto</h2>
 
-          {userRole === "team_leader_broker" && (
+          {userRole === 'team_leader_broker' && (
             <div>
               <Select
                 label="Asociación del Gasto"
                 options={[
-                  { value: "", label: "Selecciona una opción" },
+                  { value: '', label: 'Selecciona una opción' },
                   {
-                    value: "team_broker",
-                    label: "Gasto Asociado al Team / Broker",
+                    value: 'team_broker',
+                    label: 'Gasto Asociado al Team / Broker',
                   },
-                  { value: "agent", label: "Gasto Asociado como Asesor" },
+                  { value: 'agent', label: 'Gasto Asociado como Asesor' },
                 ]}
                 register={register}
                 name="expenseAssociationType"
@@ -197,7 +198,7 @@ const FormularioExpenses: React.FC = () => {
             label="Fecha del Gasto"
             type="date"
             defaultValue={date} // Mostramos la fecha como cadena
-            {...register("date")}
+            {...register('date')}
             marginBottom="0"
           />
           {errors.date && (
@@ -208,7 +209,7 @@ const FormularioExpenses: React.FC = () => {
             label="Monto"
             type="number"
             placeholder="1000000"
-            {...register("amount")}
+            {...register('amount')}
             marginBottom="0"
           />
           {errors.amount && (
@@ -221,7 +222,7 @@ const FormularioExpenses: React.FC = () => {
                 label="Cotización del Dólar"
                 type="number"
                 placeholder="1250"
-                {...register("dollarRate")}
+                {...register('dollarRate')}
                 marginBottom="0"
               />
               {errors.dollarRate && (
@@ -250,11 +251,11 @@ const FormularioExpenses: React.FC = () => {
             <p className="text-red-500 mb-4">{errors.expenseType.message}</p>
           )}
 
-          {selectedExpenseType === "Otros" && (
+          {selectedExpenseType === 'Otros' && (
             <Input
               label="Especifica el tipo de gasto"
               type="text"
-              {...register("otherType")}
+              {...register('otherType')}
               error={errors.otherType?.message}
             />
           )}
@@ -264,7 +265,7 @@ const FormularioExpenses: React.FC = () => {
 
           <TextArea
             label="Descripción"
-            {...register("description")}
+            {...register('description')}
             error={errors.description?.message}
           />
           {errors.description && (
@@ -287,7 +288,7 @@ const FormularioExpenses: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
-        onAccept={() => router.push("/expenses")}
+        onAccept={() => router.push('/expenses')}
       />
     </div>
   );

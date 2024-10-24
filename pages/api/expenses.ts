@@ -1,6 +1,5 @@
 // pages/api/expenses.ts
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "@/lib/firebase"; // Asegúrate de que estás utilizando Firestore
+import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   collection,
   query,
@@ -8,37 +7,39 @@ import {
   getDocs,
   addDoc,
   orderBy,
-} from "firebase/firestore";
+} from 'firebase/firestore';
+
+import { db } from '@/lib/firebase'; // Asegúrate de que estás utilizando Firestore
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const user_uid =
-    req.method === "GET" ? req.query.user_uid : req.body.user_uid;
+    req.method === 'GET' ? req.query.user_uid : req.body.user_uid;
 
-  if (!user_uid || typeof user_uid !== "string") {
-    return res.status(400).json({ message: "User UID is required" });
+  if (!user_uid || typeof user_uid !== 'string') {
+    return res.status(400).json({ message: 'User UID is required' });
   }
 
   switch (req.method) {
-    case "GET":
+    case 'GET':
       // Maneja la obtención de gastos
       return getUserExpenses(user_uid, res);
-    case "POST":
+    case 'POST':
       // Maneja la creación de un nuevo gasto
       return createExpense(req, res);
     default:
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({ message: 'Method not allowed' });
   }
 }
 
 const getUserExpenses = async (userUID: string, res: NextApiResponse) => {
   try {
     const q = query(
-      collection(db, "expenses"),
-      where("user_uid", "==", userUID),
-      orderBy("date", "asc")
+      collection(db, 'expenses'),
+      where('user_uid', '==', userUID),
+      orderBy('date', 'asc')
     );
     const querySnapshot = await getDocs(q);
     const expenses = querySnapshot.docs.map((doc) => ({
@@ -48,8 +49,8 @@ const getUserExpenses = async (userUID: string, res: NextApiResponse) => {
 
     res.status(200).json(expenses);
   } catch (error) {
-    console.error("Error fetching expenses:", error);
-    res.status(500).json({ message: "Error fetching expenses" });
+    console.error('Error fetching expenses:', error);
+    res.status(500).json({ message: 'Error fetching expenses' });
   }
 };
 
@@ -75,7 +76,7 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
     !user_uid ||
     !expenseAssociationType
   ) {
-    return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
   try {
@@ -88,21 +89,21 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
       description,
       dollarRate,
       user_uid,
-      otherType: otherType ?? "",
+      otherType: otherType ?? '',
       expenseAssociationType,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
     // Guardar el nuevo gasto en Firestore
-    const docRef = await addDoc(collection(db, "expenses"), newExpense);
+    const docRef = await addDoc(collection(db, 'expenses'), newExpense);
 
     // Retornar una respuesta exitosa con el ID del nuevo documento
     return res
       .status(201)
-      .json({ id: docRef.id, message: "Expense created successfully" });
+      .json({ id: docRef.id, message: 'Expense created successfully' });
   } catch (error) {
-    console.error("Error creating expense:", error);
-    return res.status(500).json({ message: "Error creating expense" });
+    console.error('Error creating expense:', error);
+    return res.status(500).json({ message: 'Error creating expense' });
   }
 };

@@ -1,26 +1,27 @@
-import { useState } from "react";
-import { resetPassword } from "@/lib/api/auth";
-import Button from "@/components/TrackerComponents/FormComponents/Button";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import Link from "next/link";
-import Image from "next/image";
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+
+import { resetPassword } from '@/lib/api/auth';
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import Input from '@/components/TrackerComponents/FormComponents/Input';
 
 const PasswordResetForm = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
-    setError("");
+    setMessage('');
+    setError('');
 
     try {
       const response = await resetPassword(email);
       setMessage(response.message);
     } catch (error) {
       console.error(error);
-      setError("Error al enviar el correo de restablecimiento de contraseña.");
+      setError('Error al enviar el correo de restablecimiento de contraseña.');
     }
   };
 

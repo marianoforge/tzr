@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
@@ -8,18 +8,20 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useRouter } from "next/router";
-import { useExpensesStore } from "@/stores/useExpensesStore";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserExpenses } from "@/lib/api/expensesApi";
-import useFilteredExpenses from "@/hooks/useFilteredExpenses";
-import { Expense } from "@/types";
-import { formatNumber } from "@/utils/formatNumber";
-import { COLORS } from "@/lib/constants";
-import SkeletonLoader from "../SkeletonLoader";
+} from 'recharts';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
+
+import { auth } from '@/lib/firebase';
+import { useExpensesStore } from '@/stores/useExpensesStore';
+import { fetchUserExpenses } from '@/lib/api/expensesApi';
+import useFilteredExpenses from '@/hooks/useFilteredExpenses';
+import { Expense } from '@/types';
+import { formatNumber } from '@/utils/formatNumber';
+import { COLORS } from '@/lib/constants';
+
+import SkeletonLoader from '../SkeletonLoader';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -54,7 +56,7 @@ const ExpensesBarchart: React.FC = () => {
         setUserUID(user.uid);
       } else {
         setUserUID(null);
-        router.push("/login");
+        router.push('/login');
       }
     });
     return () => unsubscribe();
@@ -65,7 +67,7 @@ const ExpensesBarchart: React.FC = () => {
     isLoading,
     error: expensesError,
   } = useQuery({
-    queryKey: ["expenses", userUID],
+    queryKey: ['expenses', userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
@@ -80,24 +82,24 @@ const ExpensesBarchart: React.FC = () => {
     expenses || []
   );
 
-  const filteredExpenses = router.pathname.includes("expensesBroker")
+  const filteredExpenses = router.pathname.includes('expensesBroker')
     ? teamBrokerExpenses
     : nonTeamBrokerExpenses;
 
   const groupExpensesByMonth = (expenses: Expense[]) => {
     const allMonths = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
 
     const expensesByMonth = expenses.reduce(
@@ -115,7 +117,7 @@ const ExpensesBarchart: React.FC = () => {
         const date = new Date(expense.date);
         const year = date.getFullYear();
         if (year === 2024) {
-          const month = date.toLocaleString("default", { month: "long" });
+          const month = date.toLocaleString('default', { month: 'long' });
           if (!acc[month]) {
             acc[month] = {
               month,
@@ -158,7 +160,7 @@ const ExpensesBarchart: React.FC = () => {
     );
   }
   if (expensesError) {
-    return <p>Error: {expensesError.message || "An unknown error occurred"}</p>;
+    return <p>Error: {expensesError.message || 'An unknown error occurred'}</p>;
   }
 
   return (
@@ -173,7 +175,7 @@ const ExpensesBarchart: React.FC = () => {
             <XAxis dataKey="month" axisLine={false} tickLine={false} />
             <YAxis axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: "20px" }} />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <Bar
               dataKey="amountInDollars"
               fill={COLORS[3]}

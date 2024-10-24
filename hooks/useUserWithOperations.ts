@@ -1,5 +1,6 @@
-import { Operation, UserData } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
+
+import { Operation, UserData } from '@/types';
 
 interface UserWithOperations {
   uid: string;
@@ -13,24 +14,24 @@ interface UserWithOperations {
 const fetchUsersWithOperations = async (
   user: UserData
 ): Promise<UserWithOperations[]> => {
-  const response = await fetch("/api/users/usersWithOps", {
-    method: "GET",
+  const response = await fetch('/api/users/usersWithOps', {
+    method: 'GET',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch users and operations");
+    throw new Error('Failed to fetch users and operations');
   }
 
   const { csrfToken, usersWithOperations } = await response.json();
 
   // Optional: Handle CSRF token if needed.
-  console.log("Received CSRF token:", csrfToken);
+  console.log('Received CSRF token:', csrfToken);
 
   // Filter the data if the user is a team leader
-  if (user.role === "team_leader_broker") {
+  if (user.role === 'team_leader_broker') {
     return usersWithOperations.filter(
       (usuario: UserWithOperations) => usuario.uid === user.uid
     );
@@ -41,7 +42,7 @@ const fetchUsersWithOperations = async (
 
 const useUsersWithOperations = (user: UserData) => {
   return useQuery({
-    queryKey: ["usersWithOperations", user],
+    queryKey: ['usersWithOperations', user],
     queryFn: () => fetchUsersWithOperations(user),
     staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
   });

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 interface NavLinkProps {
   href: string;
@@ -14,7 +14,7 @@ export const NavButton: React.FC<NavLinkProps> = ({
   <Link
     href={href}
     className={`text-white hover:bg-[#3A6D8A] px-3 py-2 rounded transition duration-150 ease-in-out ${
-      fullWidth ? "w-full text-center" : ""
+      fullWidth ? 'w-full text-center' : ''
     }`}
   >
     {label}

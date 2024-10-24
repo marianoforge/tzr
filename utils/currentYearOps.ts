@@ -1,4 +1,4 @@
-import { Operation } from "@/types";
+import { Operation } from '@/types';
 
 const currentYear = new Date().getFullYear();
 

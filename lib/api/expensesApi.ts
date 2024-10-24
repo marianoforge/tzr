@@ -1,9 +1,10 @@
-import axios from "axios";
-import { Expense } from "@/types";
+import axios from 'axios';
+
+import { Expense } from '@/types';
 
 // Crear un nuevo gasto
 export const createExpense = async (expenseData: Expense) => {
-  const response = await axios.post("/api/expenses", expenseData);
+  const response = await axios.post('/api/expenses', expenseData);
   return response.data;
 };
 

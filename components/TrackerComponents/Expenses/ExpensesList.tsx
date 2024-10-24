@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { useRouter } from "next/router";
-import { useExpensesStore } from "@/stores/useExpensesStore";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { useExpensesStore } from '@/stores/useExpensesStore';
+import { auth } from '@/lib/firebase';
 import {
   fetchUserExpenses,
   deleteExpense,
   updateExpense,
-} from "@/lib/api/expensesApi";
-import { formatNumber } from "@/utils/formatNumber";
-import { Expense } from "@/types";
-import ExpensesModal from "./ExpensesModal";
-import useFilteredExpenses from "@/hooks/useFilteredExpenses";
-import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import SkeletonLoader from "../SkeletonLoader";
+} from '@/lib/api/expensesApi';
+import { formatNumber } from '@/utils/formatNumber';
+import { Expense } from '@/types';
+import useFilteredExpenses from '@/hooks/useFilteredExpenses';
+import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
+
+import SkeletonLoader from '../SkeletonLoader';
+
+import ExpensesModal from './ExpensesModal';
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -33,7 +36,7 @@ const ExpensesList = () => {
         setUserUID(user.uid);
       } else {
         setUserUID(null);
-        router.push("/login");
+        router.push('/login');
       }
     });
     return () => unsubscribe();
@@ -44,7 +47,7 @@ const ExpensesList = () => {
     isLoading,
     error: expensesError,
   } = useQuery({
-    queryKey: ["expenses", userUID],
+    queryKey: ['expenses', userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
@@ -58,7 +61,7 @@ const ExpensesList = () => {
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] });
+      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
       calculateTotals();
     },
   });
@@ -66,7 +69,7 @@ const ExpensesList = () => {
   const mutationUpdate = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", userUID] });
+      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
       calculateTotals();
     },
   });
@@ -87,11 +90,11 @@ const ExpensesList = () => {
   const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
     useFilteredExpenses(expenses || []);
 
-  const filteredExpenses = router.pathname.includes("expensesBroker")
+  const filteredExpenses = router.pathname.includes('expensesBroker')
     ? teamBrokerExpenses
     : nonTeamBrokerExpenses;
 
-  const filteredTotals = router.pathname.includes("expensesBroker")
+  const filteredTotals = router.pathname.includes('expensesBroker')
     ? totals.teamBrokerTotal
     : totals.nonTeamBrokerTotal;
 
@@ -116,21 +119,21 @@ const ExpensesList = () => {
   // Ruta de tu archivo utilitario
 
   const formatDate = (date: string | null) => {
-    if (!date) return "Fecha inválida";
+    if (!date) return 'Fecha inválida';
 
     try {
-      const [year, month, day] = date.split("-");
+      const [year, month, day] = date.split('-');
 
       return `${day}/${month}/${year}`;
     } catch (error) {
-      console.error("Error formateando la fecha:", error);
-      return "Fecha inválida";
+      console.error('Error formateando la fecha:', error);
+      return 'Fecha inválida';
     }
   };
 
-  const pageTitle = router.pathname.includes("expensesBroker")
-    ? "Lista de Gastos Team / Broker"
-    : "Lista de Gastos propios";
+  const pageTitle = router.pathname.includes('expensesBroker')
+    ? 'Lista de Gastos Team / Broker'
+    : 'Lista de Gastos propios';
 
   if (isLoading) {
     return (
@@ -140,7 +143,7 @@ const ExpensesList = () => {
     );
   }
   if (expensesError) {
-    return <p>Error: {expensesError.message || "An unknown error occurred"}</p>;
+    return <p>Error: {expensesError.message || 'An unknown error occurred'}</p>;
   }
 
   return (

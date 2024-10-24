@@ -1,9 +1,10 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import Button from "@/components/TrackerComponents/FormComponents/Button";
-import { formatDateTime } from "@/utils/formatEventDateTime";
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import { formatDateTime } from '@/utils/formatEventDateTime';
 
 interface SessionType {
   id: string;
@@ -41,10 +42,10 @@ export default function Success() {
         const { userId } = await userIdRes.json();
 
         // Guardar el userID en localStorage para futuras referencias
-        localStorage.setItem("userID", userId);
+        localStorage.setItem('userID', userId);
         setUserId(userId);
       } catch (error) {
-        console.error("Error fetching user ID:", error);
+        console.error('Error fetching user ID:', error);
       }
     };
 
@@ -60,9 +61,9 @@ export default function Success() {
 
           // Hacer PUT para actualizar el perfil del usuario en Firebase
           const res = await fetch(`/api/users/${userId}`, {
-            method: "PUT",
+            method: 'PUT',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               stripeCustomerId,
@@ -71,10 +72,10 @@ export default function Success() {
           });
 
           if (!res.ok) {
-            throw new Error("Failed to update user profile");
+            throw new Error('Failed to update user profile');
           }
         } catch (error) {
-          console.error("Error updating user profile:", error);
+          console.error('Error updating user profile:', error);
         }
       }
     };
@@ -91,7 +92,7 @@ export default function Success() {
           // Actualizar el perfil del usuario
           await updateUserProfile(session, userId);
         } catch (error) {
-          console.error("Error al obtener los detalles de la sesión:", error);
+          console.error('Error al obtener los detalles de la sesión:', error);
         }
       }
     };
@@ -127,21 +128,21 @@ export default function Success() {
             <h1>La transacción se ha realizado con éxito</h1>
           </div>
           <p>
-            Fin de la prueba gratis:{" "}
+            Fin de la prueba gratis:{' '}
             <span className="font-semibold">{formattedDate}</span>
           </p>
         </div>
 
         <div className="w-full flex justify-around">
           <Button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push('/login')}
             className="bg-mediumBlue hover:bg-lightBlue text-white p-2 rounded transition-all duration-300 font-semibold w-[200px] cursor-pointer"
             type="button"
           >
-            Ir al Login{" "}
+            Ir al Login{' '}
           </Button>
           <Button
-            onClick={() => router.push("/")}
+            onClick={() => router.push('/')}
             className="bg-lightBlue hover:bg-mediumBlue text-white p-2 rounded transition-all duration-300 font-semibold w-[200px] cursor-pointer"
             type="button"
           >

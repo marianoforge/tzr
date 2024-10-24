@@ -1,18 +1,19 @@
 // RegisterForm.tsx
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import { useForm, SubmitHandler, Resolver } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import ModalOK from "@/components/TrackerComponents/ModalOK";
-import { cleanString } from "@/utils/cleanString";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import Button from "@/components/TrackerComponents/FormComponents/Button";
-import { RegisterData } from "@/types";
-import { createSchema } from "@/schemas/registerFormSchema";
-import Link from "next/link";
-import Image from "next/image";
-import { loadStripe } from "@stripe/stripe-js";
-import Select from "@/components/TrackerComponents/FormComponents/Select";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import Link from 'next/link';
+import Image from 'next/image';
+import { loadStripe } from '@stripe/stripe-js';
+
+import ModalOK from '@/components/TrackerComponents/ModalOK';
+import { cleanString } from '@/utils/cleanString';
+import Input from '@/components/TrackerComponents/FormComponents/Input';
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import { RegisterData } from '@/types';
+import { createSchema } from '@/schemas/registerFormSchema';
+import Select from '@/components/TrackerComponents/FormComponents/Select';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -24,11 +25,11 @@ const RegisterForm = () => {
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [formError, setFormError] = useState("");
+  const [modalMessage, setModalMessage] = useState('');
+  const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
 
-  const schema = createSchema(googleUser === "true");
+  const schema = createSchema(googleUser === 'true');
   const {
     register,
     handleSubmit,
@@ -41,67 +42,67 @@ const RegisterForm = () => {
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
-        const res = await fetch("/api/auth/register", {
-          method: "GET",
+        const res = await fetch('/api/auth/register', {
+          method: 'GET',
         });
         const data = await res.json();
         setCsrfToken(data.csrfToken);
       } catch (error) {
-        console.error("Error al obtener el token CSRF:", error);
+        console.error('Error al obtener el token CSRF:', error);
       }
     };
     fetchCsrfToken();
   }, []);
 
   useEffect(() => {
-    if (googleUser === "true" && email) {
-      setValue("email", email as string);
+    if (googleUser === 'true' && email) {
+      setValue('email', email as string);
     }
   }, [googleUser, email, setValue]);
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     setLoading(true);
     if (!csrfToken) {
-      setFormError("No se pudo obtener el token CSRF, intenta nuevamente.");
+      setFormError('No se pudo obtener el token CSRF, intenta nuevamente.');
       setLoading(false);
       return;
     }
 
     try {
       // 1. Registrar el usuario
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "CSRF-Token": csrfToken || "",
+          'Content-Type': 'application/json',
+          'CSRF-Token': csrfToken || '',
         },
         body: JSON.stringify({
           ...data,
           agenciaBroker: cleanString(data.agenciaBroker),
-          googleUser: googleUser === "true",
-          uid: googleUser === "true" ? uid : undefined,
+          googleUser: googleUser === 'true',
+          uid: googleUser === 'true' ? uid : undefined,
           priceId: priceId || null, // Si hay un priceId, lo usamos, de lo contrario null
           // trialEndsAt solo si NO está comprando una licencia (sin priceId)
           ...(priceId
             ? {}
             : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
-          password: googleUser !== "true" ? data.password : undefined,
+          password: googleUser !== 'true' ? data.password : undefined,
           confirmPassword:
-            googleUser !== "true" ? data.confirmPassword : undefined,
+            googleUser !== 'true' ? data.confirmPassword : undefined,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Error al registrar usuario");
+        throw new Error(errorData.message || 'Error al registrar usuario');
       }
 
       if (priceId) {
         // 2. Si se seleccionó una licencia, crear la sesión de Stripe y redirigir
-        const stripeRes = await fetch("/api/checkout/checkout_session", {
-          method: "POST",
+        const stripeRes = await fetch('/api/checkout/checkout_session', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             priceId: priceId,
@@ -115,23 +116,23 @@ const RegisterForm = () => {
           const { error } = await stripe!.redirectToCheckout({ sessionId });
           if (error) {
             throw new Error(
-              "Error en la redirección a Stripe: " + error.message
+              'Error en la redirección a Stripe: ' + error.message
             );
           }
         } else {
-          throw new Error("No se pudo obtener el sessionId para Stripe.");
+          throw new Error('No se pudo obtener el sessionId para Stripe.');
         }
       } else {
         // 3. Si no seleccionaron licencia, terminar el registro y redirigir al dashboard
-        setModalMessage("Registro exitoso. Ahora puedes iniciar sesión.");
+        setModalMessage('Registro exitoso. Ahora puedes iniciar sesión.');
         setIsModalOpen(true);
-        router.push("/dashboard");
+        router.push('/dashboard');
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
-        setFormError("Ocurrió un error desconocido");
+        setFormError('Ocurrió un error desconocido');
       }
     } finally {
       setLoading(false);
@@ -163,7 +164,7 @@ const RegisterForm = () => {
           label="Nombre"
           type="text"
           placeholder="Juan"
-          {...register("firstName")}
+          {...register('firstName')}
           error={errors.firstName?.message}
           required
         />
@@ -172,7 +173,7 @@ const RegisterForm = () => {
           label="Apellido"
           type="text"
           placeholder="Pérez"
-          {...register("lastName")}
+          {...register('lastName')}
           error={errors.lastName?.message}
           required
         />
@@ -181,19 +182,19 @@ const RegisterForm = () => {
           label="Correo Electrónico"
           type="email"
           placeholder="juan@perez.com"
-          {...register("email")}
+          {...register('email')}
           error={errors.email?.message}
           required
-          readOnly={googleUser === "true"}
+          readOnly={googleUser === 'true'}
         />
 
-        {googleUser !== "true" && (
+        {googleUser !== 'true' && (
           <>
             <Input
               label="Contraseña"
               type="password"
               placeholder="************"
-              {...register("password")}
+              {...register('password')}
               error={errors.password?.message}
               required
               showPasswordToggle
@@ -205,7 +206,7 @@ const RegisterForm = () => {
               label="Repite la Contraseña"
               type="password"
               placeholder="************"
-              {...register("confirmPassword")}
+              {...register('confirmPassword')}
               error={errors.confirmPassword?.message}
               required
               showPasswordToggle
@@ -219,7 +220,7 @@ const RegisterForm = () => {
           label="Agencia / Broker a la que perteneces"
           type="text"
           placeholder="Gustavo De Simone Soluciones Inmobiliarias"
-          {...register("agenciaBroker")}
+          {...register('agenciaBroker')}
           error={errors.agenciaBroker?.message}
           required
         />
@@ -228,7 +229,7 @@ const RegisterForm = () => {
           label="Número de Teléfono"
           type="tel"
           placeholder="+54 11 6348 8465"
-          {...register("numeroTelefono")}
+          {...register('numeroTelefono')}
           error={errors.numeroTelefono?.message}
           required
         />
@@ -236,8 +237,8 @@ const RegisterForm = () => {
         <Select
           label="¿Sos Team Leader / Broker o Asesor?"
           options={[
-            { value: "agente_asesor", label: "Asesor" },
-            { value: "team_leader_broker", label: "Team Leader / Broker" },
+            { value: 'agente_asesor', label: 'Asesor' },
+            { value: 'team_leader_broker', label: 'Team Leader / Broker' },
           ]}
           register={register}
           name="role"
@@ -255,7 +256,7 @@ const RegisterForm = () => {
           </Button>
           <Button
             type="button"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push('/login')}
             className="bg-mediumBlue hover:bg-lightBlue text-white py-2 px-4 mt-4 rounded-md w-48"
           >
             Iniciar sesión
@@ -267,7 +268,7 @@ const RegisterForm = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
-        onAccept={() => router.push("/login")}
+        onAccept={() => router.push('/login')}
       />
     </div>
   );

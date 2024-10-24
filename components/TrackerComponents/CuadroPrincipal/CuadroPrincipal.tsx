@@ -1,19 +1,20 @@
-import Loader from "@/components/TrackerComponents/Loader";
-import { useAuthStore } from "@/stores/authStore";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserOperations } from "@/lib/api/operationsApi";
-import { Operation } from "@/types";
-import { formatNumber } from "@/utils/formatNumber";
-import { calculateTotals } from "@/utils/calculations";
-import { useMemo } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useCallback } from 'react';
+
+import Loader from '@/components/TrackerComponents/Loader';
+import { useAuthStore } from '@/stores/authStore';
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+import { Operation } from '@/types';
+import { formatNumber } from '@/utils/formatNumber';
+import { calculateTotals } from '@/utils/calculations';
 import {
   calculateOperationData,
   calculateTotalCantidad,
   calculateTotalLastColumnSum,
   calculatePercentage,
-} from "@/utils/calculationsPrincipal";
-import { useCallback } from "react";
-import SkeletonLoader from "../SkeletonLoader";
+} from '@/utils/calculationsPrincipal';
+
+import SkeletonLoader from '../SkeletonLoader';
 
 const CuadroPrincipal = () => {
   const { userID } = useAuthStore();
@@ -23,13 +24,13 @@ const CuadroPrincipal = () => {
     isLoading,
     error: operationsError,
   } = useQuery({
-    queryKey: ["operations", userID],
-    queryFn: () => fetchUserOperations(userID || ""),
+    queryKey: ['operations', userID],
+    queryFn: () => fetchUserOperations(userID || ''),
     enabled: !!userID,
   });
 
   const closedOperations = operations.filter(
-    (op: Operation) => op.estado === "Cerrada"
+    (op: Operation) => op.estado === 'Cerrada'
   );
 
   const totals = calculateTotals(closedOperations);
@@ -68,7 +69,7 @@ const CuadroPrincipal = () => {
   }
   if (operationsError) {
     return (
-      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
 
@@ -89,11 +90,11 @@ const CuadroPrincipal = () => {
                 <thead className="hidden md:table-header-group">
                   <tr className="bg-lightBlue/10 border-b-2 text-center text-sm text-mediumBlue h-18">
                     {[
-                      "Tipo de Operacion",
-                      "Cantidad de Operaciones",
-                      "Porcentaje Sobre el Total",
-                      "% Ganancias Brutas",
-                      "Promedio Monto Ventas & Desarrollos",
+                      'Tipo de Operacion',
+                      'Cantidad de Operaciones',
+                      'Porcentaje Sobre el Total',
+                      '% Ganancias Brutas',
+                      'Promedio Monto Ventas & Desarrollos',
                     ].map((header) => (
                       <th key={header} className="py-3 px-4 font-semibold">
                         {header}
@@ -107,7 +108,7 @@ const CuadroPrincipal = () => {
                       <tr
                         key={tipo}
                         className={`${
-                          index % 2 === 0 ? "bg-white" : "bg-mediumBlue/10"
+                          index % 2 === 0 ? 'bg-white' : 'bg-mediumBlue/10'
                         } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-12`}
                       >
                         <td className="py-3 px-4 text-start text-base w-1/5 pl-8">
@@ -130,12 +131,12 @@ const CuadroPrincipal = () => {
                         </td>
                         <td className="py-3 px-4 text-base">
                           {[
-                            "Alquiler",
-                            "Cochera",
-                            "Alquiler Temporal",
-                            "Alquiler Tradicional",
+                            'Alquiler',
+                            'Cochera',
+                            'Alquiler Temporal',
+                            'Alquiler Tradicional',
                           ].includes(tipo)
-                            ? ""
+                            ? ''
                             : `$${formatNumber(
                                 (data.totalVenta ?? 0) / (data.cantidad || 1)
                               )}`}

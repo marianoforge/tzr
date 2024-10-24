@@ -1,6 +1,5 @@
 // pages/api/operations.ts
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "@/lib/firebase";
+import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   collection,
   query,
@@ -8,8 +7,10 @@ import {
   getDocs,
   addDoc,
   orderBy,
-} from "firebase/firestore";
-import { Operation } from "@/types";
+} from 'firebase/firestore';
+
+import { db } from '@/lib/firebase';
+import { Operation } from '@/types';
 
 // Handler para manejar GET y POST en este endpoint
 export default async function handler(
@@ -17,29 +18,29 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const user_uid =
-    req.method === "GET" ? req.query.user_uid : req.body.user_uid;
+    req.method === 'GET' ? req.query.user_uid : req.body.user_uid;
 
   // Validar que el user_uid esté presente
-  if (!user_uid || typeof user_uid !== "string") {
-    return res.status(400).json({ message: "User UID is required" });
+  if (!user_uid || typeof user_uid !== 'string') {
+    return res.status(400).json({ message: 'User UID is required' });
   }
 
   switch (req.method) {
-    case "GET":
+    case 'GET':
       return getUserOperations(user_uid, res);
-    case "POST":
+    case 'POST':
       return createOperation(req, res);
     default:
-      return res.status(405).json({ message: "Method not allowed" });
+      return res.status(405).json({ message: 'Method not allowed' });
   }
 }
 
 const getUserOperations = async (userUID: string, res: NextApiResponse) => {
   try {
     const q = query(
-      collection(db, "operations"),
-      where("teamId", "==", userUID), // Filtra por teamId igual a userUID
-      orderBy("fecha_operacion", "asc")
+      collection(db, 'operations'),
+      where('teamId', '==', userUID), // Filtra por teamId igual a userUID
+      orderBy('fecha_operacion', 'asc')
     );
     const querySnapshot = await getDocs(q);
     const operations = querySnapshot.docs.map((doc) => ({
@@ -49,8 +50,8 @@ const getUserOperations = async (userUID: string, res: NextApiResponse) => {
 
     return res.status(200).json(operations);
   } catch (error) {
-    console.error("Error fetching operations:", error);
-    return res.status(500).json({ message: "Error fetching operations" });
+    console.error('Error fetching operations:', error);
+    return res.status(500).json({ message: 'Error fetching operations' });
   }
 };
 
@@ -90,7 +91,7 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
   ) {
     return res
       .status(400)
-      .json({ message: "Todos los campos son obligatorios" });
+      .json({ message: 'Todos los campos son obligatorios' });
   }
 
   try {
@@ -113,12 +114,12 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
       updatedAt: new Date().toISOString(),
     };
 
-    const docRef = await addDoc(collection(db, "operations"), newOperation);
+    const docRef = await addDoc(collection(db, 'operations'), newOperation);
     return res
       .status(201)
-      .json({ id: docRef.id, message: "Operación creada exitosamente" });
+      .json({ id: docRef.id, message: 'Operación creada exitosamente' });
   } catch (error) {
-    console.error("Error creando la operación:", error);
-    return res.status(500).json({ message: "Error creando la operación" });
+    console.error('Error creando la operación:', error);
+    return res.status(500).json({ message: 'Error creando la operación' });
   }
 };

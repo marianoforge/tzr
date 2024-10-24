@@ -1,12 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "@/lib/firebase";
+import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   doc,
   getDoc,
   updateDoc,
   deleteDoc,
   FieldValue,
-} from "firebase/firestore";
+} from 'firebase/firestore';
+
+import { db } from '@/lib/firebase';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,25 +15,25 @@ export default async function handler(
 ) {
   const { id } = req.query;
 
-  if (!id || typeof id !== "string") {
-    return res.status(400).json({ message: "User ID is required" });
+  if (!id || typeof id !== 'string') {
+    return res.status(400).json({ message: 'User ID is required' });
   }
 
-  if (req.method === "GET") {
+  if (req.method === 'GET') {
     try {
-      const userRef = doc(db, "usuarios", id);
+      const userRef = doc(db, 'usuarios', id);
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: 'User not found' });
       }
 
       res.status(200).json(userSnap.data());
     } catch (error) {
-      console.error("Error fetching user data:", error);
-      res.status(500).json({ message: "Error fetching user data", error });
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ message: 'Error fetching user data', error });
     }
-  } else if (req.method === "PUT") {
+  } else if (req.method === 'PUT') {
     const {
       firstName,
       lastName,
@@ -57,11 +58,11 @@ export default async function handler(
       stripeSubscriptionId === undefined &&
       priceId === undefined
     ) {
-      return res.status(400).json({ message: "No fields to update" });
+      return res.status(400).json({ message: 'No fields to update' });
     }
 
     try {
-      const userRef = doc(db, "usuarios", id);
+      const userRef = doc(db, 'usuarios', id);
       const updates: Record<string, unknown> = {};
 
       // Add fields to updates object if they are present in the request body
@@ -84,25 +85,23 @@ export default async function handler(
         updates as { [x: string]: FieldValue | Partial<unknown> | undefined }
       );
 
-      res.status(200).json({ message: "User updated successfully" });
+      res.status(200).json({ message: 'User updated successfully' });
     } catch (error) {
-      res
-        .status(500)
-        .json({
-          message: "Error updating user",
-          error: error instanceof Error ? error.message : String(error),
-        });
+      res.status(500).json({
+        message: 'Error updating user',
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
-  } else if (req.method === "DELETE") {
+  } else if (req.method === 'DELETE') {
     try {
-      const userRef = doc(db, "usuarios", id);
+      const userRef = doc(db, 'usuarios', id);
       await deleteDoc(userRef);
 
-      res.status(200).json({ message: "User deleted successfully" });
+      res.status(200).json({ message: 'User deleted successfully' });
     } catch (error) {
-      res.status(500).json({ message: "Error deleting user", error });
+      res.status(500).json({ message: 'Error deleting user', error });
     }
   } else {
-    res.status(405).json({ message: "Method not allowed" });
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }

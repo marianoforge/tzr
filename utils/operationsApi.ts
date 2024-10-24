@@ -1,5 +1,6 @@
-import axios from "axios";
-import { Operation } from "@/types";
+import axios from 'axios';
+
+import { Operation } from '@/types';
 
 export const fetchUserOperations = async (
   userUID: string

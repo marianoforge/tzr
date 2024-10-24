@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
@@ -8,14 +8,16 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import { useAuthStore } from "@/stores/authStore";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserOperations } from "@/lib/api/operationsApi";
-import { COLORS, MAX_BAR_SIZE } from "@/lib/constants";
-import { formatOperationsData } from "@/utils/formatOperationsData";
-import { Operation } from "@/types";
-import SkeletonLoader from "../SkeletonLoader";
+} from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+
+import { useAuthStore } from '@/stores/authStore';
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+import { COLORS, MAX_BAR_SIZE } from '@/lib/constants';
+import { formatOperationsData } from '@/utils/formatOperationsData';
+import { Operation } from '@/types';
+
+import SkeletonLoader from '../SkeletonLoader';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -49,11 +51,11 @@ const MonthlyBarChartGross: React.FC = () => {
     isLoading,
     error: operationsError,
   } = useQuery({
-    queryKey: ["operations", userID],
+    queryKey: ['operations', userID],
     queryFn: async () => {
-      const allOperations = await fetchUserOperations(userID || "");
+      const allOperations = await fetchUserOperations(userID || '');
       return allOperations.filter(
-        (operation: Operation) => operation.estado === "Cerrada"
+        (operation: Operation) => operation.estado === 'Cerrada'
       );
     },
     enabled: !!userID, // Solo ejecuta la query si hay un userID
@@ -63,11 +65,11 @@ const MonthlyBarChartGross: React.FC = () => {
   useEffect(() => {
     if (operations.length > 0) {
       const closedOperations = operations.filter(
-        (operation: Operation) => operation.estado === "Cerrada"
+        (operation: Operation) => operation.estado === 'Cerrada'
       );
       const formattedData = formatOperationsData(
         closedOperations,
-        "honorarios_broker"
+        'honorarios_broker'
       );
 
       // Verificar que los datos estén correctamente formateados
@@ -96,7 +98,7 @@ const MonthlyBarChartGross: React.FC = () => {
   }
   if (operationsError) {
     return (
-      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
 
@@ -112,7 +114,7 @@ const MonthlyBarChartGross: React.FC = () => {
             <XAxis dataKey="month" axisLine={false} tickLine={false} />
             <YAxis axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: "20px" }} />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} />
             <Bar
               dataKey="previousYear"
               fill={COLORS[1]}

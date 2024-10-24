@@ -1,6 +1,6 @@
-import React from "react";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import React from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 interface SkeletonLoaderProps {
   height?: number;
@@ -9,9 +9,9 @@ interface SkeletonLoaderProps {
 }
 
 const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
-  height = "",
+  height = '',
   count = 10,
-  width = "",
+  width = '',
 }) => {
   return <Skeleton height={height} count={count} width={width} />;
 };

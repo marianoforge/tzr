@@ -1,7 +1,7 @@
 // components/BounceCard.tsx
-import { motion } from "framer-motion";
-import React from "react";
-import Image from "next/image";
+import { motion } from 'framer-motion';
+import React from 'react';
+import Image from 'next/image';
 
 interface BounceCardProps {
   title: React.ReactNode; // Change from string to React.ReactNode
@@ -23,7 +23,7 @@ const BounceCard: React.FC<BounceCardProps> = ({
         duration: 3,
         ease: [0, 0.71, 0.2, 1.01],
         scale: {
-          type: "spring",
+          type: 'spring',
           damping: 5,
           stiffness: 80,
           restDelta: 0.001,

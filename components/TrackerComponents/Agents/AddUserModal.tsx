@@ -1,34 +1,28 @@
-import React, { useState, useEffect, useCallback } from "react";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useRouter } from "next/router";
-import { useForm, SubmitHandler, Resolver } from "react-hook-form";
-import Button from "../FormComponents/Button";
-import Input from "../FormComponents/Input";
-import ModalOK from "../ModalOK";
-import { useAuthStore } from "@/stores/authStore";
-import { useMutation } from "@tanstack/react-query";
-import { TeamMemberRequestBody } from "@/types";
+import React, { useState, useEffect, useCallback } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
+import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+
+import { createSchema } from '@/schemas/addUserModalSchema';
+import { useAuthStore } from '@/stores/authStore';
+import { TeamMemberRequestBody } from '@/types';
+
+import Button from '../FormComponents/Button';
+import Input from '../FormComponents/Input';
+import ModalOK from '../ModalOK';
 
 interface AddUserModalProps {
   onClose: () => void;
 }
-
-export const createSchema = () =>
-  yup.object().shape({
-    firstName: yup.string().required("Nombre es requerido"),
-    lastName: yup.string().required("Apellido es requerido"),
-    email: yup.string().email("Correo inválido").nullable(),
-    numeroTelefono: yup.string().nullable(),
-  });
 
 const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const router = useRouter();
   const { userID } = useAuthStore();
   const schema = createSchema();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [formError, setFormError] = useState("");
+  const [modalMessage, setModalMessage] = useState('');
+  const [formError, setFormError] = useState('');
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
 
   const {
@@ -43,13 +37,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
-        const response = await fetch("/api/users/teamMembers", {
-          method: "GET",
+        const response = await fetch('/api/users/teamMembers', {
+          method: 'GET',
         });
         const data = await response.json();
         setCsrfToken(data.csrfToken);
       } catch (error) {
-        console.error("Error fetching CSRF token:", error);
+        console.error('Error fetching CSRF token:', error);
       }
     };
 
@@ -59,14 +53,14 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
   const mutation = useMutation<unknown, Error, TeamMemberRequestBody>({
     mutationFn: async (data: TeamMemberRequestBody) => {
       if (!userID) {
-        throw new Error("El UID del usuario es requerido");
+        throw new Error('El UID del usuario es requerido');
       }
 
-      const response = await fetch("/api/users/teamMembers", {
-        method: "POST",
+      const response = await fetch('/api/users/teamMembers', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "CSRF-Token": csrfToken || "",
+          'Content-Type': 'application/json',
+          'CSRF-Token': csrfToken || '',
         },
         body: JSON.stringify({
           uid: userID,
@@ -76,13 +70,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Error al registrar usuario");
+        throw new Error(errorData.message || 'Error al registrar usuario');
       }
 
       return response.json();
     },
     onSuccess: () => {
-      setModalMessage("Se ha agregado un nuevo asesor.");
+      setModalMessage('Se ha agregado un nuevo asesor.');
       setIsModalOpen(true);
       reset();
     },
@@ -90,7 +84,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
-        setFormError("An unknown error occurred");
+        setFormError('An unknown error occurred');
       }
     },
   });
@@ -118,7 +112,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           <Input
             type="text"
             placeholder="Nombre"
-            {...register("firstName")}
+            {...register('firstName')}
             required
           />
           {errors.firstName && (
@@ -128,7 +122,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           <Input
             type="text"
             placeholder="Apellido"
-            {...register("lastName")}
+            {...register('lastName')}
             required
           />
           {errors.lastName && (
@@ -138,7 +132,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           <Input
             type="email"
             placeholder="Correo electrónico"
-            {...register("email")}
+            {...register('email')}
           />
           {errors.email && (
             <p className="text-red-500">{errors.email.message}</p>
@@ -147,7 +141,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
           <Input
             type="tel"
             placeholder="Número de Teléfono"
-            {...register("numeroTelefono")}
+            {...register('numeroTelefono')}
           />
           {errors.numeroTelefono && (
             <p className="text-red-500">{errors.numeroTelefono.message}</p>
@@ -177,7 +171,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
             onClose();
           }}
           message={modalMessage}
-          onAccept={() => router.push("/dashboard")}
+          onAccept={() => router.push('/dashboard')}
         />
       </div>
     </div>

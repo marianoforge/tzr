@@ -1,17 +1,18 @@
-import { useMemo } from "react";
-import { useRouter } from "next/router";
-import { Expense } from "@/types";
+import { useMemo } from 'react';
+import { useRouter } from 'next/router';
+
+import { Expense } from '@/types';
 
 const useFilteredExpenses = (expenses: Expense[]) => {
   const router = useRouter();
 
   const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } = useMemo(() => {
     const teamBrokerExpenses = expenses.filter(
-      (expense) => expense.expenseAssociationType === "team_broker"
+      (expense) => expense.expenseAssociationType === 'team_broker'
     );
 
     const nonTeamBrokerExpenses = expenses.filter(
-      (expense) => expense.expenseAssociationType !== "team_broker"
+      (expense) => expense.expenseAssociationType !== 'team_broker'
     );
 
     const totals = {

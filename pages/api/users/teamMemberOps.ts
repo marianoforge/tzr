@@ -1,13 +1,14 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase"; // Asegúrate de que este importa correctamente tu instancia de Firestore
-import { setCsrfCookie } from "@/lib/csrf"; // Asegúrate de tener configurado el CSRF correctamente
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+
+import { db } from '@/lib/firebase'; // Asegúrate de que este importa correctamente tu instancia de Firestore
+import { setCsrfCookie } from '@/lib/csrf'; // Asegúrate de tener configurado el CSRF correctamente
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
+  if (req.method === 'GET') {
     try {
       // Set CSRF token cookie
       const token = setCsrfCookie(res);
@@ -15,13 +16,13 @@ export default async function handler(
       // Obtener el teamLeadID desde el query de la request
       const { teamLeadID } = req.query;
       if (!teamLeadID) {
-        return res.status(400).json({ message: "teamLeadID es requerido" });
+        return res.status(400).json({ message: 'teamLeadID es requerido' });
       }
 
       // Obtener los miembros del equipo desde la colección 'teams' usando el teamLeadID
       const teamsQuery = query(
-        collection(db, "teams"),
-        where("teamLeadID", "==", teamLeadID)
+        collection(db, 'teams'),
+        where('teamLeadID', '==', teamLeadID)
       );
       const teamsSnapshot = await getDocs(teamsQuery);
 
@@ -34,15 +35,15 @@ export default async function handler(
         teamMembers.map(async (member) => {
           // Query for operations where the member is the primary user
           const primaryQuery = query(
-            collection(db, "operations"),
-            where("user_uid", "==", member.id)
+            collection(db, 'operations'),
+            where('user_uid', '==', member.id)
           );
           const primarySnapshot = await getDocs(primaryQuery);
 
           // Query for operations where the member is the additional user
           const additionalQuery = query(
-            collection(db, "operations"),
-            where("user_uid_adicional", "==", member.id)
+            collection(db, 'operations'),
+            where('user_uid_adicional', '==', member.id)
           );
           const additionalSnapshot = await getDocs(additionalQuery);
 
@@ -59,13 +60,13 @@ export default async function handler(
       // Devolver los miembros del equipo junto con sus operaciones
       return res.status(200).json({ csrfToken: token, membersWithOperations });
     } catch (error) {
-      console.error("Error fetching team members and operations:", error);
+      console.error('Error fetching team members and operations:', error);
       return res
         .status(500)
-        .json({ message: "Error fetching team members and operations" });
+        .json({ message: 'Error fetching team members and operations' });
     }
   }
 
   // Return 405 for unsupported methods
-  return res.status(405).json({ message: "Method not allowed" });
+  return res.status(405).json({ message: 'Method not allowed' });
 }

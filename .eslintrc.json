@@ -1,3 +1,41 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["import", "prettier"],
+  "rules": {
+    "no-unused-vars": "off",
+    "import/no-unused-modules": [1, { "unusedExports": true }],
+    "import/order": [
+      "warn",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "prettier/prettier": "error",
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error", "info", "debug"] // Allow other console methods
+      }
+    ],
+    "import/named": "off",
+    "react/react-in-jsx-scope": "off"
+  },
+  "globals": {
+    "React": "writable" // Define React como global
+  }
 }

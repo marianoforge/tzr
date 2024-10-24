@@ -1,5 +1,6 @@
-import { ModalProps } from "@/types";
-import React from "react";
+import React from 'react';
+
+import { ModalProps } from '@/types';
 
 const Modal: React.FC<ModalProps> = ({
   isOpen,

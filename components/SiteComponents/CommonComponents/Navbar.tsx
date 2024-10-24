@@ -1,6 +1,7 @@
-import Link from "next/link";
-import Image from "next/image";
-import Navigation from "./Navigation";
+import Link from 'next/link';
+import Image from 'next/image';
+
+import Navigation from './Navigation';
 
 const Navbar = () => {
   return (

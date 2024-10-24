@@ -1,8 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import OperationsTable from "./OperationsTable";
-import OperationsContainer from "./OperationsContainer";
-import { fetchUserOperations } from "@/lib/api/operationsApi";
-import { useAuthStore } from "@/stores/authStore";
+import { useQuery } from '@tanstack/react-query';
+
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+import { useAuthStore } from '@/stores/authStore';
+
+import OperationsTable from './OperationsTable';
+import OperationsContainer from './OperationsContainer';
 
 const OperationsListDash: React.FC = () => {
   const { userID } = useAuthStore();
@@ -12,8 +14,8 @@ const OperationsListDash: React.FC = () => {
     isLoading,
     error: operationsError,
   } = useQuery({
-    queryKey: ["operations", userID],
-    queryFn: () => fetchUserOperations(userID || ""),
+    queryKey: ['operations', userID],
+    queryFn: () => fetchUserOperations(userID || ''),
     enabled: !!userID,
   });
 

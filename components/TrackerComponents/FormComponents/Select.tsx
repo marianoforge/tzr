@@ -1,5 +1,5 @@
-import React from "react";
-import { UseFormRegister, Path, FieldValues } from "react-hook-form"; // Importa FieldValues
+import React from 'react';
+import { UseFormRegister, Path, FieldValues } from 'react-hook-form'; // Importa FieldValues
 
 // Agregamos 'extends FieldValues' para cumplir con las restricciones de react-hook-form
 interface SelectProps<T extends FieldValues> {
@@ -21,8 +21,8 @@ const Select = <T extends FieldValues>({
   register,
   name,
   required = false,
-  className = "",
-  mb = "-mb-2", // Valor por defecto para margen inferior
+  className = '',
+  mb = '-mb-2', // Valor por defecto para margen inferior
   error,
   onChange,
   defaultValue,

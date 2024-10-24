@@ -1,10 +1,12 @@
-import React, { useMemo, useCallback } from "react";
-import { useAuthStore } from "@/stores/authStore";
-import { useQuery } from "@tanstack/react-query"; // Importar useQuery
-import { fetchUserEvents } from "@/lib/api/eventsApi"; // Asegúrate de tener esta función en tu eventsApi.ts
-import router from "next/router";
-import { Event } from "@/types";
-import SkeletonLoader from "../SkeletonLoader";
+import React, { useMemo, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query'; // Importar useQuery
+import router from 'next/router';
+
+import { useAuthStore } from '@/stores/authStore';
+import { fetchUserEvents } from '@/lib/api/eventsApi'; // Asegúrate de tener esta función en tu eventsApi.ts
+import { Event } from '@/types';
+
+import SkeletonLoader from '../SkeletonLoader';
 
 const EventsList: React.FC = () => {
   const { userID } = useAuthStore();
@@ -15,7 +17,7 @@ const EventsList: React.FC = () => {
     error: eventsError,
     isLoading,
   } = useQuery({
-    queryKey: ["events", userID], // Query key única por usuario
+    queryKey: ['events', userID], // Query key única por usuario
     queryFn: () => fetchUserEvents(userID!), // Función para obtener eventos
     enabled: !!userID, // Solo ejecutar la consulta si userID está definido
   });
@@ -25,14 +27,14 @@ const EventsList: React.FC = () => {
 
   // Memoize the navigation function
   const handleViewCalendar = useCallback(() => {
-    router.push("/calendar");
+    router.push('/calendar');
   }, []);
 
   if (isLoading) {
     return <SkeletonLoader height={440} count={1} />;
   }
   if (eventsError) {
-    return <p>Error: {eventsError.message || "An unknown error occurred"}</p>;
+    return <p>Error: {eventsError.message || 'An unknown error occurred'}</p>;
   }
 
   return (

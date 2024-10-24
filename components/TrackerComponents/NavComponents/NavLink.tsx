@@ -1,5 +1,5 @@
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 
 interface NavLinkProps {
   href?: string; // or URL if you want to use the URL type from the standard library
@@ -10,7 +10,7 @@ interface NavLinkProps {
 
 export const NavLink: React.FC<NavLinkProps> = ({ href, label, icon }) => {
   // Ensure href is defined and of type string
-  const validHref: string = href || "/default-path";
+  const validHref: string = href || '/default-path';
 
   return (
     <Link

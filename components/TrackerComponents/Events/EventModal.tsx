@@ -1,8 +1,9 @@
-import React from "react";
-import { EventModalProps } from "@/types";
-import { formatEventDateTime } from "@/utils/formatEventDateTime";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteEvent } from "@/lib/api/eventsApi";
+import React from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { EventModalProps } from '@/types';
+import { formatEventDateTime } from '@/utils/formatEventDateTime';
+import { deleteEvent } from '@/lib/api/eventsApi';
 
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   const queryClient = useQueryClient();
@@ -10,7 +11,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteEvent(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ['events'] });
       onClose();
     },
   });
@@ -28,13 +29,13 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
       <div className="bg-white p-6 rounded-xl shadow-lg text-center font-bold md:w-[50%] lg:w-[40%] h-[30%] flex flex-col justify-center w-[90%]">
         <div className="flex flex-col gap-1 h-[30%]">
           <p>
-            Comienzo:{" "}
+            Comienzo:{' '}
             <span className="font-normal">
               {formatEventDateTime(new Date(event.startTime))}
             </span>
           </p>
           <p>
-            Fin:{" "}
+            Fin:{' '}
             <span className="font-normal">
               {formatEventDateTime(new Date(event.endTime))}
             </span>

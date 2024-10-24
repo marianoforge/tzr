@@ -1,6 +1,6 @@
-import FormularioExpenses from "@/components/TrackerComponents/Expenses/FormExpenses";
-import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
-import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
+import FormularioExpenses from '@/components/TrackerComponents/Expenses/FormExpenses';
+import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
+import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
 
 const ExpensesFormPage = () => {
   return (

@@ -1,21 +1,22 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { signInWithPopup } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore'; // Importar Firestore para verificar el usuario
+import Link from 'next/link';
+import Image from 'next/image';
+
 import {
   auth,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   db,
-} from "@/lib/firebase"; // Import Firebase Auth
-import { signInWithPopup } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore"; // Importar Firestore para verificar el usuario
-import Button from "@/components/TrackerComponents/FormComponents/Button";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import { schema } from "@/schemas/loginFormSchema";
-import { LoginData } from "@/types";
-import Link from "next/link";
-import Image from "next/image";
+} from '@/lib/firebase'; // Import Firebase Auth
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import Input from '@/components/TrackerComponents/FormComponents/Input';
+import { schema } from '@/schemas/loginFormSchema';
+import { LoginData } from '@/types';
 
 const LoginForm = () => {
   const {
@@ -26,7 +27,7 @@ const LoginForm = () => {
     resolver: yupResolver(schema),
   });
   const router = useRouter();
-  const [formError, setFormError] = useState("");
+  const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
 
   // Iniciar sesión con correo y contraseña usando Firebase
@@ -41,24 +42,24 @@ const LoginForm = () => {
       const user = userCredential.user;
 
       // Verificamos si el usuario está en Firestore
-      const userDocRef = doc(db, "usuarios", user.uid); // Usamos el UID del usuario
+      const userDocRef = doc(db, 'usuarios', user.uid); // Usamos el UID del usuario
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
         // Si el usuario no existe en Firestore, redirigirlo al formulario de registro
         router.push({
-          pathname: "/register",
-          query: { email: user.email, googleUser: "false", uid: user.uid },
+          pathname: '/register',
+          query: { email: user.email, googleUser: 'false', uid: user.uid },
         });
       } else {
         // Si el usuario existe, redirigir al dashboard
-        router.push("/dashboard");
+        router.push('/dashboard');
       }
     } catch (err) {
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
-        setFormError("Error desconocido al iniciar sesión.");
+        setFormError('Error desconocido al iniciar sesión.');
       }
     }
   };
@@ -70,21 +71,21 @@ const LoginForm = () => {
       const user = result.user;
 
       // Verificar si el usuario ya existe en Firestore
-      const userDocRef = doc(db, "usuarios", user.uid); // Usamos el UID de Firebase
+      const userDocRef = doc(db, 'usuarios', user.uid); // Usamos el UID de Firebase
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
         // Si el usuario no existe, redirigir al formulario de registro para completar los datos
         router.push({
-          pathname: "/register",
-          query: { email: user.email, googleUser: "true", uid: user.uid },
+          pathname: '/register',
+          query: { email: user.email, googleUser: 'true', uid: user.uid },
         });
       } else {
         // Si el usuario ya existe, simplemente redirige al dashboard
-        router.push("/dashboard");
+        router.push('/dashboard');
       }
     } catch {
-      setFormError("Error al iniciar sesión con Google");
+      setFormError('Error al iniciar sesión con Google');
     }
   };
 
@@ -114,16 +115,16 @@ const LoginForm = () => {
           label="Correo Electrónico"
           type="email"
           placeholder="juanaperez@gmail.com"
-          {...register("email")}
+          {...register('email')}
           error={errors.email?.message}
           required
         />
 
         <Input
           label="Contraseña"
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           placeholder="********"
-          {...register("password")}
+          {...register('password')}
           error={errors.password?.message}
           required
           showPasswordToggle

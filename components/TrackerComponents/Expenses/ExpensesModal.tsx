@@ -1,32 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import Button from "@/components/TrackerComponents/FormComponents/Button";
-import Select from "@/components/TrackerComponents/FormComponents/Select"; // Reutilizamos Select
-import { Expense } from "@/types";
-import { expenseTypes } from "./FormExpenses";
+import React, { useEffect, useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateExpense } from "@/lib/api/expensesApi";
-import { useUserDataStore } from "@/stores/userDataStore";
+import Input from '@/components/TrackerComponents/FormComponents/Input';
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import Select from '@/components/TrackerComponents/FormComponents/Select'; // Reutilizamos Select
+import { Expense } from '@/types';
+import { updateExpense } from '@/lib/api/expensesApi';
+import { useUserDataStore } from '@/stores/userDataStore';
+
+import { expenseTypes } from './FormExpenses';
 
 // Validación con Yup
 const schema = yup.object().shape({
-  date: yup.string().required("La fecha es requerida"),
+  date: yup.string().required('La fecha es requerida'),
   amount: yup
     .number()
-    .typeError("El monto debe ser un número")
-    .positive("El monto debe ser positivo")
-    .required("El monto es requerido"),
+    .typeError('El monto debe ser un número')
+    .positive('El monto debe ser positivo')
+    .required('El monto es requerido'),
   dollarRate: yup
     .number()
-    .typeError("La cotización debe ser un número")
-    .positive("La cotización debe ser positiva")
-    .required("La cotización del dólar es requerida"),
-  expenseType: yup.string().required("El tipo de gasto es requerido"),
-  description: yup.string().required("La descripción es requerida"),
+    .typeError('La cotización debe ser un número')
+    .positive('La cotización debe ser positiva')
+    .required('La cotización del dólar es requerida'),
+  expenseType: yup.string().required('El tipo de gasto es requerido'),
+  description: yup.string().required('La descripción es requerida'),
   otherType: yup.string().nullable(),
   expenseAssociationType: yup.string().nullable(),
 });
@@ -59,7 +60,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
   });
 
   const [expenseAssociationType, setExpenseAssociationType] = useState(
-    expense?.expenseAssociationType || "agent"
+    expense?.expenseAssociationType || 'agent'
   );
   const { userData } = useUserDataStore();
   const userRole = userData?.role;
@@ -69,8 +70,8 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
       reset({
         ...expense,
         date: expense.date
-          ? new Date(expense.date).toISOString().split("T")[0]
-          : "",
+          ? new Date(expense.date).toISOString().split('T')[0]
+          : '',
       });
     }
   }, [expense, reset]);
@@ -78,17 +79,17 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
   const mutation = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ['expenses'] });
       onClose();
     },
     onError: (error) => {
-      console.error("Error updating expense:", error);
+      console.error('Error updating expense:', error);
     },
   });
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!expense?.id) {
-      console.error("Expense ID is missing");
+      console.error('Expense ID is missing');
       return;
     }
 
@@ -97,7 +98,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
       id: expense.id,
       amountInDollars: data.amount / data.dollarRate,
       user_uid: expense.user_uid,
-      otherType: data.otherType ?? "",
+      otherType: data.otherType ?? '',
       expenseAssociationType: expenseAssociationType,
     });
   };
@@ -113,16 +114,16 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
       <div className="bg-white p-6 rounded-xl shadow-lg  font-bold w-[50%] h-auto flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4 text-center">Editar Gasto</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {userRole === "team_leader_broker" && (
+          {userRole === 'team_leader_broker' && (
             <Select
               label="Asociación del Gasto"
               options={[
-                { value: "", label: "Selecciona una opción" }, // Added default option
+                { value: '', label: 'Selecciona una opción' }, // Added default option
                 {
-                  value: "team_broker",
-                  label: "Gasto Asociado al Team / Broker",
+                  value: 'team_broker',
+                  label: 'Gasto Asociado al Team / Broker',
                 },
-                { value: "agent", label: "Gasto Asociado como Asesor" },
+                { value: 'agent', label: 'Gasto Asociado como Asesor' },
               ]}
               register={register}
               name="expenseAssociationType"
@@ -135,7 +136,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
           <Input
             label="Fecha del Gasto"
             type="date"
-            {...register("date")}
+            {...register('date')}
             error={errors.date?.message}
             required
           />
@@ -145,7 +146,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
             type="number"
             placeholder="Monto"
             step="any"
-            {...register("amount")}
+            {...register('amount')}
             error={errors.amount?.message}
             required
           />
@@ -155,7 +156,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
             type="number"
             placeholder="Cotización del dólar"
             step="any"
-            {...register("dollarRate")}
+            {...register('dollarRate')}
             error={errors.dollarRate?.message}
             required
           />
@@ -164,7 +165,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
             label="Descripción"
             type="text"
             placeholder="Descripción"
-            {...register("description")}
+            {...register('description')}
             error={errors.description?.message}
             required
           />
@@ -181,12 +182,12 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
             required
           />
 
-          {watch("expenseType") === "Otros" && (
+          {watch('expenseType') === 'Otros' && (
             <Input
               label="Especifica el tipo de gasto"
               type="text"
               placeholder="Especifica el tipo de gasto"
-              {...register("otherType")}
+              {...register('otherType')}
             />
           )}
 

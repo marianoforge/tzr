@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { InferType } from "yup";
-import Input from "@/components/TrackerComponents/FormComponents/Input";
-import Select from "@/components/TrackerComponents/FormComponents/Select";
-import Button from "@/components/TrackerComponents/FormComponents/Button";
-import { calculateHonorarios } from "@/utils/calculations";
-import { schema } from "@/schemas/operationsFormSchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateOperation } from "@/lib/api/operationsApi";
-import { TeamMember, UserData } from "@/types";
-import { useTeamMembers } from "@/hooks/useTeamMembers";
-import { useUserDataStore } from "@/stores/userDataStore";
+import React, { useEffect, useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { InferType } from 'yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import Input from '@/components/TrackerComponents/FormComponents/Input';
+import Select from '@/components/TrackerComponents/FormComponents/Select';
+import Button from '@/components/TrackerComponents/FormComponents/Button';
+import { calculateHonorarios } from '@/utils/calculations';
+import { schema } from '@/schemas/operationsFormSchema';
+import { updateOperation } from '@/lib/api/operationsApi';
+import { TeamMember, UserData } from '@/types';
+import { useTeamMembers } from '@/hooks/useTeamMembers';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 type FormData = InferType<typeof schema>;
 
@@ -39,7 +40,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     resolver: yupResolver(schema),
     defaultValues: {
       ...operation,
-      realizador_venta: operation?.realizador_venta || "", // Asegúrate de incluir realizador_venta aquí
+      realizador_venta: operation?.realizador_venta || '', // Asegúrate de incluir realizador_venta aquí
     },
   });
 
@@ -57,7 +58,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           {
             name:
               `${currentUser.firstName} ${currentUser?.lastName}` ||
-              "Logged User",
+              'Logged User',
             uid: currentUser.uid,
           },
         ]
@@ -69,8 +70,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       const formattedOperation = {
         ...operation,
         fecha_operacion: operation.fecha_operacion
-          ? new Date(operation.fecha_operacion).toISOString().split("T")[0]
-          : "",
+          ? new Date(operation.fecha_operacion).toISOString().split('T')[0]
+          : '',
         porcentaje_punta_compradora: operation.porcentaje_punta_compradora || 0,
         porcentaje_punta_vendedora: operation.porcentaje_punta_vendedora || 0,
       };
@@ -86,18 +87,18 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   const mutation = useMutation({
     mutationFn: updateOperation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["operations"] });
+      queryClient.invalidateQueries({ queryKey: ['operations'] });
       onUpdate();
       onClose();
     },
     onError: (error) => {
-      console.error("Error updating operation:", error);
+      console.error('Error updating operation:', error);
     },
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (!operation?.id) {
-      console.error("Operation ID is missing");
+      console.error('Operation ID is missing');
       return;
     }
 
@@ -108,7 +109,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     const selectedUser_id = selectedUser ? selectedUser.uid : null;
 
     if (!selectedUser_id) {
-      console.error("Selected user ID is missing");
+      console.error('Selected user ID is missing');
       return;
     }
 
@@ -154,7 +155,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Fecha de Operación"
             type="date"
-            {...register("fecha_operacion")}
+            {...register('fecha_operacion')}
             error={errors.fecha_operacion?.message}
             required
           />
@@ -162,7 +163,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Dirección de la Reserva"
             type="text"
-            {...register("direccion_reserva")}
+            {...register('direccion_reserva')}
             placeholder="Dirección de la Reserva"
             error={errors.direccion_reserva?.message}
             required
@@ -171,7 +172,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Localidad de la Reserva"
             type="text"
-            {...register("localidad_reserva")}
+            {...register('localidad_reserva')}
             placeholder="Por ejemplo: San Isidro"
             error={errors.localidad_reserva?.message}
             required
@@ -180,30 +181,30 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Select
             label="Provincia de la Reserva"
             options={[
-              { value: "Buenos Aires", label: "Buenos Aires" },
-              { value: "CABA", label: "CABA" },
-              { value: "Catamarca", label: "Catamarca" },
-              { value: "Chaco", label: "Chaco" },
-              { value: "Chubut", label: "Chubut" },
-              { value: "Córdoba", label: "Córdoba" },
-              { value: "Corrientes", label: "Corrientes" },
-              { value: "Entre Ríos", label: "Entre Ríos" },
-              { value: "Formosa", label: "Formosa" },
-              { value: "Jujuy", label: "Jujuy" },
-              { value: "La Pampa", label: "La Pampa" },
-              { value: "La Rioja", label: "La Rioja" },
-              { value: "Mendoza", label: "Mendoza" },
-              { value: "Misiones", label: "Misiones" },
-              { value: "Neuquén", label: "Neuquén" },
-              { value: "Río Negro", label: "Río Negro" },
-              { value: "Salta", label: "Salta" },
-              { value: "San Juan", label: "San Juan" },
-              { value: "San Luis", label: "San Luis" },
-              { value: "Santa Cruz", label: "Santa Cruz" },
-              { value: "Santa Fe", label: "Santa Fe" },
-              { value: "Santiago del Estero", label: "Santiago del Estero" },
-              { value: "Tierra del Fuego", label: "Tierra del Fuego" },
-              { value: "Tucumán", label: "Tucumán" },
+              { value: 'Buenos Aires', label: 'Buenos Aires' },
+              { value: 'CABA', label: 'CABA' },
+              { value: 'Catamarca', label: 'Catamarca' },
+              { value: 'Chaco', label: 'Chaco' },
+              { value: 'Chubut', label: 'Chubut' },
+              { value: 'Córdoba', label: 'Córdoba' },
+              { value: 'Corrientes', label: 'Corrientes' },
+              { value: 'Entre Ríos', label: 'Entre Ríos' },
+              { value: 'Formosa', label: 'Formosa' },
+              { value: 'Jujuy', label: 'Jujuy' },
+              { value: 'La Pampa', label: 'La Pampa' },
+              { value: 'La Rioja', label: 'La Rioja' },
+              { value: 'Mendoza', label: 'Mendoza' },
+              { value: 'Misiones', label: 'Misiones' },
+              { value: 'Neuquén', label: 'Neuquén' },
+              { value: 'Río Negro', label: 'Río Negro' },
+              { value: 'Salta', label: 'Salta' },
+              { value: 'San Juan', label: 'San Juan' },
+              { value: 'San Luis', label: 'San Luis' },
+              { value: 'Santa Cruz', label: 'Santa Cruz' },
+              { value: 'Santa Fe', label: 'Santa Fe' },
+              { value: 'Santiago del Estero', label: 'Santiago del Estero' },
+              { value: 'Tierra del Fuego', label: 'Tierra del Fuego' },
+              { value: 'Tucumán', label: 'Tucumán' },
             ]}
             register={register}
             name="provincia_reserva"
@@ -214,14 +215,14 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Select
             label="Tipo de Operación"
             options={[
-              { value: "Venta", label: "Venta" },
-              { value: "Alquiler Temporal", label: "Alquiler Temporal" },
-              { value: "Alquiler Tradicional", label: "Alquiler Tradicional" },
-              { value: "Alquiler Comercial", label: "Alquiler Comercial" },
-              { value: "Fondo de Comercio", label: "Fondo de Comercio" },
-              { value: "Desarrollo", label: "Desarrollo Inmobiliario" },
-              { value: "Cochera", label: "Cochera" },
-              { value: "Locales Comerciales", label: "Locales Comerciales" },
+              { value: 'Venta', label: 'Venta' },
+              { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
+              { value: 'Alquiler Tradicional', label: 'Alquiler Tradicional' },
+              { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
+              { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
+              { value: 'Desarrollo', label: 'Desarrollo Inmobiliario' },
+              { value: 'Cochera', label: 'Cochera' },
+              { value: 'Locales Comerciales', label: 'Locales Comerciales' },
             ]}
             register={register}
             name="tipo_operacion"
@@ -231,7 +232,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Valor de Reserva"
             type="number"
-            {...register("valor_reserva")}
+            {...register('valor_reserva')}
             placeholder="Valor de Reserva"
             error={errors.valor_reserva?.message}
             required
@@ -241,7 +242,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Porcentaje Punta Compradora"
             type="text"
             step="any"
-            {...register("porcentaje_punta_compradora", {
+            {...register('porcentaje_punta_compradora', {
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             error={errors.porcentaje_punta_compradora?.message}
@@ -252,7 +253,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Porcentaje Punta Vendedora"
             type="text"
             step="any"
-            {...register("porcentaje_punta_vendedora", {
+            {...register('porcentaje_punta_vendedora', {
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             error={errors.porcentaje_punta_vendedora?.message}
@@ -263,7 +264,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Porcentaje Honorarios Broker"
             type="text"
             step="any"
-            {...register("porcentaje_honorarios_broker", {
+            {...register('porcentaje_honorarios_broker', {
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             error={errors.porcentaje_honorarios_broker?.message}
@@ -273,7 +274,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Sobre de Reserva"
             type="text"
-            {...register("numero_sobre_reserva")}
+            {...register('numero_sobre_reserva')}
             placeholder="Sobre de Reserva"
             error={errors.numero_sobre_reserva?.message}
           />
@@ -281,7 +282,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Monto Sobre de Reserva"
             type="text"
-            {...register("monto_sobre_reserva")}
+            {...register('monto_sobre_reserva')}
             placeholder="Por ejemplo: 2000"
             error={errors.monto_sobre_reserva?.message}
           />
@@ -289,7 +290,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Sobre de Refuerzo"
             type="text"
-            {...register("numero_sobre_refuerzo")}
+            {...register('numero_sobre_refuerzo')}
             placeholder="Sobre de Refuerzo"
             error={errors.numero_sobre_refuerzo?.message}
           />
@@ -297,7 +298,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Monto Sobre de Refuerzo"
             type="text"
-            {...register("monto_sobre_refuerzo")}
+            {...register('monto_sobre_refuerzo')}
             placeholder="Por ejemplo: 4000"
             error={errors.monto_sobre_refuerzo?.message}
           />
@@ -305,7 +306,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Datos Referido"
             type="text"
-            {...register("referido")}
+            {...register('referido')}
             placeholder="Datos Referido"
             error={errors.referido?.message}
           />
@@ -314,7 +315,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Porcentaje Referido"
             type="text"
             step="any"
-            {...register("porcentaje_referido", {
+            {...register('porcentaje_referido', {
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             placeholder="Por ejemplo 10%"
@@ -324,7 +325,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Datos Compartido"
             type="text"
-            {...register("compartido")}
+            {...register('compartido')}
             placeholder="Datos Compartido"
             error={errors.compartido?.message}
           />
@@ -333,23 +334,23 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Porcentaje Compartido"
             type="text"
             step="any"
-            {...register("porcentaje_compartido", {
+            {...register('porcentaje_compartido', {
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             placeholder="Por ejemplo: 25%"
             error={errors.porcentaje_compartido?.message}
           />
 
-          {userRole === "team_leader_broker" && (
+          {userRole === 'team_leader_broker' && (
             <>
               <Select
                 label="Asesor que realizó la venta"
                 register={register}
-                {...register("realizador_venta")}
+                {...register('realizador_venta')}
                 options={[
                   {
-                    value: "",
-                    label: "Selecciona el asesor que realizó la operación",
+                    value: '',
+                    label: 'Selecciona el asesor que realizó la operación',
                   },
                   ...usersMapped
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -373,7 +374,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Porcentaje Honorarios Asesor"
             type="text"
             step="any"
-            {...register("porcentaje_honorarios_asesor", {
+            {...register('porcentaje_honorarios_asesor', {
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             error={errors.porcentaje_honorarios_asesor?.message}
@@ -386,11 +387,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               <Select
                 label="Asesor adicional"
                 register={register}
-                {...register("realizador_venta_adicional")}
+                {...register('realizador_venta_adicional')}
                 options={[
                   {
-                    value: "",
-                    label: "Selecciona el asesor participante en la operación",
+                    value: '',
+                    label: 'Selecciona el asesor participante en la operación',
                   },
                   ...usersMapped
                     .sort((a, b) => a.name.localeCompare(b.name))
@@ -411,27 +412,27 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
                 label="Porcentaje honorarios asesor adicional"
                 type="text"
                 placeholder="Por ejemplo: 40%"
-                {...register("porcentaje_honorarios_asesor_adicional", {
+                {...register('porcentaje_honorarios_asesor_adicional', {
                   setValueAs: (value) => parseFloat(value) || 0,
                 })}
                 error={errors.porcentaje_honorarios_asesor_adicional?.message}
               />
             </>
           )}
-          {userRole === "team_leader_broker" && (
+          {userRole === 'team_leader_broker' && (
             <p
               className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
               onClick={toggleAdditionalAdvisor}
             >
               {showAdditionalAdvisor
-                ? "Eliminar Segundo Asesor"
-                : "Agregar Otro Asesor"}
+                ? 'Eliminar Segundo Asesor'
+                : 'Agregar Otro Asesor'}
             </p>
           )}
 
           <div className="flex justify-around items-center ">
             <div className="flex items-center gap-2 my-4">
-              <input type="checkbox" {...register("punta_vendedora")} />
+              <input type="checkbox" {...register('punta_vendedora')} />
               <label>Punta Vendedora</label>
             </div>
             {errors.punta_vendedora && (
@@ -439,7 +440,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             )}
 
             <div className="flex items-center gap-2 my-4">
-              <input type="checkbox" {...register("punta_compradora")} />
+              <input type="checkbox" {...register('punta_compradora')} />
               <label>Punta Compradora</label>
             </div>
             {errors.punta_compradora && (

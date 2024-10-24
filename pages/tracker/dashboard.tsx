@@ -1,10 +1,11 @@
-import Dashboard from "@/components/TrackerComponents/Dashboard";
-import PrivateLayout from "@/components/TrackerComponents/PrivateLayout";
-import PrivateRoute from "@/components/TrackerComponents/PrivateRoute";
-import { auth, db } from "@/lib/firebase";
-import { getDoc, doc } from "firebase/firestore";
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { getDoc, doc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
+
+import Dashboard from '@/components/TrackerComponents/Dashboard';
+import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
+import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
+import { auth, db } from '@/lib/firebase';
 
 const DashboardPage = () => {
   const [trialExpired, setTrialExpired] = useState(false);
@@ -14,7 +15,7 @@ const DashboardPage = () => {
     const checkTrialStatus = async () => {
       const user = auth.currentUser;
       if (user) {
-        const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+        const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
         const userData = userDoc.data();
 
         if (userData && userData.trialEndsAt) {
@@ -40,7 +41,7 @@ const DashboardPage = () => {
   }, []);
 
   if (trialExpired) {
-    router.push("/trial-expired");
+    router.push('/trial-expired');
     return null;
   }
 

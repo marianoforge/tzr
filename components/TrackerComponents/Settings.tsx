@@ -1,21 +1,22 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useAuthStore } from "@/stores/authStore";
-import { useUserDataStore } from "@/stores/userDataStore";
-import { cleanString } from "@/utils/cleanString";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { formatNumber } from "@/utils/formatNumber";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { useAuthStore } from '@/stores/authStore';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { cleanString } from '@/utils/cleanString';
+import { formatNumber } from '@/utils/formatNumber';
 
 const Settings = () => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
   const { error, userData } = useUserDataStore();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [agenciaBroker, setAgenciaBroker] = useState("");
-  const [numeroTelefono, setNumeroTelefono] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [agenciaBroker, setAgenciaBroker] = useState('');
+  const [numeroTelefono, setNumeroTelefono] = useState('');
   const [objetivoAnual, setObjetivoAnual] = useState(0);
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] = useState('');
   const [editMode, setEditMode] = useState({
     firstName: false,
     lastName: false,
@@ -29,7 +30,7 @@ const Settings = () => {
   const [isCanceling, setIsCanceling] = useState(false);
 
   const { data: userDataQuery, isLoading: isLoadingQuery } = useQuery({
-    queryKey: ["userData", userID],
+    queryKey: ['userData', userID],
     queryFn: async () => {
       const response = await axios.get(`/api/users/${userID}`);
       return response.data;
@@ -45,7 +46,7 @@ const Settings = () => {
       setAgenciaBroker(userDataQuery.agenciaBroker);
       setNumeroTelefono(userDataQuery.numeroTelefono);
       setObjetivoAnual(
-        userDataQuery.objetivoAnual ?? "Objetivo anual no definido"
+        userDataQuery.objetivoAnual ?? 'Objetivo anual no definido'
       );
     }
   }, [userDataQuery]);
@@ -55,23 +56,23 @@ const Settings = () => {
 
     try {
       setIsCanceling(true);
-      const response = await axios.post("/api/stripe/cancel_subscription", {
+      const response = await axios.post('/api/stripe/cancel_subscription', {
         subscription_id: subscriptionId,
       });
 
       if (response.status === 200) {
-        setCancelMessage("Suscripción cancelada exitosamente.");
+        setCancelMessage('Suscripción cancelada exitosamente.');
         // Add a PUT request to remove stripeSubscriptionId
         await axios.put(`/api/users/${userID}`, {
           stripeSubscriptionId: null, // Set stripeSubscriptionId to null
         });
-        queryClient.invalidateQueries({ queryKey: ["userData", userID] });
+        queryClient.invalidateQueries({ queryKey: ['userData', userID] });
       } else {
-        setCancelMessage("No se pudo cancelar la suscripción.");
+        setCancelMessage('No se pudo cancelar la suscripción.');
       }
     } catch (error) {
-      console.error("Error al cancelar la suscripción:", error);
-      setCancelMessage("Error al cancelar la suscripción.");
+      console.error('Error al cancelar la suscripción:', error);
+      setCancelMessage('Error al cancelar la suscripción.');
     } finally {
       setIsCanceling(false);
     }
@@ -89,12 +90,12 @@ const Settings = () => {
         objetivoAnual,
       });
       if (response.status === 200) {
-        setSuccess("Datos actualizados correctamente");
-        queryClient.invalidateQueries({ queryKey: ["userData", userID] });
+        setSuccess('Datos actualizados correctamente');
+        queryClient.invalidateQueries({ queryKey: ['userData', userID] });
       }
     } catch (error) {
-      console.error("Error updating user data:", error);
-      setErrorMessage("Error al actualizar los datos");
+      console.error('Error updating user data:', error);
+      setErrorMessage('Error al actualizar los datos');
     }
   };
 
@@ -136,12 +137,12 @@ const Settings = () => {
                 type="button"
                 onClick={() =>
                   editMode.firstName
-                    ? handleSave("firstName")
-                    : toggleEditMode("firstName")
+                    ? handleSave('firstName')
+                    : toggleEditMode('firstName')
                 }
                 className=" bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
               >
-                {editMode.firstName ? "Guardar" : "Editar"}
+                {editMode.firstName ? 'Guardar' : 'Editar'}
               </button>
             </div>
 
@@ -160,12 +161,12 @@ const Settings = () => {
                 type="button"
                 onClick={() =>
                   editMode.lastName
-                    ? handleSave("lastName")
-                    : toggleEditMode("lastName")
+                    ? handleSave('lastName')
+                    : toggleEditMode('lastName')
                 }
                 className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
               >
-                {editMode.lastName ? "Guardar" : "Editar"}
+                {editMode.lastName ? 'Guardar' : 'Editar'}
               </button>
             </div>
           </div>
@@ -185,12 +186,12 @@ const Settings = () => {
                 type="button"
                 onClick={() =>
                   editMode.agenciaBroker
-                    ? handleSave("agenciaBroker")
-                    : toggleEditMode("agenciaBroker")
+                    ? handleSave('agenciaBroker')
+                    : toggleEditMode('agenciaBroker')
                 }
                 className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
               >
-                {editMode.agenciaBroker ? "Guardar" : "Editar"}
+                {editMode.agenciaBroker ? 'Guardar' : 'Editar'}
               </button>
             </div>
 
@@ -209,12 +210,12 @@ const Settings = () => {
                 type="button"
                 onClick={() =>
                   editMode.numeroTelefono
-                    ? handleSave("numeroTelefono")
-                    : toggleEditMode("numeroTelefono")
+                    ? handleSave('numeroTelefono')
+                    : toggleEditMode('numeroTelefono')
                 }
                 className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
               >
-                {editMode.numeroTelefono ? "Guardar" : "Editar"}
+                {editMode.numeroTelefono ? 'Guardar' : 'Editar'}
               </button>
             </div>
           </div>
@@ -226,7 +227,7 @@ const Settings = () => {
                 name="objetivoAnual"
                 value={`$${formatNumber(objetivoAnual || 0)}`} // Default to 0 if empty
                 onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, "");
+                  const value = e.target.value.replace(/[^0-9]/g, '');
                   setObjetivoAnual(Number(value) || 0); // Default to 0 if conversion fails
                 }}
                 className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
@@ -237,12 +238,12 @@ const Settings = () => {
                 type="button"
                 onClick={() =>
                   editMode.objetivoAnual
-                    ? handleSave("objetivoAnual")
-                    : toggleEditMode("objetivoAnual")
+                    ? handleSave('objetivoAnual')
+                    : toggleEditMode('objetivoAnual')
                 }
                 className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
               >
-                {editMode.objetivoAnual ? "Guardar" : "Editar"}
+                {editMode.objetivoAnual ? 'Guardar' : 'Editar'}
               </button>
             </div>
           </div>
@@ -276,12 +277,12 @@ const Settings = () => {
             onClick={handleCancelSubscription}
             className={`px-4 py-2 rounded ${
               subscriptionId
-                ? "bg-redAccent text-white hover:bg-redAccent/80"
-                : "bg-mutedBlue text-white cursor-not-allowed"
+                ? 'bg-redAccent text-white hover:bg-redAccent/80'
+                : 'bg-mutedBlue text-white cursor-not-allowed'
             }`}
             disabled={!subscriptionId || isCanceling}
           >
-            {isCanceling ? "Cancelando..." : "Cancelar suscripción"}
+            {isCanceling ? 'Cancelando...' : 'Cancelar suscripción'}
           </button>
           {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
         </div>

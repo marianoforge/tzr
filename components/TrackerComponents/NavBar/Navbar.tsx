@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { useUserDataStore } from "@/stores/userDataStore";
-import { auth } from "@/lib/firebase";
-import { NavButton } from "@/components/TrackerComponents/NavComponents/NavButton";
-import { UserActions } from "@/components/TrackerComponents/NavComponents/UserActions";
-import Image from "next/image";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+
+import { useUserDataStore } from '@/stores/userDataStore';
+import { auth } from '@/lib/firebase';
+import { NavButton } from '@/components/TrackerComponents/NavComponents/NavButton';
+import { UserActions } from '@/components/TrackerComponents/NavComponents/UserActions';
 interface NavbarProps {
   setActiveView: (view: string) => void;
 }
@@ -17,7 +18,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
       if (user) {
         fetchUserData(user.uid);
       } else {
-        console.log("No authenticated user");
+        console.log('No authenticated user');
       }
     });
 
@@ -59,9 +60,9 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     if (isLoading || !userData) return null;
 
     switch (userData.role) {
-      case "team_leader_broker":
+      case 'team_leader_broker':
         return renderAdminNavButtons();
-      case "agente_asesor":
+      case 'agente_asesor':
         return renderNavButtons();
       default:
         return <NavButton href="/dashboard" label="Dashboard" fullWidth />;

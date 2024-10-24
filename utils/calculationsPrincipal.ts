@@ -1,4 +1,4 @@
-import { Operation } from "@/types";
+import { Operation } from '@/types';
 
 export const calculateOperationData = (closedOperations: Operation[]) => {
   return closedOperations.reduce(
@@ -43,10 +43,10 @@ export const calculateTotalLastColumnSum = (
   return Object.entries(operationData).reduce((acc, [tipo, data]) => {
     if (
       ![
-        "Alquiler",
-        "Cochera",
-        "Alquiler Temporal",
-        "Alquiler Tradicional",
+        'Alquiler',
+        'Cochera',
+        'Alquiler Temporal',
+        'Alquiler Tradicional',
       ].includes(tipo)
     ) {
       return acc + data.totalVenta / data.cantidad;

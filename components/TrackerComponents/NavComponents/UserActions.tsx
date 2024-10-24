@@ -1,10 +1,11 @@
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { signOut } from 'firebase/auth';
 import {
   ArrowLeftStartOnRectangleIcon,
   Cog6ToothIcon,
-} from "@heroicons/react/24/outline";
-import Link from "next/link";
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+
+import { auth } from '@/lib/firebase';
 
 interface UserActionsProps {
   setActiveView: (view: string) => void;
@@ -16,16 +17,16 @@ export const UserActions = ({ setActiveView }: UserActionsProps) => {
       await signOut(auth);
 
       localStorage.clear();
-      setActiveView("login");
+      setActiveView('login');
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error('Error signing out:', error);
     }
   };
 
   return (
     <div className="w-full flex justify-around my-4">
       <Link
-        href={"/settings"}
+        href={'/settings'}
         className="text-white xl:text-mediumBlue font-semibold rounded cursor-pointer transition duration-150 ease-in-out flex justify-center items-center gap-1 w-1/2"
       >
         <Cog6ToothIcon className="h-5 w-5" />

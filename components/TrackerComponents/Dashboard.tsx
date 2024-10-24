@@ -1,14 +1,15 @@
-import CuadroPrincipal from "@/components/TrackerComponents/CuadroPrincipal/CuadroPrincipal";
-import CuadroPrincipalChart from "@/components/TrackerComponents/CuadroPrincipal/CuadroPrincipalChart";
-import Bubbles from "@/components/TrackerComponents/Bubbles";
-import EventsList from "@/components/TrackerComponents/Events/EventsList";
-import ObjectiveChart from "@/components/TrackerComponents/ObjectiveChart";
-import OperationsListDash from "@/components/TrackerComponents/Operations/OperationsListDash";
-import Profitability from "@/components/TrackerComponents/Profitability";
-import { UserInfo } from "@/components/TrackerComponents/NavComponents/UserInfo";
-import { UserAvatar } from "@/components/TrackerComponents/NavComponents/UserAvatar";
-import MonthlyBarChart from "./MonthlyBarChart/MonthlyBarChart";
-import MonthlyBarChartGross from "./MonthlyBarChart/MonthlyBarChartGross";
+import CuadroPrincipal from '@/components/TrackerComponents/CuadroPrincipal/CuadroPrincipal';
+import CuadroPrincipalChart from '@/components/TrackerComponents/CuadroPrincipal/CuadroPrincipalChart';
+import Bubbles from '@/components/TrackerComponents/Bubbles';
+import EventsList from '@/components/TrackerComponents/Events/EventsList';
+import ObjectiveChart from '@/components/TrackerComponents/ObjectiveChart';
+import OperationsListDash from '@/components/TrackerComponents/Operations/OperationsListDash';
+import Profitability from '@/components/TrackerComponents/Profitability';
+import { UserInfo } from '@/components/TrackerComponents/NavComponents/UserInfo';
+import { UserAvatar } from '@/components/TrackerComponents/NavComponents/UserAvatar';
+
+import MonthlyBarChart from './MonthlyBarChart/MonthlyBarChart';
+import MonthlyBarChartGross from './MonthlyBarChart/MonthlyBarChartGross';
 
 const DashBoard = () => {
   return (
@@ -43,7 +44,7 @@ const DashBoard = () => {
         </div> */}
         <div
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-          style={{ marginTop: "2.5rem" }}
+          style={{ marginTop: '2.5rem' }}
         >
           <div className="col-span-1 lg:col-span-2">
             <CuadroPrincipal />
@@ -53,11 +54,11 @@ const DashBoard = () => {
           </div>
         </div>
         {/* Sacar el Mocked */}
-        <div style={{ marginTop: "2.5rem" }}>
+        <div style={{ marginTop: '2.5rem' }}>
           <MonthlyBarChart />
           {/* <MonthlyMockedBarchart /> */}
         </div>
-        <div style={{ marginTop: "2.5rem" }}>
+        <div style={{ marginTop: '2.5rem' }}>
           <MonthlyBarChartGross />
           {/* <MonthlyMockedBarchart /> */}
         </div>

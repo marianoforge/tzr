@@ -1,7 +1,8 @@
-import React from "react";
-import OperationsCarousel from "./OperationsCarousel";
+import React from 'react';
 
-export type FilterType = "all" | "open" | "closed" | "currentYear" | "year2023";
+import OperationsCarousel from './OperationsCarousel';
+
+export type FilterType = 'all' | 'open' | 'closed' | 'currentYear' | 'year2023';
 
 interface OperationsCarouselDashProps {
   filter: FilterType;

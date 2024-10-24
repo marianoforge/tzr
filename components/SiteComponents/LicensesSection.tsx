@@ -1,16 +1,16 @@
 // CardsSection.tsx
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 
 const CardsSection = () => {
   const router = useRouter();
 
-  const PRICE_ID_STARTER = "price_1QAASbJkIrtwQiz3PcJiJebj";
-  const PRICE_ID_GROWTH = "price_1QAAT6JkIrtwQiz3J0HLDRTQ";
-  const PRICE_ID_ENTERPRISE = "price_1QAAT6JkIrtwQiz3J0HLDRTQ";
+  const PRICE_ID_STARTER = 'price_1QAASbJkIrtwQiz3PcJiJebj';
+  const PRICE_ID_GROWTH = 'price_1QAAT6JkIrtwQiz3J0HLDRTQ';
+  const PRICE_ID_ENTERPRISE = 'price_1QAAT6JkIrtwQiz3J0HLDRTQ';
 
   const handleLicenseSelect = (priceId: string) => {
     router.push({
-      pathname: "/register",
+      pathname: '/register',
       query: { priceId },
     });
   };

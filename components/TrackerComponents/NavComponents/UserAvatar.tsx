@@ -1,4 +1,4 @@
-import { useUserDataStore } from "@/stores/userDataStore";
+import { useUserDataStore } from '@/stores/userDataStore';
 
 export const UserAvatar = () => {
   const { userData } = useUserDataStore();
@@ -6,16 +6,16 @@ export const UserAvatar = () => {
   // Función para obtener las iniciales de un nombre completo
   const getInitials = (name: string) => {
     return name
-      .split(" ")
+      .split(' ')
       .map((word) => word.charAt(0))
-      .join("");
+      .join('');
   };
   // Obtener las iniciales de firstName y lastName
   const initials = userData
-    ? `${getInitials(userData.firstName || "")}${getInitials(
-        userData.lastName || ""
+    ? `${getInitials(userData.firstName || '')}${getInitials(
+        userData.lastName || ''
       )}`
-    : "";
+    : '';
 
   return (
     <div className="w-12 font-semibold bg-lightBlue h-12 text-white rounded-full overflow-hidden flex items-center justify-center">
