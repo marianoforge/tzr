@@ -123,11 +123,15 @@ export const calculateTotals = (operations: Operation[]) => {
   );
 
   const validPuntaCompradoraOperations = filtroOperacionsSinAlquileres.filter(
-    (op) => op.porcentaje_punta_compradora !== null
+    (op) =>
+      op.porcentaje_punta_compradora !== null &&
+      op.porcentaje_punta_compradora !== 0
   );
 
   const validPuntaVendedoraOperations = filtroOperacionsSinAlquileres.filter(
-    (op) => op.porcentaje_punta_vendedora !== null
+    (op) =>
+      op.porcentaje_punta_vendedora !== null &&
+      op.porcentaje_punta_vendedora !== 0
   );
 
   const promedioPuntaCompradoraPorcentaje =
