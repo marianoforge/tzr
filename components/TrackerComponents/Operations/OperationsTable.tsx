@@ -20,6 +20,7 @@ import { Operation } from '@/types';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/utils/calculations';
 import { filteredOperations } from '@/utils/filteredOperations';
+import { filterOperationsBySearch } from '@/utils/filterOperations';
 
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
@@ -35,6 +36,7 @@ const OperationsTable: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [yearFilter, setYearFilter] = useState('all');
   const [monthFilter, setMonthFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState(''); // Add search query state
 
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
@@ -76,12 +78,18 @@ const OperationsTable: React.FC = () => {
       monthFilter
     );
 
-    const totals = calculateTotals(filteredOps || []);
+    // Filter operations by search query
+    const searchedOps = filterOperationsBySearch(
+      filteredOps || [],
+      searchQuery
+    );
+
+    const totals = calculateTotals(searchedOps || []);
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentOps =
-      filteredOps?.slice(indexOfFirstItem, indexOfLastItem) || [];
+      searchedOps?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
     return { currentOperations: currentOps, filteredTotals: totals };
   }, [
@@ -91,6 +99,7 @@ const OperationsTable: React.FC = () => {
     monthFilter,
     currentPage,
     itemsPerPage,
+    searchQuery, // Add searchQuery to dependencies
   ]);
 
   const totalPages = useMemo(() => {
@@ -161,6 +170,13 @@ const OperationsTable: React.FC = () => {
   return (
     <div className="overflow-x-auto flex flex-col justify-around">
       <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
+        <input
+          type="text"
+          placeholder="Buscar Propiedad..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
+        />
         <select
           onChange={(e) => setStatusFilter(e.target.value)}
           value={statusFilter}
