@@ -16,7 +16,9 @@ import { Expense } from "@/types";
 import ExpensesModal from "./ExpensesModal";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import { format } from "date-fns"; // Importa format desde date-fns
+import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import { formatDateForUser } from "@/utils/formatDateForUser";
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -110,15 +112,16 @@ const ExpensesList = () => {
 
   const disablePagination = filteredExpenses.length < itemsPerPage;
 
-  // Formatear la fecha usando date-fns
+  // Ruta de tu archivo utilitario
+
   const formatDate = (date: string) => {
-    if (!date) return "Fecha inválida"; // Verifica si la fecha es válida
+    if (!date) return "Fecha inválida";
     try {
-      const parsedDate = new Date(date); // Asegúrate de que la fecha se parsea correctamente
-      return format(parsedDate, "dd/MM/yyyy");
+      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      return formatDateForUser(date, userTimeZone);
     } catch (error) {
       console.error("Error formateando la fecha:", error);
-      return "Fecha inválida"; // Devuelve un mensaje de error si ocurre un problema
+      return "Fecha inválida";
     }
   };
 
