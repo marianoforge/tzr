@@ -16,6 +16,9 @@ import { Operation, TeamMember } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
 import Select from "@/components/TrackerComponents/FormComponents/Select";
+import { toZonedTime } from "date-fns-tz";
+import { formatISO } from "date-fns";
+import { formatDateForUser } from "@/utils/formatDateForUser";
 
 type FormData = InferType<typeof schema>;
 
@@ -32,6 +35,7 @@ const OperationsForm = () => {
       estado: "En Curso",
       punta_compradora: false,
       punta_vendedora: false,
+      fecha_operacion: "", // Set a default value for the date field
     },
   });
 
@@ -40,6 +44,7 @@ const OperationsForm = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
   const { userData } = useUserDataStore();
 
+  const [userTimeZone, setUserTimeZone] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [honorariosBroker, setHonorariosBroker] = useState(0);
@@ -73,7 +78,18 @@ const OperationsForm = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setUserTimeZone(timeZone);
+  }, []);
+
   const watchAllFields = watch();
+  const date = watch("fecha_operacion");
+
+  // Debugging log
+  console.log(`Watched fecha_operacion: ${date}`);
+
+  const formattedDate = date ? formatDateForUser(date, userTimeZone) : "";
 
   // Calculate honorarios based on form values
   useEffect(() => {
@@ -121,7 +137,11 @@ const OperationsForm = () => {
       return;
     }
 
-    // Determine the user UID to assign the operation to
+    // Convertimos la fecha ingresada a UTC
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const zonedDate = toZonedTime(new Date(data.fecha_operacion), userTimeZone);
+    const utcDate = formatISO(zonedDate, { representation: "date" });
+
     const selectedUser = usersMapped.find(
       (member: { name: string }) => member.name === data.realizador_venta
     );
@@ -139,12 +159,12 @@ const OperationsForm = () => {
 
     const dataToSubmit = {
       ...data,
-      fecha_operacion: new Date(data.fecha_operacion).toISOString(),
+      fecha_operacion: utcDate, // Usamos la fecha en UTC
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
-      user_uid: assignedUserUID, // Use the determined user UID
+      user_uid: assignedUserUID,
       user_uid_adicional: assignedUserUIDAdicional,
-      teamId: userUID, // Add the logged-in user's ID as teamId
+      teamId: userUID,
       punta_compradora: data.punta_compradora ? 1 : 0,
       punta_vendedora: data.punta_vendedora ? 1 : 0,
       estado: "En Curso",
@@ -152,7 +172,7 @@ const OperationsForm = () => {
       porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
     };
 
-    // Execute the mutation to create the operation
+    // Ejecutamos la mutación para crear la operación
     mutation.mutate(dataToSubmit as unknown as Operation);
   };
 
@@ -181,6 +201,7 @@ const OperationsForm = () => {
             <Input
               label="Fecha de la Operación*"
               type="date"
+              defaultValue={formattedDate} // Ensure this is a valid date string
               {...register("fecha_operacion")}
               error={errors.fecha_operacion?.message}
               required

@@ -15,6 +15,7 @@ import { createExpense } from "@/lib/api/expensesApi";
 import { AxiosError } from "axios";
 import { toZonedTime } from "date-fns-tz";
 import { formatISO } from "date-fns";
+import { formatDateForUser } from "@/utils/formatDateForUser";
 
 // Tipos de gastos
 export const expenseTypes = [
@@ -38,10 +39,12 @@ const FormularioExpenses: React.FC = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
   const router = useRouter();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [expenseAssociationType, setExpenseAssociationType] = useState("agent");
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [userTimeZone, setUserTimeZone] = useState<string>("");
 
   const queryClient = useQueryClient();
   const role = userData?.role;
@@ -60,6 +63,11 @@ const FormularioExpenses: React.FC = () => {
       fetchUserRole();
     }
   }, [userID]);
+
+  useEffect(() => {
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setUserTimeZone(timeZone);
+  }, []);
 
   const schema = yup.object().shape({
     expenseType: yup.string().required(),
@@ -100,11 +108,20 @@ const FormularioExpenses: React.FC = () => {
     reset,
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      date: "", // Set a default value for the date field
+    },
   });
 
   const selectedExpenseType = watch("expenseType");
   const amount = watch("amount");
   const dollarRate = watch("dollarRate");
+  const date = watch("date");
+
+  // Debugging log
+  console.log(`Watched date: ${date}`);
+
+  const formattedDate = date ? formatDateForUser(date, userTimeZone) : "";
 
   const mutation = useMutation({
     mutationFn: (expenseData: Expense) => createExpense(expenseData),
@@ -132,8 +149,8 @@ const FormularioExpenses: React.FC = () => {
 
     // Convertimos la fecha ingresada a UTC
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const zonedDate = toZonedTime(data.date, userTimeZone);
-    const utcDate = formatISO(zonedDate, { representation: "date" });
+    const zonedDate = toZonedTime(new Date(data.date), userTimeZone); // Convertimos la fecha a la zona horaria del usuario
+    const utcDate = formatISO(zonedDate, { representation: "date" }); // Formato UTC compatible con el backend
 
     const amountInDollars =
       data.amount && data.dollarRate ? data.amount / data.dollarRate : 0;
@@ -197,6 +214,7 @@ const FormularioExpenses: React.FC = () => {
           <Input
             label="Fecha del Gasto"
             type="date"
+            defaultValue={formattedDate} // Ensure this is a valid date string
             {...register("date")}
             marginBottom="0"
           />
