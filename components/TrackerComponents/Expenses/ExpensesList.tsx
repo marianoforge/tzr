@@ -15,9 +15,7 @@ import { Expense } from "@/types";
 import ExpensesModal from "./ExpensesModal";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import { formatDateForUser } from "@/utils/formatDateForUser";
 import SkeletonLoader from "../SkeletonLoader";
-import { format } from "date-fns";
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
