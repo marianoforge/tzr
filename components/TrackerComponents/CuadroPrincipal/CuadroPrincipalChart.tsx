@@ -13,11 +13,16 @@ import { useQuery } from "@tanstack/react-query";
 import { Operation } from "@/types";
 import { COLORS } from "@/lib/constants";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
+import SkeletonLoader from "../SkeletonLoader";
 
 const CuadroPrincipalChart = () => {
   const { userID } = useAuthStore();
 
-  const { data: operations = [], isLoading } = useQuery({
+  const {
+    data: operations = [],
+    isLoading,
+    error: operationsError,
+  } = useQuery({
     queryKey: ["operations", userID],
     queryFn: async () => {
       return await fetchUserOperations(userID || "");
@@ -46,6 +51,15 @@ const CuadroPrincipalChart = () => {
     }
     return [];
   }, [closedOperations]);
+
+  if (isLoading) {
+    return <SkeletonLoader height={550} count={1} />;
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+    );
+  }
 
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[550px] overflow-y-auto">

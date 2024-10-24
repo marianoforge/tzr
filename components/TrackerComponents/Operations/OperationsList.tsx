@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { auth } from "@/lib/firebase";
 import { Operation } from "@/types";
+import SkeletonLoader from "../SkeletonLoader";
 
 interface OperationsCarouselDashProps {
   filter: "all" | "open" | "closed" | "currentYear" | "year2023";
@@ -28,7 +29,11 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
     return () => unsubscribe();
   }, [router]);
 
-  const { data: operations = [], isLoading } = useQuery({
+  const {
+    data: operations = [],
+    isLoading,
+    error: operationsError,
+  } = useQuery({
     queryKey: ["operations", userUID],
     queryFn: () => fetchUserOperations(userUID || ""),
     enabled: !!userUID,
@@ -45,11 +50,25 @@ const OperationsList: React.FC<OperationsCarouselDashProps> = ({ filter }) => {
     if (filter === "year2023") return operationYear === 2023;
   });
 
+  if (isLoading) {
+    return (
+      <div className="mt-[70px]">
+        <SkeletonLoader height={64} count={11} />
+      </div>
+    );
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+    );
+  }
+
   return (
     <OperationsContainer
       isLoading={isLoading}
       title="Lista de Operaciones"
       operationsLength={filteredOperations.length}
+      operationsError={operationsError}
     >
       <OperationsTable />
     </OperationsContainer>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import SkeletonLoader from "@/components/TrackerComponents/SkeletonLoader";
 import { UserData, TeamMember, UserWithOperations } from "@/types";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import { formatNumber } from "@/utils/formatNumber";
@@ -167,7 +166,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   }, []);
 
   if (isLoadingUsers || isLoadingMembers) {
-    return <Skeleton height={60} count={14} />;
+    return <SkeletonLoader height={60} count={14} />;
   }
   if (usersError || membersError) {
     return (

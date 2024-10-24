@@ -7,7 +7,11 @@ import { useAuthStore } from "@/stores/authStore";
 const OperationsListDash: React.FC = () => {
   const { userID } = useAuthStore();
 
-  const { data: operations = [], isLoading } = useQuery({
+  const {
+    data: operations = [],
+    isLoading,
+    error: operationsError,
+  } = useQuery({
     queryKey: ["operations", userID],
     queryFn: () => fetchUserOperations(userID || ""),
     enabled: !!userID,
@@ -18,6 +22,7 @@ const OperationsListDash: React.FC = () => {
       isLoading={isLoading}
       title="Lista de Operaciones"
       operationsLength={operations.length}
+      operationsError={operationsError}
     >
       <OperationsTable />
     </OperationsContainer>

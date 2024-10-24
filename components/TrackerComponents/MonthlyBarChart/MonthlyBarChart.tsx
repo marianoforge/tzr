@@ -16,6 +16,7 @@ import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { COLORS, MAX_BAR_SIZE } from "@/lib/constants";
 import { formatOperationsData } from "@/utils/formatOperationsData";
 import { Operation } from "@/types";
+import SkeletonLoader from "../SkeletonLoader";
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -45,7 +46,11 @@ const MonthlyBarChart: React.FC = () => {
   >([]);
 
   // Utilizamos useQuery para obtener las operaciones del usuario
-  const { data: operations = [], isLoading } = useQuery({
+  const {
+    data: operations = [],
+    isLoading,
+    error: operationsError,
+  } = useQuery({
     queryKey: ["operations", userID],
     queryFn: async () => {
       const allOperations = await fetchUserOperations(userID || "");
@@ -85,6 +90,15 @@ const MonthlyBarChart: React.FC = () => {
         </h2>
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
+    );
+  }
+
+  if (isLoading) {
+    return <SkeletonLoader height={380} count={1} />;
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
     );
   }
 

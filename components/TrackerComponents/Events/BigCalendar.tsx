@@ -9,6 +9,7 @@ import { Event } from "@/types";
 import { useAuthStore } from "@/stores/authStore";
 import { useQuery } from "@tanstack/react-query"; // Import Tanstack Query
 import { fetchUserEvents } from "@/lib/api/eventsApi"; // Import fetchUserEvents API function
+import SkeletonLoader from "../SkeletonLoader";
 
 const localizer = momentLocalizer(moment);
 
@@ -23,7 +24,7 @@ const BigCalendar = () => {
   const {
     data: events = [],
     isLoading,
-    error,
+    error: eventsError,
   } = useQuery({
     queryKey: ["events", userID],
     queryFn: () => fetchUserEvents(userID as string),
@@ -103,11 +104,14 @@ const BigCalendar = () => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="mt-[70px]">
+        <SkeletonLoader height={1000} count={1} />
+      </div>
+    );
   }
-
-  if (error) {
-    return <div>Error loading events: {error.message}</div>;
+  if (eventsError) {
+    return <p>Error: {eventsError.message || "An unknown error occurred"}</p>;
   }
 
   return (

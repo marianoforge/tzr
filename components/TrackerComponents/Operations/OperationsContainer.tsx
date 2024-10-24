@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 import { useRouter } from "next/router"; // Importa useRouter de next/router
-import Loader from "../Loader";
+import SkeletonLoader from "../SkeletonLoader";
 
 interface OperationsContainerProps {
   isLoading: boolean;
+  operationsError: Error | null;
   title: string;
   operationsLength: number;
   children: ReactNode;
@@ -11,6 +12,7 @@ interface OperationsContainerProps {
 
 const OperationsContainer: React.FC<OperationsContainerProps> = ({
   isLoading,
+  operationsError,
   title,
   operationsLength,
   children,
@@ -22,21 +24,24 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
     ? "mt-10"
     : "mt-20";
 
+  if (isLoading) {
+    return <SkeletonLoader height={1100} count={1} />;
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+    );
+  }
+
   return (
     <div
       className={`bg-white p-4 mb-20 ${marginTopClass} rounded-xl shadow-md`}
     >
-      {isLoading ? (
-        <Loader />
+      <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
+      {operationsLength === 0 ? (
+        <p className="text-center ">No existen operaciones</p>
       ) : (
-        <>
-          <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
-          {operationsLength === 0 ? (
-            <p className="text-center ">No existen operaciones</p>
-          ) : (
-            children
-          )}
-        </>
+        children
       )}
     </div>
   );

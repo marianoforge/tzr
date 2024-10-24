@@ -20,6 +20,7 @@ import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { Expense } from "@/types";
 import { formatNumber } from "@/utils/formatNumber";
 import { COLORS } from "@/lib/constants";
+import SkeletonLoader from "../SkeletonLoader";
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -60,7 +61,11 @@ const ExpensesBarchart: React.FC = () => {
     return () => unsubscribe();
   }, [router]);
 
-  const { data: expenses, isLoading } = useQuery({
+  const {
+    data: expenses,
+    isLoading,
+    error: expensesError,
+  } = useQuery({
     queryKey: ["expenses", userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
@@ -147,7 +152,14 @@ const ExpensesBarchart: React.FC = () => {
   const groupedExpenses = groupExpensesByMonth(filteredExpenses);
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <div className="mt-[70px]">
+        <SkeletonLoader height={380} count={1} />
+      </div>
+    );
+  }
+  if (expensesError) {
+    return <p>Error: {expensesError.message || "An unknown error occurred"}</p>;
   }
 
   return (

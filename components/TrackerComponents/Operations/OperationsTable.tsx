@@ -7,7 +7,6 @@ import {
 } from "@/lib/api/operationsApi";
 import { formatNumber } from "@/utils/formatNumber";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import Loader from "../Loader";
 import OperationsModal from "./OperationsModal";
 import {
   PencilIcon,
@@ -144,10 +143,6 @@ const OperationsTable: React.FC = ({}) => {
   }, []);
 
   const styleTotalRow = "py-3 px-4 text-center";
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <div className="overflow-x-auto flex flex-col justify-around">

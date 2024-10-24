@@ -13,11 +13,16 @@ import {
   calculatePercentage,
 } from "@/utils/calculationsPrincipal";
 import { useCallback } from "react";
+import SkeletonLoader from "../SkeletonLoader";
 
 const CuadroPrincipal = () => {
   const { userID } = useAuthStore();
 
-  const { data: operations = [], isLoading } = useQuery({
+  const {
+    data: operations = [],
+    isLoading,
+    error: operationsError,
+  } = useQuery({
     queryKey: ["operations", userID],
     queryFn: () => fetchUserOperations(userID || ""),
     enabled: !!userID,
@@ -58,6 +63,15 @@ const CuadroPrincipal = () => {
     []
   );
 
+  if (isLoading) {
+    return <SkeletonLoader height={550} count={1} />;
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError.message || "An unknown error occurred"}</p>
+    );
+  }
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[550px] overflow-y-auto">
       {isLoading ? (
@@ -73,7 +87,7 @@ const CuadroPrincipal = () => {
             <div className="overflow-x-auto text-center">
               <table className="w-full text-left border-collapse">
                 <thead className="hidden md:table-header-group">
-                  <tr className="bg-lightBlue/10 border-b-2 text-center text-sm text-mediumBlue h-16">
+                  <tr className="bg-lightBlue/10 border-b-2 text-center text-sm text-mediumBlue h-18">
                     {[
                       "Tipo de Operacion",
                       "Cantidad de Operaciones",
@@ -94,9 +108,9 @@ const CuadroPrincipal = () => {
                         key={tipo}
                         className={`${
                           index % 2 === 0 ? "bg-white" : "bg-mediumBlue/10"
-                        } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-16`}
+                        } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-12`}
                       >
-                        <td className="py-3 px-4 text-start text-base">
+                        <td className="py-3 px-4 text-start text-base w-1/5 pl-8">
                           {tipo}
                         </td>
                         <td className="py-3 px-4 text-base">{data.cantidad}</td>

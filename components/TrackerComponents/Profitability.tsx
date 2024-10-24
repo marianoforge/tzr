@@ -8,18 +8,27 @@ import { Expense } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { calculateTotals } from "@/utils/calculations";
 import { currentYearOperations } from "@/utils/currentYearOps";
+import SkeletonLoader from "./SkeletonLoader";
 
 const Profitability = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
   const validUserID = userID || ""; // Ensure userID is a string
 
-  const { data: expenses = [], isLoading: isLoadingExpenses } = useQuery({
+  const {
+    data: expenses = [],
+    isLoading: isLoadingExpenses,
+    error: expensesError,
+  } = useQuery({
     queryKey: ["expenses", validUserID],
     queryFn: () => fetchUserExpenses(validUserID),
   });
 
-  const { data: operations = [], isLoading: isLoadingOperations } = useQuery({
+  const {
+    data: operations = [],
+    isLoading: isLoadingOperations,
+    error: operationsError,
+  } = useQuery({
     queryKey: ["operations", validUserID],
     queryFn: () => fetchUserOperations(validUserID),
     enabled: !!userID,
@@ -54,12 +63,14 @@ const Profitability = () => {
       : 0;
 
   // Loader para operaciones o gastos
-  const loaderFn = () => {
-    if (isLoadingExpenses || isLoadingOperations) {
-      return <Loader />;
-    }
-  };
-
+  if (isLoadingExpenses || isLoadingOperations) {
+    return <SkeletonLoader height={220} count={1} />;
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError?.message || "An unknown error occurred"}</p>
+    );
+  }
   return (
     <div className="flex flex-col sm:flex-row gap-4">
       <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center h-[208px] w-full">
@@ -67,7 +78,7 @@ const Profitability = () => {
           Rentabilidad Propia
         </p>
         <p className="text-2xl text-[48px] sm:text-2xl lg:text-[48px] xl:text-[40px] font-bold text-greenAccent h-3/5 items-center justify-center flex">
-          {loaderFn() ? <Loader /> : `${profitability.toFixed(2)}%`}
+          {profitability.toFixed(2)}%
         </p>
       </div>
       {/* Asume que `userData` viene desde `useAuthStore` o similar */}
@@ -77,7 +88,7 @@ const Profitability = () => {
             Rentabilidad Total
           </p>
           <p className="text-2xl text-[48px] sm:text-2xl lg:text-[48px] xl:text-[40px] font-bold text-greenAccent h-3/5 items-center justify-center flex">
-            {loaderFn() ? <Loader /> : `${profitabilityBroker.toFixed(2)}%`}
+            {profitabilityBroker.toFixed(2)}%
           </p>
         </div>
       )}

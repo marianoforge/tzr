@@ -12,6 +12,7 @@ import { formatNumber } from "@/utils/formatNumber";
 
 import router from "next/router";
 import { currentYearOperations } from "@/utils/currentYearOps";
+import SkeletonLoader from "./SkeletonLoader";
 
 const RADIAN = Math.PI / 180;
 
@@ -57,12 +58,23 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
   return function WrappedComponent(props: React.JSX.IntrinsicAttributes) {
     const { userData } = useUserDataStore();
     const { userID } = useAuthStore();
-    const { data: operations = [] } = useQuery({
+    const {
+      data: operations = [],
+      isLoading: isLoadingOperations,
+      error: operationsError,
+    } = useQuery({
       queryKey: ["operations", userID],
       queryFn: () => fetchUserOperations(userID || ""),
       enabled: !!userID,
     });
-
+    if (isLoadingOperations) {
+      return <SkeletonLoader height={220} count={1} />;
+    }
+    if (operationsError) {
+      return (
+        <p>Error: {operationsError?.message || "An unknown error occurred"}</p>
+      );
+    }
     return (
       <Component {...props} userData={userData!} operations={operations} />
     );
