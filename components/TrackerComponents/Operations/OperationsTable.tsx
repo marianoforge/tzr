@@ -144,6 +144,18 @@ const OperationsTable: React.FC = ({}) => {
 
   const styleTotalRow = "py-3 px-4 text-center";
 
+  const formatDate = (date: string | null) => {
+    if (!date) return "Fecha inválida";
+
+    try {
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    } catch (error) {
+      console.error("Error formateando la fecha:", error);
+      return "Fecha inválida";
+    }
+  };
+
   return (
     <div className="overflow-x-auto flex flex-col justify-around">
       <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
@@ -255,7 +267,7 @@ const OperationsTable: React.FC = ({}) => {
               } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-[75px] max-h-[75px]`}
             >
               <td className="py-3 px-4 before:content-['Fecha:'] md:before:content-none">
-                {new Date(operacion.fecha_operacion).toLocaleDateString()}
+                {formatDate(operacion.fecha_operacion)}
               </td>
               <td className="py-3 px-4 before:content-['Dirección:'] md:before:content-none">
                 {operacion.direccion_reserva}

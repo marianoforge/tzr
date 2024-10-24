@@ -8,16 +8,14 @@ import Button from "@/components/TrackerComponents/FormComponents/Button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType } from "yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query"; // Import Tanstack Query
-import { createOperation } from "@/lib/api/operationsApi"; // Import the createOperation function
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createOperation } from "@/lib/api/operationsApi";
 import { calculateHonorarios } from "@/utils/calculations";
 import { schema } from "@/schemas/operationsFormSchema";
 import { Operation, TeamMember } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
 import Select from "@/components/TrackerComponents/FormComponents/Select";
-import { toZonedTime } from "date-fns-tz";
-import { formatISO } from "date-fns";
 import { formatDateForUser } from "@/utils/formatDateForUser";
 
 type FormData = InferType<typeof schema>;
@@ -40,10 +38,8 @@ const OperationsForm = () => {
   });
 
   const { data: teamMembers } = useTeamMembers();
-
   const [userUID, setUserUID] = useState<string | null>(null);
   const { userData } = useUserDataStore();
-
   const [userTimeZone, setUserTimeZone] = useState<string>("");
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -52,8 +48,8 @@ const OperationsForm = () => {
 
   const router = useRouter();
   const queryClient = useQueryClient();
-
   const userRole = userData?.role;
+
   const usersMapped = [
     ...(teamMembers?.map((member: TeamMember) => ({
       name: `${member.firstName} ${member.lastName}`,
@@ -137,11 +133,7 @@ const OperationsForm = () => {
       return;
     }
 
-    // Convertimos la fecha ingresada a UTC
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const zonedDate = toZonedTime(new Date(data.fecha_operacion), userTimeZone);
-    const utcDate = formatISO(zonedDate, { representation: "date" });
-
+    // No convertimos la fecha a Date, la tratamos como cadena
     const selectedUser = usersMapped.find(
       (member: { name: string }) => member.name === data.realizador_venta
     );
@@ -159,7 +151,7 @@ const OperationsForm = () => {
 
     const dataToSubmit = {
       ...data,
-      fecha_operacion: utcDate, // Usamos la fecha en UTC
+      fecha_operacion: data.fecha_operacion, // Guardamos la fecha como cadena, sin conversión
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
       user_uid: assignedUserUID,
@@ -201,7 +193,7 @@ const OperationsForm = () => {
             <Input
               label="Fecha de la Operación*"
               type="date"
-              defaultValue={formattedDate} // Ensure this is a valid date string
+              defaultValue={formattedDate} // Se usa la fecha como string
               {...register("fecha_operacion")}
               error={errors.fecha_operacion?.message}
               required
@@ -264,8 +256,8 @@ const OperationsForm = () => {
             )}
 
             <Select
-              label="Tipo de operación*" // Add the missing label prop
-              register={register} // Add the missing register prop
+              label="Tipo de operación*"
+              register={register}
               {...register("tipo_operacion")}
               options={[
                 { value: "", label: "Selecciona el Tipo de Operación" },
@@ -347,7 +339,6 @@ const OperationsForm = () => {
 
           <div className="w-full md:w-[40%] px-2">
             {/* Right column */}
-
             <Input
               label="Número sobre de refuerzo"
               type="text"

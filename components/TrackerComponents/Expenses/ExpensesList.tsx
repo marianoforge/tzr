@@ -17,6 +17,7 @@ import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
 import { formatDateForUser } from "@/utils/formatDateForUser";
 import SkeletonLoader from "../SkeletonLoader";
+import { format } from "date-fns";
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -116,11 +117,13 @@ const ExpensesList = () => {
 
   // Ruta de tu archivo utilitario
 
-  const formatDate = (date: string) => {
+  const formatDate = (date: string | null) => {
     if (!date) return "Fecha inválida";
+
     try {
-      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      return formatDateForUser(date, userTimeZone);
+      const [year, month, day] = date.split("-");
+
+      return `${day}/${month}/${year}`;
     } catch (error) {
       console.error("Error formateando la fecha:", error);
       return "Fecha inválida";

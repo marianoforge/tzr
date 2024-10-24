@@ -13,9 +13,6 @@ import { useUserDataStore } from "@/stores/userDataStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createExpense } from "@/lib/api/expensesApi";
 import { AxiosError } from "axios";
-import { toZonedTime } from "date-fns-tz";
-import { formatISO } from "date-fns";
-import { formatDateForUser } from "@/utils/formatDateForUser";
 
 // Tipos de gastos
 export const expenseTypes = [
@@ -44,7 +41,6 @@ const FormularioExpenses: React.FC = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [expenseAssociationType, setExpenseAssociationType] = useState("agent");
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [userTimeZone, setUserTimeZone] = useState<string>("");
 
   const queryClient = useQueryClient();
   const role = userData?.role;
@@ -63,11 +59,6 @@ const FormularioExpenses: React.FC = () => {
       fetchUserRole();
     }
   }, [userID]);
-
-  useEffect(() => {
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    setUserTimeZone(timeZone);
-  }, []);
 
   const schema = yup.object().shape({
     expenseType: yup.string().required(),
@@ -118,11 +109,6 @@ const FormularioExpenses: React.FC = () => {
   const dollarRate = watch("dollarRate");
   const date = watch("date");
 
-  // Debugging log
-  console.log(`Watched date: ${date}`);
-
-  const formattedDate = date ? formatDateForUser(date, userTimeZone) : "";
-
   const mutation = useMutation({
     mutationFn: (expenseData: Expense) => createExpense(expenseData),
     onSuccess: () => {
@@ -147,16 +133,12 @@ const FormularioExpenses: React.FC = () => {
       return;
     }
 
-    // Convertimos la fecha ingresada a UTC
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const zonedDate = toZonedTime(new Date(data.date), userTimeZone); // Convertimos la fecha a la zona horaria del usuario
-    const utcDate = formatISO(zonedDate, { representation: "date" }); // Formato UTC compatible con el backend
-
+    // No convertir la fecha a un objeto Date, guardarla tal como está (cadena)
     const amountInDollars =
       data.amount && data.dollarRate ? data.amount / data.dollarRate : 0;
 
     const expenseData: Expense = {
-      date: utcDate,
+      date: data.date, // Guardamos la fecha tal cual, sin conversión a Date
       amount: data.amount ?? 0,
       amountInDollars,
       otherType: data.otherType ?? "",
@@ -214,7 +196,7 @@ const FormularioExpenses: React.FC = () => {
           <Input
             label="Fecha del Gasto"
             type="date"
-            defaultValue={formattedDate} // Ensure this is a valid date string
+            defaultValue={date} // Mostramos la fecha como cadena
             {...register("date")}
             marginBottom="0"
           />
