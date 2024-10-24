@@ -45,7 +45,7 @@ export const calculateTotalLastColumnSum = (
       ![
         "Alquiler",
         "Cochera",
-        "Alquiler temporal",
+        "Alquiler Temporal",
         "Alquiler Tradicional",
       ].includes(tipo)
     ) {

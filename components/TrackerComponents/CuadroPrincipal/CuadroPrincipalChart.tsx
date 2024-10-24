@@ -62,7 +62,7 @@ const CuadroPrincipalChart = () => {
   }
 
   return (
-    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[550px] overflow-y-auto">
+    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[560px] overflow-y-auto">
       {isLoading ? (
         <Loader />
       ) : (

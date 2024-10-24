@@ -73,7 +73,7 @@ const CuadroPrincipal = () => {
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[550px] overflow-y-auto">
+    <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[560px] overflow-y-auto">
       {isLoading ? (
         <Loader />
       ) : (
@@ -132,7 +132,7 @@ const CuadroPrincipal = () => {
                           {[
                             "Alquiler",
                             "Cochera",
-                            "Alquiler temporal",
+                            "Alquiler Temporal",
                             "Alquiler Tradicional",
                           ].includes(tipo)
                             ? ""

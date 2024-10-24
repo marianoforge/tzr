@@ -34,9 +34,7 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
   }
 
   return (
-    <div
-      className={`bg-white p-4 mb-20 ${marginTopClass} rounded-xl shadow-md`}
-    >
+    <div className={`bg-white p-4 ${marginTopClass} rounded-xl shadow-md`}>
       <h2 className="text-2xl font-bold mb-4 text-center">{title}</h2>
       {operationsLength === 0 ? (
         <p className="text-center ">No existen operaciones</p>
