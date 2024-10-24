@@ -12,3 +12,19 @@ export const filterOperationsBySearch = (
     operation.direccion_reserva.toLowerCase().includes(lowercasedQuery)
   );
 };
+
+export const filterAgentsBySearch = <T>(
+  items: T[],
+  searchQuery: string,
+  keys: (keyof T)[]
+): T[] => {
+  if (!searchQuery) return items;
+
+  const lowercasedQuery = searchQuery.toLowerCase();
+
+  return items.filter((item) =>
+    keys.some((key) =>
+      String(item[key]).toLowerCase().includes(lowercasedQuery)
+    )
+  );
+};

@@ -20,6 +20,7 @@ import {
 } from '@/utils/calculationsAgents';
 import useUsersWithOperations from '@/hooks/useUserWithOperations';
 import { useTeamMembersOps } from '@/hooks/useTeamMembersOps';
+import { filterAgentsBySearch } from '@/utils/filterOperations'; // Import the generic search filter function
 
 import AddUserModal from '../Agents/AddUserModal';
 
@@ -45,6 +46,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(''); // Add search query state
 
   const handleAddAdvisorClick = useCallback(() => {
     setIsAddUserModalOpen(true);
@@ -147,8 +149,15 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const filteredAgents = useMemo(() => {
+    return filterAgentsBySearch(combinedData, searchQuery, [
+      'firstName',
+      'lastName',
+    ]);
+  }, [combinedData, searchQuery]);
+
   const sortedData = useMemo(() => {
-    const sorted = combinedData
+    const sorted = filteredAgents // Use filtered agents instead of combinedData
       .map((agent) => ({
         ...agent,
         percentage:
@@ -157,7 +166,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
       }))
       .sort((a, b) => b.percentage - a.percentage);
     return sorted;
-  }, [combinedData, honorariosBrokerTotales]);
+  }, [filteredAgents, honorariosBrokerTotales]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -184,17 +193,24 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
 
   return (
     <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md">
-      <div className="flex items-center">
-        <h2 className="text-2xl font-bold text-end w-7/12 justify-end mb-4">
-          Informe Asesores
-        </h2>
-        <button
-          onClick={handleAddAdvisorClick}
-          className="flex items-center hover:text-mediumBlue w-5/12 justify-end mr-2 mb-3"
-        >
-          <UserPlusIcon className="w-5 h-5 mr-2 text-lightBlue" />
-          Agregar Asesor
-        </button>
+      <div className="flex items-center justify-between mb-4">
+        <input
+          type="text"
+          placeholder="Buscar Asesor..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-[220px] p-2 border border-gray-300 rounded font-semibold mr-4 placeholder-mediumBlue placeholder-italic"
+        />
+        <h2 className="text-2xl font-bold">Informe Asesores</h2>
+        <div className="flex items-center">
+          <button
+            onClick={handleAddAdvisorClick}
+            className="flex items-center hover:text-mediumBlue"
+          >
+            <UserPlusIcon className="w-5 h-5 mr-2 text-lightBlue" />
+            Agregar Asesor
+          </button>
+        </div>
       </div>
       {currentAgents.length === 0 ? (
         <p className="text-center text-gray-600">No existen agentes</p>
