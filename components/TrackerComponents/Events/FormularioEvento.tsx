@@ -10,6 +10,7 @@ import Input from '@/components/TrackerComponents/FormComponents/Input';
 import TextArea from '@/components/TrackerComponents/FormComponents/TextArea';
 import Button from '@/components/TrackerComponents/FormComponents/Button';
 import { createEvent } from '@/lib/api/eventsApi'; // Import the createEvent function from the events API
+import { EventFormData } from '@/types';
 
 import ModalOK from '../ModalOK';
 
@@ -21,15 +22,6 @@ const schema = yup.object().shape({
   endTime: yup.string().required('La hora de fin es requerida'),
   description: yup.string().required('La descripción es requerida'),
 });
-
-// Interfaz para el formulario de eventos
-export interface EventFormData {
-  title: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  description: string;
-}
 
 const FormularioEvento: React.FC = () => {
   const { userID } = useAuthStore();

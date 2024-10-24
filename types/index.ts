@@ -7,18 +7,6 @@ interface BaseState<T> {
   setItems: (items: T[]) => void;
 }
 
-export interface Totals {
-  totalAmount: number;
-  totalAmountInDollars: number;
-  totalExpenses: number;
-  valor_reserva?: number;
-  suma_total_de_puntas?: number;
-  honorarios_broker?: number;
-  honorarios_asesor?: number;
-  promedio_punta_compradora?: number;
-  promedio_punta_vendedora?: number;
-}
-
 export interface Operation {
   punta_compradora: boolean;
   punta_vendedora: boolean;
@@ -52,30 +40,12 @@ export interface Operation {
   teamId: string;
 }
 
-export interface OperationsState extends BaseState<Operation> {
-  operations: Operation[];
-  totals: Totals & {
-    valor_reserva: number | string;
-    porcentaje_honorarios_asesor: number | string;
-    porcentaje_honorarios_broker: number | string;
-    honorarios_broker: number | string;
-    honorarios_asesor: number | string;
-    mayor_venta_efectuada: number | string;
-    promedio_valor_reserva: number | string;
-    punta_compradora: number | string;
-    punta_vendedora: number | string;
-    suma_total_de_puntas: number | string;
-    cantidad_operaciones: number | string;
-  };
-  calculateTotals: () => void;
-  updateOperationEstado: (id: string, newEstado: string) => void;
-}
-
-export interface OperationsComponentsProps {
-  handleEstadoChange: (id: string, currentEstado: string) => Promise<void>;
-  handleEditClick: (operation: Operation, id: string) => Promise<void>;
-  handleDeleteClick: (id: string) => Promise<void>;
-  operations: Operation[];
+export interface EventFormData {
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  description: string;
 }
 
 export interface Event {

@@ -2,6 +2,7 @@ import Slider from 'react-slick';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 import { formatNumber } from '@/utils/formatNumber';
 import {
@@ -12,7 +13,6 @@ import {
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/types';

@@ -2,13 +2,13 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Tooltip } from 'react-tooltip';
 import { InformationCircleIcon } from '@heroicons/react/24/solid';
+
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { calculateTotals } from '@/utils/calculations';
 import SkeletonLoader from '@/components/TrackerComponents/SkeletonLoader';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useAuthStore } from '@/stores/authStore';
 import { formatValue } from '@/utils/formatValue';
-
 import { currentYearOperations } from '@/utils/currentYearOps';
 
 const Bubbles = () => {

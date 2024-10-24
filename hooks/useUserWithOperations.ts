@@ -25,12 +25,8 @@ const fetchUsersWithOperations = async (
     throw new Error('Failed to fetch users and operations');
   }
 
-  const { csrfToken, usersWithOperations } = await response.json();
+  const { usersWithOperations } = await response.json();
 
-  // Optional: Handle CSRF token if needed.
-  console.log('Received CSRF token:', csrfToken);
-
-  // Filter the data if the user is a team leader
   if (user.role === 'team_leader_broker') {
     return usersWithOperations.filter(
       (usuario: UserWithOperations) => usuario.uid === user.uid

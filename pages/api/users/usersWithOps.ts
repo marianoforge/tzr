@@ -1,18 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
-import * as yup from 'yup';
 
-import { db } from '@/lib/firebase'; // Make sure this imports your client-side initialized Firestore instance
+import { db } from '@/lib/firebase';
 import { setCsrfCookie, validateCsrfToken } from '@/lib/csrf';
-
-// Define schema for validation (you can modify this to match your needs)
-export const userSchema = yup.object().shape({
-  uid: yup.string().required('UID is required'),
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  email: yup.string().email('Invalid email').nullable(),
-  numeroTelefono: yup.string().nullable(),
-});
+import { userSchema } from '@/schemas/userSchema';
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,10 +11,8 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     try {
-      // Set CSRF token cookie
       const token = setCsrfCookie(res);
 
-      // Fetch all users from the "usuarios" collection
       const usuariosCollection = collection(db, 'usuarios');
       const usuariosSnapshot = await getDocs(usuariosCollection);
 
@@ -32,7 +21,6 @@ export default async function handler(
         ...doc.data(),
       }));
 
-      // Fetch operations for each user in parallel
       const usersWithOperations = await Promise.all(
         usuarios.map(async (usuario) => {
           const operationsQuery = query(
@@ -59,14 +47,12 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
-    // Validate CSRF token
     const isValidCsrf = validateCsrfToken(req);
     if (!isValidCsrf) {
       return res.status(403).json({ message: 'Invalid CSRF token' });
     }
 
     try {
-      // Validate request body with schema
       await userSchema.validate(req.body, { abortEarly: false });
 
       const { uid, email, numeroTelefono, firstName, lastName } = req.body;

@@ -1,12 +1,9 @@
-// utils/formatDate.ts
 import { toZonedTime, format } from 'date-fns-tz';
 
 export const formatDateForUser = (
   utcDateString: string,
   userTimeZone: string
 ) => {
-  console.log(`Received utcDateString: ${utcDateString}`); // Debugging log
-
   const utcDate = new Date(utcDateString);
 
   // Check if the date is valid

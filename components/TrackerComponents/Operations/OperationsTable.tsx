@@ -24,7 +24,7 @@ import { filteredOperations } from '@/utils/filteredOperations';
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
 
-const OperationsTable: React.FC = ({}) => {
+const OperationsTable: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null

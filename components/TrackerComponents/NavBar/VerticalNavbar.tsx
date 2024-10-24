@@ -27,7 +27,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
       if (user) {
         fetchItems(user.uid);
       } else {
-        console.log('No authenticated user');
+        console.error('No authenticated user');
       }
     });
 

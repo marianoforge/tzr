@@ -11,7 +11,6 @@ export const calculateAdjustedBrokerFees = (operations: Operation[]) =>
     return acc + op.honorarios_broker * (isHalfOperation ? 0.5 : 1);
   }, 0);
 
-console.log();
 // Function to calculate total operations
 export const calculateTotalOperations = (operations: Operation[]) =>
   operations.reduce((total, op) => {

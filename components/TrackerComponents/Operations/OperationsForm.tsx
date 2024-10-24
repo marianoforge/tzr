@@ -84,9 +84,6 @@ const OperationsForm = () => {
   const watchAllFields = watch();
   const date = watch('fecha_operacion');
 
-  // Debugging log
-  console.log(`Watched fecha_operacion: ${date}`);
-
   const formattedDate = date ? formatDateForUser(date, userTimeZone) : '';
 
   // Calculate honorarios based on form values
