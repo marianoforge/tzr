@@ -4,6 +4,8 @@ import {
   PencilIcon,
   TrashIcon,
   MagnifyingGlassPlusIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
 } from '@heroicons/react/24/outline';
 import { Tooltip } from 'react-tooltip';
 import { InformationCircleIcon } from '@heroicons/react/24/solid'; // Import Heroicons icon
@@ -21,6 +23,7 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/utils/calculations';
 import { filteredOperations } from '@/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/utils/filterOperations';
+import { sortOperationValue } from '@/utils/sortUtils'; // Import the sorting utility
 
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
@@ -37,6 +40,9 @@ const OperationsTable: React.FC = () => {
   const [yearFilter, setYearFilter] = useState('all');
   const [monthFilter, setMonthFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState(''); // Add search query state
+  const [isValueAscending, setIsValueAscending] = useState<boolean | null>(
+    null
+  ); // Add state for sorting order
 
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
@@ -84,12 +90,22 @@ const OperationsTable: React.FC = () => {
       searchQuery
     );
 
-    const totals = calculateTotals(searchedOps || []);
+    // Sort operations by date in descending order (newest first)
+    const dateSortedOps = searchedOps.sort((a, b) => {
+      return b.fecha_operacion.localeCompare(a.fecha_operacion);
+    });
+
+    // If additional sorting is needed, apply it after date sorting
+    const sortedOps =
+      isValueAscending !== null
+        ? sortOperationValue(dateSortedOps, isValueAscending)
+        : dateSortedOps;
+
+    const totals = calculateTotals(sortedOps);
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentOps =
-      searchedOps?.slice(indexOfFirstItem, indexOfLastItem) || [];
+    const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
 
     return { currentOperations: currentOps, filteredTotals: totals };
   }, [
@@ -99,7 +115,8 @@ const OperationsTable: React.FC = () => {
     monthFilter,
     currentPage,
     itemsPerPage,
-    searchQuery, // Add searchQuery to dependencies
+    searchQuery,
+    isValueAscending,
   ]);
 
   const totalPages = useMemo(() => {
@@ -167,6 +184,10 @@ const OperationsTable: React.FC = () => {
     }
   };
 
+  const toggleValueSortOrder = () => {
+    setIsValueAscending(!isValueAscending);
+  };
+
   return (
     <div className="overflow-x-auto flex flex-col justify-around">
       <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
@@ -222,15 +243,29 @@ const OperationsTable: React.FC = () => {
               Operación
             </th>
             <th
-              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[160px]`}
+              className={`py-3  ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[160px] cursor-pointer flex items-center justify-center `}
             >
               Tipo de Operación
             </th>
 
             <th
-              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+              onClick={toggleValueSortOrder}
             >
-              Valor Reserva / Cierre
+              Valor Operación
+              <span className="ml-2 text-xs text-mediumBlue inline-flex items-center justify-center ">
+                {isValueAscending ? (
+                  <ArrowUpIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  /> // Use ArrowUpIcon for ascending
+                ) : (
+                  <ArrowDownIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  /> // Use ArrowDownIcon for descending
+                )}
+              </span>
             </th>
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -416,7 +451,7 @@ const OperationsTable: React.FC = () => {
                   <Tooltip id="tooltip-vendedora" place="top" />
                 </>
               ) : (
-                'Cálculo no disponible'
+                'C��lculo no disponible'
               )}
             </td>
 
