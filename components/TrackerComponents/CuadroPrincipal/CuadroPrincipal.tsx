@@ -135,6 +135,9 @@ const CuadroPrincipal = () => {
                             'Cochera',
                             'Alquiler Temporal',
                             'Alquiler Tradicional',
+                            'Alquiler Comercial',
+                            'Locales Comerciales',
+                            'Fondo de Comercio',
                           ].includes(tipo)
                             ? ''
                             : `$${formatNumber(

@@ -47,6 +47,9 @@ export const calculateTotalLastColumnSum = (
         'Cochera',
         'Alquiler Temporal',
         'Alquiler Tradicional',
+        'Alquiler Comercial',
+        'Locales Comerciales',
+        'Fondo de Comercio',
       ].includes(tipo)
     ) {
       return acc + data.totalVenta / data.cantidad;

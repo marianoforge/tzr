@@ -59,7 +59,7 @@ const FormularioExpenses: React.FC = () => {
     if (userID) {
       fetchUserRole();
     }
-  }, [userID]);
+  }, [role, userID]);
 
   const schema = yup.object().shape({
     expenseType: yup.string().required(),

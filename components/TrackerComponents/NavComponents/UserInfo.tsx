@@ -29,7 +29,7 @@ export const UserInfo = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [userID]);
 
   return (
     <div className="flex flex-col text-nowrap">
