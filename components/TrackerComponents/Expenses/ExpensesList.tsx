@@ -16,8 +16,6 @@ import { Expense } from "@/types";
 import ExpensesModal from "./ExpensesModal";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";
 import { OPERATIONS_LIST_COLORS } from "@/lib/constants";
-import { format } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import { formatDateForUser } from "@/utils/formatDateForUser";
 
 const ExpensesList = () => {
