@@ -3,7 +3,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import { useExpensesStore } from "@/stores/useExpensesStore";
-import Loader from "../Loader";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUserOperations } from "@/lib/api/operationsApi";
 import { fetchUserExpenses } from "@/lib/api/expensesApi"; // Asume que tienes este método
 import { useAuthStore } from "@/stores/authStore"; // Esto sigue para obtener el userID
-import Loader from "./Loader";
+
 import { Expense } from "@/types";
 import { useUserDataStore } from "@/stores/userDataStore";
 import { calculateTotals } from "@/utils/calculations";
@@ -66,9 +66,14 @@ const Profitability = () => {
   if (isLoadingExpenses || isLoadingOperations) {
     return <SkeletonLoader height={220} count={1} />;
   }
-  if (operationsError) {
+  if (operationsError || expensesError) {
     return (
-      <p>Error: {operationsError?.message || "An unknown error occurred"}</p>
+      <p>
+        Error:{" "}
+        {operationsError?.message ||
+          expensesError?.message ||
+          "An unknown error occurred"}
+      </p>
     );
   }
   return (

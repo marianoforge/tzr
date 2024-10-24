@@ -40,7 +40,7 @@ const OperationsTable: React.FC = ({}) => {
 
   const itemsPerPage = 10;
 
-  const { data: operations, isLoading } = useQuery({
+  const { data: operations } = useQuery({
     queryKey: ["operations", userID || ""],
     queryFn: () => fetchUserOperations(userID || ""),
     enabled: !!userID,

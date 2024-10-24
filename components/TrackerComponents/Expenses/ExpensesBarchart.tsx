@@ -13,7 +13,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/router";
 import { useExpensesStore } from "@/stores/useExpensesStore";
-import Loader from "../Loader";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserExpenses } from "@/lib/api/expensesApi";
 import useFilteredExpenses from "@/hooks/useFilteredExpenses";

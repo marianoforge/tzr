@@ -1,5 +1,4 @@
 import React, { useMemo, useCallback } from "react";
-import Loader from "../Loader";
 import { useAuthStore } from "@/stores/authStore";
 import { useQuery } from "@tanstack/react-query"; // Importar useQuery
 import { fetchUserEvents } from "@/lib/api/eventsApi"; // Asegúrate de tener esta función en tu eventsApi.ts
