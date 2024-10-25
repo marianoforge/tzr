@@ -12,8 +12,10 @@ import { fetchUserOperations } from '@/utils/operationsApi';
 import { useAuthStore } from '@/stores/authStore';
 import { formatNumber } from '@/utils/formatNumber';
 import { currentYearOperations } from '@/utils/currentYearOps';
-
+import 'react-tooltip/dist/react-tooltip.css';
 import SkeletonLoader from './SkeletonLoader';
+import { Tooltip } from 'react-tooltip';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 const RADIAN = Math.PI / 180;
 
@@ -99,12 +101,20 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
 
     return (
       <div
-        className="bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center"
+        className="relative bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center"
         style={{ height: '225px' }}
       >
         <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold pt-2 pb-2">
           Objetivo Anual de Ventas
         </p>
+        <div
+          className="absolute top-2 right-2  cursor-pointer"
+          data-tooltip-id="objective-tooltip"
+          data-tooltip-content="Porcentaje de los honorarios totales brutos menos los gastos de Team / Broker"
+        >
+          <InformationCircleIcon className="text-mediumBlue stroke-2 h-5 w-5" />
+        </div>
+        <Tooltip id="objective-tooltip" place="top" />
         {!userData?.objetivoAnual ? (
           <div className="flex justify-center items-center h-[225px]">
             <button
@@ -144,7 +154,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
                   85,
                   55,
                   75,
-                  '#7ED994'
+                  '#00b4d8'
                 )}
               </PieChart>
             </div>

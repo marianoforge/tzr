@@ -89,7 +89,10 @@ const FormularioExpenses: React.FC = () => {
     expenseAssociationType: yup
       .string()
       .required('Debes seleccionar una asociación de gasto')
-      .notOneOf([''], 'Debes seleccionar una opción válida'),
+      .notOneOf(
+        [''],
+        'Debes asociar el gasto como gasto del Team / Broker o del Asesor'
+      ),
   });
 
   const {
@@ -183,11 +186,11 @@ const FormularioExpenses: React.FC = () => {
                 ]}
                 register={register}
                 name="expenseAssociationType"
-                className="w-full p-2 border mb-[8px]"
+                className="w-full p-2 border mb-8"
                 onChange={(e) => handleAssociationTypeChange(e.target.value)}
               />
               {errors.expenseAssociationType && (
-                <p className="text-red-500 mb-4">
+                <p className="text-red-500 mb-4 -mt-8">
                   {errors.expenseAssociationType.message}
                 </p>
               )}
@@ -199,10 +202,10 @@ const FormularioExpenses: React.FC = () => {
             type="date"
             defaultValue={date} // Mostramos la fecha como cadena
             {...register('date')}
-            marginBottom="0"
+            marginBottom="mb-8"
           />
           {errors.date && (
-            <p className="text-red-500 mb-4">{errors.date.message}</p>
+            <p className="text-red-500 mb-4 -mt-8">{errors.date.message}</p>
           )}
 
           <Input
@@ -210,10 +213,10 @@ const FormularioExpenses: React.FC = () => {
             type="number"
             placeholder="1000000"
             {...register('amount')}
-            marginBottom="0"
+            marginBottom="mb-8"
           />
           {errors.amount && (
-            <p className="text-red-500 mb-4">{errors.amount.message}</p>
+            <p className="text-red-500 mb-4 -mt-8">{errors.amount.message}</p>
           )}
 
           <div className="flex gap-4 items-center">
@@ -223,10 +226,12 @@ const FormularioExpenses: React.FC = () => {
                 type="number"
                 placeholder="1250"
                 {...register('dollarRate')}
-                marginBottom="0"
+                marginBottom="mb-8"
               />
               {errors.dollarRate && (
-                <p className="text-red-500 mb-4">{errors.dollarRate.message}</p>
+                <p className="text-red-500 mb-4 -mt-8">
+                  {errors.dollarRate.message}
+                </p>
               )}
             </div>
             <div className="w-1/2 ">
@@ -235,7 +240,7 @@ const FormularioExpenses: React.FC = () => {
                 type="text"
                 value={amountInDollars}
                 readOnly
-                className="bg-gray-100 cursor-not-allowed p-2 rounded-lg"
+                className="bg-mutedBlue/80 border text-white border-mutedBlue cursor-not-allowed p-2 rounded mb-4"
               />
             </div>
           </div>
@@ -245,10 +250,12 @@ const FormularioExpenses: React.FC = () => {
             options={expenseTypes}
             register={register}
             name="expenseType"
-            mb="mb-4"
+            mb="mb-8"
           />
           {errors.expenseType && (
-            <p className="text-red-500 mb-4">{errors.expenseType.message}</p>
+            <p className="text-red-500 mb-4 -mt-8">
+              {errors.expenseType.message}
+            </p>
           )}
 
           {selectedExpenseType === 'Otros' && (
@@ -260,7 +267,7 @@ const FormularioExpenses: React.FC = () => {
             />
           )}
           {errors.otherType && (
-            <p className="text-red-500">{errors.otherType.message}</p>
+            <p className="text-red-500 -mt-8">{errors.otherType.message}</p>
           )}
 
           <TextArea
@@ -269,7 +276,7 @@ const FormularioExpenses: React.FC = () => {
             error={errors.description?.message}
           />
           {errors.description && (
-            <p className="text-red-500">{errors.description.message}</p>
+            <p className="text-red-500 -mt-8">{errors.description.message}</p>
           )}
 
           <div className="flex justify-center items-center mt-8 w-full">

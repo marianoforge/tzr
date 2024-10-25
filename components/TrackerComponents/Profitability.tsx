@@ -10,6 +10,9 @@ import { calculateTotals } from '@/utils/calculations';
 import { currentYearOperations } from '@/utils/currentYearOps';
 
 import SkeletonLoader from './SkeletonLoader';
+import { Tooltip } from 'react-tooltip';
+
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 const Profitability = () => {
   const { userID } = useAuthStore();
@@ -79,20 +82,35 @@ const Profitability = () => {
   }
   return (
     <div className="flex flex-col sm:flex-row gap-4">
-      <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center h-[208px] w-full">
+      <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center h-[208px] w-full relative">
         <p className="text-xl font-semibold flex justify-center items-center h-2/5 pt-6">
           Rentabilidad Propia
         </p>
+        <div
+          className="absolute top-2 right-2 cursor-pointer"
+          data-tooltip-id="profitability-tooltip"
+          data-tooltip-content="Porcentaje de los honorarios totales netos menos los gastos propios"
+        >
+          <InformationCircleIcon className="text-mediumBlue stroke-2 h-5 w-5" />
+        </div>
+        <Tooltip id="profitability-tooltip" place="top" />
         <p className="text-2xl text-[48px] sm:text-2xl lg:text-[48px] xl:text-[40px] font-bold text-greenAccent h-3/5 items-center justify-center flex">
           {profitability.toFixed(2)}%
         </p>
       </div>
-      {/* Asume que `userData` viene desde `useAuthStore` o similar */}
       {userData?.role === 'team_leader_broker' && (
-        <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center justify-center h-[208px] w-full">
+        <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center justify-center h-[208px] w-full relative">
           <p className="text-xl font-semibold flex justify-center items-center h-2/5 pt-6">
             Rentabilidad Total
           </p>
+          <div
+            className="absolute top-2 right-2  cursor-pointer"
+            data-tooltip-id="profitability-tooltip-total"
+            data-tooltip-content="Porcentaje de los honorarios totales brutos menos los gastos de Team / Broker"
+          >
+            <InformationCircleIcon className="text-mediumBlue stroke-2 h-5 w-5" />
+          </div>
+          <Tooltip id="profitability-tooltip-total" place="top" />
           <p className="text-2xl text-[48px] sm:text-2xl lg:text-[48px] xl:text-[40px] font-bold text-greenAccent h-3/5 items-center justify-center flex">
             {profitabilityBroker.toFixed(2)}%
           </p>

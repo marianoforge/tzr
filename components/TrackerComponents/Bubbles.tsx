@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Tooltip } from 'react-tooltip';
-import { InformationCircleIcon } from '@heroicons/react/24/solid';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { calculateTotals } from '@/utils/calculations';
@@ -85,18 +85,18 @@ const Bubbles = () => {
       tooltip: 'Promedio de Honorarios netos totales por mes.',
     },
     {
-      title: 'Suma de las Operaciones en Curso.',
+      title: 'Monto Reservas Netas en Curso',
       figure: formatValue(totals.valor_reserva_en_curso ?? 0, 'currency'),
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
-      tooltip: 'Monto total de las Operaciones en Curso',
+      tooltip: 'Monto total neto de las Operaciones en Curso',
     },
     {
-      title: 'TBD',
+      title: 'Monto Reservas Brutas en Curso',
       figure: formatValue('', 'none'),
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
-      tooltip: 'TBD',
+      tooltip: 'Monto total bruto de las Operaciones en Curso',
     },
   ];
 
@@ -119,7 +119,7 @@ const Bubbles = () => {
           >
             {/* Heroicons Info icon with tooltip */}
             <InformationCircleIcon
-              className="absolute top-1 right-1 text-white h-5 w-5 cursor-pointer"
+              className="absolute top-1 right-1 text-white stroke-2 h-4 w-4 cursor-pointer z-10"
               data-tooltip-id={`tooltip-${index}`}
               data-tooltip-content={data.tooltip}
             />
@@ -134,7 +134,7 @@ const Bubbles = () => {
             </p>
 
             {/* Tooltip for the icon */}
-            <Tooltip id={`tooltip-${index}`} place="top" />
+            <Tooltip id={`tooltip-${index}`} place="top" className="z-20" />
           </div>
         ))}
       </div>
