@@ -49,7 +49,7 @@ const Profitability = () => {
     0
   );
   const totalExpensesTeamBroker = expenses.reduce(
-    (acc: number, exp: Expense) => acc + exp.amountInDollars || 0, // Suponiendo que tengas un campo así
+    (acc: number, exp: Expense) => acc + exp.amountInDollars || 0,
     0
   );
   const profitability =
