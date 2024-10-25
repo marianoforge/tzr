@@ -26,7 +26,7 @@ const needle = (
   oR: number,
   color: string | undefined
 ) => {
-  let total = 100; // Assume total is 100 for percentage calculation
+  const total = 100; // Assume total is 100 for percentage calculation
   const ang = 180.0 * (1 - value / total); // Calculate angle based on percentage
   const length = (iR + 2 * oR) / 3;
   const sin = Math.sin(-RADIAN * ang);
