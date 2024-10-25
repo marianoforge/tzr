@@ -112,7 +112,7 @@ const Bubbles = () => {
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-md min-h-[465px] flex justify-center items-center">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-4 w-[90%]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-4 w-[100%]">
         {bubbleData.map((data, index) => (
           <div
             key={index}
