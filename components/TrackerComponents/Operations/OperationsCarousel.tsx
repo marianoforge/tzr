@@ -1,6 +1,5 @@
 import Slider from 'react-slick';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
