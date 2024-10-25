@@ -104,6 +104,18 @@ export const calculateTotals = (operations: Operation[]) => {
     'honorarios_broker'
   );
 
+  // Total Honorarios Broker Abiertas
+  const totalHonorariosBrokerAbiertas = sumField(
+    operations.filter((op) => op.estado === 'En Curso'),
+    'honorarios_broker'
+  );
+
+  // Total Honorarios Asesor Abiertas
+  const totalHonorariosAsesorAbiertas = sumField(
+    operations.filter((op) => op.estado === 'En Curso'),
+    'honorarios_asesor'
+  );
+
   // Mayor Valor Reserva Efectuada
   const mayorVentaEfectuada = Math.max(
     ...operations.map((op) => op.valor_reserva)
@@ -198,6 +210,8 @@ export const calculateTotals = (operations: Operation[]) => {
     honorarios_asesor: totalHonorariosAsesor,
     honorarios_asesor_cerradas: totalHonorariosAsesorCerradas,
     honorarios_broker_cerradas: totalHonorariosBrokerCerradas,
+    honorarios_broker_abiertas: totalHonorariosBrokerAbiertas,
+    honorarios_asesor_abiertas: totalHonorariosAsesorAbiertas,
     mayor_venta_efectuada: mayorVentaEfectuada,
     promedio_valor_reserva: promedioValorReserva,
     punta_compradora: puntaCompradora,
