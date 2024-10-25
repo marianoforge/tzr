@@ -80,7 +80,7 @@ const CuadroPrincipal = () => {
       ) : (
         <div>
           <h2 className="text-2xl lg:text-[24px] font-bold mb-4 text-center">
-            Cuadro Tipos de Operaciones
+            Cuadro Tipos de Operaciones - 2024
           </h2>
           {operations.length === 0 ? (
             <p className="text-center text-gray-600">No existen operaciones</p>

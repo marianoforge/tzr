@@ -38,7 +38,22 @@ const Settings = () => {
     enabled: !!userID,
   });
 
-  const subscriptionId = userData?.stripeSubscriptionId;
+  const subscriptionId = userData?.stripeSubscriptionId ?? 'No Subscription ID';
+  const { data: customerData, isLoading: isLoadingCustomer } = useQuery({
+    queryKey: ['customerData', userID],
+    queryFn: async () => {
+      const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
+      const response = await axios.get(
+        `/api/stripe/customer_info?customer_id=${customerId}`
+      );
+      return response.data;
+    },
+    enabled: !!userID,
+  });
+
+  console.log(customerData ?? 'No Customer Data');
+  console.log(subscriptionId);
+
   useEffect(() => {
     if (userDataQuery) {
       setFirstName(userDataQuery.firstName);
@@ -106,7 +121,7 @@ const Settings = () => {
   const handleSave = (field: keyof typeof editMode) => {
     toggleEditMode(field);
   };
-
+  console.log(userData);
   return (
     <div>
       {isLoadingQuery ? (
@@ -261,18 +276,18 @@ const Settings = () => {
       <div className="bg-white p-6 mt-10 rounded-xl shadow-md w-[100%]">
         <h3 className="text-xl font-semibold">Manejo de la Suscripción</h3>
         <div className="flex items-center justify-center gap-4">
-          {/* {subscriptionId && (
-                <>
-                  <button
-                    onClick={handleCancelSubscription}
-                    className="bg-mediumBlue text-white px-4 py-2 rounded hover:bg-lightBlue"
-                    disabled={isCanceling}
-                  >
-                    {isCanceling ? "Actualizando..." : "Actualizar suscripción"}
-                  </button>
-                  {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
-                </>
-              )} */}
+          {subscriptionId && (
+            <>
+              <button
+                onClick={handleCancelSubscription}
+                className="bg-mediumBlue text-white px-4 py-2 rounded hover:bg-lightBlue"
+                disabled={isCanceling}
+              >
+                {isCanceling ? 'Actualizando...' : 'Actualizar suscripción'}
+              </button>
+              {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+            </>
+          )}
           <button
             onClick={handleCancelSubscription}
             className={`px-4 py-2 rounded ${

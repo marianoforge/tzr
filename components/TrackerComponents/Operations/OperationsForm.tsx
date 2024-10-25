@@ -271,6 +271,12 @@ const OperationsForm = () => {
                 { value: 'Desarrollo', label: 'Desarrollo Inmobiliario' },
                 { value: 'Cochera', label: 'Cochera' },
                 { value: 'Locales Comerciales', label: 'Locales Comerciales' },
+                { value: 'Loteamiento', label: 'Loteamiento' },
+                { value: 'Naves Industriales', label: 'Naves Industriales' },
+                {
+                  value: 'Lotes Para Desarrollos',
+                  label: 'Lotes para Desarrollos',
+                },
               ]}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required

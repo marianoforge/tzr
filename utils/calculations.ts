@@ -65,7 +65,7 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Total Valores Ventas y Desarrollos Cerrados
   const filteredOperations = filterOperationsByType(operations, 'Venta')
-    .concat(filterOperationsByType(operations, 'Desarrollo'))
+    .concat(filterOperationsByType(operations, 'Desarrollo Inmobiliario'))
     .filter((op) => op.estado === 'Cerrada');
 
   // Total Promedio Valor Reservas Filtradas

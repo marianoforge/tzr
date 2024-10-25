@@ -40,7 +40,7 @@ const OperationsContainer: React.FC<OperationsContainerProps> = ({
       {operationsLength === 0 ? (
         <p className="text-center ">No existen operaciones</p>
       ) : (
-        children
+        <div className="flex flex-col gap-20">{children}</div>
       )}
     </div>
   );

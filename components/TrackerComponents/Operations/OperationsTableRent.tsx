@@ -8,7 +8,7 @@ import {
   ArrowDownIcon,
 } from '@heroicons/react/24/outline';
 import { Tooltip } from 'react-tooltip';
-import { InformationCircleIcon } from '@heroicons/react/24/solid'; // Import Heroicons icon
+import { InformationCircleIcon } from '@heroicons/react/24/solid';
 
 import {
   fetchUserOperations,
@@ -28,7 +28,7 @@ import { sortOperationValue } from '@/utils/sortUtils';
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
 
-const OperationsTable: React.FC = () => {
+const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
@@ -61,17 +61,10 @@ const OperationsTable: React.FC = () => {
   const transformedOperations = useMemo(() => {
     return operations
       ?.map((operation: Operation) => {
-        if (operation.tipo_operacion === 'Desarrollo') {
-          return {
-            ...operation,
-            tipo_operacion: 'Desarrollo Inmobiliario',
-          };
-        }
         return operation;
       })
-      .filter(
-        (operation: Operation) =>
-          !operation.tipo_operacion.startsWith('Alquiler')
+      .filter((operation: Operation) =>
+        operation.tipo_operacion.startsWith('Alquiler')
       );
   }, [operations]);
 
@@ -102,13 +95,11 @@ const OperationsTable: React.FC = () => {
       monthFilter
     );
 
-    // Apply the new operation type filter
-    const typeFilteredOps =
-      operationTypeFilter === 'all'
-        ? filteredOps
-        : filteredOps?.filter(
-            (op) => op.tipo_operacion === operationTypeFilter
-          );
+    const typeFilteredOps = filteredOps?.filter(
+      (operation: Operation) =>
+        operationTypeFilter === 'all' ||
+        operation.tipo_operacion === operationTypeFilter
+    );
 
     const searchedOps = filterOperationsBySearch(
       typeFilteredOps || [],
@@ -142,7 +133,7 @@ const OperationsTable: React.FC = () => {
     statusFilter,
     yearFilter,
     monthFilter,
-    operationTypeFilter,
+    operationTypeFilter, // Add this dependency
     currentPage,
     itemsPerPage,
     searchQuery,
@@ -236,7 +227,7 @@ const OperationsTable: React.FC = () => {
   return (
     <div className="bg-white p-4 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
-        Lista de Operaciones - Ventas
+        Lista de Operaciones - Alquileres
       </h2>
       <div className="overflow-x-auto flex flex-col justify-around">
         <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
@@ -283,29 +274,20 @@ const OperationsTable: React.FC = () => {
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
           >
             <option value="all">Todos los Tipos</option>
-            <option value="Venta">Venta</option>
-            <option value="Fondo de Comercio">Fondo de Comercio</option>
-            <option value="Desarrollo Inmobiliario">
-              Desarrollo Inmobiliario
-            </option>
-            <option value="Cochera">Cochera</option>
-            <option value="Locales Comerciales">Locales Comerciales</option>
-            <option value="Loteamiento">Loteamiento</option>
-            <option value="Naves Industriales">Naves Industriales</option>
-            <option value="Lotes Para Desarrollos">
-              Lotes Para Desarrollos
-            </option>
+            <option value="Alquiler">Alquiler Tradicional</option>
+            <option value="Alquiler Temporal">Alquiler Temporal</option>
+            <option value="Alquiler Comercial">Alquiler Comercial</option>
           </select>
         </div>
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
               <th
-                className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex`}
+                className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex items-center justify-center`}
                 onClick={toggleDateSortOrder} // Add onClick handler
               >
                 Fecha de Operación
-                <span className="ml-2 text-xs text-mediumBlue items-center justify-center">
+                <span className="ml-2 text-xs text-mediumBlue inline-flex items-center justify-center ">
                   {isDateAscending ? (
                     <ArrowUpIcon
                       className="h-4 w-4 text-mediumBlue"
@@ -329,7 +311,6 @@ const OperationsTable: React.FC = () => {
               >
                 Tipo de Operación
               </th>
-
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
                 onClick={toggleValueSortOrder}
@@ -340,36 +321,26 @@ const OperationsTable: React.FC = () => {
                     <ArrowUpIcon
                       className="h-4 w-4 text-mediumBlue"
                       strokeWidth={3}
-                    /> // Use ArrowUpIcon for ascending
+                    />
                   ) : (
                     <ArrowDownIcon
                       className="h-4 w-4 text-mediumBlue"
                       strokeWidth={3}
-                    /> // Use ArrowDownIcon for descending
+                    />
                   )}
                 </span>
               </th>
-              <th
-                className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-              >
-                Punta Compradora
-              </th>
-              <th
-                className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-              >
-                Punta Vendedora
-              </th>
-              <th
+
+              {/* <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
               >
                 Punta % Promedio
-              </th>
+              </th>  */}
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
               >
                 Puntas
               </th>
-
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
               >
@@ -416,24 +387,18 @@ const OperationsTable: React.FC = () => {
                 <td className="py-3 px-4 before:content-['Tipo:'] md:before:content-none">
                   {operacion.tipo_operacion}
                 </td>
-
                 <td className="py-3 px-4 before:content-['Valor:'] md:before:content-none">
                   ${formatNumber(operacion.valor_reserva)}
                 </td>
-                <td className="py-3 px-4 before:content-['Punta Compradora:'] md:before:content-none">
-                  {formatNumber(operacion.porcentaje_punta_compradora ?? 0)}%
-                </td>
-                <td className="py-3 px-4 before:content-['Punta Vendedora:'] md:before:content-none">
-                  {formatNumber(operacion.porcentaje_punta_vendedora ?? 0)}%
-                </td>
-                <td className="py-3 px-4 before:content-['Punta Vendedora:'] md:before:content-none">
+
+                {/* <td className="py-3 px-4 before:content-['Punta Vendedora:'] md:before:content-none">
                   {formatNumber(
                     (operacion.porcentaje_punta_compradora +
                       operacion.porcentaje_punta_vendedora) /
                       2
                   )}
                   %
-                </td>
+                </td> */}
                 <td className="py-3 px-4 before:content-['Puntas:'] md:before:content-none">
                   {formatNumber(
                     Number(operacion.punta_vendedora) +
@@ -446,7 +411,6 @@ const OperationsTable: React.FC = () => {
                 <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
                   ${formatNumber(operacion.honorarios_asesor)}
                 </td>
-
                 <td className="py-3 px-4 md:before:content-none">
                   <button
                     onClick={() =>
@@ -512,47 +476,8 @@ const OperationsTable: React.FC = () => {
               <td className={styleTotalRow}>
                 ${formatNumber(Number(filteredTotals.valor_reserva))}
               </td>
-              <td className={styleTotalRow}>
-                {filteredTotals.promedio_punta_compradora_porcentaje !==
-                  undefined &&
-                filteredTotals.promedio_punta_compradora_porcentaje !== null ? (
-                  <>
-                    {`${formatNumber(
-                      Number(
-                        filteredTotals.promedio_punta_compradora_porcentaje
-                      )
-                    )}%`}
-                    <InformationCircleIcon
-                      className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
-                      data-tooltip-id="tooltip-compradora"
-                      data-tooltip-content="Promedio del % incluyendo solamente ventas y desarrollos. Otras operaciones y puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
-                    />
-                    <Tooltip id="tooltip-compradora" place="top" />
-                  </>
-                ) : (
-                  'Cálculo no disponible'
-                )}
-              </td>
-              <td className={styleTotalRow}>
-                {filteredTotals.promedio_punta_vendedora_porcentaje !==
-                  undefined &&
-                filteredTotals.promedio_punta_vendedora_porcentaje !== null ? (
-                  <>
-                    {`${formatNumber(
-                      Number(filteredTotals.promedio_punta_vendedora_porcentaje)
-                    )}%`}
-                    <InformationCircleIcon
-                      className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
-                      data-tooltip-id="tooltip-vendedora"
-                      data-tooltip-content="Promedio del % incluyendo solamente ventas y desarrollos. Otras operaciones y puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
-                    />
-                    <Tooltip id="tooltip-vendedora" place="top" />
-                  </>
-                ) : (
-                  'Cálculo no disponible'
-                )}
-              </td>
-              <td className={styleTotalRow}>
+
+              {/* <td className={styleTotalRow}>
                 {filteredTotals.promedio_suma_puntas !== undefined &&
                 filteredTotals.promedio_suma_puntas !== null ? (
                   <>
@@ -561,8 +486,7 @@ const OperationsTable: React.FC = () => {
                 ) : (
                   'Cálculo no disponible'
                 )}
-              </td>
-
+              </td> */}
               <td className={styleTotalRow}>
                 {filteredTotals.suma_total_de_puntas !== undefined &&
                 filteredTotals.suma_total_de_puntas !== null ? (
@@ -627,4 +551,4 @@ const OperationsTable: React.FC = () => {
   );
 };
 
-export default OperationsTable;
+export default OperationsTableTent;

@@ -3,7 +3,6 @@ import CuadroPrincipalChart from '@/components/TrackerComponents/CuadroPrincipal
 import Bubbles from '@/components/TrackerComponents/Bubbles';
 import EventsList from '@/components/TrackerComponents/Events/EventsList';
 import ObjectiveChart from '@/components/TrackerComponents/ObjectiveChart';
-import OperationsListDash from '@/components/TrackerComponents/Operations/OperationsListDash';
 import Profitability from '@/components/TrackerComponents/Profitability';
 import { UserInfo } from '@/components/TrackerComponents/NavComponents/UserInfo';
 import { UserAvatar } from '@/components/TrackerComponents/NavComponents/UserAvatar';
@@ -11,6 +10,8 @@ import { UserAvatar } from '@/components/TrackerComponents/NavComponents/UserAva
 import MonthlyBarChart from './MonthlyBarChart/MonthlyBarChart';
 import MonthlyBarChartGross from './MonthlyBarChart/MonthlyBarChartGross';
 import OperationsCarouselDash from './Operations/OperationsCarouselDash';
+import OperationsTable from './Operations/OperationsTable';
+import OperationsTableRent from './Operations/OperationsTableRent';
 
 const DashBoard = () => {
   return (
@@ -37,8 +38,9 @@ const DashBoard = () => {
         </div>
       </div>
       <div className="space-y-6">
-        <div className="hidden lg:block">
-          <OperationsListDash />
+        <div className="hidden lg:block space-y-8">
+          <OperationsTable />
+          <OperationsTableRent />
         </div>
         <div className="block lg:hidden">
           <OperationsCarouselDash />
