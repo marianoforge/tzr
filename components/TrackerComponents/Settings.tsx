@@ -39,7 +39,7 @@ const Settings = () => {
   });
 
   const subscriptionId = userData?.stripeSubscriptionId ?? 'No Subscription ID';
-  const { data: customerData, isLoading: isLoadingCustomer } = useQuery({
+  const { data: customerData } = useQuery({
     queryKey: ['customerData', userID],
     queryFn: async () => {
       const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
@@ -51,8 +51,8 @@ const Settings = () => {
     enabled: !!userID,
   });
 
-  console.log(customerData ?? 'No Customer Data');
-  console.log(subscriptionId);
+  // console.log(customerData ?? 'No Customer Data');
+  // console.log(subscriptionId);
 
   useEffect(() => {
     if (userDataQuery) {
@@ -121,7 +121,7 @@ const Settings = () => {
   const handleSave = (field: keyof typeof editMode) => {
     toggleEditMode(field);
   };
-  console.log(userData);
+
   return (
     <div>
       {isLoadingQuery ? (
