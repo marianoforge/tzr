@@ -21,10 +21,8 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import Loader from '../Loader';
 
 import OperationsModal from './OperationsModal';
-import { FilterType } from './OperationsCarouselDash'; // Import the FilterType
 
 const OperationsCarousel: React.FC = () => {
-  const router = useRouter();
   const settings = {
     dots: true,
     infinite: false,
