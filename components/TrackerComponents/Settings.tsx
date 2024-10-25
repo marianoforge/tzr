@@ -39,17 +39,17 @@ const Settings = () => {
   });
 
   const subscriptionId = userData?.stripeSubscriptionId ?? 'No Subscription ID';
-  const { data: customerData } = useQuery({
-    queryKey: ['customerData', userID],
-    queryFn: async () => {
-      const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
-      const response = await axios.get(
-        `/api/stripe/customer_info?customer_id=${customerId}`
-      );
-      return response.data;
-    },
-    enabled: !!userID,
-  });
+  // const { data: customerData } = useQuery({
+  //   queryKey: ['customerData', userID],
+  //   queryFn: async () => {
+  //     const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
+  //     const response = await axios.get(
+  //       `/api/stripe/customer_info?customer_id=${customerId}`
+  //     );
+  //     return response.data;
+  //   },
+  //   enabled: !!userID,
+  // });
 
   // console.log(customerData ?? 'No Customer Data');
   // console.log(subscriptionId);
