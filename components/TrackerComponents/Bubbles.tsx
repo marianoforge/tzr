@@ -34,14 +34,15 @@ const Bubbles = () => {
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip:
-        'Este es el monto total de honorarios netos obtenidos por el asesor o broker.',
+        'Este es el monto total de honorarios netos obtenidos de las operaciones cerradas.',
     },
     {
       title: 'Honorarios Brutos',
       figure: formatValue(totals.honorarios_broker_cerradas ?? 0, 'currency'),
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
-      tooltip: 'Este es el monto total de honorarios brutos.',
+      tooltip:
+        'Este es el monto total de honorarios brutos obtenido de las operaciones cerradas.',
     },
     {
       title: 'Monto Sobre Operaciones Cerradas',
@@ -89,14 +90,14 @@ const Bubbles = () => {
       figure: formatValue(totals.honorarios_asesor_abiertas ?? 0, 'currency'),
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
-      tooltip: 'Monto total neto de las Operaciones en Curso',
+      tooltip: 'Honorarios Netos sobre las operaciones en curso.',
     },
     {
       title: 'Honorarios Brutos en Curso',
       figure: formatValue(totals.honorarios_broker_abiertas ?? 0, 'currency'),
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
-      tooltip: 'Monto total bruto de las Operaciones en Curso',
+      tooltip: 'Honorarios Brutos sobre las operaciones en curso.',
     },
   ];
 
