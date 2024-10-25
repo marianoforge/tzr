@@ -4,8 +4,9 @@ export const MAX_BAR_SIZE = 40;
 
 export const OBJECTIVE_CHART_COLORS = [
   { name: 'A', value: 25, color: '#FFB7B2' },
-  { name: 'B', value: 50, color: '#F9D77E' },
+  { name: 'B', value: 25, color: '#F9D77E' },
   { name: 'C', value: 25, color: '#7ED994' },
+  { name: 'D', value: 25, color: '#34A853' },
 ];
 
 export const OPERATIONS_LIST_COLORS = {

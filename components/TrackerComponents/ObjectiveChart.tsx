@@ -26,11 +26,8 @@ const needle = (
   oR: number,
   color: string | undefined
 ) => {
-  let total = 0;
-  data.forEach((v) => {
-    total += v.value;
-  });
-  const ang = 180.0 * (1 - value / total);
+  let total = 100; // Assume total is 100 for percentage calculation
+  const ang = 180.0 * (1 - value / total); // Calculate angle based on percentage
   const length = (iR + 2 * oR) / 3;
   const sin = Math.sin(-RADIAN * ang);
   const cos = Math.cos(-RADIAN * ang);
@@ -96,7 +93,9 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
     const totals = calculateTotals(currentYearOperations(operations));
 
     const percentage =
-      (totals.honorarios_broker * 100) / (userData?.objetivoAnual ?? 1);
+      ((totals.honorarios_broker_cerradas ?? 0) /
+        (userData?.objetivoAnual ?? 1)) *
+      100;
 
     return (
       <div
