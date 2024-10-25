@@ -276,8 +276,14 @@ const OperationsTable: React.FC = () => {
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
+              Punta % Promedio
+            </th>
+            <th
+              className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+            >
               Puntas
             </th>
+
             <th
               className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
             >
@@ -333,6 +339,14 @@ const OperationsTable: React.FC = () => {
               </td>
               <td className="py-3 px-4 before:content-['Punta Vendedora:'] md:before:content-none">
                 {formatNumber(operacion.porcentaje_punta_vendedora ?? 0)}%
+              </td>
+              <td className="py-3 px-4 before:content-['Punta Vendedora:'] md:before:content-none">
+                {formatNumber(
+                  (operacion.porcentaje_punta_compradora +
+                    operacion.porcentaje_punta_vendedora) /
+                    2
+                )}
+                %
               </td>
               <td className="py-3 px-4 before:content-['Puntas:'] md:before:content-none">
                 {formatNumber(
@@ -450,9 +464,24 @@ const OperationsTable: React.FC = () => {
                 'C��lculo no disponible'
               )}
             </td>
+            <td className={styleTotalRow}>
+              {filteredTotals.promedio_suma_puntas !== undefined &&
+              filteredTotals.promedio_suma_puntas !== null ? (
+                <>
+                  {formatNumber(Number(filteredTotals.promedio_suma_puntas))}%
+                </>
+              ) : (
+                'Cálculo no disponible'
+              )}
+            </td>
 
             <td className={styleTotalRow}>
-              {formatNumber(Number(filteredTotals.suma_total_de_puntas))}
+              {filteredTotals.suma_total_de_puntas !== undefined &&
+              filteredTotals.suma_total_de_puntas !== null ? (
+                <>{formatNumber(Number(filteredTotals.suma_total_de_puntas))}</>
+              ) : (
+                'Cálculo no disponible'
+              )}
             </td>
             <td className={styleTotalRow}>
               ${formatNumber(Number(filteredTotals.honorarios_broker))}

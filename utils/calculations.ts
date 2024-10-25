@@ -147,25 +147,25 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Total Punta Compradora Porcentaje
   const totalPuntaCompradoraPorcentaje = sumField(
-    filtroOperacionsSinAlquileres,
+    filteredOperations,
     'porcentaje_punta_compradora'
   );
 
   // Total Punta Vendedora Porcentaje
   const totalPuntaVendedoraPorcentaje = sumField(
-    filtroOperacionsSinAlquileres,
+    filteredOperations,
     'porcentaje_punta_vendedora'
   );
 
   // Operaciones Punta Compradora Valida !== null && !== 0
-  const validPuntaCompradoraOperations = filtroOperacionsSinAlquileres.filter(
+  const validPuntaCompradoraOperations = filteredOperations.filter(
     (op) =>
       op.porcentaje_punta_compradora !== null &&
       op.porcentaje_punta_compradora !== 0
   );
 
   // Operaciones Punta Vendedora Valida !== null && !== 0
-  const validPuntaVendedoraOperations = filtroOperacionsSinAlquileres.filter(
+  const validPuntaVendedoraOperations = filteredOperations.filter(
     (op) =>
       op.porcentaje_punta_vendedora !== null &&
       op.porcentaje_punta_vendedora !== 0
@@ -182,6 +182,9 @@ export const calculateTotals = (operations: Operation[]) => {
     validPuntaVendedoraOperations.length > 0
       ? totalPuntaVendedoraPorcentaje / validPuntaVendedoraOperations.length
       : 0;
+
+  const totalPromedioPorcentajePuntasValidas =
+    (promedioPuntaCompradoraPorcentaje + promedioPuntaVendedoraPorcentaje) / 2;
 
   // Total Honorarios Broker Ajustados para operaciones dobles
   const totalHonorariosBrokerAdjusted = operations.reduce(
@@ -200,6 +203,35 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Promedio Mensual Honorarios Asesor
   const promedioMensualHonorariosAsesor = totalHonorariosAsesor / currentMonth;
+
+  // Filtrar operaciones donde ambas puntas son distintas de cero
+  const validOperations = filteredOperations.filter(
+    (op) =>
+      op.porcentaje_punta_compradora !== null &&
+      op.porcentaje_punta_compradora !== 0 &&
+      op.porcentaje_punta_vendedora !== null &&
+      op.porcentaje_punta_vendedora !== 0
+  );
+
+  // Calcular la suma de las puntas compradora y vendedora
+  const totalPuntaCompradoraPorcentajeDevVentas = sumField(
+    validOperations,
+    'porcentaje_punta_compradora'
+  );
+
+  const totalPuntaVendedoraPorcentajeDevVentas = sumField(
+    validOperations,
+    'porcentaje_punta_vendedora'
+  );
+
+  // Calcular el promedio de la suma de las puntas
+  const totalPuntas = validOperations.length * 2; // Total de puntas (compradora y vendedora)
+  const promedioSumaPuntas =
+    totalPuntas > 0
+      ? (totalPuntaCompradoraPorcentajeDevVentas +
+          totalPuntaVendedoraPorcentajeDevVentas) /
+        totalPuntas
+      : 0;
 
   return {
     valor_reserva: totalValorReserva,
@@ -224,5 +256,8 @@ export const calculateTotals = (operations: Operation[]) => {
     valor_reserva_cerradas: totalValorReservaCerradas,
     total_honorarios_broker_adjusted: totalHonorariosBrokerAdjusted,
     promedio_mensual_honorarios_asesor: promedioMensualHonorariosAsesor,
+    total_promedio_porcentaje_puntas_validas:
+      totalPromedioPorcentajePuntasValidas,
+    promedio_suma_puntas: promedioSumaPuntas,
   };
 };
