@@ -69,11 +69,13 @@ const CuadroPrincipalChart = () => {
         <Loader />
       ) : (
         <>
-          <h2 className="text-2xl text-center font-semibold mb-6 text-gray-800">
+          <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[22px] text-center font-semibold mt-4 xl:mb-6">
             Tipo de Operaciones
           </h2>
           {tiposOperaciones.length === 0 ? (
-            <p className="text-center text-gray-600">No existen operaciones</p>
+            <p className="text-center text-[20px] xl:text-[20px] 2xl:text-[22px] font-semibold">
+              No existen operaciones
+            </p>
           ) : (
             <div className="h-[420px] w-full align-middle">
               <ResponsiveContainer width="100%" height="100%">

@@ -85,9 +85,6 @@ const MonthlyBarChartGross: React.FC = () => {
   if (data.length === 0) {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          Honorarios Netos Mensuales
-        </h2>
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
     );
@@ -104,7 +101,7 @@ const MonthlyBarChartGross: React.FC = () => {
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+      <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold mb-6 text-center">
         Honorarios Brutos Mensuales
       </h2>
       <div className="h-80 w-full">

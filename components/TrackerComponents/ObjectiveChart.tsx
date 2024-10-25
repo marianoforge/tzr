@@ -104,7 +104,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
         className="relative bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center"
         style={{ height: '225px' }}
       >
-        <p className="text-sm sm:text-base lg:text-lg xl:text-lg 2xl:text-xl font-semibold pt-2 pb-2">
+        <p className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[22px] font-semibold pt-2 pb-2">
           Objetivo Anual de Ventas
         </p>
         <div
@@ -112,7 +112,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
           data-tooltip-id="objective-tooltip"
           data-tooltip-content="Porcentaje de los honorarios totales brutos menos los gastos de Team / Broker"
         >
-          <InformationCircleIcon className="text-mediumBlue stroke-2 h-5 w-5" />
+          <InformationCircleIcon className="text-mediumBlue stroke-2 h-6 w-6 lg:h-5 lg:w-5" />
         </div>
         <Tooltip id="objective-tooltip" place="top" />
         {!userData?.objetivoAnual ? (

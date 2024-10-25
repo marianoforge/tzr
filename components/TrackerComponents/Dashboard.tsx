@@ -10,6 +10,7 @@ import { UserAvatar } from '@/components/TrackerComponents/NavComponents/UserAva
 
 import MonthlyBarChart from './MonthlyBarChart/MonthlyBarChart';
 import MonthlyBarChartGross from './MonthlyBarChart/MonthlyBarChartGross';
+import OperationsCarouselDash from './Operations/OperationsCarouselDash';
 
 const DashBoard = () => {
   return (
@@ -23,15 +24,15 @@ const DashBoard = () => {
           <UserInfo />
         </div>
       </div>
-      <div className="grid grid-cols-1 mt-32 sm:mt-20 xl:mt-2 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-10 gap-4 lg:gap-6 mb-6">
-        <div className="md:col-span-2 lg:col-span-1 2xl:col-span-4">
+      <div className="grid grid-cols-1 mt-28 sm:mt-20 xl:mt-2 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-10 lg:gap-6 mb-6">
+        <div className="md:col-span-1 lg:col-span-1 2xl:col-span-3">
           <Bubbles />
         </div>
-        <div className="md:col-span-2 lg:col-span-1 2xl:col-span-3 space-y-4">
+        <div className="md:col-span-1 mt-8 lg:mt-0 lg:col-span-1 2xl:col-span-4 space-y-8">
           <ObjectiveChart />
           <Profitability />
         </div>
-        <div className="md:col-span-2 lg:col-span-2 2xl:col-span-3">
+        <div className="md:col-span-1 mt-10 lg:mt-6 lg:col-span-2 2xl:col-span-3 2xl:mt-0">
           <EventsList />
         </div>
       </div>
@@ -39,11 +40,11 @@ const DashBoard = () => {
         <div className="hidden lg:block">
           <OperationsListDash />
         </div>
-        {/* <div className="block lg:hidden">
-          <OperationsCarouselDash filter="all" setFilter={() => {}} />
-        </div> */}
+        <div className="block lg:hidden">
+          <OperationsCarouselDash />
+        </div>
         <div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 lg:grid-cols-3 md:gap-10"
           style={{ marginTop: '2.5rem' }}
         >
           <div className="col-span-1 lg:col-span-2">

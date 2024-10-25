@@ -23,7 +23,7 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/utils/calculations';
 import { filteredOperations } from '@/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/utils/filterOperations';
-import { sortOperationValue } from '@/utils/sortUtils'; // Import the sorting utility
+import { sortOperationValue } from '@/utils/sortUtils';
 
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
@@ -39,10 +39,10 @@ const OperationsTable: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [yearFilter, setYearFilter] = useState('all');
   const [monthFilter, setMonthFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState(''); // Add search query state
+  const [searchQuery, setSearchQuery] = useState('');
   const [isValueAscending, setIsValueAscending] = useState<boolean | null>(
     null
-  ); // Add state for sorting order
+  );
 
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
@@ -75,7 +75,6 @@ const OperationsTable: React.FC = () => {
     },
   });
 
-  // Calculate filtered operations and totals
   const { currentOperations, filteredTotals } = useMemo(() => {
     const filteredOps = filteredOperations(
       operations,
@@ -84,18 +83,15 @@ const OperationsTable: React.FC = () => {
       monthFilter
     );
 
-    // Filter operations by search query
     const searchedOps = filterOperationsBySearch(
       filteredOps || [],
       searchQuery
     );
 
-    // Sort operations by date in descending order (newest first)
     const dateSortedOps = searchedOps.sort((a, b) => {
       return b.fecha_operacion.localeCompare(a.fecha_operacion);
     });
 
-    // If additional sorting is needed, apply it after date sorting
     const sortedOps =
       isValueAscending !== null
         ? sortOperationValue(dateSortedOps, isValueAscending)

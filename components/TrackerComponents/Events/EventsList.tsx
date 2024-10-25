@@ -40,7 +40,9 @@ const EventsList: React.FC = () => {
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center">
       {displayedEvents.length === 0 ? (
-        <p className="text-center text-gray-500">No hay eventos programados.</p>
+        <p className="text-[20px] xl:text-[20px] 2xl:text-[22px] text-center font-semibold">
+          No hay eventos programados.
+        </p>
       ) : (
         displayedEvents.map((event: Event) => (
           <div

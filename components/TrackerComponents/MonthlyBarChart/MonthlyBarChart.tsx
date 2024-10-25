@@ -110,7 +110,7 @@ const MonthlyBarChart: React.FC = () => {
         <Loader />
       ) : (
         <>
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+          <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold mb-6 text-center">
             Honorarios Netos Mensuales
           </h2>
           <div className="h-80 w-full">

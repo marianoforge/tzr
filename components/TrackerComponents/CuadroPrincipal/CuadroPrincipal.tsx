@@ -79,7 +79,7 @@ const CuadroPrincipal = () => {
         <Loader />
       ) : (
         <div>
-          <h2 className="text-2xl font-bold mb-4 text-center">
+          <h2 className="text-2xl lg:text-[24px] font-bold mb-4 text-center">
             Cuadro Tipos de Operaciones
           </h2>
           {operations.length === 0 ? (

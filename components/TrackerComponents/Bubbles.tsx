@@ -111,8 +111,8 @@ const Bubbles = () => {
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md min-h-[450px] flex justify-center items-center">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-4">
+    <div className="bg-white p-4 rounded-xl shadow-md min-h-[465px] flex justify-center items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 gap-4 w-[90%]">
         {bubbleData.map((data, index) => (
           <div
             key={index}
@@ -120,16 +120,16 @@ const Bubbles = () => {
           >
             {/* Heroicons Info icon with tooltip */}
             <InformationCircleIcon
-              className="absolute top-1 right-1 text-white stroke-2 h-4 w-4 cursor-pointer z-10"
+              className="absolute top-1 right-1 text-white stroke-2 h-6 w-6 lg:h-4 lg:w-4 cursor-pointer z-10"
               data-tooltip-id={`tooltip-${index}`}
               data-tooltip-content={data.tooltip}
             />
 
-            <p className="text-xl text-white lg:text-lg xl:text-lg 2xl:text-base lg:px-1 font-semibold h-1/2 items-center justify-center flex">
+            <p className="text-lg text-white sm:text-md lg:text-[16px] xl:text-sm 2xl:text-[15px] lg:px-1 font-semibold h-1/2 items-center justify-center flex px-3 2xl:px-2">
               {data.title}
             </p>
             <p
-              className={`text-[40px] lg:text-[30px] xl:text-[20px] 2xl:text-[22px] font-bold ${data.textColor} h-1/2 items-center justify-center flex`}
+              className={`text-[40px] sm:text-[28px] lg:text-[18px] xl:text-md 2xl:text-[20px] font-bold ${data.textColor} h-1/2 items-center justify-center flex`}
             >
               {data.figure}
             </p>
