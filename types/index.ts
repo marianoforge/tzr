@@ -155,6 +155,9 @@ export interface ModalProps {
   onClose: () => void;
   message: string;
   onAccept: () => void;
+  secondButtonText?: string;
+  onSecondButtonClick?: () => void;
+  className?: string;
 }
 
 export interface UserInfoProps {

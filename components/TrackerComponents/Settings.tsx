@@ -7,6 +7,9 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { cleanString } from '@/utils/cleanString';
 import { formatNumber } from '@/utils/formatNumber';
 import SkeletonLoader from './CommonComponents/SkeletonLoader';
+import ModalCancel from './CommonComponents/Modal';
+import ModalUpdate from './CommonComponents/Modal';
+import router from 'next/router';
 
 const Settings = () => {
   const { userID } = useAuthStore();
@@ -26,10 +29,13 @@ const Settings = () => {
     numeroTelefono: false,
     objetivoAnual: false,
   });
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cancelMessage, setCancelMessage] = useState<string | null>(null);
   const [isCanceling, setIsCanceling] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
+  const [openModalCancel, setOpenModalCancel] = useState(false);
+  const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
   const { data: userDataQuery, isLoading: isLoadingQuery } = useQuery({
     queryKey: ['userData', userID],
@@ -103,13 +109,14 @@ const Settings = () => {
     setErrorMessage(null);
     try {
       const response = await axios.put(`/api/users/${userID}`, {
-        firstName: cleanString(firstName),
-        lastName: cleanString(lastName),
+        firstName: firstName,
+        lastName: lastName,
         agenciaBroker: cleanString(agenciaBroker),
         numeroTelefono: cleanString(numeroTelefono),
         objetivoAnual,
       });
       if (response.status === 200) {
+        setOpenModalUpdate(true);
         setSuccess('Datos actualizados correctamente');
         queryClient.invalidateQueries({ queryKey: ['userData', userID] });
       }
@@ -126,9 +133,11 @@ const Settings = () => {
   const handleSave = (field: keyof typeof editMode) => {
     toggleEditMode(field);
   };
+
   if (isLoading || isLoadingQuery) {
     return <SkeletonLoader height={760} count={1} />;
   }
+
   return (
     <div>
       {isLoadingQuery ? (
@@ -141,8 +150,8 @@ const Settings = () => {
           <h2 className="text-2xl mb-4 text-center font-semibold">
             Datos Personales
           </h2>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          {success && <p className="text-green-500 mb-4">{success}</p>}
+          {/* {error && <p className="text-red-500 mb-4">{error}</p>}
+          {success && <p className="text-green-500 mb-4">{success}</p>} */}
           <div className="flex lg:flex-row flex-col items-center justify-center lg:gap-10 w-full mt-10">
             <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-end">
               <input
@@ -343,7 +352,7 @@ const Settings = () => {
               </>
             )} */}
             <button
-              onClick={handleCancelSubscription}
+              onClick={() => setOpenModalCancel(true)}
               className={`px-4 py-2 rounded w-[200px] ${
                 subscriptionId
                   ? 'bg-lightBlue text-white hover:bg-mediumBlue'
@@ -359,6 +368,32 @@ const Settings = () => {
       </div>
 
       {errorMessage && <p className="error">{errorMessage}</p>}
+
+      <ModalCancel
+        isOpen={openModalCancel}
+        onClose={() => setOpenModalCancel(false)}
+        onAccept={() => {
+          setOpenModalCancel(false);
+        }}
+        message="Desde que cancelas la suscripción, no podrás acceder a Realtor Trackpro"
+        secondButtonText="Cancelar Suscripción"
+        onSecondButtonClick={() => {
+          setOpenModalCancel(false);
+          handleCancelSubscription();
+          router.push('/');
+        }}
+        className="w-[760px]"
+      />
+
+      <ModalUpdate
+        isOpen={openModalUpdate}
+        onClose={() => setOpenModalUpdate(false)}
+        onAccept={() => {
+          setOpenModalUpdate(false);
+        }}
+        message={errorMessage ? errorMessage : success}
+        className="w-[760px]"
+      />
     </div>
   );
 };

@@ -10,7 +10,7 @@ import { TeamMemberRequestBody } from '@/types';
 
 import Button from '../FormComponents/Button';
 import Input from '../FormComponents/Input';
-import ModalOK from '../CommonComponents/ModalOK';
+import ModalOK from '../CommonComponents/Modal';
 
 interface AddUserModalProps {
   onClose: () => void;

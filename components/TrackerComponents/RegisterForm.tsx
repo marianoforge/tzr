@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 
-import ModalOK from '@/components/TrackerComponents/CommonComponents/ModalOK';
+import ModalOK from '@/components/TrackerComponents/CommonComponents/Modal';
 import { cleanString } from '@/utils/cleanString';
 import Input from '@/components/TrackerComponents/FormComponents/Input';
 import Button from '@/components/TrackerComponents/FormComponents/Button';

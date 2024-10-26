@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import ModalOK from '@/components/TrackerComponents/CommonComponents/ModalOK';
+import ModalOK from '@/components/TrackerComponents/CommonComponents/Modal';
 import { useAuthStore } from '@/stores/authStore';
 import Input from '@/components/TrackerComponents/FormComponents/Input';
 import TextArea from '@/components/TrackerComponents/FormComponents/TextArea';

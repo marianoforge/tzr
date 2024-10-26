@@ -12,7 +12,7 @@ import Button from '@/components/TrackerComponents/FormComponents/Button';
 import { createEvent } from '@/lib/api/eventsApi'; // Import the createEvent function from the events API
 import { EventFormData } from '@/types';
 
-import ModalOK from '../CommonComponents/ModalOK';
+import ModalOK from '../CommonComponents/Modal';
 
 // Esquema de validación con Yup
 const schema = yup.object().shape({
