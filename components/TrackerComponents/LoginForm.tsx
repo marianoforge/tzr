@@ -58,7 +58,6 @@ const LoginForm = () => {
         const userData = userDoc.data();
         if (!userData.stripeSubscriptionId) {
           setOpenLicensesModal(true);
-          console.log('No subscription');
         } else {
           router.push('/dashboard');
         }
