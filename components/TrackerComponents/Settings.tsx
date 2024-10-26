@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useAuthStore } from '@/stores/authStore';
-import { useUserDataStore } from '@/stores/userDataStore';
 import { cleanString } from '@/utils/cleanString';
 import { formatNumber } from '@/utils/formatNumber';
 import SkeletonLoader from './CommonComponents/SkeletonLoader';
