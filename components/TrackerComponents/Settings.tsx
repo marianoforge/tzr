@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { cleanString } from '@/utils/cleanString';
 import { formatNumber } from '@/utils/formatNumber';
+import SkeletonLoader from './SkeletonLoader';
 
 const Settings = () => {
   const { userID } = useAuthStore();
@@ -44,19 +45,7 @@ const Settings = () => {
     );
   }, [userDataQuery]);
 
-  // const { data: customerData } = useQuery({
-  //   queryKey: ['customerData', userID],
-  //   queryFn: async () => {
-  //     const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
-  //     const response = await axios.get(
-  //       `/api/stripe/customer_info?customer_id=${customerId}`
-  //     );
-  //     return response.data;
-  //   },
-  //   enabled: !!userID,
-  // });
-
-  const { data: subscriptionData } = useQuery({
+  const { data: subscriptionData, isLoading } = useQuery({
     queryKey: ['subscriptionData', userID],
     queryFn: async () => {
       if (!subscriptionId) {
@@ -93,9 +82,9 @@ const Settings = () => {
 
       if (response.status === 200) {
         setCancelMessage('Suscripción cancelada exitosamente.');
-        // Add a PUT request to remove stripeSubscriptionId
+
         await axios.put(`/api/users/${userID}`, {
-          stripeSubscriptionId: null, // Set stripeSubscriptionId to null
+          stripeSubscriptionId: null,
         });
         queryClient.invalidateQueries({ queryKey: ['userData', userID] });
       } else {
@@ -137,7 +126,9 @@ const Settings = () => {
   const handleSave = (field: keyof typeof editMode) => {
     toggleEditMode(field);
   };
-
+  if (isLoading || isLoadingQuery) {
+    return <SkeletonLoader height={760} count={1} />;
+  }
   return (
     <div>
       {isLoadingQuery ? (

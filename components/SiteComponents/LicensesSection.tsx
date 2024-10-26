@@ -1,7 +1,11 @@
 // CardsSection.tsx
 import { useRouter } from 'next/router';
 
-const CardsSection = () => {
+interface LicensesSectionProps {
+  onClose: () => void;
+}
+
+const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
   const router = useRouter();
 
   const PRICE_ID_STARTER = 'price_1QAASbJkIrtwQiz3PcJiJebj';
@@ -9,10 +13,16 @@ const CardsSection = () => {
   const PRICE_ID_ENTERPRISE = 'price_1QAAT6JkIrtwQiz3J0HLDRTQ';
 
   const handleLicenseSelect = (priceId: string) => {
-    router.push({
-      pathname: '/register',
-      query: { priceId },
-    });
+    // Almacena el priceId en el almacenamiento local
+    localStorage.setItem('selectedPriceId', priceId);
+
+    // Check if the current path is not '/register' before redirecting
+    if (router.pathname !== '/register') {
+      router.push('/register');
+    }
+
+    // Close the modal
+    onClose();
   };
 
   return (
@@ -77,4 +87,4 @@ const CardsSection = () => {
   );
 };
 
-export default CardsSection;
+export default LicensesSection;

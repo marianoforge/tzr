@@ -16,7 +16,7 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
         <h1 className="text-lg mb-6 text-mediumBlue uppercase">
           Por favor elije una opción para registrarte
         </h1>
-        <LicensesSection />
+        <LicensesSection onClose={onClose} />
         <button
           onClick={onClose}
           className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-bold w-[200px] mt-4"

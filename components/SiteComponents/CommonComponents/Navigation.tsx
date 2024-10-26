@@ -44,7 +44,7 @@ const Navigation = () => {
             <Link href={item.link} key={index}>
               <button
                 className="px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white"
-                onClick={item.onClick} // Asignar el evento onClick
+                onClick={item.onClick}
               >
                 {item.name}
               </button>

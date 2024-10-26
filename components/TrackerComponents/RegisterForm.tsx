@@ -14,6 +14,7 @@ import Button from '@/components/TrackerComponents/FormComponents/Button';
 import { RegisterData } from '@/types';
 import { createSchema } from '@/schemas/registerFormSchema';
 import Select from '@/components/TrackerComponents/FormComponents/Select';
+import LicensesModal from '../SiteComponents/LicensesModal';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -21,13 +22,14 @@ const stripePromise = loadStripe(
 
 const RegisterForm = () => {
   const router = useRouter();
-  const { googleUser, email, uid, priceId } = router.query; // Capturar priceId directamente de la query
+  const { googleUser, email, uid } = router.query; // Capturar priceId directamente de la query
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
+  const [openLicensesModal, setOpenLicensesModal] = useState(false);
 
   const schema = createSchema(googleUser === 'true');
   const {
@@ -60,6 +62,13 @@ const RegisterForm = () => {
     }
   }, [googleUser, email, setValue]);
 
+  useEffect(() => {
+    const storedPriceId = localStorage.getItem('selectedPriceId');
+    if (!storedPriceId) {
+      setOpenLicensesModal(true);
+    }
+  }, []);
+
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     setLoading(true);
     if (!csrfToken) {
@@ -69,7 +78,8 @@ const RegisterForm = () => {
     }
 
     try {
-      // 1. Registrar el usuario
+      const storedPriceId = localStorage.getItem('selectedPriceId');
+
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -81,9 +91,8 @@ const RegisterForm = () => {
           agenciaBroker: cleanString(data.agenciaBroker),
           googleUser: googleUser === 'true',
           uid: googleUser === 'true' ? uid : undefined,
-          priceId: priceId || null, // Si hay un priceId, lo usamos, de lo contrario null
-          // trialEndsAt solo si NO está comprando una licencia (sin priceId)
-          ...(priceId
+          priceId: storedPriceId || null,
+          ...(storedPriceId
             ? {}
             : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
           password: googleUser !== 'true' ? data.password : undefined,
@@ -97,15 +106,14 @@ const RegisterForm = () => {
         throw new Error(errorData.message || 'Error al registrar usuario');
       }
 
-      if (priceId) {
-        // 2. Si se seleccionó una licencia, crear la sesión de Stripe y redirigir
+      if (storedPriceId) {
         const stripeRes = await fetch('/api/checkout/checkout_session', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            priceId: priceId,
+            priceId: storedPriceId,
           }),
         });
 
@@ -123,7 +131,6 @@ const RegisterForm = () => {
           throw new Error('No se pudo obtener el sessionId para Stripe.');
         }
       } else {
-        // 3. Si no seleccionaron licencia, terminar el registro y redirigir al dashboard
         setModalMessage('Registro exitoso. Ahora puedes iniciar sesión.');
         setIsModalOpen(true);
         router.push('/dashboard');
@@ -269,6 +276,11 @@ const RegisterForm = () => {
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
         onAccept={() => router.push('/login')}
+      />
+
+      <LicensesModal
+        isOpen={openLicensesModal}
+        onClose={() => setOpenLicensesModal(false)}
       />
     </div>
   );
