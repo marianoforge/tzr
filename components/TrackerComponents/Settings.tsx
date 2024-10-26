@@ -28,6 +28,7 @@ const Settings = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cancelMessage, setCancelMessage] = useState<string | null>(null);
   const [isCanceling, setIsCanceling] = useState(false);
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
 
   const { data: userDataQuery, isLoading: isLoadingQuery } = useQuery({
     queryKey: ['userData', userID],
@@ -37,22 +38,40 @@ const Settings = () => {
     },
     enabled: !!userID,
   });
+  useEffect(() => {
+    setSubscriptionId(
+      userDataQuery?.stripeSubscriptionId ?? 'No Subscription ID'
+    );
+  }, [userDataQuery]);
 
-  const subscriptionId = userData?.stripeSubscriptionId ?? 'No Subscription ID';
-  // const { data: customerData } = useQuery({
-  //   queryKey: ['customerData', userID],
-  //   queryFn: async () => {
-  //     const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
-  //     const response = await axios.get(
-  //       `/api/stripe/customer_info?customer_id=${customerId}`
-  //     );
-  //     return response.data;
-  //   },
-  //   enabled: !!userID,
-  // });
+  const { data: customerData } = useQuery({
+    queryKey: ['customerData', userID],
+    queryFn: async () => {
+      const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
+      const response = await axios.get(
+        `/api/stripe/customer_info?customer_id=${customerId}`
+      );
+      return response.data;
+    },
+    enabled: !!userID,
+  });
+
+  const { data: subscriptionData } = useQuery({
+    queryKey: ['subscriptionData', userID],
+    queryFn: async () => {
+      if (!subscriptionId) {
+        throw new Error('No Subscription ID');
+      }
+      const response = await axios.get(
+        `/api/stripe/subscription_info?subscription_id=${subscriptionId}`
+      );
+      return response.data;
+    },
+    enabled: !!userID && !!subscriptionId,
+  });
 
   // console.log(customerData ?? 'No Customer Data');
-  // console.log(subscriptionId);
+  // console.log(subscriptionData ?? 'No Subscription Data');
 
   useEffect(() => {
     if (userDataQuery) {
@@ -240,10 +259,10 @@ const Settings = () => {
                 type="text"
                 placeholder="Objetivo de Anual de Ventas"
                 name="objetivoAnual"
-                value={`$${formatNumber(objetivoAnual || 0)}`} // Default to 0 if empty
+                value={`${formatNumber(objetivoAnual) ?? 'Objetivo anual no definido'}`}
                 onChange={(e) => {
                   const value = e.target.value.replace(/[^0-9]/g, '');
-                  setObjetivoAnual(Number(value) || 0); // Default to 0 if conversion fails
+                  setObjetivoAnual(Number(value) || 0);
                 }}
                 className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
                 disabled={!editMode.objetivoAnual}
@@ -265,7 +284,7 @@ const Settings = () => {
           <div className="flex items-center w-[80%] justify-end ml-2 mt-6">
             <button
               type="submit"
-              className="w-[200px] bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue font-semibold"
+              className="w-[200px] bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue"
             >
               Actualizar
             </button>
@@ -273,33 +292,81 @@ const Settings = () => {
         </form>
       )}
 
+      {/* SUBSCRIPTION */}
       <div className="bg-white p-6 mt-10 rounded-xl shadow-md w-[100%]">
-        <h3 className="text-xl font-semibold">Manejo de la Suscripción</h3>
-        <div className="flex items-center justify-center gap-4">
-          {subscriptionId && (
-            <>
-              <button
-                onClick={handleCancelSubscription}
-                className="bg-mediumBlue text-white px-4 py-2 rounded hover:bg-lightBlue"
-                disabled={isCanceling}
-              >
-                {isCanceling ? 'Actualizando...' : 'Actualizar suscripción'}
-              </button>
-              {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
-            </>
-          )}
-          <button
-            onClick={handleCancelSubscription}
-            className={`px-4 py-2 rounded ${
-              subscriptionId
-                ? 'bg-redAccent text-white hover:bg-redAccent/80'
-                : 'bg-mutedBlue text-white cursor-not-allowed'
-            }`}
-            disabled={!subscriptionId || isCanceling}
-          >
-            {isCanceling ? 'Cancelando...' : 'Cancelar suscripción'}
-          </button>
-          {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+        <h3 className="text-2xl font-semibold text-center">Suscripción</h3>
+        <div className="flex gap-20 justify-center items-center">
+          <div className="flex flex-col gap-2 justify-center items-center">
+            <ul className="mb-8 mt-4 font-semibold text-md flex flex-col gap-2 text-mediumBlue border-dashed border-2 border-mediumBlue rounded-lg p-4 w-[400px]">
+              <li>
+                Plan Activo:{' '}
+                {subscriptionData?.plan?.active ? (
+                  <span className="text-greenAccent font-semibold">Sí</span>
+                ) : (
+                  <span className="text-red-500">No</span>
+                )}
+              </li>
+              <li>
+                Monto del Plan: ${subscriptionData?.plan?.amount_decimal / 100}{' '}
+                (USD)
+              </li>
+              <li>
+                Intervalo del Plan:{' '}
+                {subscriptionData?.plan?.interval === 'month'
+                  ? 'Mensual'
+                  : 'Anual'}
+              </li>
+              <li>
+                Estado:{' '}
+                {subscriptionData?.status === 'trialing'
+                  ? 'Periodo de Prueba'
+                  : 'Activo'}
+              </li>
+              <li>
+                Inicio del Periodo de Prueba:{' '}
+                {subscriptionData?.trial_start
+                  ? new Date(
+                      subscriptionData.trial_start * 1000
+                    ).toLocaleDateString()
+                  : 'N/A'}
+              </li>
+              <li>
+                Fin del Periodo de Prueba:{' '}
+                {subscriptionData?.trial_end
+                  ? new Date(
+                      subscriptionData.trial_end * 1000
+                    ).toLocaleDateString()
+                  : 'N/A'}
+              </li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col items-center justify-center gap-4">
+            {/* {subscriptionId && (
+              <>
+                <button
+                  onClick={handleCancelSubscription}
+                  className="bg-mediumBlue text-white px-4 py-2 rounded hover:bg-lightBlue w-[200px]"
+                  disabled={isCanceling}
+                >
+                  {isCanceling ? 'Actualizando...' : 'Actualizar suscripción'}
+                </button>
+                {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+              </>
+            )} */}
+            <button
+              onClick={handleCancelSubscription}
+              className={`px-4 py-2 rounded w-[200px] ${
+                subscriptionId
+                  ? 'bg-lightBlue text-white hover:bg-mediumBlue'
+                  : 'bg-mutedBlue text-white cursor-not-allowed'
+              }`}
+              disabled={!subscriptionId || isCanceling}
+            >
+              {isCanceling ? 'Cancelando...' : 'Cancelar suscripción'}
+            </button>
+            {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+          </div>
         </div>
       </div>
 
