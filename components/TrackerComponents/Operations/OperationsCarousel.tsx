@@ -1,6 +1,6 @@
 import Slider from 'react-slick';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 import { formatNumber } from '@/utils/formatNumber';
@@ -16,6 +16,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/types';
 import { useUserDataStore } from '@/stores/userDataStore';
+import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 
 import Loader from '../Loader';
 
@@ -30,6 +31,7 @@ const OperationsCarousel: React.FC = () => {
     slidesToScroll: 1,
   };
 
+  // Hooks should be called at the top level of the component
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
   const { userData } = useUserDataStore();
@@ -39,6 +41,7 @@ const OperationsCarousel: React.FC = () => {
     null
   );
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { data: operations = [], isLoading } = useQuery({
     queryKey: ['operations', userID],
@@ -64,6 +67,24 @@ const OperationsCarousel: React.FC = () => {
     },
   });
 
+  // Ensure hooks are not inside any conditionals
+  const handleDeleteClick = useCallback(
+    (id: string) => {
+      deleteOperationMutation.mutate(id);
+    },
+    [deleteOperationMutation]
+  );
+
+  const handleDeleteButtonClick = useCallback((operation: Operation) => {
+    setSelectedOperation(operation); // Set the selected operation
+    setIsDeleteModalOpen(true); // Open the delete modal
+  }, []);
+
+  const handleEditClick = (operation: Operation) => {
+    setIsEditModalOpen(true);
+    setSelectedOperation(operation);
+  };
+
   const searchedOperations = searchQuery
     ? operations.filter((operation: Operation) =>
         operation.direccion_reserva
@@ -79,15 +100,6 @@ const OperationsCarousel: React.FC = () => {
   const handleEstadoChange = (id: string, currentEstado: string) => {
     const newEstado = currentEstado === 'En Curso' ? 'Cerrada' : 'En Curso';
     updateEstadoMutation.mutate({ id, data: { estado: newEstado } });
-  };
-
-  const handleDeleteClick = (id: string) => {
-    deleteOperationMutation.mutate(id);
-  };
-
-  const handleEditClick = (operation: Operation) => {
-    setIsEditModalOpen(true);
-    setSelectedOperation(operation);
   };
 
   return (
@@ -162,7 +174,7 @@ const OperationsCarousel: React.FC = () => {
                       <PencilIcon className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={() => handleDeleteClick(operacion.id)}
+                      onClick={() => handleDeleteButtonClick(operacion)}
                       className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
                     >
                       <TrashIcon className="text-redAccent h-5 w-5" />
@@ -211,6 +223,19 @@ const OperationsCarousel: React.FC = () => {
           currentUser={userData!}
         />
       )}
+      <ModalDelete
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        message="¿Estás seguro de querer eliminar esta operación?"
+        onSecondButtonClick={() => {
+          if (selectedOperation?.id) {
+            handleDeleteClick(selectedOperation.id);
+            setIsDeleteModalOpen(false);
+          }
+        }}
+        secondButtonText="Borrar Operación"
+        className="w-[450px]"
+      />
     </>
   );
 };

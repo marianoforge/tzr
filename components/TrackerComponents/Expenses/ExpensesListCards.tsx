@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
@@ -20,7 +20,7 @@ import {
 } from '@/lib/api/expensesApi';
 
 import Loader from '../Loader';
-
+import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 import ExpensesModal from './ExpensesModal';
 
 const ExpensesListCards: React.FC = () => {
@@ -37,6 +37,8 @@ const ExpensesListCards: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -85,10 +87,17 @@ const ExpensesListCards: React.FC = () => {
     },
   });
 
-  // Manejar eliminación
-  const handleDeleteClick = (id: string | undefined) => {
-    if (id) mutationDelete.mutate(id);
-  };
+  const handleDeleteClick = useCallback(
+    (id: string) => {
+      mutationDelete.mutate(id);
+    },
+    [mutationDelete]
+  );
+
+  const handleDeleteButtonClick = useCallback((expense: Expense) => {
+    setSelectedExpense(expense); // Set the selected operation
+    setIsDeleteModalOpen(true); // Open the delete modal
+  }, []);
 
   // Manejar la edición
   const handleEditClick = (expense: Expense) => {
@@ -162,7 +171,7 @@ const ExpensesListCards: React.FC = () => {
                       <PencilIcon className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={() => handleDeleteClick(expense.id)}
+                      onClick={() => handleDeleteButtonClick(expense)}
                       className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
                     >
                       <TrashIcon className="h-5 w-5" />
@@ -182,6 +191,19 @@ const ExpensesListCards: React.FC = () => {
           )}
         </>
       )}
+      <ModalDelete
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        message="¿Estás seguro de querer eliminar esta operación?"
+        onSecondButtonClick={() => {
+          if (selectedExpense?.id) {
+            handleDeleteClick(selectedExpense.id);
+            setIsDeleteModalOpen(false);
+          }
+        }}
+        secondButtonText="Borrar Operación"
+        className="w-[450px]"
+      />
     </div>
   );
 };

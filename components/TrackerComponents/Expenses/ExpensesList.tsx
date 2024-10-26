@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -17,7 +17,7 @@ import useFilteredExpenses from '@/hooks/useFilteredExpenses';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 
 import SkeletonLoader from '../CommonComponents/SkeletonLoader';
-
+import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 import ExpensesModal from './ExpensesModal';
 
 const ExpensesList = () => {
@@ -28,6 +28,8 @@ const ExpensesList = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -74,9 +76,17 @@ const ExpensesList = () => {
     },
   });
 
-  const handleDeleteClick = (id: string | undefined) => {
-    if (id) mutationDelete.mutate(id);
-  };
+  const handleDeleteClick = useCallback(
+    (id: string) => {
+      mutationDelete.mutate(id);
+    },
+    [mutationDelete]
+  );
+
+  const handleDeleteButtonClick = useCallback((expense: Expense) => {
+    setSelectedExpense(expense); // Set the selected operation
+    setIsDeleteModalOpen(true); // Open the delete modal
+  }, []);
 
   const handleEditClick = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -211,7 +221,7 @@ const ExpensesList = () => {
                       <PencilIcon className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={() => handleDeleteClick(expense.id)}
+                      onClick={() => handleDeleteButtonClick(expense)}
                       className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
                     >
                       <TrashIcon className="h-5 w-5" />
@@ -263,6 +273,19 @@ const ExpensesList = () => {
           onExpenseUpdate={handleExpenseUpdate}
         />
       )}
+      <ModalDelete
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        message="¿Estás seguro de querer eliminar esta operación?"
+        onSecondButtonClick={() => {
+          if (selectedExpense?.id) {
+            handleDeleteClick(selectedExpense.id);
+            setIsDeleteModalOpen(false);
+          }
+        }}
+        secondButtonText="Borrar Operación"
+        className="w-[450px]"
+      />
     </div>
   );
 };

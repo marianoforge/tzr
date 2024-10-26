@@ -229,9 +229,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   )}
                 </p>
                 {/* Botones de acción (Editar y Eliminar) */}
-                {usersData?.some(
-                  (user: UserWithOperations) => user.uid === usuario.id
-                ) ? null : (
+                {usuario.id !== currentUser.uid && ( // Check if the user is not the current user
                   <div className="flex w-full justify-center gap-8">
                     <button
                       onClick={() => handleEditClick(usuario)}
