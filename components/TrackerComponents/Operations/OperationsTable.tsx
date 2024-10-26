@@ -27,6 +27,7 @@ import { sortOperationValue } from '@/utils/sortUtils';
 
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
+import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 
 const OperationsTable: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -45,6 +46,7 @@ const OperationsTable: React.FC = () => {
   );
   const [operationTypeFilter, setOperationTypeFilter] = useState('all'); // New state for operation type filter
   const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null); // New state for date sort order
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
@@ -200,6 +202,11 @@ const OperationsTable: React.FC = () => {
     },
     [deleteMutation]
   );
+
+  const handleDeleteButtonClick = useCallback((operation: Operation) => {
+    setSelectedOperation(operation); // Set the selected operation
+    setIsDeleteModalOpen(true); // Open the delete modal
+  }, []);
 
   const handleEditClick = useCallback((operation: Operation) => {
     setSelectedOperation(operation);
@@ -487,7 +494,7 @@ const OperationsTable: React.FC = () => {
                 </td>
                 <td className="md:before:content-none">
                   <button
-                    onClick={() => handleDeleteClick(operacion.id)}
+                    onClick={() => handleDeleteButtonClick(operacion)} // Use the new handler
                     className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
                   >
                     <TrashIcon className="text-redAccent h-5 w-5" />
@@ -622,6 +629,20 @@ const OperationsTable: React.FC = () => {
             operation={viewOperation}
           />
         )}
+
+        <ModalDelete
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          message="¿Estás seguro de querer eliminar esta operación?"
+          onSecondButtonClick={() => {
+            if (selectedOperation?.id) {
+              handleDeleteClick(selectedOperation.id);
+              setIsDeleteModalOpen(false);
+            }
+          }}
+          secondButtonText="Borrar Operación"
+          className="w-[450px]"
+        />
       </div>
     </div>
   );

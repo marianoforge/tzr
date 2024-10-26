@@ -15,7 +15,7 @@ const Modal: React.FC<ModalProps> = ({
 
   const handleAccept = () => {
     onClose();
-    onAccept();
+    onAccept?.();
   };
 
   return (
