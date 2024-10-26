@@ -13,7 +13,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { formatNumber } from '@/utils/formatNumber';
 import { currentYearOperations } from '@/utils/currentYearOps';
 import 'react-tooltip/dist/react-tooltip.css';
-import SkeletonLoader from './SkeletonLoader';
+import SkeletonLoader from './CommonComponents/SkeletonLoader';
 import { Tooltip } from 'react-tooltip';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { useRouter } from 'next/router'; // Importa useRouter de next/router
 
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 interface OperationsContainerProps {
   isLoading: boolean;

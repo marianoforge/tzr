@@ -17,7 +17,7 @@ import { COLORS, MAX_BAR_SIZE } from '@/lib/constants';
 import { formatOperationsData } from '@/utils/formatOperationsData';
 import { Operation } from '@/types';
 
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/utils/formatNumber';
 
 const CustomTooltip: React.FC<{

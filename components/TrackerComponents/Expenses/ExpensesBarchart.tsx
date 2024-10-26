@@ -21,7 +21,7 @@ import { Expense } from '@/types';
 import { formatNumber } from '@/utils/formatNumber';
 import { COLORS } from '@/lib/constants';
 
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 const CustomTooltip: React.FC<{
   active?: boolean;

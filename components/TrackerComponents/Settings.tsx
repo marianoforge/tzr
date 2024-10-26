@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { cleanString } from '@/utils/cleanString';
 import { formatNumber } from '@/utils/formatNumber';
-import SkeletonLoader from './SkeletonLoader';
+import SkeletonLoader from './CommonComponents/SkeletonLoader';
 
 const Settings = () => {
   const { userID } = useAuthStore();

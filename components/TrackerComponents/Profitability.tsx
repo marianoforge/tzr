@@ -9,7 +9,7 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/utils/calculations';
 import { currentYearOperations } from '@/utils/currentYearOps';
 
-import SkeletonLoader from './SkeletonLoader';
+import SkeletonLoader from './CommonComponents/SkeletonLoader';
 import { Tooltip } from 'react-tooltip';
 
 import { InformationCircleIcon } from '@heroicons/react/24/outline';

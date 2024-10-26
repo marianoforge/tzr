@@ -16,7 +16,7 @@ import { Expense } from '@/types';
 import useFilteredExpenses from '@/hooks/useFilteredExpenses';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 import ExpensesModal from './ExpensesModal';
 

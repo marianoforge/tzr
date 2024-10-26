@@ -284,10 +284,10 @@ const OperationsTableTent: React.FC = () => {
             <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex items-center justify-center`}
-                onClick={toggleDateSortOrder} // Add onClick handler
+                onClick={toggleDateSortOrder}
               >
                 Fecha de Operación
-                <span className="ml-2 text-xs text-mediumBlue inline-flex items-center justify-center ">
+                <span className="ml-1 text-xs text-mediumBlue items-center justify-center">
                   {isDateAscending ? (
                     <ArrowUpIcon
                       className="h-4 w-4 text-mediumBlue"
@@ -378,16 +378,16 @@ const OperationsTableTent: React.FC = () => {
                   index % 2 === 0 ? 'bg-white' : 'bg-mediumBlue/10'
                 } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-[75px] max-h-[75px]`}
               >
-                <td className="py-3 px-4 before:content-['Fecha:'] md:before:content-none">
+                <td className="py-3 px-2 before:content-['Fecha:'] md:before:content-none">
                   {formatDate(operacion.fecha_operacion)}
                 </td>
-                <td className="py-3 px-4 before:content-['Dirección:'] md:before:content-none">
+                <td className="py-3 px-2 text-sm before:content-['Dirección:'] md:before:content-none">
                   {operacion.direccion_reserva}
                 </td>
-                <td className="py-3 px-4 before:content-['Tipo:'] md:before:content-none">
+                <td className="py-3 px-2 before:content-['Tipo:'] md:before:content-none">
                   {operacion.tipo_operacion}
                 </td>
-                <td className="py-3 px-4 before:content-['Valor:'] md:before:content-none">
+                <td className="py-3 px-2 before:content-['Valor:'] md:before:content-none">
                   ${formatNumber(operacion.valor_reserva)}
                 </td>
 
@@ -399,19 +399,19 @@ const OperationsTableTent: React.FC = () => {
                   )}
                   %
                 </td> */}
-                <td className="py-3 px-4 before:content-['Puntas:'] md:before:content-none">
+                <td className="py-3 px-2 before:content-['Puntas:'] md:before:content-none">
                   {formatNumber(
                     Number(operacion.punta_vendedora) +
                       Number(operacion.punta_compradora)
                   )}
                 </td>
-                <td className="py-3 px-4 before:content-['Honorarios Agencia:'] md:before:content-none">
+                <td className="py-3 px-2 before:content-['Honorarios Agencia:'] md:before:content-none">
                   ${formatNumber(operacion.honorarios_broker)}
                 </td>
-                <td className="py-3 px-4 before:content-['Honorarios Netos:'] md:before:content-none">
+                <td className="py-3 px-2 before:content-['Honorarios Netos:'] md:before:content-none">
                   ${formatNumber(operacion.honorarios_asesor)}
                 </td>
-                <td className="py-3 px-4 md:before:content-none">
+                <td className="py-3 px-2 md:before:content-none">
                   <button
                     onClick={() =>
                       handleEstadoChange(operacion.id, operacion.estado)
@@ -457,7 +457,7 @@ const OperationsTableTent: React.FC = () => {
                     <TrashIcon className="text-redAccent h-5 w-5" />
                   </button>
                 </td>
-                <td className="md:before:content-none text-mediumBlue text-sm font-semibold">
+                <td className="md:before:content-none text-mediumBlue text-sm font-semibold pr-2">
                   <button
                     onClick={() => handleViewClick(operacion)}
                     className="text-mediumBlue hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"

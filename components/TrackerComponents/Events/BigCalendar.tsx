@@ -10,7 +10,7 @@ import { Event } from '@/types';
 import { useAuthStore } from '@/stores/authStore';
 import { fetchUserEvents } from '@/lib/api/eventsApi'; // Import fetchUserEvents API function
 
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 import EventModal from './EventModal';
 

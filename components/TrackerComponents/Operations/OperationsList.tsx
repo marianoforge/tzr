@@ -7,7 +7,7 @@ import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { auth } from '@/lib/firebase';
 import { Operation } from '@/types';
 
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 import OperationsTable from './OperationsTable';
 import OperationsContainer from './OperationsContainer';

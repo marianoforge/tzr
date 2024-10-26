@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { fetchUserEvents } from '@/lib/api/eventsApi'; // Asegúrate de tener esta función en tu eventsApi.ts
 import { Event } from '@/types';
 
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 const EventsList: React.FC = () => {
   const { userID } = useAuthStore();

@@ -17,8 +17,7 @@ import { COLORS, MAX_BAR_SIZE } from '@/lib/constants';
 import { formatOperationsData } from '@/utils/formatOperationsData';
 import { Operation } from '@/types';
 
-import Loader from '../Loader';
-import SkeletonLoader from '../SkeletonLoader';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/utils/formatNumber';
 
 const CustomTooltip: React.FC<{
@@ -107,40 +106,34 @@ const MonthlyBarChart: React.FC = () => {
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold mb-6 text-center">
-            Honorarios Netos Mensuales
-          </h2>
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} barSize={MAX_BAR_SIZE} barGap={5}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} />
-                <YAxis axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                <Bar
-                  dataKey="previousYear"
-                  fill={COLORS[1]}
-                  name="Año Anterior"
-                  maxBarSize={MAX_BAR_SIZE}
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  dataKey="currentYear"
-                  fill={COLORS[0]}
-                  name="Año Actual"
-                  maxBarSize={MAX_BAR_SIZE}
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </>
-      )}
+      <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold mb-6 text-center">
+        Honorarios Netos Mensuales
+      </h2>
+      <div className="h-80 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} barSize={MAX_BAR_SIZE} barGap={5}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <XAxis dataKey="month" axisLine={false} tickLine={false} />
+            <YAxis axisLine={false} tickLine={false} />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+            <Bar
+              dataKey="previousYear"
+              fill={COLORS[1]}
+              name="Año Anterior"
+              maxBarSize={MAX_BAR_SIZE}
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="currentYear"
+              fill={COLORS[0]}
+              name="Año Actual"
+              maxBarSize={MAX_BAR_SIZE}
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

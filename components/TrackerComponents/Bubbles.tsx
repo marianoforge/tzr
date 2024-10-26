@@ -5,7 +5,7 @@ import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { calculateTotals } from '@/utils/calculations';
-import SkeletonLoader from '@/components/TrackerComponents/SkeletonLoader';
+import SkeletonLoader from '@/components/TrackerComponents/CommonComponents/SkeletonLoader';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useAuthStore } from '@/stores/authStore';
 import { formatValue } from '@/utils/formatValue';

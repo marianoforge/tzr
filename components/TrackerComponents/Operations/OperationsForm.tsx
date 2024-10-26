@@ -18,7 +18,7 @@ import { useTeamMembers } from '@/hooks/useTeamMembers';
 import Select from '@/components/TrackerComponents/FormComponents/Select';
 import { formatDateForUser } from '@/utils/formatDateForUser';
 
-import ModalOK from '../ModalOK';
+import ModalOK from '../CommonComponents/ModalOK';
 
 type FormData = InferType<typeof schema>;
 

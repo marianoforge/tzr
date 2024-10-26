@@ -6,7 +6,7 @@ import {
   UserPlusIcon,
 } from '@heroicons/react/24/outline';
 
-import SkeletonLoader from '@/components/TrackerComponents/SkeletonLoader';
+import SkeletonLoader from '@/components/TrackerComponents/CommonComponents/SkeletonLoader';
 import { UserData, TeamMember, UserWithOperations } from '@/types';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { formatNumber } from '@/utils/formatNumber';
