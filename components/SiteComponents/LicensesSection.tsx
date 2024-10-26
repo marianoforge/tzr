@@ -2,7 +2,7 @@
 import { useRouter } from 'next/router';
 
 interface LicensesSectionProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
@@ -20,13 +20,14 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
     if (router.pathname !== '/register') {
       router.push('/register');
     }
-
     // Close the modal
-    onClose();
+    if (onClose) {
+      onClose();
+    }
   };
 
   return (
-    <div className=" flex flex-col justify-around items-center gap-20 pb-10 lg:flex-row">
+    <div className="flex flex-col justify-around items-center gap-20 pb-10 lg:flex-row">
       <div className="bg-white  p-6 border rounded-lg shadow-xl lg:min-w-[360px]">
         <h2 className="text-lg font-semibold">ASESOR</h2>
         <p>Everything you need to start selling.</p>
