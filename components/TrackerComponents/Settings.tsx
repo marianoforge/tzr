@@ -10,7 +10,7 @@ import { formatNumber } from '@/utils/formatNumber';
 const Settings = () => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
-  const { error, userData } = useUserDataStore();
+  const { error } = useUserDataStore();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [agenciaBroker, setAgenciaBroker] = useState('');
@@ -44,17 +44,17 @@ const Settings = () => {
     );
   }, [userDataQuery]);
 
-  const { data: customerData } = useQuery({
-    queryKey: ['customerData', userID],
-    queryFn: async () => {
-      const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
-      const response = await axios.get(
-        `/api/stripe/customer_info?customer_id=${customerId}`
-      );
-      return response.data;
-    },
-    enabled: !!userID,
-  });
+  // const { data: customerData } = useQuery({
+  //   queryKey: ['customerData', userID],
+  //   queryFn: async () => {
+  //     const customerId = userDataQuery?.stripeCustomerId ?? 'No Customer ID';
+  //     const response = await axios.get(
+  //       `/api/stripe/customer_info?customer_id=${customerId}`
+  //     );
+  //     return response.data;
+  //   },
+  //   enabled: !!userID,
+  // });
 
   const { data: subscriptionData } = useQuery({
     queryKey: ['subscriptionData', userID],
@@ -69,9 +69,6 @@ const Settings = () => {
     },
     enabled: !!userID && !!subscriptionId,
   });
-
-  // console.log(customerData ?? 'No Customer Data');
-  // console.log(subscriptionData ?? 'No Subscription Data');
 
   useEffect(() => {
     if (userDataQuery) {
