@@ -14,7 +14,7 @@ import router from 'next/router';
 const Settings = () => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
-  const { error } = useUserDataStore();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [agenciaBroker, setAgenciaBroker] = useState('');
@@ -29,7 +29,6 @@ const Settings = () => {
     numeroTelefono: false,
     objetivoAnual: false,
   });
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cancelMessage, setCancelMessage] = useState<string | null>(null);
   const [isCanceling, setIsCanceling] = useState(false);
