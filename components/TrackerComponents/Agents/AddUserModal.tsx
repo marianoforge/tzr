@@ -1,29 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useRouter } from 'next/router';
-import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { createSchema } from '@/schemas/addUserModalSchema';
-import { useAuthStore } from '@/stores/authStore';
 import { TeamMemberRequestBody } from '@/types';
 
 import Button from '../FormComponents/Button';
 import Input from '../FormComponents/Input';
 import ModalOK from '../CommonComponents/Modal';
+import useAddAgent from '@/hooks/useAddAgent';
 
 interface AddUserModalProps {
   onClose: () => void;
 }
 
 const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
-  const router = useRouter();
-  const { userID } = useAuthStore();
+  const queryClient = useQueryClient();
   const schema = createSchema();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const [formError, setFormError] = useState('');
-  const [csrfToken, setCsrfToken] = useState<string | null>(null);
 
   const {
     register,
@@ -31,77 +27,25 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
     reset,
     formState: { errors },
   } = useForm<TeamMemberRequestBody>({
-    resolver: yupResolver(schema) as Resolver<TeamMemberRequestBody>,
+    resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    const fetchCsrfToken = async () => {
-      try {
-        const response = await fetch('/api/users/teamMembers', {
-          method: 'GET',
-        });
-        const data = await response.json();
-        setCsrfToken(data.csrfToken);
-      } catch (error) {
-        console.error('Error fetching CSRF token:', error);
-      }
-    };
+  const { addUser, formError, isLoading } = useAddAgent(() => {
+    setModalMessage('Se ha agregado un nuevo asesor.');
+    setIsModalOpen(true);
+    reset();
 
-    fetchCsrfToken();
-  }, []);
-
-  const mutation = useMutation<unknown, Error, TeamMemberRequestBody>({
-    mutationFn: async (data: TeamMemberRequestBody) => {
-      if (!userID) {
-        throw new Error('El UID del usuario es requerido');
-      }
-
-      const response = await fetch('/api/users/teamMembers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'CSRF-Token': csrfToken || '',
-        },
-        body: JSON.stringify({
-          uid: userID,
-          ...data,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al registrar usuario');
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      setModalMessage('Se ha agregado un nuevo asesor.');
-      setIsModalOpen(true);
-      reset();
-    },
-    onError: (err: unknown) => {
-      if (err instanceof Error) {
-        setFormError(err.message);
-      } else {
-        setFormError('An unknown error occurred');
-      }
-    },
+    // Invalidar queries después de agregar un usuario
+    queryClient.invalidateQueries({ queryKey: ['teamMembersOps'] });
   });
 
-  const onSubmit: SubmitHandler<TeamMemberRequestBody> = useCallback(
-    (data) => {
-      mutation.mutate(data);
-    },
-    [mutation]
-  );
+  const onSubmit: SubmitHandler<TeamMemberRequestBody> = (data) => {
+    addUser(data);
+  };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      style={{ zIndex: 1000 }}
-    >
-      <div className="bg-white p-6 pt-4 rounded-xl shadow-lg text-center font-bold w-auto h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center items-center z-60">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 pt-4 rounded-xl shadow-lg text-center font-bold w-auto h-auto max-h-[90vh] overflow-y-auto flex flex-col justify-center items-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white p-6 pt-4 w-11/12 max-w-lg rounded-lg"
@@ -151,8 +95,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
             <Button
               type="submit"
               className="bg-mediumBlue hover:bg-lightBlue text-white py-2 px-4 rounded-md w-48"
+              disabled={isLoading}
             >
-              Agregar Asesor
+              {isLoading ? 'Agregando...' : 'Agregar Asesor'}
             </Button>
             <Button
               type="button"
@@ -171,7 +116,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
             onClose();
           }}
           message={modalMessage}
-          onAccept={() => router.push('/dashboard')}
         />
       </div>
     </div>

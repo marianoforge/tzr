@@ -66,19 +66,21 @@ const EditAgentsModal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white p-2 rounded-lg"
-          >
-            Guardar Cambios
-          </button>
-          <button
-            type="button"
-            className="bg-red-500 text-white p-2 rounded-lg ml-2"
-            onClick={onClose}
-          >
-            Cancelar
-          </button>
+          <div className="flex justify-center gap-4 items-center">
+            <button
+              type="submit"
+              className="bg-lightBlue hover:bg-mediumBlue transition-all duration-300 text-white p-2 rounded-lg w-48"
+            >
+              Guardar Cambios
+            </button>
+            <button
+              type="button"
+              className="bg-mediumBlue hover:bg-lightBlue transition-all duration-300 text-white p-2 rounded-lg w-48"
+              onClick={onClose}
+            >
+              Cancelar
+            </button>
+          </div>
         </form>
       </div>
     </div>

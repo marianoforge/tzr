@@ -162,7 +162,8 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   }
 
   return (
-    <>
+    <div className="bg-white p-4 mt-20 rounded-xl shadow-md pb-10">
+      <h2 className="text-2xl font-bold mb-2 text-center">Reporte Agentes</h2>
       <Slider {...settings}>
         {combinedData.map((usuario) => (
           <div key={usuario.id} className="p-4 expense-card">
@@ -259,7 +260,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
           onSubmit={handleSubmit}
         />
       )}
-    </>
+    </div>
   );
 };
 

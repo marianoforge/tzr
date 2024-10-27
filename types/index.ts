@@ -224,8 +224,8 @@ export interface UserWithOperations {
 }
 
 export interface TeamMemberRequestBody {
-  email?: string;
   firstName: string;
   lastName: string;
-  numeroTelefono?: string;
+  email?: string | null;
+  numeroTelefono?: string | null;
 }

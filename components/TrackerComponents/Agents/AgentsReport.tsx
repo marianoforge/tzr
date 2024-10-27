@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   PencilIcon,
@@ -7,7 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 import SkeletonLoader from '@/components/TrackerComponents/CommonComponents/SkeletonLoader';
-import { UserData, TeamMember, UserWithOperations } from '@/types';
+import { UserData, TeamMember } from '@/types';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { formatNumber } from '@/utils/formatNumber';
 import {
@@ -18,9 +18,7 @@ import {
   calculateTotalTips,
   calculateTotalReservationValue,
 } from '@/utils/calculationsAgents';
-import useUsersWithOperations from '@/hooks/useUserWithOperations';
-import { useTeamMembersOps } from '@/hooks/useTeamMembersOps';
-import { filterAgentsBySearch } from '@/utils/filterOperations'; // Import the generic search filter function
+import useAgentsData from '@/hooks/useAgentsData';
 
 import AddUserModal from '../Agents/AddUserModal';
 
@@ -31,28 +29,10 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const queryClient = useQueryClient();
 
   // State hooks
-  const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Constants
-  const itemsPerPage = 10;
-
-  // Data fetching hooks
-  const {
-    data: usersData,
-    isLoading: isLoadingUsers,
-    error: usersError,
-  } = useUsersWithOperations(currentUser);
-  const {
-    data: membersData,
-    isLoading: isLoadingMembers,
-    error: membersError,
-  } = useTeamMembersOps(currentUser.uid ?? '');
 
   // Callbacks
   const handleAddAdvisorClick = useCallback(() => {
@@ -67,9 +47,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         });
 
         if (response.ok) {
-          setCombinedData((prevData) =>
-            prevData.filter((member) => member.id !== memberId)
-          );
           queryClient.invalidateQueries({
             queryKey: ['teamMembersOps', currentUser.uid],
           });
@@ -105,12 +82,6 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         });
 
         if (response.ok) {
-          setCombinedData((prevData) =>
-            prevData.map((member) =>
-              member.id === updatedMember.id ? updatedMember : member
-            )
-          );
-          setIsModalOpen(false);
           queryClient.invalidateQueries({
             queryKey: ['teamMembersOps', currentUser.uid],
           });
@@ -124,79 +95,23 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     [queryClient, currentUser.uid]
   );
 
-  // Effects
-  useEffect(() => {
-    if (usersData && membersData) {
-      const initialData: TeamMember[] = [
-        ...usersData.map((user: UserWithOperations) => ({
-          id: user.uid,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          numeroTelefono: '',
-          operaciones: user.operaciones,
-        })),
-        ...membersData.membersWithOperations,
-      ];
-      setCombinedData(initialData);
-    }
-  }, [usersData, membersData]);
-
-  // Memos
-  const honorariosBrokerTotales = useMemo(() => {
-    return combinedData.reduce((acc, usuario) => {
-      return (
-        acc +
-        usuario.operaciones.reduce(
-          (sum: number, op: { honorarios_broker: number }) =>
-            sum + op.honorarios_broker,
-          0
-        )
-      );
-    }, 0);
-  }, [combinedData]);
-
-  const filteredAgents = useMemo(() => {
-    return filterAgentsBySearch(combinedData, searchQuery, [
-      'firstName',
-      'lastName',
-    ]);
-  }, [combinedData, searchQuery]);
-
-  const sortedData = useMemo(() => {
-    const sorted = filteredAgents // Use filtered agents instead of combinedData
-      .map((agent) => ({
-        ...agent,
-        percentage:
-          calculateAdjustedBrokerFees(agent.operaciones) /
-          honorariosBrokerTotales,
-      }))
-      .sort((a, b) => b.percentage - a.percentage);
-    return sorted;
-  }, [filteredAgents, honorariosBrokerTotales]);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentAgents = sortedData.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-
-  const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
-  }, []);
+  const {
+    currentAgents,
+    isLoading,
+    error,
+    searchQuery,
+    setSearchQuery,
+    currentPage,
+    totalPages,
+    handlePageChange,
+  } = useAgentsData(currentUser);
 
   // Render logic
-  if (isLoadingUsers || isLoadingMembers) {
+  if (isLoading) {
     return <SkeletonLoader height={60} count={14} />;
   }
-  if (usersError || membersError) {
-    return (
-      <p>
-        Error:{' '}
-        {usersError?.message ||
-          membersError?.message ||
-          'An unknown error occurred'}
-      </p>
-    );
+  if (error) {
+    return <p>Error: {error?.message || 'An unknown error occurred'}</p>;
   }
 
   return (
