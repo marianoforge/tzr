@@ -4,8 +4,10 @@ interface ButtonProps {
   type: 'button' | 'submit' | 'reset';
   className?: string;
   onClick?: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   disabled?: boolean;
+  label?: string;
+  isActive?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -13,6 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   className,
   onClick,
   children,
+  label,
 }) => {
   return (
     <button
@@ -22,6 +25,7 @@ const Button: React.FC<ButtonProps> = ({
       } !cursor-pointer`} // Ensure cursor-pointer is applied
       onClick={onClick}
     >
+      {label}
       {children}
     </button>
   );

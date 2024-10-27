@@ -1,76 +1,15 @@
-import React, { useState, useCallback } from 'react';
-import { useRouter } from 'next/router';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { useMutation, useQueryClient } from '@tanstack/react-query'; // Import Tanstack Query
-
-import { useAuthStore } from '@/stores/authStore';
+import React from 'react';
 import Input from '@/components/TrackerComponents/FormComponents/Input';
 import TextArea from '@/components/TrackerComponents/FormComponents/TextArea';
 import Button from '@/components/TrackerComponents/FormComponents/Button';
-import { createEvent } from '@/lib/api/eventsApi'; // Import the createEvent function from the events API
-import { EventFormData } from '@/types';
-
 import ModalOK from '../CommonComponents/Modal';
-
-// Esquema de validación con Yup
-const schema = yup.object().shape({
-  title: yup.string().required('El título es requerido'),
-  date: yup.string().required('La fecha es requerida'),
-  startTime: yup.string().required('La hora de inicio es requerida'),
-  endTime: yup.string().required('La hora de fin es requerida'),
-  description: yup.string().required('La descripción es requerida'),
-});
+import { useEventForm } from '@/hooks/useEventForm';
+import { useEventMutation } from '@/hooks/useEventMutation';
 
 const FormularioEvento: React.FC = () => {
-  const { userID } = useAuthStore();
-  const queryClient = useQueryClient();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const router = useRouter();
-
-  // Configuración de react-hook-form
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<EventFormData>({
-    resolver: yupResolver(schema),
-  });
-  const mutation = useMutation({
-    mutationFn: createEvent,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events', userID] });
-      setModalMessage('Evento guardado exitosamente');
-      setIsModalOpen(true);
-      reset();
-    },
-    onError: () => {
-      setModalMessage('Error al agendar el evento');
-      setIsModalOpen(true);
-    },
-  });
-
-  // Memoize the onSubmit function
-  const onSubmit: SubmitHandler<EventFormData> = useCallback(
-    async (data) => {
-      if (!userID) {
-        setModalMessage('No se proporcionó un ID de usuario válido');
-        setIsModalOpen(true);
-        return;
-      }
-
-      const eventData = {
-        ...data,
-        user_uid: userID,
-      };
-
-      mutation.mutate(eventData);
-    },
-    [userID, mutation]
-  );
+  const { register, handleSubmit, errors, reset } = useEventForm();
+  const { isModalOpen, modalMessage, onSubmit, closeModal, acceptModal } =
+    useEventMutation(reset);
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">
@@ -138,9 +77,9 @@ const FormularioEvento: React.FC = () => {
         </div>
         <ModalOK
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={closeModal}
           message={modalMessage}
-          onAccept={() => router.push('/dashboard')}
+          onAccept={acceptModal}
         />
       </form>
     </div>

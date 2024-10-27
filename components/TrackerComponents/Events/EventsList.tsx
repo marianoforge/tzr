@@ -1,34 +1,11 @@
-import React, { useMemo, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query'; // Importar useQuery
-import router from 'next/router';
-
-import { useAuthStore } from '@/stores/authStore';
-import { fetchUserEvents } from '@/lib/api/eventsApi'; // Asegúrate de tener esta función en tu eventsApi.ts
+import React from 'react';
+import { useEventList } from '@/hooks/useEventList';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 import { Event } from '@/types';
 
-import SkeletonLoader from '../CommonComponents/SkeletonLoader';
-
 const EventsList: React.FC = () => {
-  const { userID } = useAuthStore();
-
-  // Utilizar Tanstack Query para obtener los eventos
-  const {
-    data: events = [],
-    error: eventsError,
-    isLoading,
-  } = useQuery({
-    queryKey: ['events', userID], // Query key única por usuario
-    queryFn: () => fetchUserEvents(userID!), // Función para obtener eventos
-    enabled: !!userID, // Solo ejecutar la consulta si userID está definido
-  });
-
-  // Memoize the filtered events
-  const displayedEvents = useMemo(() => events.slice(0, 3), [events]);
-
-  // Memoize the navigation function
-  const handleViewCalendar = useCallback(() => {
-    router.push('/calendar');
-  }, []);
+  const { displayedEvents, isLoading, eventsError, handleViewCalendar } =
+    useEventList();
 
   if (isLoading) {
     return <SkeletonLoader height={440} count={1} />;
@@ -52,7 +29,9 @@ const EventsList: React.FC = () => {
             <div className="flex items-center justify-between gap-1">
               <h1 className="font-semibold text-base">{event.title}</h1>
               <span className="text-gray-400  2xl:text-sm">
-                {event.date} | {event.startTime} - {event.endTime}
+                {new Date(event.date).toLocaleDateString()} |{' '}
+                {new Date(event.startTime).toLocaleTimeString()} -{' '}
+                {new Date(event.endTime).toLocaleTimeString()}
               </span>
             </div>
             <div className="2xl:hidden">
