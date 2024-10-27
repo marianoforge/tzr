@@ -38,8 +38,9 @@ const ExpensesList = () => {
     enabled: !!userUID,
   });
 
-  const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
-    useFilteredExpenses(expenses || []);
+  const { teamBrokerExpenses, nonTeamBrokerExpenses } = useFilteredExpenses(
+    expenses || []
+  );
 
   const filteredExpenses = useRouter().pathname.includes('expensesBroker')
     ? teamBrokerExpenses

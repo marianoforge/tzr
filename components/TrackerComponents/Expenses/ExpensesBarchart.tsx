@@ -17,7 +17,6 @@ import { auth } from '@/lib/firebase';
 import { useExpensesStore } from '@/stores/useExpensesStore';
 import { fetchUserExpenses, deleteExpense } from '@/lib/api/expensesApi';
 import useFilteredExpenses from '@/hooks/useFilteredExpenses';
-import useUserAuth from '@/hooks/useUserAuth';
 import useModal from '@/hooks/useModal';
 import { Expense } from '@/types';
 import { formatNumber } from '@/utils/formatNumber';
