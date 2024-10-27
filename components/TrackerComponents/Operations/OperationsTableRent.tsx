@@ -238,7 +238,7 @@ const OperationsTableTent: React.FC = () => {
         <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
           <input
             type="text"
-            placeholder="Buscar Propiedad..."
+            placeholder="Buscar Propiedad por dirección..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"

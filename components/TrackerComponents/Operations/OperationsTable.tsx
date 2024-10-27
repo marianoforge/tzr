@@ -1,23 +1,25 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
+import { onAuthStateChanged } from 'firebase/auth';
 import {
   PencilIcon,
   TrashIcon,
   MagnifyingGlassPlusIcon,
   ArrowUpIcon,
   ArrowDownIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Tooltip } from 'react-tooltip';
-import { InformationCircleIcon } from '@heroicons/react/24/solid'; // Import Heroicons icon
 
 import {
   fetchUserOperations,
   deleteOperation,
   updateOperation,
 } from '@/lib/api/operationsApi';
+import { auth } from '@/lib/firebase';
 import { formatNumber } from '@/utils/formatNumber';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
-import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/types';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/utils/calculations';
@@ -28,8 +30,10 @@ import { sortOperationValue } from '@/utils/sortUtils';
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 const OperationsTable: React.FC = () => {
+  const [userUID, setUserUID] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
     null
@@ -44,20 +48,36 @@ const OperationsTable: React.FC = () => {
   const [isValueAscending, setIsValueAscending] = useState<boolean | null>(
     null
   );
-  const [operationTypeFilter, setOperationTypeFilter] = useState('all'); // New state for operation type filter
-  const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null); // New state for date sort order
+  const [operationTypeFilter, setOperationTypeFilter] = useState('all');
+  const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { userID } = useAuthStore();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { userData } = useUserDataStore();
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserUID(user.uid);
+      } else {
+        setUserUID(null);
+        router.push('/login');
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
   const itemsPerPage = 10;
 
-  const { data: operations } = useQuery({
-    queryKey: ['operations', userID || ''],
-    queryFn: () => fetchUserOperations(userID || ''),
-    enabled: !!userID,
+  const {
+    data: operations = [],
+    isLoading,
+    error: operationsError,
+  } = useQuery({
+    queryKey: ['operations', userUID],
+    queryFn: () => fetchUserOperations(userUID || ''),
+    enabled: !!userUID,
   });
 
   const transformedOperations = useMemo(() => {
@@ -81,7 +101,7 @@ const OperationsTable: React.FC = () => {
     mutationFn: deleteOperation,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userID],
+        queryKey: ['operations', userUID],
       });
     },
   });
@@ -91,7 +111,7 @@ const OperationsTable: React.FC = () => {
       updateOperation({ id, data }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userID],
+        queryKey: ['operations', userUID],
       });
     },
   });
@@ -104,7 +124,6 @@ const OperationsTable: React.FC = () => {
       monthFilter
     );
 
-    // Apply the new operation type filter
     const typeFilteredOps =
       operationTypeFilter === 'all'
         ? filteredOps
@@ -204,8 +223,8 @@ const OperationsTable: React.FC = () => {
   );
 
   const handleDeleteButtonClick = useCallback((operation: Operation) => {
-    setSelectedOperation(operation); // Set the selected operation
-    setIsDeleteModalOpen(true); // Open the delete modal
+    setSelectedOperation(operation);
+    setIsDeleteModalOpen(true);
   }, []);
 
   const handleEditClick = useCallback((operation: Operation) => {
@@ -240,6 +259,19 @@ const OperationsTable: React.FC = () => {
     setIsDateAscending(!isDateAscending);
   };
 
+  if (isLoading) {
+    return (
+      <div className="mt-[70px]">
+        <SkeletonLoader height={64} count={11} />
+      </div>
+    );
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
+    );
+  }
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
@@ -249,10 +281,10 @@ const OperationsTable: React.FC = () => {
         <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
           <input
             type="text"
-            placeholder="Buscar Propiedad..."
+            placeholder="Buscar operación por dirección..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
+            className="w-[280px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
           />
           <select
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -309,7 +341,7 @@ const OperationsTable: React.FC = () => {
             <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex items-center justify-center`}
-                onClick={toggleDateSortOrder} // Add onClick handler
+                onClick={toggleDateSortOrder}
               >
                 Fecha de Operación
                 <span className="ml-1 text-xs text-mediumBlue items-center justify-center">
@@ -347,12 +379,12 @@ const OperationsTable: React.FC = () => {
                     <ArrowUpIcon
                       className="h-4 w-4 text-mediumBlue"
                       strokeWidth={3}
-                    /> // Use ArrowUpIcon for ascending
+                    />
                   ) : (
                     <ArrowDownIcon
                       className="h-4 w-4 text-mediumBlue"
                       strokeWidth={3}
-                    /> // Use ArrowDownIcon for descending
+                    />
                   )}
                 </span>
               </th>
@@ -494,7 +526,7 @@ const OperationsTable: React.FC = () => {
                 </td>
                 <td className="md:before:content-none">
                   <button
-                    onClick={() => handleDeleteButtonClick(operacion)} // Use the new handler
+                    onClick={() => handleDeleteButtonClick(operacion)}
                     className="text-redAccent hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
                   >
                     <TrashIcon className="text-redAccent h-5 w-5" />
@@ -616,7 +648,7 @@ const OperationsTable: React.FC = () => {
             operation={selectedOperation}
             onUpdate={() =>
               queryClient.invalidateQueries({
-                queryKey: ['operations', userID],
+                queryKey: ['operations', userUID],
               })
             }
             currentUser={userData!}

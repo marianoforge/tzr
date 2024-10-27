@@ -9,9 +9,9 @@ import { UserAvatar } from '@/components/TrackerComponents/NavComponents/UserAva
 
 import MonthlyBarChart from './MonthlyBarChart/MonthlyBarChart';
 import MonthlyBarChartGross from './MonthlyBarChart/MonthlyBarChartGross';
-import OperationsCarouselDash from './Operations/OperationsCarouselDash';
 import OperationsTable from './Operations/OperationsTable';
 import OperationsTableRent from './Operations/OperationsTableRent';
+import OperationsCarousel from './Operations/OperationsCarousel';
 
 const DashBoard = () => {
   return (
@@ -43,7 +43,7 @@ const DashBoard = () => {
           <OperationsTableRent />
         </div>
         <div className="block lg:hidden">
-          <OperationsCarouselDash />
+          <OperationsCarousel />
         </div>
         <div
           className="grid grid-cols-1 lg:grid-cols-3 md:gap-10"

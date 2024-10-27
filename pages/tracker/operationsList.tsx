@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 
 import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
 import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import OperationsList from '@/components/TrackerComponents/Operations/OperationsList';
+import OperationsTable from '@/components/TrackerComponents/Operations/OperationsTable';
+import OperationsCarousel from '@/components/TrackerComponents/Operations/OperationsCarousel';
+import OperationsTableRent from '@/components/TrackerComponents/Operations/OperationsTableRent';
 
 const OperationsPage = () => {
   const [filter] = useState<
@@ -12,12 +14,13 @@ const OperationsPage = () => {
   return (
     <PrivateRoute>
       <PrivateLayout>
-        <div className="hidden lg:block">
-          <OperationsList filter={filter} />
+        <div className="hidden lg:flex lg:flex-col lg:gap-10">
+          <OperationsTable />
+          <OperationsTableRent />
         </div>
-        {/* <div className="block lg:hidden">
-          <OperationsCarouselDash filter={filter} setFilter={setFilter} />
-        </div> */}
+        <div className="block lg:hidden">
+          <OperationsCarousel />
+        </div>
       </PrivateLayout>
     </PrivateRoute>
   );

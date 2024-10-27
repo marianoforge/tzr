@@ -18,11 +18,20 @@ import { Operation } from '@/types';
 import { useUserDataStore } from '@/stores/userDataStore';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 
-import Loader from '../Loader';
-
 import OperationsModal from './OperationsModal';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
+
+import { useRouter } from 'next/router';
 
 const OperationsCarousel: React.FC = () => {
+  const router = useRouter();
+  const currentPath = router.pathname;
+
+  // Define el margin-top basado en la ruta
+  const marginTopStyle = currentPath.includes('operationsList') && 'mt-[96px]';
+
+  console.log(currentPath.includes('operationsList'));
+
   const settings = {
     dots: true,
     infinite: false,
@@ -31,7 +40,6 @@ const OperationsCarousel: React.FC = () => {
     slidesToScroll: 1,
   };
 
-  // Hooks should be called at the top level of the component
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
   const { userData } = useUserDataStore();
@@ -67,7 +75,6 @@ const OperationsCarousel: React.FC = () => {
     },
   });
 
-  // Ensure hooks are not inside any conditionals
   const handleDeleteClick = useCallback(
     (id: string) => {
       deleteOperationMutation.mutate(id);
@@ -76,8 +83,8 @@ const OperationsCarousel: React.FC = () => {
   );
 
   const handleDeleteButtonClick = useCallback((operation: Operation) => {
-    setSelectedOperation(operation); // Set the selected operation
-    setIsDeleteModalOpen(true); // Open the delete modal
+    setSelectedOperation(operation);
+    setIsDeleteModalOpen(true);
   }, []);
 
   const handleEditClick = (operation: Operation) => {
@@ -94,7 +101,7 @@ const OperationsCarousel: React.FC = () => {
     : [];
 
   if (isLoading) {
-    return <Loader />;
+    return <SkeletonLoader height={64} count={11} />;
   }
 
   const handleEstadoChange = (id: string, currentEstado: string) => {
@@ -103,17 +110,19 @@ const OperationsCarousel: React.FC = () => {
   };
 
   return (
-    <>
+    <div
+      className={`bg-white p-6 rounded-xl shadow-md pb-10 ${marginTopStyle}`}
+    >
       <div className="flex justify-center mb-4 flex-col items-center">
         <input
           type="text"
-          placeholder="Buscar Operación..."
+          placeholder="Buscar operación por dirección..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
+          className="w-[280px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
         />
         <p className="text-[20px] xl:text-[20px] 2xl:text-[22px] text-center font-semibold">
-          Busca la operacion sobre la que queres información
+          Busca la operación sobre la que quieres información
         </p>
       </div>
       {searchedOperations.length > 0 && (
@@ -236,7 +245,7 @@ const OperationsCarousel: React.FC = () => {
         secondButtonText="Borrar Operación"
         className="w-[450px]"
       />
-    </>
+    </div>
   );
 };
 

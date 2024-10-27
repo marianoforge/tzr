@@ -22,6 +22,7 @@ import {
 import Loader from '../Loader';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 import ExpensesModal from './ExpensesModal';
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 const ExpensesListCards: React.FC = () => {
   const settings = {
@@ -123,12 +124,15 @@ const ExpensesListCards: React.FC = () => {
     const regex = new RegExp(`.{1,${maxLength}}`, 'g');
     return text.match(regex) || [];
   };
+  const pageTitle = useRouter().pathname.includes('expensesBroker')
+    ? 'Lista de Gastos Team / Broker'
+    : 'Lista de Gastos Propios';
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <SkeletonLoader height={64} count={11} />;
 
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md pb-10">
-      <h2 className="text-2xl font-bold mb-4 text-center">Lista de Gastos</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
       {filteredExpenses.length === 0 ? (
         <p className="text-center text-gray-600">No existen gastos</p>
       ) : (
