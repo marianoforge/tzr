@@ -7,29 +7,13 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
-import { useQuery } from '@tanstack/react-query';
-
-import { useAuthStore } from '@/stores/authStore';
-import { Operation } from '@/types';
 import { COLORS } from '@/lib/constants';
-import { fetchUserOperations } from '@/lib/api/operationsApi';
-
 import SkeletonLoader from '../CommonComponents/SkeletonLoader';
+import { useOperationsData } from '@/hooks/useOperationsData';
+import { Operation } from '@/types';
 
 const CuadroPrincipalChart = () => {
-  const { userID } = useAuthStore();
-
-  const {
-    data: operations = [],
-    isLoading,
-    error: operationsError,
-  } = useQuery({
-    queryKey: ['operations', userID],
-    queryFn: async () => {
-      return await fetchUserOperations(userID || '');
-    },
-    enabled: !!userID,
-  });
+  const { operations, isLoading, operationsError } = useOperationsData();
 
   const closedOperations = useMemo(() => {
     return operations.filter((op: Operation) => op.estado === 'Cerrada');

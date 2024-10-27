@@ -1,63 +1,25 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMemo, useCallback } from 'react';
-
-import { useAuthStore } from '@/stores/authStore';
-import { fetchUserOperations } from '@/lib/api/operationsApi';
-import { Operation } from '@/types';
+import { useCallback } from 'react';
+import { useOperationsData } from '@/hooks/useOperationsData';
 import { formatNumber } from '@/utils/formatNumber';
-import { calculateTotals } from '@/utils/calculations';
-import {
-  calculateOperationData,
-  calculateTotalCantidad,
-  calculateTotalLastColumnSum,
-  calculatePercentage,
-} from '@/utils/calculationsPrincipal';
-
+import { calculatePercentage } from '@/utils/calculationsPrincipal';
 import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 const CuadroPrincipal = () => {
-  const { userID } = useAuthStore();
-
   const {
-    data: operations = [],
+    operations,
     isLoading,
-    error: operationsError,
-  } = useQuery({
-    queryKey: ['operations', userID],
-    queryFn: () => fetchUserOperations(userID || ''),
-    enabled: !!userID,
-  });
-
-  const closedOperations = operations.filter(
-    (op: Operation) => op.estado === 'Cerrada'
-  );
-
-  const totals = calculateTotals(closedOperations);
-
-  const operationData = useMemo(
-    () => calculateOperationData(closedOperations),
-    [closedOperations]
-  );
+    operationsError,
+    totals,
+    operationData,
+    totalCantidad,
+    adjustedTotalVentaSum,
+  } = useOperationsData();
 
   const typedOperationData = operationData as Record<
     string,
     { cantidad: number; totalHonorarios: number; totalVenta: number }
   >;
 
-  const totalCantidad = useMemo(
-    () => calculateTotalCantidad(operationData),
-    [operationData]
-  );
-  const totalLastColumnSum = useMemo(
-    () => calculateTotalLastColumnSum(operationData),
-    [operationData]
-  );
-  const adjustedTotalVentaSum = useMemo(
-    () => totalLastColumnSum / 2,
-    [totalLastColumnSum]
-  );
-
-  // Ejemplo de uso de useCallback
   const calculatePercentageCallback = useCallback(
     (cantidad: number, total: number) => calculatePercentage(cantidad, total),
     []
