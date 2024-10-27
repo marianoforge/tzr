@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useExpensesStore } from '@/stores/useExpensesStore';
-import { auth } from '@/lib/firebase';
 import {
   fetchUserExpenses,
   deleteExpense,
@@ -15,34 +13,20 @@ import { formatNumber } from '@/utils/formatNumber';
 import { Expense } from '@/types';
 import useFilteredExpenses from '@/hooks/useFilteredExpenses';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
+import useUserAuth from '@/hooks/useUserAuth';
+import usePagination from '@/hooks/usePagination';
+import useModal from '@/hooks/useModal';
 
 import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 import ExpensesModal from './ExpensesModal';
+import { formatDate } from '@/utils/formatDate';
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
-  const [userUID, setUserUID] = useState<string | null>(null);
-  const router = useRouter();
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const userUID = useUserAuth();
   const queryClient = useQueryClient();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  const itemsPerPage = 10;
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserUID(user.uid);
-      } else {
-        setUserUID(null);
-        router.push('/login');
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   const {
     data: expenses,
@@ -53,6 +37,33 @@ const ExpensesList = () => {
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
+
+  const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
+    useFilteredExpenses(expenses || []);
+
+  const filteredExpenses = useRouter().pathname.includes('expensesBroker')
+    ? teamBrokerExpenses
+    : nonTeamBrokerExpenses;
+
+  const itemsPerPage = 10;
+  const {
+    currentItems: currentExpenses,
+    currentPage,
+    totalPages,
+    handlePageChange,
+    disablePagination,
+  } = usePagination(filteredExpenses, itemsPerPage);
+
+  const {
+    isOpen: isEditModalOpen,
+    openModal: openEditModal,
+    closeModal: closeEditModal,
+  } = useModal();
+  const {
+    isOpen: isDeleteModalOpen,
+    openModal: openDeleteModal,
+    closeModal: closeDeleteModal,
+  } = useModal();
 
   useEffect(() => {
     if (expenses) {
@@ -83,67 +94,30 @@ const ExpensesList = () => {
     [mutationDelete]
   );
 
-  const handleDeleteButtonClick = useCallback((expense: Expense) => {
-    setSelectedExpense(expense); // Set the selected operation
-    setIsDeleteModalOpen(true); // Open the delete modal
-  }, []);
-
   const handleEditClick = (expense: Expense) => {
     setSelectedExpense(expense);
-    setIsEditModalOpen(true);
+    openEditModal();
   };
 
   const handleExpenseUpdate = (updatedExpense: Expense) => {
     mutationUpdate.mutate(updatedExpense);
   };
 
-  const { teamBrokerExpenses, nonTeamBrokerExpenses, totals } =
-    useFilteredExpenses(expenses || []);
-
-  const filteredExpenses = router.pathname.includes('expensesBroker')
-    ? teamBrokerExpenses
-    : nonTeamBrokerExpenses;
-
-  const filteredTotals = router.pathname.includes('expensesBroker')
-    ? totals.teamBrokerTotal
-    : totals.nonTeamBrokerTotal;
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentExpenses = filteredExpenses.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredExpenses.length / itemsPerPage)
-  );
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const disablePagination = filteredExpenses.length < itemsPerPage;
-
-  // Ruta de tu archivo utilitario
-
-  const formatDate = (date: string | null) => {
-    if (!date) return 'Fecha inválida';
-
-    try {
-      const [year, month, day] = date.split('-');
-
-      return `${day}/${month}/${year}`;
-    } catch (error) {
-      console.error('Error formateando la fecha:', error);
-      return 'Fecha inválida';
-    }
-  };
-
-  const pageTitle = router.pathname.includes('expensesBroker')
+  const pageTitle = useRouter().pathname.includes('expensesBroker')
     ? 'Lista de Gastos Team / Broker'
     : 'Lista de Gastos propios';
+
+  const handleDeleteButtonClick = (expense: Expense) => {
+    setSelectedExpense(expense);
+    openDeleteModal();
+  };
+
+  const confirmDelete = () => {
+    if (selectedExpense?.id) {
+      handleDeleteClick(selectedExpense.id);
+      closeDeleteModal();
+    }
+  };
 
   if (isLoading) {
     return (
@@ -234,10 +208,22 @@ const ExpensesList = () => {
                   Total
                 </td>
                 <td className="py-3 px-4 text-center">
-                  ${formatNumber(filteredTotals.totalAmount)}
+                  $
+                  {formatNumber(
+                    filteredExpenses.reduce(
+                      (acc, expense) => acc + expense.amount,
+                      0
+                    )
+                  )}
                 </td>
                 <td className="py-3 px-4 text-center">
-                  ${formatNumber(filteredTotals.totalAmountInDollars)}
+                  $
+                  {formatNumber(
+                    filteredExpenses.reduce(
+                      (acc, expense) => acc + expense.amountInDollars,
+                      0
+                    )
+                  )}
                 </td>
                 <td className="py-3 px-4" colSpan={3}></td>
               </tr>
@@ -268,20 +254,17 @@ const ExpensesList = () => {
       {isEditModalOpen && selectedExpense && (
         <ExpensesModal
           isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
+          onClose={closeEditModal}
           expense={selectedExpense}
           onExpenseUpdate={handleExpenseUpdate}
         />
       )}
       <ModalDelete
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeDeleteModal}
         message="¿Estás seguro de querer eliminar esta operación?"
         onSecondButtonClick={() => {
-          if (selectedExpense?.id) {
-            handleDeleteClick(selectedExpense.id);
-            setIsDeleteModalOpen(false);
-          }
+          confirmDelete();
         }}
         secondButtonText="Borrar Operación"
         className="w-[450px]"

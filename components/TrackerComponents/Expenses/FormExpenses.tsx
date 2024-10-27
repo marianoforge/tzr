@@ -6,7 +6,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 import ModalOK from '@/components/TrackerComponents/CommonComponents/Modal';
-import { useAuthStore } from '@/stores/authStore';
 import Input from '@/components/TrackerComponents/FormComponents/Input';
 import TextArea from '@/components/TrackerComponents/FormComponents/TextArea';
 import Select from '@/components/TrackerComponents/FormComponents/Select';
@@ -14,31 +13,16 @@ import { Expense, ExpenseFormData } from '@/types';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { createExpense } from '@/lib/api/expensesApi';
 import { schema } from '@/schemas/formExpensesSchema';
-
-// Tipos de gastos
-export const expenseTypes = [
-  { value: 'Fee (Franquicia)', label: 'Fee (Franquicia)' },
-  { value: 'Carteleria', label: 'Carteleria' },
-  { value: 'Marketing', label: 'Marketing' },
-  { value: 'Varios', label: 'Varios' },
-  { value: 'Contador', label: 'Contador' },
-  { value: 'Matricula', label: 'Matricula' },
-  { value: 'ABAO', label: 'ABAO' },
-  { value: 'Fianza', label: 'Fianza' },
-  { value: 'Alquiler Oficina', label: 'Alquiler Oficina' },
-  { value: 'Portales Inmobiliarios', label: 'Portales Inmobiliarios' },
-  { value: 'CRM', label: 'CRM' },
-  { value: 'Viaticos', label: 'Viaticos' },
-  { value: 'Expensas', label: 'Expensas' },
-  { value: 'Otros', label: 'Otros' },
-];
+import { expenseTypes } from '@/lib/data';
+import useUserAuth from '@/hooks/useUserAuth';
+import useModal from '@/hooks/useModal';
 
 const FormularioExpenses: React.FC = () => {
-  const { userID } = useAuthStore();
+  const userID = useUserAuth();
   const { userData } = useUserDataStore();
   const router = useRouter();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isOpen: isModalOpen, openModal, closeModal } = useModal();
   const [modalMessage, setModalMessage] = useState('');
   const [expenseAssociationType, setExpenseAssociationType] = useState('agent');
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -47,17 +31,8 @@ const FormularioExpenses: React.FC = () => {
   const role = userData?.role;
 
   useEffect(() => {
-    const fetchUserRole = async () => {
-      try {
-        setUserRole(role ?? null);
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-        setModalMessage('Error fetching user role');
-        setIsModalOpen(true);
-      }
-    };
     if (userID) {
-      fetchUserRole();
+      setUserRole(role ?? null);
     }
   }, [role, userID]);
 
@@ -70,7 +45,7 @@ const FormularioExpenses: React.FC = () => {
   } = useForm<ExpenseFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      date: '', // Set a default value for the date field
+      date: '',
     },
   });
 
@@ -84,7 +59,7 @@ const FormularioExpenses: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
       setModalMessage('Gasto guardado exitosamente');
-      setIsModalOpen(true);
+      openModal();
       reset();
     },
     onError: (error) => {
@@ -99,16 +74,15 @@ const FormularioExpenses: React.FC = () => {
   const onSubmit: SubmitHandler<ExpenseFormData> = (data) => {
     if (!userID) {
       setModalMessage('No se proporcionó un ID de usuario válido');
-      setIsModalOpen(true);
+      openModal();
       return;
     }
 
-    // No convertir la fecha a un objeto Date, guardarla tal como está (cadena)
     const amountInDollars =
       data.amount && data.dollarRate ? data.amount / data.dollarRate : 0;
 
     const expenseData: Expense = {
-      date: data.date, // Guardamos la fecha tal cual, sin conversión a Date
+      date: data.date,
       amount: data.amount ?? 0,
       amountInDollars,
       otherType: data.otherType ?? '',
@@ -166,7 +140,7 @@ const FormularioExpenses: React.FC = () => {
           <Input
             label="Fecha del Gasto"
             type="date"
-            defaultValue={date} // Mostramos la fecha como cadena
+            defaultValue={date}
             {...register('date')}
             marginBottom="mb-8"
           />
@@ -259,7 +233,7 @@ const FormularioExpenses: React.FC = () => {
       )}
       <ModalOK
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         message={modalMessage}
         onAccept={() => router.push('/expenses')}
       />

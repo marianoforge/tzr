@@ -40,3 +40,20 @@ export const months = [
   'Nov',
   'Dic',
 ];
+
+export const expenseTypes = [
+  { value: 'Fee (Franquicia)', label: 'Fee (Franquicia)' },
+  { value: 'Carteleria', label: 'Carteleria' },
+  { value: 'Marketing', label: 'Marketing' },
+  { value: 'Varios', label: 'Varios' },
+  { value: 'Contador', label: 'Contador' },
+  { value: 'Matricula', label: 'Matricula' },
+  { value: 'ABAO', label: 'ABAO' },
+  { value: 'Fianza', label: 'Fianza' },
+  { value: 'Alquiler Oficina', label: 'Alquiler Oficina' },
+  { value: 'Portales Inmobiliarios', label: 'Portales Inmobiliarios' },
+  { value: 'CRM', label: 'CRM' },
+  { value: 'Viaticos', label: 'Viaticos' },
+  { value: 'Expensas', label: 'Expensas' },
+  { value: 'Otros', label: 'Otros' },
+];
