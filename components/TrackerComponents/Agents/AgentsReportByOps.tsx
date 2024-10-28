@@ -5,23 +5,21 @@ import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { formatNumber } from '@/utils/formatNumber';
 
 import useAgentsData from '@/hooks/useAgentsData';
-import usePagination from '@/hooks/usePagination'; // Importa el hook de paginación
+import usePagination from '@/hooks/usePagination';
 
 const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
   const { currentAgents, isLoading, error, searchQuery, setSearchQuery } =
     useAgentsData(currentUser);
 
-  // Combina todas las operaciones de todos los agentes en una sola lista
   const allOperations = currentAgents.flatMap((usuario) =>
     usuario.operaciones
       .map((operacion) => ({
         ...operacion,
-        agente: `${usuario.firstName} ${usuario.lastName}`, // Agrega el nombre del asesor
+        agente: `${usuario.firstName} ${usuario.lastName}`,
       }))
       .filter((op) => op.estado === 'Cerrada')
   );
 
-  // Aplica la paginación con 10 elementos por página
   const {
     currentItems: paginatedOperations,
     currentPage,
@@ -36,7 +34,7 @@ const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
   if (error) {
     return <p>Error: {error?.message || 'An unknown error occurred'}</p>;
   }
-  console.log(searchQuery === '');
+
   return (
     <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md">
       <div className="flex items-center mb-4 w-full">
