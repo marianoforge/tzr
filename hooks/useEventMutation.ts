@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SubmitHandler } from 'react-hook-form';
+
 import { createEvent } from '@/lib/api/eventsApi';
 import { EventFormData } from '@/types';
 import { useAuthStore } from '@/stores/authStore';
-import { SubmitHandler } from 'react-hook-form';
 
 export const useEventMutation = (reset: () => void) => {
   const { userID } = useAuthStore();

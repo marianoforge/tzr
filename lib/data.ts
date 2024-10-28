@@ -95,3 +95,48 @@ export const operationTypes = [
   { value: 'Cochera', label: 'Cochera' },
   { value: 'Locales Comerciales', label: 'Locales Comerciales' },
 ];
+
+export const yearsFilter = [
+  { value: 'all', label: 'Todos los Años' },
+  { value: 'currentYear', label: 'Año Actual' },
+  { value: 'year2023', label: 'Año 2023' },
+];
+
+export const statusOptions = [
+  { value: 'all', label: 'Todas las Operaciones' },
+  { value: 'open', label: 'En Curso / Reservas' },
+  { value: 'closed', label: 'Operaciones Cerradas' },
+];
+
+export const operationVentasTypeFilter = [
+  { value: 'all', label: 'Todos los Tipos' },
+  { value: 'Venta', label: 'Venta' },
+  { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
+  {
+    value: 'Desarrollo Inmobiliario',
+    label: 'Desarrollo Inmobiliario',
+  },
+  { value: 'Cochera', label: 'Cochera' },
+  { value: 'Locales Comerciales', label: 'Locales Comerciales' },
+  { value: 'Loteamiento', label: 'Loteamiento' },
+  { value: 'Naves Industriales', label: 'Naves Industriales' },
+  {
+    value: 'Lotes Para Desarrollos',
+    label: 'Lotes Para Desarrollos',
+  },
+];
+
+export const monthsFilter = [
+  { value: 'all', label: 'Todos los Meses' },
+  ...Array.from({ length: 12 }, (_, i) => ({
+    value: (i + 1).toString(),
+    label: new Date(0, i).toLocaleString('default', { month: 'long' }),
+  })),
+];
+
+export const operationTypeRentFilter = [
+  { value: 'all', label: 'Todos los Tipos' },
+  { value: 'Alquiler', label: 'Alquiler Tradicional' },
+  { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
+  { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
+];

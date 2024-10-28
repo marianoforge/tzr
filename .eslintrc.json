@@ -8,9 +8,17 @@
     "plugin:prettier/recommended"
   ],
   "plugins": ["import", "prettier"],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./"
+      }
+    }
+  },
   "rules": {
     "no-unused-vars": "off",
-    "import/no-unused-modules": [1, { "unusedExports": true }],
+    "import/no-unused-modules": [1, { "unusedExports": false }],
 
     "import/order": [
       "warn",
@@ -26,14 +34,7 @@
         "newlines-between": "always"
       }
     ],
-    "settings": {
-      "import/resolver": {
-        "typescript": {
-          "alwaysTryTypes": true,
-          "project": "./"
-        }
-      }
-    },
+
     "prettier/prettier": "error",
     "no-console": [
       "error",

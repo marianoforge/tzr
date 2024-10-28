@@ -26,11 +26,18 @@ import { calculateTotals } from '@/utils/calculations';
 import { filteredOperations } from '@/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/utils/filterOperations';
 import { sortOperationValue } from '@/utils/sortUtils';
+import Select from '@/components/TrackerComponents/CommonComponents/Select';
 
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 import SkeletonLoader from '../CommonComponents/SkeletonLoader';
+import {
+  monthsFilter,
+  operationVentasTypeFilter,
+  statusOptions,
+} from '@/lib/data';
+import { yearsFilter } from '@/lib/data';
 
 const OperationsTable: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -286,55 +293,30 @@ const OperationsTable: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-[280px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
           />
-          <select
-            onChange={(e) => setStatusFilter(e.target.value)}
+          <Select
+            options={statusOptions}
             value={statusFilter}
+            onChange={setStatusFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todas las Operaciones</option>
-            <option value="open">En Curso / Reservas</option>
-            <option value="closed">Operaciones Cerradas</option>
-          </select>
-          <select
-            onChange={(e) => setYearFilter(e.target.value)}
+          />
+          <Select
+            options={yearsFilter}
             value={yearFilter}
+            onChange={setYearFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todos los Años</option>
-            <option value="currentYear">Año Actual</option>
-            <option value="year2023">Año 2023</option>
-          </select>
-          <select
-            onChange={(e) => setMonthFilter(e.target.value)}
+          />
+          <Select
+            options={monthsFilter}
             value={monthFilter}
+            onChange={setMonthFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todos los Meses</option>
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i} value={i + 1}>
-                {new Date(0, i).toLocaleString('default', { month: 'long' })}
-              </option>
-            ))}
-          </select>
-          <select
-            onChange={(e) => setOperationTypeFilter(e.target.value)}
+          />
+          <Select
+            options={operationVentasTypeFilter}
             value={operationTypeFilter}
+            onChange={setOperationTypeFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todos los Tipos</option>
-            <option value="Venta">Venta</option>
-            <option value="Fondo de Comercio">Fondo de Comercio</option>
-            <option value="Desarrollo Inmobiliario">
-              Desarrollo Inmobiliario
-            </option>
-            <option value="Cochera">Cochera</option>
-            <option value="Locales Comerciales">Locales Comerciales</option>
-            <option value="Loteamiento">Loteamiento</option>
-            <option value="Naves Industriales">Naves Industriales</option>
-            <option value="Lotes Para Desarrollos">
-              Lotes Para Desarrollos
-            </option>
-          </select>
+          />
         </div>
         <table className="w-full text-left border-collapse">
           <thead>

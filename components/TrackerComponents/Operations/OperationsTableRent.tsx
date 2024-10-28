@@ -24,10 +24,17 @@ import { calculateTotals } from '@/utils/calculations';
 import { filteredOperations } from '@/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/utils/filterOperations';
 import { sortOperationValue } from '@/utils/sortUtils';
+import Select from '@/components/TrackerComponents/CommonComponents/Select';
 
 import OperationsFullScreenTable from './OperationsFullScreenTable';
 import OperationsModal from './OperationsModal';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
+import {
+  monthsFilter,
+  operationTypeRentFilter,
+  statusOptions,
+  yearsFilter,
+} from '@/lib/data';
 const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -133,7 +140,7 @@ const OperationsTableTent: React.FC = () => {
     statusFilter,
     yearFilter,
     monthFilter,
-    operationTypeFilter, // Add this dependency
+    operationTypeFilter,
     currentPage,
     itemsPerPage,
     searchQuery,
@@ -243,46 +250,30 @@ const OperationsTableTent: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
           />
-          <select
-            onChange={(e) => setStatusFilter(e.target.value)}
+          <Select
+            options={statusOptions}
             value={statusFilter}
+            onChange={setStatusFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todas las Operaciones</option>
-            <option value="open">En Curso / Reservas</option>
-            <option value="closed">Operaciones Cerradas</option>
-          </select>
-          <select
-            onChange={(e) => setYearFilter(e.target.value)}
+          />
+          <Select
+            options={yearsFilter}
             value={yearFilter}
+            onChange={setYearFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todos los Años</option>
-            <option value="currentYear">Año Actual</option>
-            <option value="year2023">Año 2023</option>
-          </select>
-          <select
-            onChange={(e) => setMonthFilter(e.target.value)}
+          />
+          <Select
+            options={monthsFilter}
             value={monthFilter}
+            onChange={setMonthFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todos los Meses</option>
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i} value={i + 1}>
-                {new Date(0, i).toLocaleString('default', { month: 'long' })}
-              </option>
-            ))}
-          </select>
-          <select
-            onChange={(e) => setOperationTypeFilter(e.target.value)}
+          />
+          <Select
+            options={operationTypeRentFilter}
             value={operationTypeFilter}
+            onChange={setOperationTypeFilter}
             className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          >
-            <option value="all">Todos los Tipos</option>
-            <option value="Alquiler">Alquiler Tradicional</option>
-            <option value="Alquiler Temporal">Alquiler Temporal</option>
-            <option value="Alquiler Comercial">Alquiler Comercial</option>
-          </select>
+          />
         </div>
         <table className="w-full text-left border-collapse">
           <thead>
@@ -335,12 +326,6 @@ const OperationsTableTent: React.FC = () => {
                   )}
                 </span>
               </th>
-
-              {/* <th
-                className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-              >
-                Punta % Promedio
-              </th>  */}
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
               >
@@ -395,15 +380,6 @@ const OperationsTableTent: React.FC = () => {
                 <td className="py-3 px-2 before:content-['Valor:'] md:before:content-none">
                   ${formatNumber(operacion.valor_reserva)}
                 </td>
-
-                {/* <td className="py-3 px-4 before:content-['Punta Vendedora:'] md:before:content-none">
-                  {formatNumber(
-                    (operacion.porcentaje_punta_compradora +
-                      operacion.porcentaje_punta_vendedora) /
-                      2
-                  )}
-                  %
-                </td> */}
                 <td className="py-3 px-2 before:content-['Puntas:'] md:before:content-none">
                   {formatNumber(
                     Number(operacion.punta_vendedora) +
@@ -481,17 +457,6 @@ const OperationsTableTent: React.FC = () => {
               <td className={styleTotalRow}>
                 ${formatNumber(Number(filteredTotals.valor_reserva))}
               </td>
-
-              {/* <td className={styleTotalRow}>
-                {filteredTotals.promedio_suma_puntas !== undefined &&
-                filteredTotals.promedio_suma_puntas !== null ? (
-                  <>
-                    {formatNumber(Number(filteredTotals.promedio_suma_puntas))}%
-                  </>
-                ) : (
-                  'Cálculo no disponible'
-                )}
-              </td> */}
               <td className={styleTotalRow}>
                 {filteredTotals.suma_total_de_puntas !== undefined &&
                 filteredTotals.suma_total_de_puntas !== null ? (

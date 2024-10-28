@@ -1,7 +1,9 @@
 import { useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { Event } from '@/types';
+
 import { useCalendarEvents } from './useCalendarEvents';
+
+import { Event } from '@/types';
 
 export const useEventList = () => {
   const { calendarEvents, isLoading, eventsError } = useCalendarEvents();

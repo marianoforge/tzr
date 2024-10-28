@@ -229,3 +229,12 @@ export interface TeamMemberRequestBody {
   email?: string | null;
   numeroTelefono?: string | null;
 }
+
+export interface ColumnConfig {
+  key: string;
+  label: string;
+  sortable?: boolean;
+  tooltip?: string;
+  onSort?: () => void;
+  isSortedAsc?: boolean;
+}
