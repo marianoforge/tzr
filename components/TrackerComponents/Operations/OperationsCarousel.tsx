@@ -8,7 +8,7 @@ import {
   fetchUserOperations,
   updateOperation,
   deleteOperation,
-} from '@/lib/api/operationsApi'; // Ensure you have these functions in your API
+} from '@/lib/api/operationsApi';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -27,7 +27,6 @@ const OperationsCarousel: React.FC = () => {
   const router = useRouter();
   const currentPath = router.pathname;
 
-  // Define el margin-top basado en la ruta
   const marginTopStyle = currentPath.includes('operationsList') && 'mt-[96px]';
 
   console.log(currentPath.includes('operationsList'));

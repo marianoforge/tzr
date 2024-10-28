@@ -13,6 +13,7 @@ import { updateOperation } from '@/lib/api/operationsApi';
 import { TeamMember, UserData } from '@/types';
 import { useTeamMembers } from '@/hooks/useTeamMembers';
 import { useUserDataStore } from '@/stores/userDataStore';
+import { operationTypes, provincias } from '@/lib/data';
 
 type FormData = InferType<typeof schema>;
 
@@ -170,7 +171,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           />
 
           <Input
-            label="Localidad de la Reserva"
+            label="Localidad de la Operación"
             type="text"
             {...register('localidad_reserva')}
             placeholder="Por ejemplo: San Isidro"
@@ -179,33 +180,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           />
 
           <Select
-            label="Provincia de la Reserva"
-            options={[
-              { value: 'Buenos Aires', label: 'Buenos Aires' },
-              { value: 'CABA', label: 'CABA' },
-              { value: 'Catamarca', label: 'Catamarca' },
-              { value: 'Chaco', label: 'Chaco' },
-              { value: 'Chubut', label: 'Chubut' },
-              { value: 'Córdoba', label: 'Córdoba' },
-              { value: 'Corrientes', label: 'Corrientes' },
-              { value: 'Entre Ríos', label: 'Entre Ríos' },
-              { value: 'Formosa', label: 'Formosa' },
-              { value: 'Jujuy', label: 'Jujuy' },
-              { value: 'La Pampa', label: 'La Pampa' },
-              { value: 'La Rioja', label: 'La Rioja' },
-              { value: 'Mendoza', label: 'Mendoza' },
-              { value: 'Misiones', label: 'Misiones' },
-              { value: 'Neuquén', label: 'Neuquén' },
-              { value: 'Río Negro', label: 'Río Negro' },
-              { value: 'Salta', label: 'Salta' },
-              { value: 'San Juan', label: 'San Juan' },
-              { value: 'San Luis', label: 'San Luis' },
-              { value: 'Santa Cruz', label: 'Santa Cruz' },
-              { value: 'Santa Fe', label: 'Santa Fe' },
-              { value: 'Santiago del Estero', label: 'Santiago del Estero' },
-              { value: 'Tierra del Fuego', label: 'Tierra del Fuego' },
-              { value: 'Tucumán', label: 'Tucumán' },
-            ]}
+            label="Provincia de la Operación"
+            options={provincias}
             register={register}
             name="provincia_reserva"
             error={errors.provincia_reserva?.message}
@@ -214,16 +190,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
           <Select
             label="Tipo de Operación"
-            options={[
-              { value: 'Venta', label: 'Venta' },
-              { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
-              { value: 'Alquiler Tradicional', label: 'Alquiler Tradicional' },
-              { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
-              { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
-              { value: 'Desarrollo', label: 'Desarrollo Inmobiliario' },
-              { value: 'Cochera', label: 'Cochera' },
-              { value: 'Locales Comerciales', label: 'Locales Comerciales' },
-            ]}
+            options={operationTypes}
             register={register}
             name="tipo_operacion"
             error={errors.tipo_operacion?.message}

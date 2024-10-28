@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
 import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
@@ -7,10 +7,6 @@ import OperationsCarousel from '@/components/TrackerComponents/Operations/Operat
 import OperationsTableRent from '@/components/TrackerComponents/Operations/OperationsTableRent';
 
 const OperationsPage = () => {
-  const [filter] = useState<
-    'all' | 'open' | 'closed' | 'currentYear' | 'year2023'
-  >('all');
-
   return (
     <PrivateRoute>
       <PrivateLayout>
