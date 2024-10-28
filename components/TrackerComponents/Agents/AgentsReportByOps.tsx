@@ -36,12 +36,12 @@ const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
   if (error) {
     return <p>Error: {error?.message || 'An unknown error occurred'}</p>;
   }
-
+  console.log(searchQuery === '');
   return (
     <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md">
       <div className="flex items-center mb-4 w-full">
         <h2 className="text-2xl font-bold text-center w-full">
-          Informe Operaciones Por Asesores
+          Informe Operaciones Por Asesor
         </h2>
       </div>
       <div className="flex items-center justify-center mb-4">
@@ -125,11 +125,14 @@ const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
             Anterior
           </button>
           <span className="px-4 py-2 mx-1">
-            Página {currentPage} de {totalPages}
+            Página{' '}
+            {searchQuery === ''
+              ? `${currentPage} de 1`
+              : `${currentPage} de ${totalPages}`}
           </span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            disabled={searchQuery === '' || currentPage === totalPages}
             className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
           >
             Siguiente
