@@ -1,21 +1,16 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { UserData, TeamMember, UserWithOperations } from '@/types';
 import useUsersWithOperations from '@/hooks/useUserWithOperations';
 import { useTeamMembersOps } from '@/hooks/useTeamMembersOps';
-import { filterAgentsBySearch } from '@/utils/filterOperations';
 import { calculateAdjustedBrokerFees } from '@/utils/calculationsAgents';
 
 const useAgentsData = (currentUser: UserData) => {
-  // State hooks
   const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Constants
   const itemsPerPage = 10;
 
-  // Data fetching hooks
   const {
     data: usersData,
     isLoading: isLoadingUsers,
@@ -27,7 +22,6 @@ const useAgentsData = (currentUser: UserData) => {
     error: membersError,
   } = useTeamMembersOps(currentUser.uid ?? '');
 
-  // Effects
   useEffect(() => {
     if (usersData && membersData) {
       const initialData: TeamMember[] = [
@@ -60,10 +54,10 @@ const useAgentsData = (currentUser: UserData) => {
   }, [combinedData]);
 
   const filteredAgents = useMemo(() => {
-    return filterAgentsBySearch(combinedData, searchQuery, [
-      'firstName',
-      'lastName',
-    ]);
+    return combinedData.filter((agent) => {
+      const fullName = `${agent.firstName} ${agent.lastName}`.toLowerCase();
+      return fullName.includes(searchQuery.toLowerCase());
+    });
   }, [combinedData, searchQuery]);
 
   const sortedData = useMemo(() => {

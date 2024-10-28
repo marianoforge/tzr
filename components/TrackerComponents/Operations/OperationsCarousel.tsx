@@ -2,6 +2,11 @@ import Slider from 'react-slick';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
+
+import OperationsModal from './OperationsModal';
 
 import { formatNumber } from '@/utils/formatNumber';
 import {
@@ -17,11 +22,6 @@ import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/types';
 import { useUserDataStore } from '@/stores/userDataStore';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
-
-import OperationsModal from './OperationsModal';
-import SkeletonLoader from '../CommonComponents/SkeletonLoader';
-
-import { useRouter } from 'next/router';
 
 const OperationsCarousel: React.FC = () => {
   const router = useRouter();

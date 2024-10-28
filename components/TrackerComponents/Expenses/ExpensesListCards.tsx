@@ -5,6 +5,10 @@ import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { onAuthStateChanged } from 'firebase/auth';
 
+import SkeletonLoader from '../CommonComponents/SkeletonLoader';
+
+import ExpensesModal from './ExpensesModal';
+
 import { formatNumber } from '@/utils/formatNumber';
 import { Expense } from '@/types';
 
@@ -18,10 +22,7 @@ import {
   deleteExpense,
   updateExpense,
 } from '@/lib/api/expensesApi';
-
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
-import ExpensesModal from './ExpensesModal';
-import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 
 const ExpensesListCards: React.FC = () => {
   const settings = {
