@@ -19,7 +19,6 @@ import {
   updateExpense,
 } from '@/lib/api/expensesApi';
 
-import Loader from '../Loader';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 import ExpensesModal from './ExpensesModal';
 import SkeletonLoader from '../CommonComponents/SkeletonLoader';

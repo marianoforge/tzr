@@ -29,8 +29,6 @@ const OperationsCarousel: React.FC = () => {
 
   const marginTopStyle = currentPath.includes('operationsList') && 'mt-[96px]';
 
-  console.log(currentPath.includes('operationsList'));
-
   const settings = {
     dots: true,
     infinite: false,
