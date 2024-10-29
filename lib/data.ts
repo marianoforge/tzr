@@ -42,6 +42,7 @@ export const months = [
 ];
 
 export const expenseTypes = [
+  { value: 'all', label: 'Todos los Gastos' },
   { value: 'Fee (Franquicia)', label: 'Fee (Franquicia)' },
   { value: 'Carteleria', label: 'Carteleria' },
   { value: 'Marketing', label: 'Marketing' },
@@ -98,8 +99,8 @@ export const operationTypes = [
 
 export const yearsFilter = [
   { value: 'all', label: 'Todos los Años' },
-  { value: 'currentYear', label: 'Año Actual' },
-  { value: 'year2023', label: 'Año 2023' },
+  { value: '2024', label: 'Año Actual' },
+  { value: '2023', label: 'Año 2023' },
 ];
 
 export const statusOptions = [

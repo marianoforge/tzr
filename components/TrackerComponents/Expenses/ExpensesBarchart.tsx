@@ -16,7 +16,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { auth } from '@/lib/firebase';
 import { useExpensesStore } from '@/stores/useExpensesStore';
 import { fetchUserExpenses, deleteExpense } from '@/lib/api/expensesApi';
-import useFilteredExpenses from '@/hooks/useFilteredExpenses';
 import useModal from '@/hooks/useModal';
 import { Expense } from '@/types';
 import { formatNumber } from '@/utils/formatNumber';
@@ -82,13 +81,7 @@ const ExpensesBarchart: React.FC = () => {
     }
   }, [expenses, calculateTotals]);
 
-  const { teamBrokerExpenses, nonTeamBrokerExpenses } = useFilteredExpenses(
-    expenses || []
-  );
-
-  const filteredExpenses = router.pathname.includes('expensesBroker')
-    ? teamBrokerExpenses
-    : nonTeamBrokerExpenses;
+  const filteredExpenses = expenses || [];
 
   const {
     isOpen: isDeleteModalOpen,

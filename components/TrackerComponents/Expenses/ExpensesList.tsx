@@ -1,6 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  PencilIcon,
+  TrashIcon,
+  ArrowUpIcon,
+  ArrowDownIcon,
+} from '@heroicons/react/24/outline';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useExpensesStore } from '@/stores/useExpensesStore';
@@ -11,9 +16,6 @@ import {
 } from '@/lib/api/expensesApi';
 import { formatNumber } from '@/utils/formatNumber';
 import { Expense } from '@/types';
-import useFilteredExpenses from '@/hooks/useFilteredExpenses';
-import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
-import useUserAuth from '@/hooks/useUserAuth';
 import usePagination from '@/hooks/usePagination';
 import useModal from '@/hooks/useModal';
 
@@ -21,12 +23,22 @@ import SkeletonLoader from '../CommonComponents/SkeletonLoader';
 import ModalDelete from '@/components/TrackerComponents/CommonComponents/Modal';
 import ExpensesModal from './ExpensesModal';
 import { formatDate } from '@/utils/formatDate';
+import useUserAuth from '@/hooks/useUserAuth';
+import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
+import Select from '@/components/TrackerComponents/CommonComponents/Select';
+import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
   const userUID = useUserAuth();
   const queryClient = useQueryClient();
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+
+  // Estados para los filtros
+  const [searchQuery, setSearchQuery] = useState('');
+  const [yearFilter, setYearFilter] = useState('all');
+  const [monthFilter, setMonthFilter] = useState('all');
+  const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
 
   const {
     data: expenses,
@@ -38,13 +50,39 @@ const ExpensesList = () => {
     enabled: !!userUID,
   });
 
-  const { teamBrokerExpenses, nonTeamBrokerExpenses } = useFilteredExpenses(
-    expenses || []
-  );
+  // Aplicar filtros a los gastos
+  const filteredExpenses =
+    expenses?.filter((expense: Expense) => {
+      const matchesSearch = expense.description
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesYear =
+        yearFilter === 'all' || expense.date.includes(yearFilter);
+      const matchesMonth =
+        monthFilter === 'all' ||
+        new Date(expense.date).getMonth() + 1 === parseInt(monthFilter);
+      const matchesType =
+        expenseTypeFilter === 'all' ||
+        expense.expenseType === expenseTypeFilter;
 
-  const filteredExpenses = useRouter().pathname.includes('expensesBroker')
-    ? teamBrokerExpenses
-    : nonTeamBrokerExpenses;
+      return matchesSearch && matchesYear && matchesMonth && matchesType;
+    }) || [];
+
+  const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null);
+
+  const sortedExpenses = useMemo(() => {
+    if (!filteredExpenses) return [];
+    return [...filteredExpenses].sort((a, b) => {
+      if (isDateAscending === null) return 0;
+      return isDateAscending
+        ? new Date(a.date).getTime() - new Date(b.date).getTime()
+        : new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  }, [filteredExpenses, isDateAscending]);
+
+  const toggleDateSortOrder = () => {
+    setIsDateAscending((prev) => (prev === null ? true : !prev));
+  };
 
   const itemsPerPage = 10;
   const {
@@ -53,7 +91,7 @@ const ExpensesList = () => {
     totalPages,
     handlePageChange,
     disablePagination,
-  } = usePagination(filteredExpenses, itemsPerPage);
+  } = usePagination(sortedExpenses, itemsPerPage);
 
   const {
     isOpen: isEditModalOpen,
@@ -104,9 +142,7 @@ const ExpensesList = () => {
     mutationUpdate.mutate(updatedExpense);
   };
 
-  const pageTitle = useRouter().pathname.includes('expensesBroker')
-    ? 'Lista de Gastos Team / Broker'
-    : 'Lista de Gastos propios';
+  const pageTitle = 'Lista de Gastos';
 
   const handleDeleteButtonClick = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -135,6 +171,34 @@ const ExpensesList = () => {
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
 
+      <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
+        <input
+          type="text"
+          placeholder="Buscar gasto por descripción..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-[280px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
+        />
+        <Select
+          options={yearsFilter}
+          value={yearFilter}
+          onChange={setYearFilter}
+          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+        />
+        <Select
+          options={monthsFilter}
+          value={monthFilter}
+          onChange={setMonthFilter}
+          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+        />
+        <Select
+          options={expenseTypes}
+          value={expenseTypeFilter}
+          onChange={setExpenseTypeFilter}
+          className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+        />
+      </div>
+
       {currentExpenses.length === 0 ? (
         <p className="text-center text-gray-600">No existen gastos</p>
       ) : (
@@ -143,9 +207,23 @@ const ExpensesList = () => {
             <thead>
               <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
                 <th
-                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                  className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold cursor-pointer flex items-center justify-center`}
+                  onClick={toggleDateSortOrder}
                 >
                   Fecha
+                  <span className="ml-1 text-xs text-mediumBlue items-center justify-center">
+                    {isDateAscending ? (
+                      <ArrowUpIcon
+                        className="h-4 w-4 text-mediumBlue"
+                        strokeWidth={3}
+                      />
+                    ) : (
+                      <ArrowDownIcon
+                        className="h-4 w-4 text-mediumBlue"
+                        strokeWidth={3}
+                      />
+                    )}
+                  </span>
                 </th>
                 <th
                   className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -212,7 +290,7 @@ const ExpensesList = () => {
                   $
                   {formatNumber(
                     filteredExpenses.reduce(
-                      (acc, expense) => acc + expense.amount,
+                      (acc: number, expense: Expense) => acc + expense.amount,
                       0
                     )
                   )}
@@ -221,7 +299,8 @@ const ExpensesList = () => {
                   $
                   {formatNumber(
                     filteredExpenses.reduce(
-                      (acc, expense) => acc + expense.amountInDollars,
+                      (acc: number, expense: Expense) =>
+                        acc + expense.amountInDollars,
                       0
                     )
                   )}

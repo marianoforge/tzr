@@ -88,7 +88,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     <>
       {renderNavButtons()}
       <div className="text-lg flex flex-col pt-10 pl-4 pb-2">
-        <p>Reportes Team / Broker</p>
+        <p>Reportes Team</p>
       </div>
       <NavLink
         href="/agents"
@@ -96,12 +96,6 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
           <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
         }
         label="Informe Asesores"
-      />
-
-      <NavLink
-        href="/expensesBroker"
-        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Gastos Broker / Team"
       />
     </>
   );

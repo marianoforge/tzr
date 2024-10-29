@@ -40,12 +40,11 @@ const Profitability = () => {
 
   const totals = calculateTotals(currentYearOperations(operations));
 
-  // Calcular los totales de operaciones y gastos usando las operaciones filtradas
   const totalHonorariosNetosAsesor = totals.honorarios_asesor_cerradas;
   const totalHonorariosBroker = totals.honorarios_broker_cerradas;
 
   const totalAmountInDollarsExpenses = expenses.reduce(
-    (acc: number, exp: Expense) => acc + exp.amountInDollars, // Cambia según la estructura de tus gastos
+    (acc: number, exp: Expense) => acc + exp.amountInDollars,
     0
   );
   const totalExpensesTeamBroker = expenses.reduce(
@@ -89,7 +88,7 @@ const Profitability = () => {
         <div
           className="absolute top-2 right-2 cursor-pointer"
           data-tooltip-id="profitability-tooltip"
-          data-tooltip-content="Porcentaje de los honorarios totales netos menos los gastos propios"
+          data-tooltip-content="Porcentaje de los honorarios totales netos menos los gastos."
         >
           <InformationCircleIcon className="text-mediumBlue stroke-2 h-6 w-6 lg:h-5 lg:w-5" />
         </div>
@@ -106,7 +105,7 @@ const Profitability = () => {
           <div
             className="absolute top-2 right-2  cursor-pointer"
             data-tooltip-id="profitability-tooltip-total"
-            data-tooltip-content="Porcentaje de los honorarios totales brutos menos los gastos de Team / Broker"
+            data-tooltip-content="Porcentaje de los honorarios totales brutos menos los gastos."
           >
             <InformationCircleIcon className="text-mediumBlue stroke-2 h-6 w-6 lg:h-5 lg:w-5" />
           </div>

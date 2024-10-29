@@ -48,11 +48,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     <>
       {renderNavButtons()}
       <NavButton href="/agents" label="Informe Agentes / Asesores" fullWidth />
-      <NavButton
-        href="/expensesBroker"
-        label="Gastos Team / Broker"
-        fullWidth
-      />
     </>
   );
 
