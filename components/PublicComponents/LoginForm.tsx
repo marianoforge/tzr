@@ -2,22 +2,23 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { signInWithPopup } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore'; // Importar Firestore para verificar el usuario
 import Link from 'next/link';
 import Image from 'next/image';
 
-import {
-  auth,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  db,
-} from '@/lib/firebase'; // Import Firebase Auth
-import Button from '@/components/PrivateComponente/FormComponents/Button';
-import Input from '@/components/PrivateComponente/FormComponents/Input';
-import { schema } from '@/common/schemas/loginFormSchema';
-import { LoginData } from '@/common/types/';
+import Button from '../PrivateComponente/FormComponents/Button';
+import Input from '../PrivateComponente/FormComponents/Input';
+
 import LicensesModal from './LicensesModal';
+
+import { schema } from '@/common/schemas/loginFormSchema';
+import { LoginData } from '@/common/types';
+import { auth, db } from '@/lib/firebase';
 
 const LoginForm = () => {
   const {
