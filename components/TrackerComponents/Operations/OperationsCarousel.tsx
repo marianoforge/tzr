@@ -1,7 +1,7 @@
 import Slider from 'react-slick';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, ServerIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
 import SkeletonLoader from '../CommonComponents/SkeletonLoader';
@@ -110,19 +110,19 @@ const OperationsCarousel: React.FC = () => {
     <div
       className={`bg-white p-6 rounded-xl shadow-md pb-10 ${marginTopStyle}`}
     >
-      <div className="flex justify-center mb-4 flex-col items-center">
+      <div className="flex justify-center  flex-col items-center">
+        <p className="text-[20px] xl:text-[20px] 2xl:text-[22px] text-center font-semibold">
+          Informe Operaciones
+        </p>
         <input
           type="text"
           placeholder="Buscar operación por dirección..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-[280px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
+          className="w-[320px] p-2 my-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
         />
-        <p className="text-[20px] xl:text-[20px] 2xl:text-[22px] text-center font-semibold">
-          Busca la operación sobre la que quieres información
-        </p>
       </div>
-      {searchedOperations.length > 0 && (
+      {searchedOperations.length > 0 ? (
         <Slider {...settings}>
           {searchedOperations.map((operacion: Operation) => (
             <div key={operacion.id} className="px-0 py-4">
@@ -219,6 +219,11 @@ const OperationsCarousel: React.FC = () => {
             </div>
           ))}
         </Slider>
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-4">
+          <ServerIcon className="h-12 w-12 " strokeWidth={1} />
+          <p className="text-center font-semibold">No hay operaciones</p>
+        </div>
       )}
       {isEditModalOpen && (
         <OperationsModal

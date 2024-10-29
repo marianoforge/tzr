@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Slider from 'react-slick';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, ServerIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -39,11 +39,11 @@ const ExpensesListCards: React.FC = () => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  // Manejar la autenticación del usuario
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -56,21 +56,18 @@ const ExpensesListCards: React.FC = () => {
     return () => unsubscribe();
   }, [router]);
 
-  // Obtener los gastos basados en el UID del usuario
-  const { data: expenses, isLoading } = useQuery({
+  const { data: expenses = [], isLoading } = useQuery({
     queryKey: ['expenses', userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
 
-  // Actualizar los totales cuando los datos estén cargados
   useEffect(() => {
-    if (expenses) {
+    if (expenses.length > 0) {
       calculateTotals();
     }
   }, [expenses, calculateTotals]);
 
-  // Mutation para eliminar un gasto
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
@@ -79,7 +76,6 @@ const ExpensesListCards: React.FC = () => {
     },
   });
 
-  // Mutation para actualizar un gasto
   const mutationUpdate = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
@@ -96,22 +92,19 @@ const ExpensesListCards: React.FC = () => {
   );
 
   const handleDeleteButtonClick = useCallback((expense: Expense) => {
-    setSelectedExpense(expense); // Set the selected operation
-    setIsDeleteModalOpen(true); // Open the delete modal
+    setSelectedExpense(expense);
+    setIsDeleteModalOpen(true);
   }, []);
 
-  // Manejar la edición
   const handleEditClick = (expense: Expense) => {
     setSelectedExpense(expense);
     setIsEditModalOpen(true);
   };
 
-  // Manejar la actualización desde el modal
   const handleExpenseUpdate = (updatedExpense: Expense) => {
     mutationUpdate.mutate(updatedExpense);
   };
 
-  // Filtrar gastos basados en la ruta
   const { teamBrokerExpenses, nonTeamBrokerExpenses } = useFilteredExpenses(
     expenses || []
   );
@@ -120,10 +113,16 @@ const ExpensesListCards: React.FC = () => {
     ? teamBrokerExpenses
     : nonTeamBrokerExpenses;
 
-  const splitTextIntoLines = (text: string, maxLength: number) => {
-    const regex = new RegExp(`.{1,${maxLength}}`, 'g');
-    return text.match(regex) || [];
-  };
+  const searchedExpenses = searchQuery
+    ? filteredExpenses.filter(
+        (expense: Expense) =>
+          expense.description
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          expense.expenseType.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
   const pageTitle = useRouter().pathname.includes('expensesBroker')
     ? 'Lista de Gastos Team / Broker'
     : 'Lista de Gastos Propios';
@@ -131,69 +130,71 @@ const ExpensesListCards: React.FC = () => {
   if (isLoading) return <SkeletonLoader height={64} count={11} />;
 
   return (
-    <div className="bg-white p-4 mt-20 rounded-xl shadow-md pb-10">
-      <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
-      {filteredExpenses.length === 0 ? (
-        <p className="text-center text-gray-600">No existen gastos</p>
-      ) : (
-        <>
-          <Slider {...settings}>
-            {filteredExpenses.map((expense) => (
-              <div key={expense.id} className="p-4 expense-card">
-                <div className="bg-mediumBlue text-white p-4 mb-52 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
-                  <p>
-                    <strong>Fecha:</strong>{' '}
-                    {new Date(expense.date).toLocaleDateString()}
-                  </p>
-                  <p>
-                    <strong>Monto en ARS:</strong> $
-                    {formatNumber(expense.amount)}
-                  </p>
-                  <p>
-                    <strong>Monto en Dólares:</strong> $
-                    {formatNumber(expense.amountInDollars)}
-                  </p>
-                  <p>
-                    <strong>Tipo:</strong> {expense.expenseType}
-                  </p>
-                  <p className="text-sm">
-                    <strong>Descripción:</strong>
-                    {splitTextIntoLines(expense.description, 20).map(
-                      (line, index) => (
-                        <span key={index}>
-                          {line}
-                          <br />
-                        </span>
-                      )
-                    )}
-                  </p>
-                  <div className="flex justify-around">
-                    <button
-                      onClick={() => handleEditClick(expense)}
-                      className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
-                    >
-                      <PencilIcon className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteButtonClick(expense)}
-                      className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
-                  </div>
+    <div className="bg-white p-4 mt-28 lg:mt-20 rounded-xl shadow-md pb-10">
+      <h2 className="text-2xl font-bold text-center">{pageTitle}</h2>
+      <div className="flex justify-center  flex-col items-center">
+        <input
+          type="text"
+          placeholder="Buscar gasto por descripción o tipo..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-[320px] p-2 my-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
+        />
+      </div>
+      {searchedExpenses.length > 0 ? (
+        <Slider {...settings}>
+          {searchedExpenses.map((expense) => (
+            <div key={expense.id} className="p-4 expense-card">
+              <div className="bg-mediumBlue text-white p-4 mb-52 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
+                <p>
+                  <strong>Fecha:</strong>{' '}
+                  {new Date(expense.date).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Monto en ARS:</strong> ${formatNumber(expense.amount)}
+                </p>
+                <p>
+                  <strong>Monto en Dólares:</strong> $
+                  {formatNumber(expense.amountInDollars)}
+                </p>
+                <p>
+                  <strong>Tipo:</strong> {expense.expenseType}
+                </p>
+                <p className="text-sm">
+                  <strong>Descripción:</strong>
+                  {expense.description}
+                </p>
+                <div className="flex justify-around">
+                  <button
+                    onClick={() => handleEditClick(expense)}
+                    className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
+                  >
+                    <PencilIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteButtonClick(expense)}
+                    className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
-            ))}
-          </Slider>
-          {isEditModalOpen && selectedExpense && (
-            <ExpensesModal
-              isOpen={isEditModalOpen}
-              onClose={() => setIsEditModalOpen(false)}
-              expense={selectedExpense}
-              onExpenseUpdate={handleExpenseUpdate} // Pass the update handler
-            />
-          )}
-        </>
+            </div>
+          ))}
+        </Slider>
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-4">
+          <ServerIcon className="h-12 w-12" strokeWidth={1} />
+          <p className="text-center font-semibold">No hay gastos</p>
+        </div>
+      )}
+      {isEditModalOpen && selectedExpense && (
+        <ExpensesModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          expense={selectedExpense}
+          onExpenseUpdate={handleExpenseUpdate}
+        />
       )}
       <ModalDelete
         isOpen={isDeleteModalOpen}
