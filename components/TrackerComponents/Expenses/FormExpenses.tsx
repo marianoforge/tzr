@@ -90,7 +90,6 @@ const FormularioExpenses: React.FC = () => {
       description: data.description ?? '',
       dollarRate: data.dollarRate,
       user_uid: userID ?? '',
-      expenseAssociationType,
     };
 
     mutation.mutate(expenseData);
@@ -111,31 +110,6 @@ const FormularioExpenses: React.FC = () => {
           className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%] "
         >
           <h2 className="text-2xl mb-4 font-semibold">Registrar Gasto</h2>
-
-          {userRole === 'team_leader_broker' && (
-            <div>
-              <Select
-                label="Asociación del Gasto"
-                options={[
-                  { value: '', label: 'Selecciona una opción' },
-                  {
-                    value: 'team_broker',
-                    label: 'Gasto Asociado al Team / Broker',
-                  },
-                  { value: 'agent', label: 'Gasto Asociado como Asesor' },
-                ]}
-                register={register}
-                name="expenseAssociationType"
-                className="w-full p-2 border mb-8"
-                onChange={(e) => handleAssociationTypeChange(e.target.value)}
-              />
-              {errors.expenseAssociationType && (
-                <p className="text-red-500 mb-4 -mt-8">
-                  {errors.expenseAssociationType.message}
-                </p>
-              )}
-            </div>
-          )}
 
           <Input
             label="Fecha del Gasto"
@@ -180,7 +154,7 @@ const FormularioExpenses: React.FC = () => {
                 type="text"
                 value={amountInDollars}
                 readOnly
-                className="bg-mutedBlue/80 border text-white border-mutedBlue cursor-not-allowed p-2 rounded mb-4"
+                className="bg-mutedBlue/80 border text-white border-mutedBlue cursor-not-allowed p-2 rounded mb-2"
               />
             </div>
           </div>

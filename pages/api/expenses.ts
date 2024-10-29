@@ -9,7 +9,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 
-import { db } from '@/lib/firebase'; // Asegúrate de que estás utilizando Firestore
+import { db } from '@/lib/firebase';
 
 export default async function handler(
   req: NextApiRequest,
@@ -24,10 +24,8 @@ export default async function handler(
 
   switch (req.method) {
     case 'GET':
-      // Maneja la obtención de gastos
       return getUserExpenses(user_uid, res);
     case 'POST':
-      // Maneja la creación de un nuevo gasto
       return createExpense(req, res);
     default:
       return res.status(405).json({ message: 'Method not allowed' });
@@ -64,18 +62,10 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
     dollarRate,
     user_uid,
     otherType,
-    expenseAssociationType,
   } = req.body;
 
   // Validar que todos los campos requeridos están presentes
-  if (
-    !date ||
-    !amount ||
-    !expenseType ||
-    !dollarRate ||
-    !user_uid ||
-    !expenseAssociationType
-  ) {
+  if (!date || !amount || !expenseType || !dollarRate || !user_uid) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -90,7 +80,6 @@ const createExpense = async (req: NextApiRequest, res: NextApiResponse) => {
       dollarRate,
       user_uid,
       otherType: otherType ?? '',
-      expenseAssociationType,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

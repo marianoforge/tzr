@@ -2,27 +2,18 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 
 import Button from '@/components/TrackerComponents/FormComponents/Button';
 import { formatDateTime } from '@/utils/formatEventDateTime';
-
-interface SessionType {
-  id: string;
-  amount_total: number;
-  payment_status: string;
-  subscription: string;
-  customer: string;
-  customer_details: {
-    email: string;
-  };
-  line_items?: {
-    data: { price: { id: string } }[];
-  };
-}
+import axios from 'axios';
+import SkeletonLoader from '@/components/TrackerComponents/CommonComponents/SkeletonLoader';
+import { SessionType } from '@/types';
 
 export default function Success() {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
+  const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserIdByEmail = async () => {
@@ -30,18 +21,15 @@ export default function Success() {
       if (!sessionId) return;
 
       try {
-        // Obtener la sesión de Stripe
         const res = await fetch(`/api/checkout/${sessionId}`);
         const session: SessionType = await res.json();
         const email = session.customer_details.email;
 
-        // Hacer una llamada a tu API para obtener el userID usando el email
         const userIdRes = await fetch(
           `/api/users/getUserIdByEmail?email=${email}`
         );
         const { userId } = await userIdRes.json();
 
-        // Guardar el userID en localStorage para futuras referencias
         localStorage.setItem('userID', userId);
         setUserId(userId);
       } catch (error) {
@@ -52,60 +40,37 @@ export default function Success() {
     fetchUserIdByEmail();
   }, [router.query.session_id]);
 
+  const { data: userDataQuery } = useQuery({
+    queryKey: ['userData', userId],
+    queryFn: async () => {
+      const response = await axios.get(`/api/users/${userId}`);
+      return response.data;
+    },
+    enabled: !!userId,
+  });
+
   useEffect(() => {
-    const updateUserProfile = async (session: SessionType, userId: string) => {
-      if (session && userId) {
-        try {
-          const stripeCustomerId = session.customer;
-          const stripeSubscriptionId = session.subscription;
+    setSubscriptionId(
+      userDataQuery?.stripeSubscriptionId ?? 'No Subscription ID'
+    );
+  }, [userDataQuery]);
 
-          // Hacer PUT para actualizar el perfil del usuario en Firebase
-          const res = await fetch(`/api/users/${userId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              stripeCustomerId,
-              stripeSubscriptionId,
-            }),
-          });
-
-          if (!res.ok) {
-            throw new Error('Failed to update user profile');
-          }
-        } catch (error) {
-          console.error('Error updating user profile:', error);
-        }
+  const { data: subscriptionInfo, isLoading } = useQuery({
+    queryKey: ['subscriptionInfo', userId],
+    queryFn: async () => {
+      if (!subscriptionId) {
+        throw new Error('No Subscription ID');
       }
-    };
+      const response = await fetch(
+        `/api/stripe/subscription_info?subscription_id=${subscriptionId}`
+      );
+      return response.json();
+    },
+    enabled: !!userId && !!subscriptionId,
+  });
 
-    const fetchSession = async () => {
-      const sessionId = router.query.session_id;
-
-      if (sessionId && userId) {
-        try {
-          // Obtener los detalles de la sesión de Stripe
-          const res = await fetch(`/api/checkout/${sessionId}`);
-          const session: SessionType = await res.json();
-
-          // Actualizar el perfil del usuario
-          await updateUserProfile(session, userId);
-        } catch (error) {
-          console.error('Error al obtener los detalles de la sesión:', error);
-        }
-      }
-    };
-
-    if (userId) {
-      fetchSession();
-    }
-  }, [userId, router.query.session_id]);
-
-  const timestamp = 1729450553;
-  const sevenDaysInSeconds = 7 * 24 * 60 * 60; // 7 days in seconds
-  const newTimestamp = timestamp + sevenDaysInSeconds;
-  const date = new Date(newTimestamp * 1000); // Convertir segundos a milisegundos
+  const timestamp = subscriptionInfo?.trial_end;
+  const date = new Date(timestamp * 1000); // Convertir segundos a milisegundos
   const formattedDate = formatDateTime(date);
 
   return (
@@ -127,10 +92,14 @@ export default function Success() {
             <h2>¡Muchas Gracias!</h2>
             <h1>La transacción se ha realizado con éxito</h1>
           </div>
-          <p>
-            Fin de la prueba gratis:{' '}
-            <span className="font-semibold">{formattedDate}</span>
-          </p>
+          {isLoading ? (
+            <SkeletonLoader height={40} count={1} />
+          ) : (
+            <p>
+              Fin de la prueba gratis:{' '}
+              <span className="font-semibold">{formattedDate}</span>
+            </p>
+          )}
         </div>
 
         <div className="w-full flex justify-around">

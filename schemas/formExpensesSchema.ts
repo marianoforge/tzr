@@ -25,11 +25,4 @@ export const schema = yup.object().shape({
         ? schema.required('Debes especificar el tipo de gasto')
         : schema;
     }),
-  expenseAssociationType: yup
-    .string()
-    .required('Debes seleccionar una asociación de gasto')
-    .notOneOf(
-      [''],
-      'Debes asociar el gasto como gasto del Team / Broker o del Asesor'
-    ),
 });

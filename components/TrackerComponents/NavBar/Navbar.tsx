@@ -33,7 +33,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
       <NavButton href="/dashboard" label="Dashboard" fullWidth />
       <NavButton href="/calendar" label="Calendario" fullWidth />
       <NavButton href="/operationsList" label="Operaciones" fullWidth />
-      <NavButton href="/expensesList" label="Gastos Propios" fullWidth />
+      <NavButton href="/expensesList" label="Gastos" fullWidth />
       <NavButton
         href="/reservationInput"
         label="Form de Operaciones"

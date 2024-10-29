@@ -75,7 +75,6 @@ export interface Expense {
   dollarRate: number;
   user_uid: string;
   otherType?: string;
-  expenseAssociationType: string;
 }
 
 export interface ExpenseFormData {
@@ -86,7 +85,6 @@ export interface ExpenseFormData {
   description?: string;
   dollarRate: number;
   otherType?: string;
-  expenseAssociationType: string;
 }
 
 export interface ExpensesState extends BaseState<Expense> {
@@ -237,4 +235,18 @@ export interface ColumnConfig {
   tooltip?: string;
   onSort?: () => void;
   isSortedAsc?: boolean;
+}
+
+export interface SessionType {
+  id: string;
+  amount_total: number;
+  payment_status: string;
+  subscription: string;
+  customer: string;
+  customer_details: {
+    email: string;
+  };
+  line_items?: {
+    data: { price: { id: string } }[];
+  };
 }

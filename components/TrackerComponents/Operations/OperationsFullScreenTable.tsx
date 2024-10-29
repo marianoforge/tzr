@@ -11,6 +11,11 @@ interface FullScreenModalProps {
   operation: Operation;
 }
 
+// Utility function to handle displaying 'N/A'
+const displayValue = (value: any) => {
+  return !value || value === 0 ? 'N/A' : value;
+};
+
 const FullScreenModal: React.FC<FullScreenModalProps> = ({
   isOpen,
   onClose,
@@ -19,7 +24,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white pt-6 pb-10 px-12 rounded-lg w-[60%] 2xl:w-[50%]">
         <h2 className="text-2xl text-mediumBlue font-bold mb-6">
           Ficha de la Operación
@@ -31,19 +36,19 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Operación:</span>{' '}
-            {operation.direccion_reserva}
+            {displayValue(operation.direccion_reserva)}
           </p>
           <p>
             <span className="font-semibold">Localidad:</span>{' '}
-            {operation.localidad_reserva}
+            {displayValue(operation.localidad_reserva)}
           </p>
           <p>
             <span className="font-semibold">Provincia:</span>{' '}
-            {operation.provincia_reserva}
+            {displayValue(operation.provincia_reserva)}
           </p>
           <p>
             <span className="font-semibold">Tipo: </span>{' '}
-            {operation.tipo_operacion}
+            {displayValue(operation.tipo_operacion)}
           </p>
           <p>
             <span className="font-semibold">Valor Reserva / Cierre: </span> $
@@ -84,23 +89,23 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Sobre de Reserva: </span>{' '}
-            {operation.numero_sobre_reserva}
+            {displayValue(operation.numero_sobre_reserva)}
           </p>
           <p>
             <span className="font-semibold">Monto Sobre de Reserva:</span>{' '}
-            {formatNumber(operation.monto_sobre_reserva ?? 0)}
+            {formatNumber(operation.monto_sobre_reserva ?? 'N/A')}
           </p>
           <p>
             <span className="font-semibold">Sobre de Refuerzo:</span>{' '}
-            {operation.numero_sobre_refuerzo}
+            {displayValue(operation.numero_sobre_refuerzo)}
           </p>
           <p>
             <span className="font-semibold">Monto Sobre de Refuerzo:</span>{' '}
-            {formatNumber(operation.monto_sobre_refuerzo ?? 0)}
+            {formatNumber(operation.monto_sobre_refuerzo ?? 'N/A')}
           </p>
           <p>
             <span className="font-semibold">Referido:</span>{' '}
-            {operation.referido}
+            {displayValue(operation.referido)}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Referido:</span>{' '}
@@ -112,11 +117,21 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Compartido:</span>{' '}
-            {operation.compartido}
+            {displayValue(operation.compartido)}
+          </p>
+          <p>
+            <span className="font-semibold">
+              Asesor Realizador de la Venta:{' '}
+            </span>{' '}
+            {displayValue(operation.realizador_venta)}
+          </p>
+          <p>
+            <span className="font-semibold">Asesor Adicional: </span>{' '}
+            {displayValue(operation.realizador_venta_adicional)}
           </p>
           <p>
             <span className="font-semibold">Estado de la Operacion: </span>{' '}
-            {operation.estado}
+            {displayValue(operation.estado)}
           </p>
         </div>
         <div
@@ -126,7 +141,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           <Button
             type="button"
             onClick={onClose}
-            className="bg-lightBlue text-white p-2 rounded hover:bg-lightBlue/80 transition-all duration-300 font-semibold w-48 mt-10"
+            className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-48 mt-10"
           >
             Cerrar
           </Button>

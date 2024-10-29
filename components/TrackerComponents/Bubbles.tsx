@@ -135,7 +135,7 @@ const Bubbles = () => {
             </p>
 
             {/* Tooltip for the icon */}
-            <Tooltip id={`tooltip-${index}`} place="top" className="z-20" />
+            <Tooltip id={`tooltip-${index}`} place="top" />
           </div>
         ))}
       </div>
