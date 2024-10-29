@@ -41,9 +41,6 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
     defaultValues: expense || {},
   });
 
-  const [expenseAssociationType, setExpenseAssociationType] = useState(
-    expense?.expenseAssociationType || 'agent'
-  );
   const { userData } = useUserDataStore();
   const userRole = userData?.role;
 
@@ -81,40 +78,16 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
       amountInDollars: data.amount / data.dollarRate,
       user_uid: expense.user_uid,
       otherType: data.otherType ?? '',
-      expenseAssociationType: expenseAssociationType,
     });
   };
 
   if (!isOpen || !expense) return null;
-
-  const handleAssociationTypeChange = (newType: string) => {
-    setExpenseAssociationType(newType);
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-xl shadow-lg  font-bold w-[50%] h-auto flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4 text-center">Editar Gasto</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {userRole === 'team_leader_broker' && (
-            <Select
-              label="Asociación del Gasto"
-              options={[
-                { value: '', label: 'Selecciona una opción' }, // Added default option
-                {
-                  value: 'team_broker',
-                  label: 'Gasto Asociado al Team / Broker',
-                },
-                { value: 'agent', label: 'Gasto Asociado como Asesor' },
-              ]}
-              register={register}
-              name="expenseAssociationType"
-              className="w-full p-2 border"
-              required
-              onChange={(e) => handleAssociationTypeChange(e.target.value)}
-            />
-          )}
-
           <Input
             label="Fecha del Gasto"
             type="date"
