@@ -1,21 +1,26 @@
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface NavLinkProps {
-  href?: string; // or URL if you want to use the URL type from the standard library
+  href?: string;
   label: string;
   icon: React.ReactNode;
-  onClick?: () => void; // Add this line
+  onClick?: () => void;
 }
 
-export const NavLink: React.FC<NavLinkProps> = ({ href, label, icon }) => {
-  // Ensure href is defined and of type string
-  const validHref: string = href || '/default-path';
+export const NavLink: React.FC<NavLinkProps> = ({
+  href = '/default-path',
+  label,
+  icon,
+}) => {
+  const router = useRouter();
+  const isActive = router.pathname === href;
 
   return (
     <Link
-      href={validHref}
-      className="hover:text-mediumBlue px-3 py-2 rounded transition duration-150 ease-in-out w-full flex items-center justify-start"
+      href={href}
+      className={`px-3 py-2 rounded transition duration-150 ease-in-out w-full flex items-center justify-start ${isActive ? 'bg-lightBlue/15' : 'hover:text-mediumBlue'}`}
     >
       {icon}
       {label}
