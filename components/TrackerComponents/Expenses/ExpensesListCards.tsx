@@ -16,7 +16,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { auth } from '@/lib/firebase';
 import { useExpensesStore } from '@/stores/useExpensesStore';
-import useFilteredExpenses from '@/hooks/useFilteredExpenses';
 import {
   fetchUserExpenses,
   deleteExpense,
@@ -105,13 +104,8 @@ const ExpensesListCards: React.FC = () => {
     mutationUpdate.mutate(updatedExpense);
   };
 
-  const { teamBrokerExpenses, nonTeamBrokerExpenses } = useFilteredExpenses(
-    expenses || []
-  );
-
-  const filteredExpenses = router.pathname.includes('expensesBroker')
-    ? teamBrokerExpenses
-    : nonTeamBrokerExpenses;
+  // Mostrar todas las expenses sin filtrar
+  const filteredExpenses = expenses || [];
 
   const searchedExpenses = searchQuery
     ? filteredExpenses.filter(
@@ -123,9 +117,7 @@ const ExpensesListCards: React.FC = () => {
       )
     : [];
 
-  const pageTitle = useRouter().pathname.includes('expensesBroker')
-    ? 'Lista de Gastos Team / Broker'
-    : 'Lista de Gastos Propios';
+  const pageTitle = 'Lista de Gastos';
 
   if (isLoading) return <SkeletonLoader height={64} count={11} />;
 
@@ -143,7 +135,7 @@ const ExpensesListCards: React.FC = () => {
       </div>
       {searchedExpenses.length > 0 ? (
         <Slider {...settings}>
-          {searchedExpenses.map((expense) => (
+          {searchedExpenses.map((expense: Expense) => (
             <div key={expense.id} className="p-4 expense-card">
               <div className="bg-mediumBlue text-white p-4 mb-52 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
                 <p>
