@@ -7,14 +7,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 
-import ModalOK from '@/components/TrackerComponents/CommonComponents/Modal';
-import { cleanString } from '@/common/utils/cleanString';
-import Input from '@/components/TrackerComponents/FormComponents/Input';
-import Button from '@/components/TrackerComponents/FormComponents/Button';
-import { RegisterData } from '@/common/types/';
-import { createSchema } from '@/common/schemas/registerFormSchema';
-import Select from '@/components/TrackerComponents/FormComponents/Select';
+import ModalOK from '../PrivateComponente/CommonComponents/Modal';
+import Input from '../PrivateComponente/FormComponents/Input';
+import Button from '../PrivateComponente/FormComponents/Button';
 import LicensesModal from '../PublicComponents/LicensesModal';
+import Select from '../PrivateComponente/FormComponents/Select';
+
+import { cleanString } from '@/common/utils/cleanString';
+import { RegisterData } from '@/common/types';
+import { createSchema } from '@/common/schemas/registerFormSchema';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!

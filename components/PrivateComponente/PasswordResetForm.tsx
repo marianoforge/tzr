@@ -2,9 +2,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import Button from '../PrivateComponente/FormComponents/Button';
+import Input from '../PrivateComponente/FormComponents/Input';
+
 import { resetPassword } from '@/lib/api/auth';
-import Button from '@/components/TrackerComponents/FormComponents/Button';
-import Input from '@/components/TrackerComponents/FormComponents/Input';
 
 const PasswordResetForm = () => {
   const [email, setEmail] = useState('');

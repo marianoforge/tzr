@@ -7,17 +7,18 @@ import { doc, getDoc } from 'firebase/firestore'; // Importar Firestore para ver
 import Link from 'next/link';
 import Image from 'next/image';
 
+import Button from '../PrivateComponente/FormComponents/Button';
+import Input from '../PrivateComponente/FormComponents/Input';
+import LicensesModal from '../PublicComponents/LicensesModal';
+
 import {
   auth,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   db,
 } from '@/lib/firebase'; // Import Firebase Auth
-import Button from '@/components/TrackerComponents/FormComponents/Button';
-import Input from '@/components/TrackerComponents/FormComponents/Input';
 import { schema } from '@/common/schemas/loginFormSchema';
 import { LoginData } from '@/common/types/';
-import LicensesModal from '../PublicComponents/LicensesModal';
 
 const LoginForm = () => {
   const {
