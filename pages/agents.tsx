@@ -1,11 +1,11 @@
 import React from 'react';
 
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import AgentsReport from '@/components/TrackerComponents/Agents/AgentsReport';
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
+import AgentsReport from '@/modules/agents/AgentsReport';
 import { useUserDataStore } from '@/stores/userDataStore';
-import AgentsReportCarousel from '@/components/TrackerComponents/Agents/AgentsReportCarousel';
-import AgentsReportByOps from '@/components/TrackerComponents/Agents/AgentsReportByOps';
+import AgentsReportCarousel from '@/modules/agents/AgentsReportCarousel';
+import AgentsReportByOps from '@/modules/agents/AgentsReportByOps';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
 
 const Agents = () => {
   const { userData } = useUserDataStore();

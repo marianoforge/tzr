@@ -1,4 +1,4 @@
-import PasswordResetForm from '@/components/TrackerComponents/PasswordResetForm';
+import PasswordResetForm from '@/components/PrivateComponente/PasswordResetForm';
 
 const ResetPassword = () => {
   return (

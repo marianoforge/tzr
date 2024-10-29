@@ -4,11 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 
-import Button from '@/components/TrackerComponents/FormComponents/Button';
-import { formatDateTime } from '@/utils/formatEventDateTime';
+import { formatDateTime } from '@/common/utils/formatEventDateTime';
 import axios from 'axios';
-import SkeletonLoader from '@/components/TrackerComponents/CommonComponents/SkeletonLoader';
-import { SessionType } from '@/types';
+import { SessionType } from '@/common/types/';
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import Button from '@/components/PrivateComponente/FormComponents/Button';
 
 export default function Success() {
   const router = useRouter();

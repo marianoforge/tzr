@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { Expense } from '@/types';
+import { Expense } from '@/common/types/';
 
 // Crear un nuevo gasto
 export const createExpense = async (expenseData: Expense) => {

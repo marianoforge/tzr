@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { ValidationError } from 'yup'; // Import the ValidationError type
 
 import { loginWithEmailAndPassword, loginWithGoogle } from '@/lib/api/auth'; // Usamos las funciones refactorizadas
-import { LoginRequestBody } from '@/types';
-import { schema } from '@/schemas/loginFormSchema'; // Importa el esquema de validación
+import { LoginRequestBody } from '@/common/types/';
+import { schema } from '@/common/schemas/loginFormSchema'; // Importa el esquema de validación
 
 export default async function handler(
   req: NextApiRequest,

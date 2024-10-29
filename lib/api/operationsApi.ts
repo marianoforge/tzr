@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { Operation } from '@/types';
+import { Operation } from '@/common/types/';
 
 // Crear una nueva operación
 export const createOperation = async (operationData: Operation) => {

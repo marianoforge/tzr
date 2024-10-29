@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
-import { ExpenseFormData } from '@/types';
+import { ExpenseFormData } from '@/common/types/';
 
 export default async function handler(
   req: NextApiRequest,

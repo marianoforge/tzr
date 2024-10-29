@@ -3,8 +3,8 @@ import { collection, getDocs, addDoc } from 'firebase/firestore'; // Importa add
 
 import { db } from '@/lib/firebase';
 import { setCsrfCookie, validateCsrfToken } from '@/lib/csrf';
-import { TeamMemberRequestBody } from '@/types';
-import { teamMemberSchema } from '@/schemas/teamMemberSchema';
+import { TeamMemberRequestBody } from '@/common/types/';
+import { teamMemberSchema } from '@/common/schemas/teamMemberSchema';
 
 export default async function handler(
   req: NextApiRequest,

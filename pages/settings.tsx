@@ -1,8 +1,8 @@
 import React from 'react';
 
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import Settings from '@/components/TrackerComponents/Settings';
+import Settings from '@/modules/settings/Settings';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
 
 const SettingsPage = () => {
   return (

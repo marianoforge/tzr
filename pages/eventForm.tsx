@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
-import FormularioEvento from '@/components/TrackerComponents/Events/FormularioEvento';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
+import FormularioEvento from '@/modules/events/FormularioEvento';
 import { useAuthStore } from '@/stores/authStore';
 
 const ReservationInput = () => {

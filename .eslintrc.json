@@ -18,7 +18,10 @@
   },
   "rules": {
     "no-unused-vars": "off",
-    "import/no-unused-modules": [1, { "unusedExports": false }],
+    "import/no-unused-modules": [
+      "warn",
+      { "unusedExports": false, "missingExports": false }
+    ],
 
     "import/order": [
       "warn",

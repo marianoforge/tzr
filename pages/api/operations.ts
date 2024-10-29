@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
-import { Operation } from '@/types';
+import { Operation } from '@/common/types/';
 
 // Handler para manejar GET y POST en este endpoint
 export default async function handler(

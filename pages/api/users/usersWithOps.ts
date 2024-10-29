@@ -3,7 +3,7 @@ import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
 import { setCsrfCookie, validateCsrfToken } from '@/lib/csrf';
-import { userSchema } from '@/schemas/userSchema';
+import { userSchema } from '@/common/schemas/userSchema';
 
 export default async function handler(
   req: NextApiRequest,

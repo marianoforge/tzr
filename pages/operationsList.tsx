@@ -1,10 +1,10 @@
 import React from 'react';
 
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import OperationsTable from '@/components/TrackerComponents/Operations/OperationsTable';
-import OperationsCarousel from '@/components/TrackerComponents/Operations/OperationsCarousel';
-import OperationsTableRent from '@/components/TrackerComponents/Operations/OperationsTableRent';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
+import OperationsTable from '@/modules/operations/OperationsTable';
+import OperationsCarousel from '@/modules/operations/OperationsCarousel';
+import OperationsTableRent from '@/modules/operations/OperationsTableRent';
 
 const OperationsPage = () => {
   return (

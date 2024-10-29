@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
-import { UserDataState, UserData } from '@/types';
+import { UserDataState, UserData } from '@/common/types/';
 
 export const useUserDataStore = create<UserDataState>((set, get) => ({
   items: [],

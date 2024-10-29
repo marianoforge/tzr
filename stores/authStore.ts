@@ -3,7 +3,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
 import { auth, db } from '@/lib/firebase';
-import { UserState } from '@/types';
+import { UserState } from '@/common/types/';
 
 export const useAuthStore = create<UserState>((set) => ({
   userID: null,

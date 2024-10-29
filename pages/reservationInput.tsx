@@ -1,6 +1,6 @@
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
-import OperationsForm from '@/components/TrackerComponents/Operations/OperationsForm';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
+import OperationsForm from '@/modules/operations/OperationsForm';
 import { useUserDataStore } from '@/stores/userDataStore';
 
 const ReservationInput = () => {

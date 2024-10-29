@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { Event, EventFormData } from '@/types';
+import { Event, EventFormData } from '@/common/types/';
 
 export const createEvent = async (eventData: EventFormData) => {
   const response = await axios.post('/api/events', eventData);

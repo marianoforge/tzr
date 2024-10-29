@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-import { Expense, ExpensesState } from '@/types';
+import { Expense, ExpensesState } from '@/common/types/';
 
 export const useExpensesStore = create<ExpensesState>((set, get) => ({
   expenses: [],

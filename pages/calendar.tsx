@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
 import { useAuthStore } from '@/stores/authStore';
-import BigCalendar from '@/components/TrackerComponents/Events/BigCalendar';
+import BigCalendar from '@/modules/events/BigCalendar';
 
 const ReservationInput = () => {
   const { userID, initializeAuthListener } = useAuthStore();

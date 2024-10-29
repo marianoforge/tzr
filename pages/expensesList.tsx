@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
 import { useExpensesStore } from '@/stores/useExpensesStore';
-import ExpensesList from '@/components/TrackerComponents/Expenses/ExpensesList';
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
+import ExpensesList from '@/modules/expenses/ExpensesList';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
 import { useAuthStore } from '@/stores/authStore';
-import ExpensesListCards from '@/components/TrackerComponents/Expenses/ExpensesListCards';
-import ExpensesBarchart from '@/components/TrackerComponents/Expenses/ExpensesBarchart';
+import ExpensesListCards from '@/modules/expenses/ExpensesListCards';
+import ExpensesBarchart from '@/modules/expenses/ExpensesBarchart';
 
 const ExpensesFormPage = () => {
   const fetchItems = useExpensesStore((state) => state.fetchItems);

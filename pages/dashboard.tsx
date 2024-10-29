@@ -1,11 +1,6 @@
-import { getDoc, doc } from 'firebase/firestore';
-import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
-
-import Dashboard from '@/components/TrackerComponents/Dashboard';
-import PrivateLayout from '@/components/TrackerComponents/PrivateLayout';
-import PrivateRoute from '@/components/TrackerComponents/PrivateRoute';
-import { auth, db } from '@/lib/firebase';
+import Dashboard from '@/modules/dashboard/Dashboard';
+import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
+import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
 
 const DashboardPage = () => {
   return (

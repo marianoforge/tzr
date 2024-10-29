@@ -4,7 +4,7 @@ import { doc, setDoc, Timestamp } from 'firebase/firestore'; // Importa Timestam
 
 import { auth, db } from '@/lib/firebase';
 import { setCsrfCookie, validateCsrfToken } from '@/lib/csrf';
-import { RegisterRequestBody } from '@/types';
+import { RegisterRequestBody } from '@/common/types/';
 
 export default async function handler(
   req: NextApiRequest,
