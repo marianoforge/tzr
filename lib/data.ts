@@ -104,13 +104,13 @@ export const yearsFilter = [
 ];
 
 export const statusOptions = [
-  { value: 'all', label: 'Todas las Operaciones' },
+  { value: 'all', label: 'Estado de la Op.' },
   { value: 'open', label: 'En Curso / Reservas' },
   { value: 'closed', label: 'Operaciones Cerradas' },
 ];
 
 export const operationVentasTypeFilter = [
-  { value: 'all', label: 'Todos los Tipos' },
+  { value: 'all', label: 'Tipo de la Op.' },
   { value: 'Venta', label: 'Venta' },
   { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
   {

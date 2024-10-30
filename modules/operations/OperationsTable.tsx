@@ -285,38 +285,44 @@ const OperationsTable: React.FC = () => {
         Lista de Operaciones - Ventas
       </h2>
       <div className="overflow-x-auto flex flex-col justify-around">
-        <div className="flex justify-center items-center mt-2 gap-16 text-mediumBlue">
-          <input
-            type="text"
-            placeholder="Buscar operación por dirección..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-[280px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic"
-          />
-          <Select
-            options={statusOptions}
-            value={statusFilter}
-            onChange={setStatusFilter}
-            className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          />
-          <Select
-            options={yearsFilter}
-            value={yearFilter}
-            onChange={setYearFilter}
-            className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          />
-          <Select
-            options={monthsFilter}
-            value={monthFilter}
-            onChange={setMonthFilter}
-            className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          />
-          <Select
-            options={operationVentasTypeFilter}
-            value={operationTypeFilter}
-            onChange={setOperationTypeFilter}
-            className="w-[220px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          />
+        <div className="flex items-center mt-2 text-mediumBlue flex-wrap">
+          <div className="flex md:w-full lg:w-5/12 lg:justify-around justify-center items-center w-1/2 space-x-4">
+            <input
+              type="text"
+              placeholder="Buscar por dirección..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center lg:text-sm xl:text-base"
+            />
+            <Select
+              options={statusOptions}
+              value={statusFilter}
+              onChange={setStatusFilter}
+              className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
+            />
+          </div>
+          <div className="flex md:w-full lg:w-2/12 lg:justify-around justify-center items-center w-1/2 space-x-4">
+            <Select
+              options={yearsFilter}
+              value={yearFilter}
+              onChange={setYearFilter}
+              className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
+            />
+          </div>
+          <div className="flex md:w-full lg:w-5/12 lg:justify-around justify-center items-center w-1/2 space-x-4">
+            <Select
+              options={monthsFilter}
+              value={monthFilter}
+              onChange={setMonthFilter}
+              className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
+            />
+            <Select
+              options={operationVentasTypeFilter}
+              value={operationTypeFilter}
+              onChange={setOperationTypeFilter}
+              className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
+            />
+          </div>
         </div>
         <table className="w-full text-left border-collapse">
           <thead>

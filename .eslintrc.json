@@ -8,20 +8,16 @@
     "plugin:prettier/recommended"
   ],
   "plugins": ["import", "prettier"],
-  "settings": {
-    "import/resolver": {
-      "typescript": {
-        "project": "./"
-      },
-      "node": {
-        "paths": ["."],
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
-    }
-  },
+
   "rules": {
     "no-unused-vars": "off",
-
+    "settings": {
+      "import/resolver": {
+        "typescript": {
+          "project": "./tsconfig.json"
+        }
+      }
+    },
     "import/order": [
       "warn",
       {
