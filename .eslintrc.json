@@ -11,8 +11,11 @@
   "settings": {
     "import/resolver": {
       "typescript": {
-        "alwaysTryTypes": true,
         "project": "./"
+      },
+      "node": {
+        "paths": ["."],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
   },

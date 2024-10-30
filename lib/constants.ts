@@ -1,4 +1,12 @@
-export const COLORS = ['#3f37c9', '#0077b6', '#00b4d8', '#48cae4', '#5DADE299'];
+export const COLORS = [
+  '#36a2eb',
+  '#2E86C1',
+  '#FFB7B2',
+  '#F9D77E',
+  '#7ED994',
+  '#4bc0c0',
+  '#9966ff',
+];
 
 export const MAX_BAR_SIZE = 40;
 

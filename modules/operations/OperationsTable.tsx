@@ -383,7 +383,7 @@ const OperationsTable: React.FC = () => {
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
               >
-                Punta % Promedio
+                % Puntas
               </th>
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -408,7 +408,7 @@ const OperationsTable: React.FC = () => {
                 <InformationCircleIcon
                   className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                   data-tooltip-id="tooltip-estado"
-                  data-tooltip-content="Estado de la operacion C=Cerrada, A=Abierta / En Curso"
+                  data-tooltip-content="Estado de la operacion C=Cerrada, A=Abierta / En Curso. Una vez cerrada la operación edita la fecha de la operacion."
                 />
                 <Tooltip id="tooltip-estado" place="top" />
               </th>
@@ -449,9 +449,8 @@ const OperationsTable: React.FC = () => {
                 </td>
                 <td className="py-3 px-2 before:content-['Punta Vendedora:'] md:before:content-none">
                   {formatNumber(
-                    (operacion.porcentaje_punta_compradora +
-                      operacion.porcentaje_punta_vendedora) /
-                      2
+                    operacion.porcentaje_punta_compradora +
+                      operacion.porcentaje_punta_vendedora
                   )}
                   %
                 </td>
