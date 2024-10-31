@@ -202,7 +202,8 @@ export const calculateTotals = (operations: Operation[]) => {
   const currentMonth = new Date().getMonth() + 1;
 
   // Promedio Mensual Honorarios Asesor
-  const promedioMensualHonorariosAsesor = totalHonorariosAsesor / currentMonth;
+  const promedioMensualHonorariosAsesor =
+    totalHonorariosAsesorCerradas / currentMonth;
 
   // Filtrar operaciones donde ambas puntas son distintas de cero
   const validOperations = filteredOperations.filter(
