@@ -30,17 +30,17 @@ const BounceCard: React.FC<BounceCardProps> = ({
         delay: delay,
       }}
     >
-      <div className="bg-white p-10 shadow-lg w-[500px] text-center rounded-xl flex flex-row items-center justify-center">
+      <div className="bg-white py-10 px-6 shadow-lg w-[500px] max-h-[220px] min-h-[220px] text-center rounded-xl flex flex-row items-center justify-center">
         <div className="icon w-[20%]">
           <Image
-            src="/tpLogo.png"
+            src="/isortp.png"
             alt="Logo"
-            width={150}
-            height={150}
-            className="w-16 h-14"
+            width={200}
+            height={200}
+            className="w-19 h-17"
           />
         </div>
-        <div className="flex flex-col justify-center w-[80%]">
+        <div className="flex flex-col justify-center w-[90%]">
           <h3>{title}</h3>
           <p>{description}</p>
         </div>

@@ -1,4 +1,4 @@
-import Footer from '@/components/PrivateComponente/Footer';
+import Footer from '@/components/PublicComponents/CommonComponents/Footer';
 
 import HeroSection from '../HeroSections';
 
@@ -13,7 +13,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="relative flex flex-col justify-center items-center w-full px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32 2xl:px-48">
           <Navbar />
           <HeroSection />
-          <Footer setActiveView={() => {}} />
         </div>
       </div>
       <main className=" flex flex-col justify-center items-center">
