@@ -5,8 +5,8 @@ import MainLayout from '@/components/PublicComponents/CommonComponents/MainLayou
 const Home = () => {
   return (
     <MainLayout>
-      <CardsSection />
       <LicenseSection />
+      <CardsSection />
     </MainLayout>
   );
 };

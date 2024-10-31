@@ -15,7 +15,7 @@ const Navigation = () => {
 
   return (
     <div className="w-full flex flex-col sm:flex-row justify-between">
-      <nav className="hidden w-full sm:w-[50%] space-x-2 sm:space-x-4 items-center justify-center lg:hidden 2xl:flex">
+      {/* <nav className="hidden w-full sm:w-[50%] space-x-2 sm:space-x-4 items-center justify-center lg:hidden 2xl:flex">
         {[
           { name: 'Pricing', link: '/' },
           { name: 'Company', link: '/' },
@@ -28,7 +28,7 @@ const Navigation = () => {
             </button>
           </Link>
         ))}
-      </nav>
+      </nav> */}
       <nav className="hidden w-full sm:w-[50%] lg:w-full md:flex space-x-2 sm:space-x-4 items-center justify-end">
         {userID ? (
           <Link href="/dashboard">

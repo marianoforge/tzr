@@ -3,9 +3,9 @@ import BounceCard from './BounceCard';
 const CardsSection = () => {
   return (
     <section className="relative flex flex-col text-center sm:text-center md:text-start gap-8 md:flex-row pb-24 pt-16 sm:pb-32 xl:pb-0 sm:pt-24 md:pb-48 md:pt-20 items-center justify-center w-full">
-      <div className="absolute text-[64px] text-[#7B7C86] font-bold">
+      {/* <div className="absolute text-[64px] text-[#7B7C86] font-bold">
         100% emprendedor
-      </div>
+      </div> */}
       <div className="w-full ">
         <div className="flex flex-col lg:flex-row justify-around items-center mb-[120px]">
           <BounceCard
