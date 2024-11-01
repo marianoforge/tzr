@@ -127,9 +127,18 @@ export const calculateTotals = (operations: Operation[]) => {
   // Operaciones Cerradas
   const closedOperations = operations.filter((op) => op.estado === 'Cerrada');
 
+  const nonZeroOperations = operations.filter(
+    (op) => op.punta_compradora !== false && op.punta_vendedora !== false
+  );
+
   // Total Punta Compradora
-  const puntaCompradora = sumField(closedOperations, 'punta_compradora');
-  const puntaVendedora = sumField(closedOperations, 'punta_vendedora');
+  const puntaCompradora = closedOperations.reduce((sum, operation) => {
+    return sum + (operation.porcentaje_punta_compradora ? 1 : 0);
+  }, 0);
+
+  const puntaVendedora = closedOperations.reduce((sum, operation) => {
+    return sum + (operation.porcentaje_punta_vendedora ? 1 : 0);
+  }, 0);
 
   // Total Suma Total de Puntas
   const sumaTotalDePuntas = puntaCompradora + puntaVendedora;

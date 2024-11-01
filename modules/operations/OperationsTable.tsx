@@ -462,8 +462,8 @@ const OperationsTable: React.FC = () => {
                 </td>
                 <td className="py-3 px-2 before:content-['Puntas:'] md:before:content-none">
                   {formatNumber(
-                    Number(operacion.punta_vendedora) +
-                      Number(operacion.punta_compradora)
+                    (operacion.porcentaje_punta_compradora ? 1 : 0) +
+                      (operacion.porcentaje_punta_vendedora ? 1 : 0)
                   )}
                 </td>
                 <td className="py-3 px-2 before:content-['Honorarios Agencia:'] md:before:content-none">
