@@ -8,8 +8,9 @@ export function filteredOperations(
 ) {
   const currentYear = new Date().getFullYear();
   return operations?.filter((operation: Operation) => {
-    const operationYear = new Date(operation.fecha_operacion).getFullYear();
-    const operationMonth = new Date(operation.fecha_operacion).getMonth() + 1;
+    const operationDate = new Date(operation.fecha_operacion);
+    const operationYear = operationDate.getFullYear();
+    const operationMonth = operationDate.getMonth() + 1; // getMonth() returns 0-based month
 
     const statusMatch =
       statusFilter === 'all' ||
@@ -17,12 +18,12 @@ export function filteredOperations(
       (statusFilter === 'closed' && operation.estado === 'Cerrada');
 
     const yearMatch =
-      yearFilter === 'all' ||
       (yearFilter === 'currentYear' && operationYear === currentYear) ||
-      (yearFilter === 'year2023' && operationYear === 2023);
+      yearFilter === currentYear.toString() || // Ensure current year is checked as a string
+      (yearFilter === '2023' && operationYear === 2023);
 
     const monthMatch =
-      monthFilter === 'all' || operationMonth === parseInt(monthFilter);
+      monthFilter === 'all' || operationMonth === parseInt(monthFilter, 10);
 
     return statusMatch && yearMatch && monthMatch;
   });

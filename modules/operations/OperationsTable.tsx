@@ -579,14 +579,21 @@ const OperationsTable: React.FC = () => {
                 )}
               </td>
               <td className={styleTotalRow}>
-                {filteredTotals.promedio_suma_puntas !== undefined &&
-                filteredTotals.promedio_suma_puntas !== null ? (
-                  <>
-                    {formatNumber(Number(filteredTotals.promedio_suma_puntas))}%
-                  </>
-                ) : (
-                  'Cálculo no disponible'
-                )}
+                <>
+                  {filteredTotals.promedio_punta_vendedora_porcentaje !==
+                    undefined &&
+                  filteredTotals.promedio_punta_vendedora_porcentaje !== null &&
+                  filteredTotals.promedio_punta_compradora_porcentaje !==
+                    undefined &&
+                  filteredTotals.promedio_punta_compradora_porcentaje !== null
+                    ? `${formatNumber(
+                        Number(
+                          filteredTotals.promedio_punta_vendedora_porcentaje +
+                            filteredTotals.promedio_punta_compradora_porcentaje
+                        )
+                      )}%`
+                    : 'Cálculo no disponible'}
+                </>
               </td>
 
               <td className={styleTotalRow}>

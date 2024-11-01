@@ -98,8 +98,7 @@ export const operationTypes = [
 ];
 
 export const yearsFilter = [
-  { value: 'all', label: 'Todos los Años' },
-  { value: '2024', label: 'Año Actual' },
+  { value: '2024', label: 'Año 2024' },
   { value: '2023', label: 'Año 2023' },
 ];
 
