@@ -143,7 +143,7 @@ export const calculateTotals = (operations: Operation[]) => {
   const filtroOperacionsSinAlquileres = filterOperationsExcludingType(
     operations,
     'Alquiler'
-  );
+  ).filter((op) => op.estado === 'Cerrada');
 
   // Total Punta Compradora Porcentaje
   const totalPuntaCompradoraPorcentaje = sumField(
@@ -206,7 +206,7 @@ export const calculateTotals = (operations: Operation[]) => {
     totalHonorariosAsesorCerradas / currentMonth;
 
   // Filtrar operaciones donde ambas puntas son distintas de cero
-  const validOperations = filteredOperations.filter(
+  const validOperations = filtroOperacionsSinAlquileres.filter(
     (op) =>
       op.porcentaje_punta_compradora !== null &&
       op.porcentaje_punta_compradora !== 0 &&
@@ -226,13 +226,10 @@ export const calculateTotals = (operations: Operation[]) => {
   );
 
   // Calcular el promedio de la suma de las puntas
-  const totalPuntas = validOperations.length * 2; // Total de puntas (compradora y vendedora)
   const promedioSumaPuntas =
-    totalPuntas > 0
-      ? (totalPuntaCompradoraPorcentajeDevVentas +
-          totalPuntaVendedoraPorcentajeDevVentas) /
-        totalPuntas
-      : 0;
+    (totalPuntaCompradoraPorcentajeDevVentas +
+      totalPuntaVendedoraPorcentajeDevVentas) /
+    validOperations.length;
 
   return {
     valor_reserva: totalValorReserva,
