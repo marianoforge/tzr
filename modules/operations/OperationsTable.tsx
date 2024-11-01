@@ -49,7 +49,7 @@ const OperationsTable: React.FC = () => {
   const [viewOperation, setViewOperation] = useState<Operation | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
-  const [yearFilter, setYearFilter] = useState('all');
+  const [yearFilter, setYearFilter] = useState('2024');
   const [monthFilter, setMonthFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isValueAscending, setIsValueAscending] = useState<boolean | null>(
