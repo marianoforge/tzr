@@ -1,4 +1,8 @@
 import { Operation } from '@/common/types';
+import { calculateGrossByMonth } from './calculationsGrossByMonth';
+
+const currentMonth = new Date().getMonth() + 1;
+const currentYear = new Date().getFullYear();
 
 // Funcion para sumatoria de un campo en operaciones
 const sumField = (operations: Operation[], field: keyof Operation) =>
@@ -54,10 +58,12 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Total Valores Ventas y Ventas Cerradas
   const totalValorReserva = sumField(operations, 'valor_reserva');
+
   const totalValorReservaCerradas = sumField(
     operations.filter((op) => op.estado === 'Cerrada'),
     'valor_reserva'
   );
+
   const totalValorReservaEnCurso = sumField(
     operations.filter((op) => op.estado === 'En Curso'),
     'valor_reserva'
@@ -98,6 +104,23 @@ export const calculateTotals = (operations: Operation[]) => {
     'honorarios_asesor'
   );
 
+  const totalHonorariosAsesorMesVencido = sumField(
+    operations.filter((op) => {
+      const operationDate = new Date(op.fecha_operacion); // Assuming 'fecha' is the date field in Operation
+      const operationYear = operationDate.getFullYear();
+      const operationMonth = operationDate.getMonth() + 1;
+      return (
+        op.estado === 'Cerrada' &&
+        operationYear === currentYear &&
+        operationMonth < currentMonth
+      );
+    }),
+    'honorarios_asesor'
+  );
+
+  const totalHonorariosAsesorMesVencidoPromedio =
+    totalHonorariosAsesorMesVencido / (currentMonth - 1);
+
   // Total Honorarios Broker Cerradas
   const totalHonorariosBrokerCerradas = sumField(
     operations.filter((op) => op.estado === 'Cerrada'),
@@ -126,10 +149,6 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Operaciones Cerradas
   const closedOperations = operations.filter((op) => op.estado === 'Cerrada');
-
-  const nonZeroOperations = operations.filter(
-    (op) => op.punta_compradora !== false && op.punta_vendedora !== false
-  );
 
   // Total Punta Compradora
   const puntaCompradora = closedOperations.reduce((sum, operation) => {
@@ -208,7 +227,6 @@ export const calculateTotals = (operations: Operation[]) => {
   );
 
   // Obtener el mes actual (1-12)
-  const currentMonth = new Date().getMonth() + 1;
 
   // Promedio Mensual Honorarios Asesor
   const promedioMensualHonorariosAsesor =
@@ -216,13 +234,18 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Filtrar operaciones donde ambas puntas son distintas de cero
   const validOperations = filtroOperacionsSinAlquileres.filter(
-    (op) =>
-      op.porcentaje_punta_compradora !== null &&
-      op.porcentaje_punta_compradora !== 0 &&
-      op.porcentaje_punta_vendedora !== null &&
-      op.porcentaje_punta_vendedora !== 0
+    (op) => Number(op.punta_compradora) + Number(op.punta_vendedora) === 2
   );
 
+  const validOperationsTotalValorReserva = sumField(
+    validOperations,
+    'valor_reserva'
+  );
+
+  const validOperationsTotalHonorariosBroker = sumField(
+    validOperations,
+    'honorarios_broker'
+  );
   // Calcular la suma de las puntas compradora y vendedora
   const totalPuntaCompradoraPorcentajeDevVentas = sumField(
     validOperations,
@@ -239,6 +262,17 @@ export const calculateTotals = (operations: Operation[]) => {
     (totalPuntaCompradoraPorcentajeDevVentas +
       totalPuntaVendedoraPorcentajeDevVentas) /
     validOperations.length;
+
+  // Calculate the percentage for each month
+  const porcentajeHonorariosBrokerPorMes2024 = calculateGrossByMonth(
+    validOperations,
+    2024
+  );
+
+  const porcentajeHonorariosBrokerPorMes2023 = calculateGrossByMonth(
+    validOperations,
+    2023
+  );
 
   return {
     valor_reserva: totalValorReserva,
@@ -266,5 +300,11 @@ export const calculateTotals = (operations: Operation[]) => {
     total_promedio_porcentaje_puntas_validas:
       totalPromedioPorcentajePuntasValidas,
     promedio_suma_puntas: promedioSumaPuntas,
+    total_honorarios_asesor_mes_vencido_promedio:
+      totalHonorariosAsesorMesVencidoPromedio,
+    porcentaje_honorarios_broker_por_mes_2024:
+      porcentajeHonorariosBrokerPorMes2024,
+    porcentaje_honorarios_broker_por_mes_2023:
+      porcentajeHonorariosBrokerPorMes2023,
   };
 };

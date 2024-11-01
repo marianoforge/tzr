@@ -47,7 +47,7 @@ const CuadroPrincipalChart = () => {
   }
 
   return (
-    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[560px] overflow-y-auto">
+    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[610px] overflow-y-auto">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[22px] text-center font-semibold mt-4 xl:mb-6">
         Tipo de Operaciones
       </h2>

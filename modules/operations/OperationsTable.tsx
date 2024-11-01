@@ -379,15 +379,16 @@ const OperationsTable: React.FC = () => {
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
               >
-                Punta Compradora
-              </th>
-              <th
-                className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-              >
                 Punta Vendedora
               </th>
               <th
                 className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+              >
+                Punta Compradora
+              </th>
+
+              <th
+                className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
               >
                 % Puntas
               </th>
@@ -447,11 +448,11 @@ const OperationsTable: React.FC = () => {
                 <td className="py-3 px-2 before:content-['Valor:'] md:before:content-none">
                   ${formatNumber(operacion.valor_reserva)}
                 </td>
-                <td className="py-3 px-2 before:content-['Punta Compradora:'] md:before:content-none">
-                  {formatNumber(operacion.porcentaje_punta_compradora ?? 0)}%
-                </td>
                 <td className="py-3 px-2 before:content-['Punta Vendedora:'] md:before:content-none">
                   {formatNumber(operacion.porcentaje_punta_vendedora ?? 0)}%
+                </td>
+                <td className="py-3 px-2 before:content-['Punta Compradora:'] md:before:content-none">
+                  {formatNumber(operacion.porcentaje_punta_compradora ?? 0)}%
                 </td>
                 <td className="py-3 px-2 before:content-['Punta Vendedora:'] md:before:content-none">
                   {formatNumber(
@@ -462,8 +463,8 @@ const OperationsTable: React.FC = () => {
                 </td>
                 <td className="py-3 px-2 before:content-['Puntas:'] md:before:content-none">
                   {formatNumber(
-                    (operacion.porcentaje_punta_compradora ? 1 : 0) +
-                      (operacion.porcentaje_punta_vendedora ? 1 : 0)
+                    Number(operacion.punta_compradora) +
+                      Number(operacion.punta_vendedora)
                   )}
                 </td>
                 <td className="py-3 px-2 before:content-['Honorarios Agencia:'] md:before:content-none">
@@ -549,9 +550,9 @@ const OperationsTable: React.FC = () => {
                       )
                     )}%`}
                     <InformationCircleIcon
-                      className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                      className="inline-block mb-1 ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                       data-tooltip-id="tooltip-compradora"
-                      data-tooltip-content="Promedio del % incluyendo solamente ventas y desarrollos. Otras operaciones y puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
+                      data-tooltip-content="Promedio del % excluyendo alquileres y operaciones abiertas. Puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
                     />
                     <Tooltip id="tooltip-compradora" place="top" />
                   </>
@@ -568,9 +569,9 @@ const OperationsTable: React.FC = () => {
                       Number(filteredTotals.promedio_punta_vendedora_porcentaje)
                     )}%`}
                     <InformationCircleIcon
-                      className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                      className="inline-block mb-1  ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                       data-tooltip-id="tooltip-vendedora"
-                      data-tooltip-content="Promedio del % incluyendo solamente ventas y desarrollos. Otras operaciones y puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
+                      data-tooltip-content="Promedio del % excluyendo alquileres y operaciones abiertas. Puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
                     />
                     <Tooltip id="tooltip-vendedora" place="top" />
                   </>
@@ -583,6 +584,12 @@ const OperationsTable: React.FC = () => {
                 filteredTotals.promedio_suma_puntas !== null ? (
                   <>
                     {formatNumber(Number(filteredTotals.promedio_suma_puntas))}%
+                    <InformationCircleIcon
+                      className="inline-block mb-1 ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                      data-tooltip-id="tooltip-puntas"
+                      data-tooltip-content="Promedio del % excluyendo alquileres y operaciones abiertas. Puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
+                    />
+                    <Tooltip id="tooltip-puntas" place="top" />
                   </>
                 ) : (
                   'Cálculo no disponible'

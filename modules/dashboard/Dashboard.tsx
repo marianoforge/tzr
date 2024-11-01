@@ -3,9 +3,6 @@ import EventsList from '@/modules/events/EventsList';
 import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
 import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
 
-import OperationsTable from '../../modules/operations/OperationsTable';
-import OperationsTableRent from '../../modules/operations/OperationsTableRent';
-import OperationsCarousel from '../../modules/operations/OperationsCarousel';
 import Bubbles from './Bubbles';
 import CuadroPrincipal from './CuadroPrincipal';
 import CuadroPrincipalChart from './CuadroPrincipalChart';
@@ -13,6 +10,7 @@ import MonthlyBarChart from './MonthlyBarChart';
 import MonthlyBarChartGross from './MonthlyBarChartGross';
 import ObjectiveChart from './ObjectiveChart';
 import Profitability from './Profitability';
+import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 
 const DashBoard = () => {
   return (
@@ -40,12 +38,13 @@ const DashBoard = () => {
       </div>
       <div className="space-y-6">
         <div className="hidden lg:block space-y-8">
-          <OperationsTable />
-          <OperationsTableRent />
+          {/* <OperationsTable /> */}
+          <MonthlyLineChartPoints />
+          {/* <OperationsTableRent /> */}
         </div>
-        <div className="block lg:hidden">
+        {/* <div className="block lg:hidden">
           <OperationsCarousel />
-        </div>
+        </div> */}
         <div
           className="grid grid-cols-1 lg:grid-cols-3 md:gap-10"
           style={{ marginTop: '2.5rem' }}

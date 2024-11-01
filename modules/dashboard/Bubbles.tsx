@@ -78,7 +78,7 @@ const Bubbles = () => {
     {
       title: 'Promedio Mensual Honorarios Netos',
       figure: formatValue(
-        totals.promedio_mensual_honorarios_asesor ?? 0,
+        totals.total_honorarios_asesor_mes_vencido_promedio ?? 0,
         'currency'
       ),
       bgColor: 'bg-lightBlue',
@@ -104,6 +104,7 @@ const Bubbles = () => {
   if (isLoading) {
     return <SkeletonLoader height={220} count={2} />;
   }
+
   if (operationsError) {
     return (
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>

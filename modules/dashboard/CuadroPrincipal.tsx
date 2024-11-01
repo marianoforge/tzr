@@ -35,7 +35,7 @@ const CuadroPrincipal = () => {
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[560px] overflow-y-auto">
+    <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[610px] overflow-y-auto">
       <div>
         <h2 className="text-2xl lg:text-[24px] font-bold mb-4 text-center">
           Cuadro Tipos de Operaciones - 2024

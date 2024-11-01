@@ -14,8 +14,6 @@ const EventsList: React.FC = () => {
     return <p>Error: {eventsError.message || 'An unknown error occurred'}</p>;
   }
 
-  console.log(displayedEvents.map((event: Event) => event));
-
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center">
       {displayedEvents.length === 0 ? (
