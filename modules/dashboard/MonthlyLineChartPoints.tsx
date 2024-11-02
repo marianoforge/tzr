@@ -101,7 +101,6 @@ const MonthlyLineChartPoints = () => {
           )
         : [];
 
-      // Merge data for 2023 and 2024
       const mergedData = monthNames.map((month, index) => {
         const data2023 = formattedData2023.find(
           (data) => data.name === month
@@ -129,7 +128,6 @@ const MonthlyLineChartPoints = () => {
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
-
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold text-center">

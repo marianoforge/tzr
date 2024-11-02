@@ -11,16 +11,14 @@ export function filteredOperations(
     const operationDate = new Date(operation.fecha_operacion);
     const operationYear = operationDate.getFullYear();
     const operationMonth = operationDate.getMonth() + 1; // getMonth() returns 0-based month
-
     const statusMatch =
       statusFilter === 'all' ||
       (statusFilter === 'open' && operation.estado === 'En Curso') ||
       (statusFilter === 'closed' && operation.estado === 'Cerrada');
 
     const yearMatch =
-      (yearFilter === 'currentYear' && operationYear === currentYear) ||
-      yearFilter === currentYear.toString() || // Ensure current year is checked as a string
-      (yearFilter === '2023' && operationYear === 2023);
+      (yearFilter === '2023' && operationYear === 2023) ||
+      (yearFilter === '2024' && operationYear === 2024);
 
     const monthMatch =
       monthFilter === 'all' || operationMonth === parseInt(monthFilter, 10);

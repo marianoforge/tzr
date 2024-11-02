@@ -26,7 +26,7 @@ export const calculateGrossByMonth = (
     (acc: Record<number, number>, op: Operation) => {
       const operationDate = new Date(op.fecha_operacion);
       const operationYear = operationDate.getFullYear();
-      const month = operationDate.getMonth() + 1; // Get month (1-12)
+      const month = operationDate.getMonth() + 1;
 
       if (operationYear === year) {
         if (!acc[month]) {
