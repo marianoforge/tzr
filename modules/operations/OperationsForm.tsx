@@ -286,13 +286,11 @@ const OperationsForm = () => {
             )}
 
             <Input
-              label="Porcentaje punta compradora*"
-              type="text"
-              placeholder="Por ejemplo: 4%"
-              {...register('porcentaje_punta_compradora', {
-                setValueAs: (value) => parseFloat(value) || 0,
-              })}
-              error={errors.porcentaje_punta_compradora?.message}
+              label="Valor de reserva / operación*"
+              type="number"
+              placeholder="Por ejemplo: 200000"
+              {...register('valor_reserva')}
+              error={errors.valor_reserva?.message}
               required
             />
 
@@ -308,6 +306,17 @@ const OperationsForm = () => {
             />
 
             <Input
+              label="Porcentaje punta compradora*"
+              type="text"
+              placeholder="Por ejemplo: 4%"
+              {...register('porcentaje_punta_compradora', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_punta_compradora?.message}
+              required
+            />
+
+            <Input
               label="Porcentaje honorarios totales*"
               type="text"
               placeholder="Por ejemplo: 7%"
@@ -317,14 +326,7 @@ const OperationsForm = () => {
               error={errors.porcentaje_honorarios_broker?.message}
               required
             />
-            <Input
-              label="Valor de reserva / operación*"
-              type="number"
-              placeholder="Por ejemplo: 200000"
-              {...register('valor_reserva')}
-              error={errors.valor_reserva?.message}
-              required
-            />
+
             <Input
               label="Número sobre de reserva"
               type="text"

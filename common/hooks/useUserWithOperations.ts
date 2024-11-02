@@ -40,7 +40,7 @@ const useUsersWithOperations = (user: UserData) => {
   return useQuery({
     queryKey: ['usersWithOperations', user],
     queryFn: () => fetchUsersWithOperations(user),
-    staleTime: 1000 * 60 * 5, // Cache data for 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
 };
 

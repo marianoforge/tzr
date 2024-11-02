@@ -24,11 +24,9 @@ import AddUserModal from './AddUserModal';
 
 import EditAgentsModal from './EditAgentsModal';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
-// Utiliza los hooks adaptados a Tanstack Query
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const queryClient = useQueryClient();
 
-  // State hooks
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -66,8 +64,8 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   }, []);
 
   const handleDeleteButtonClick = useCallback((member: TeamMember) => {
-    setSelectedMember(member); // Set the selected member
-    setIsDeleteModalOpen(true); // Open the delete modal
+    setSelectedMember(member);
+    setIsDeleteModalOpen(true);
   }, []);
 
   const handleSubmit = useCallback(
@@ -105,6 +103,12 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
     totalPages,
     handlePageChange,
   } = useAgentsData(currentUser);
+
+  console.log(
+    currentAgents.map((agent) =>
+      agent.operaciones.map((op) => op.fecha_operacion)
+    )
+  );
 
   // Render logic
   if (isLoading) {
