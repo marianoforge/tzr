@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 
+import { APIMethods, PATHS } from '@/common/enums';
 import ModalOK from '../PrivateComponente/CommonComponents/Modal';
 import Input from '../PrivateComponente/FormComponents/Input';
 import Button from '../PrivateComponente/FormComponents/Button';
@@ -46,7 +47,7 @@ const RegisterForm = () => {
     const fetchCsrfToken = async () => {
       try {
         const res = await fetch('/api/auth/register', {
-          method: 'GET',
+          method: APIMethods.GET,
         });
         const data = await res.json();
         setCsrfToken(data.csrfToken);
@@ -82,7 +83,7 @@ const RegisterForm = () => {
       const storedPriceId = localStorage.getItem('selectedPriceId');
 
       const response = await fetch('/api/auth/register', {
-        method: 'POST',
+        method: APIMethods.POST,
         headers: {
           'Content-Type': 'application/json',
           'CSRF-Token': csrfToken || '',
@@ -109,7 +110,7 @@ const RegisterForm = () => {
 
       if (storedPriceId) {
         const stripeRes = await fetch('/api/checkout/checkout_session', {
-          method: 'POST',
+          method: APIMethods.POST,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -134,7 +135,7 @@ const RegisterForm = () => {
       } else {
         setModalMessage('Registro exitoso. Ahora puedes iniciar sesión.');
         setIsModalOpen(true);
-        router.push('/dashboard');
+        router.push(PATHS.DASHBOARD);
       }
     } catch (err: unknown) {
       if (err instanceof Error) {

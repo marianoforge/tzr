@@ -10,7 +10,7 @@ interface NavLinkProps {
 }
 
 export const NavButton: React.FC<NavLinkProps> = ({
-  href = '/default-path',
+  href,
   label,
   fullWidth = false,
   onClick,

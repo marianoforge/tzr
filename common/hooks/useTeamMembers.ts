@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { useAuthStore } from '@/stores/authStore'; // Suponiendo que aquí manejas la autenticación
+import { QueryKeys } from '../enums';
 
 export const useTeamMembers = () => {
   const { userID } = useAuthStore(); // Obtener el UID del usuario logueado
@@ -20,7 +21,7 @@ export const useTeamMembers = () => {
 
   // Usar react-query para manejar la solicitud y el caché de los datos
   const query = useQuery({
-    queryKey: ['teamMembers', userID],
+    queryKey: [QueryKeys.TEAM_MEMBERS, userID],
     queryFn: fetchTeamMembers,
     enabled: !!userID, // Habilitar la consulta solo si hay un userID
   });

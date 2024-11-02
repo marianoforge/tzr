@@ -1,11 +1,12 @@
 import { Operation } from '@/common/types';
+import { OperationStatus } from '../enums';
 
 // Function to calculate adjusted broker fees
 export const calculateAdjustedBrokerFees = (operations: Operation[]) =>
   operations
     .filter(
       (op) =>
-        op.estado === 'Cerrada' &&
+        op.estado === OperationStatus.CERRADA &&
         new Date(op.fecha_operacion).getFullYear() === 2024
     )
     .reduce((acc: number, op: Operation) => {
@@ -22,7 +23,7 @@ export const calculateTotalOperations = (operations: Operation[]) =>
   operations
     .filter(
       (op) =>
-        op.estado === 'Cerrada' &&
+        op.estado === OperationStatus.CERRADA &&
         new Date(op.fecha_operacion).getFullYear() === 2024
     )
     .reduce((total, op) => {
@@ -39,7 +40,7 @@ export const calculateTotalBuyerTips = (operations: Operation[]) =>
   operations
     .filter(
       (op) =>
-        op.estado === 'Cerrada' &&
+        op.estado === OperationStatus.CERRADA &&
         new Date(op.fecha_operacion).getFullYear() === 2024
     )
     .reduce((acc, op) => acc + (op.punta_compradora ? 1 : 0), 0);
@@ -49,7 +50,7 @@ export const calculateTotalSellerTips = (operations: Operation[]) =>
   operations
     .filter(
       (op) =>
-        op.estado === 'Cerrada' &&
+        op.estado === OperationStatus.CERRADA &&
         new Date(op.fecha_operacion).getFullYear() === 2024
     )
     .reduce((acc, op) => acc + (op.punta_vendedora ? 1 : 0), 0);
@@ -59,7 +60,7 @@ export const calculateTotalTips = (operations: Operation[]) =>
   operations
     .filter(
       (op) =>
-        op.estado === 'Cerrada' &&
+        op.estado === OperationStatus.CERRADA &&
         new Date(op.fecha_operacion).getFullYear() === 2024
     )
     .reduce(
@@ -73,7 +74,7 @@ export const calculateTotalReservationValue = (operations: Operation[]) =>
   operations
     .filter(
       (op) =>
-        op.estado === 'Cerrada' &&
+        op.estado === OperationStatus.CERRADA &&
         new Date(op.fecha_operacion).getFullYear() === 2024
     )
     .reduce((acc, op) => acc + op.valor_reserva, 0);

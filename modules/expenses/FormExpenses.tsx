@@ -16,6 +16,7 @@ import { schema } from '@/common/schemas/formExpensesSchema';
 import { expenseTypes } from '@/lib/data';
 import useUserAuth from '@/common/hooks/useUserAuth';
 import useModal from '@/common/hooks/useModal';
+import { QueryKeys } from '@/common/enums';
 
 const FormularioExpenses: React.FC = () => {
   const userID = useUserAuth();
@@ -57,7 +58,7 @@ const FormularioExpenses: React.FC = () => {
   const mutation = useMutation({
     mutationFn: (expenseData: Expense) => createExpense(expenseData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.EXPENSES] });
       setModalMessage('Gasto guardado exitosamente');
       openModal();
       reset();
@@ -71,7 +72,7 @@ const FormularioExpenses: React.FC = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<ExpenseFormData> = (data) => {
+  const onSubmit: SubmitHandler<ExpenseFormData> = (data: ExpenseFormData) => {
     if (!userID) {
       setModalMessage('No se proporcionó un ID de usuario válido');
       openModal();

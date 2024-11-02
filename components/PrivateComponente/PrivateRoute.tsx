@@ -8,6 +8,7 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { auth } from '../../lib/firebase';
 
 import Loader from './Loader';
+import { PATHS } from '@/common/enums';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -31,7 +32,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
       } else {
         setUserID(null);
         setUserRole(null);
-        router.push('/login');
+        router.push(PATHS.LOGIN);
       }
     });
 
@@ -41,7 +42,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   useEffect(() => {
     if (userID && requiredRole && userData && !isLoading) {
       if (userData?.role !== requiredRole) {
-        router.push('/not-authorized');
+        router.push(PATHS.NOT_AUTHORIZED);
       }
     }
   }, [userID, userData, requiredRole, isLoading, router]);

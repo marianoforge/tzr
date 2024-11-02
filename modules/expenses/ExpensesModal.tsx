@@ -13,6 +13,7 @@ import { useUserDataStore } from '@/stores/userDataStore';
 
 import { expenseTypes } from '@/lib/data';
 import { schema } from '@/common/schemas/expensesModalSchema';
+import { QueryKeys } from '@/common/enums';
 
 type FormData = yup.InferType<typeof schema>;
 
@@ -58,7 +59,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
   const mutation = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.EXPENSES] });
       onClose();
     },
     onError: (error) => {

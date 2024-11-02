@@ -35,6 +35,7 @@ import {
   statusOptions,
   yearsFilter,
 } from '@/lib/data';
+import { OperationType, QueryKeys } from '@/common/enums';
 const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -71,7 +72,7 @@ const OperationsTableTent: React.FC = () => {
         return operation;
       })
       .filter((operation: Operation) =>
-        operation.tipo_operacion.startsWith('Alquiler')
+        operation.tipo_operacion.startsWith(OperationType.ALQUILER)
       );
   }, [operations]);
 
@@ -79,7 +80,7 @@ const OperationsTableTent: React.FC = () => {
     mutationFn: deleteOperation,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userID],
+        queryKey: [QueryKeys.OPERATIONS, userID],
       });
     },
   });
@@ -89,7 +90,7 @@ const OperationsTableTent: React.FC = () => {
       updateOperation({ id, data }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userID],
+        queryKey: [QueryKeys.OPERATIONS, userID],
       });
     },
   });
@@ -104,7 +105,7 @@ const OperationsTableTent: React.FC = () => {
 
     const typeFilteredOps = filteredOps?.filter(
       (operation: Operation) =>
-        operationTypeFilter === 'all' ||
+        operationTypeFilter === OperationType.ALL ||
         operation.tipo_operacion === operationTypeFilter
     );
 

@@ -9,6 +9,7 @@ import axios from 'axios';
 import { SessionType } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
+import { QueryKeys } from '@/common/enums';
 
 export default function Success() {
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function Success() {
   }, [router.query.session_id]);
 
   const { data: userDataQuery } = useQuery({
-    queryKey: ['userData', userId],
+    queryKey: [QueryKeys.USER_DATA, userId],
     queryFn: async () => {
       const response = await axios.get(`/api/users/${userId}`);
       return response.data;
@@ -56,7 +57,7 @@ export default function Success() {
   }, [userDataQuery]);
 
   const { data: subscriptionInfo, isLoading } = useQuery({
-    queryKey: ['subscriptionInfo', userId],
+    queryKey: [QueryKeys.SUBSCRIPTION_DATA, userId],
     queryFn: async () => {
       if (!subscriptionId) {
         throw new Error('No Subscription ID');

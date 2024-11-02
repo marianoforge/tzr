@@ -23,6 +23,7 @@ import { COLORS } from '@/lib/constants';
 
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import { QueryKeys } from '@/common/enums';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -70,7 +71,7 @@ const ExpensesBarchart: React.FC = () => {
     isLoading,
     error: expensesError,
   } = useQuery({
-    queryKey: ['expenses', userUID],
+    queryKey: [QueryKeys.EXPENSES, userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
@@ -92,7 +93,9 @@ const ExpensesBarchart: React.FC = () => {
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.EXPENSES, userUID],
+      });
       calculateTotals();
     },
   });

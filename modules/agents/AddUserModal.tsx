@@ -9,6 +9,7 @@ import { TeamMemberRequestBody } from '@/common/types/';
 import useAddAgent from '@/common/hooks/useAddAgent';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
+import { QueryKeys } from '@/common/enums';
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -35,7 +36,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
     reset();
 
     // Invalidar queries después de agregar un usuario
-    queryClient.invalidateQueries({ queryKey: ['teamMembersOps'] });
+    queryClient.invalidateQueries({ queryKey: [QueryKeys.TEAM_MEMBERS] });
   });
 
   const onSubmit: SubmitHandler<TeamMemberRequestBody> = (data) => {

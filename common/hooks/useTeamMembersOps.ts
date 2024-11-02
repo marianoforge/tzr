@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { TeamMember } from '@/common/types/';
+import { QueryKeys } from '../enums';
 
 const fetchTeamMembers = async (
   teamLeadID: string
@@ -18,7 +19,7 @@ const fetchTeamMembers = async (
 
 export const useTeamMembersOps = (teamLeadID: string) => {
   return useQuery({
-    queryKey: ['teamMembersOps', teamLeadID],
+    queryKey: [QueryKeys.TEAM_MEMBERS_OPS, teamLeadID],
     queryFn: () => fetchTeamMembers(teamLeadID),
     enabled: !!teamLeadID, // Solo ejecuta la query si hay un teamLeadID
   });

@@ -6,6 +6,7 @@ import { formatNumber } from '@/common/utils/formatNumber';
 
 import useAgentsData from '@/common/hooks/useAgentsData';
 import usePagination from '@/common/hooks/usePagination';
+import { OperationStatus } from '@/common/enums';
 
 const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
   const { currentAgents, isLoading, error, searchQuery, setSearchQuery } =
@@ -17,7 +18,7 @@ const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
         ...operacion,
         agente: `${usuario.firstName} ${usuario.lastName}`,
       }))
-      .filter((op) => op.estado === 'Cerrada')
+      .filter((op) => op.estado === OperationStatus.CERRADA)
   );
 
   const {

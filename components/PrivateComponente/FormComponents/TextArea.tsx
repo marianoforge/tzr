@@ -25,7 +25,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
           rows={rows}
           {...props}
         />
-        {error && <span className="text-red-500">{error}</span>}
+        {error && <p className="text-redAccent">{error}</p>}
       </div>
     );
   }

@@ -14,6 +14,7 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
 
 import { NavLink } from '../NavComponents/NavLink';
+import { UserRole } from '@/common/enums';
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
@@ -104,9 +105,9 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     if (isLoading || !userData) return null;
 
     switch (userData.role) {
-      case 'team_leader_broker':
+      case UserRole.TEAM_LEADER_BROKER:
         return renderAdminNavButtons();
-      case 'agente_asesor':
+      case UserRole.AGENTE_ASESOR:
         return renderNavButtons();
       default:
         return (

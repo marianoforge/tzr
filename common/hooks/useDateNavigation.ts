@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { CalendarAction, CalendarView } from '../enums';
 
 export const useDateNavigation = () => {
   const [date, setDate] = useState(new Date());
@@ -10,16 +11,17 @@ export const useDateNavigation = () => {
   };
 
   const navigateCalendar = useCallback(
-    (action: 'PREV' | 'NEXT' | 'TODAY', view: 'day' | 'week' | 'month') => {
-      const daysToAdjust = view === 'day' ? 1 : view === 'week' ? 7 : 30;
+    (action: CalendarAction, view: CalendarView) => {
+      const daysToAdjust =
+        view === CalendarView.DAY ? 1 : view === CalendarView.WEEK ? 7 : 30;
       switch (action) {
-        case 'PREV':
+        case CalendarAction.PREV:
           setDate((prevDate) => adjustDate(prevDate, -daysToAdjust));
           break;
-        case 'NEXT':
+        case CalendarAction.NEXT:
           setDate((prevDate) => adjustDate(prevDate, daysToAdjust));
           break;
-        case 'TODAY':
+        case CalendarAction.TODAY:
           setDate(new Date());
           break;
       }

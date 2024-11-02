@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { TeamMember, UserData } from '@/common/types/';
+import { APIMethods, QueryKeys } from '../enums';
 
 const useAgentsManagement = (currentUser: UserData) => {
   const queryClient = useQueryClient();
@@ -18,12 +19,12 @@ const useAgentsManagement = (currentUser: UserData) => {
     async (memberId: string) => {
       try {
         const response = await fetch(`/api/teamMembers/${memberId}`, {
-          method: 'DELETE',
+          method: APIMethods.DELETE,
         });
 
         if (response.ok) {
           queryClient.invalidateQueries({
-            queryKey: ['teamMembersOps', currentUser.uid],
+            queryKey: [QueryKeys.TEAM_MEMBERS_OPS, currentUser.uid],
           });
         } else {
           console.error('Error al borrar el miembro');
@@ -39,7 +40,7 @@ const useAgentsManagement = (currentUser: UserData) => {
     async (updatedMember: TeamMember) => {
       try {
         const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-          method: 'PUT',
+          method: APIMethods.PUT,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -48,7 +49,7 @@ const useAgentsManagement = (currentUser: UserData) => {
 
         if (response.ok) {
           queryClient.invalidateQueries({
-            queryKey: ['teamMembersOps', currentUser.uid],
+            queryKey: [QueryKeys.TEAM_MEMBERS_OPS, currentUser.uid],
           });
         } else {
           console.error('Error al actualizar el miembro');

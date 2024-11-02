@@ -21,6 +21,7 @@ import Loader from '@/components/PrivateComponente/Loader';
 import EditAgentsModal from './EditAgentsModal';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { APIMethods, QueryKeys } from '@/common/enums';
 
 // Configuración del slider
 const settings = {
@@ -87,7 +88,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
       ) {
         try {
           const response = await fetch(`/api/teamMembers/${memberId}`, {
-            method: 'DELETE',
+            method: APIMethods.DELETE,
           });
 
           if (response.ok) {
@@ -95,7 +96,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
               prevData.filter((member) => member.id !== memberId)
             );
             queryClient.invalidateQueries({
-              queryKey: ['teamMembersOps', currentUser.uid],
+              queryKey: [QueryKeys.TEAM_MEMBERS],
             });
           } else {
             console.error('Error al borrar el miembro');
@@ -118,7 +119,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
   const handleSubmit = async (updatedMember: TeamMember) => {
     try {
       const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-        method: 'PUT',
+        method: APIMethods.PUT,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -133,7 +134,7 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
         );
         setIsModalOpen(false);
         queryClient.invalidateQueries({
-          queryKey: ['teamMembersOps', currentUser.uid],
+          queryKey: [QueryKeys.TEAM_MEMBERS],
         });
       } else {
         console.error('Error al actualizar el miembro');

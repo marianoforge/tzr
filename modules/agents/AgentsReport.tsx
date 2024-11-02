@@ -24,6 +24,7 @@ import AddUserModal from './AddUserModal';
 
 import EditAgentsModal from './EditAgentsModal';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
+import { QueryKeys } from '@/common/enums';
 const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   const queryClient = useQueryClient();
 
@@ -46,7 +47,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
 
         if (response.ok) {
           queryClient.invalidateQueries({
-            queryKey: ['teamMembersOps', currentUser.uid],
+            queryKey: [QueryKeys.TEAM_MEMBERS],
           });
         } else {
           console.error('Error al borrar el miembro');
@@ -81,7 +82,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
 
         if (response.ok) {
           queryClient.invalidateQueries({
-            queryKey: ['teamMembersOps', currentUser.uid],
+            queryKey: [QueryKeys.TEAM_MEMBERS],
           });
         } else {
           console.error('Error al actualizar el miembro');

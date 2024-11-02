@@ -22,6 +22,7 @@ import {
   updateExpense,
 } from '@/lib/api/expensesApi';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
+import { QueryKeys } from '@/common/enums';
 
 const ExpensesListCards: React.FC = () => {
   const settings = {
@@ -56,7 +57,7 @@ const ExpensesListCards: React.FC = () => {
   }, [router]);
 
   const { data: expenses = [], isLoading } = useQuery({
-    queryKey: ['expenses', userUID],
+    queryKey: [QueryKeys.EXPENSES, userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
@@ -70,7 +71,9 @@ const ExpensesListCards: React.FC = () => {
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.EXPENSES, userUID],
+      });
       calculateTotals();
     },
   });
@@ -78,7 +81,9 @@ const ExpensesListCards: React.FC = () => {
   const mutationUpdate = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.EXPENSES, userUID],
+      });
       calculateTotals();
     },
   });

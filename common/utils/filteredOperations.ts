@@ -1,4 +1,5 @@
 import { Operation } from '@/common/types';
+import { OperationStatus, YearFilter } from '../enums';
 
 export function filteredOperations(
   operations: Operation[] | undefined,
@@ -12,13 +13,17 @@ export function filteredOperations(
     const operationYear = operationDate.getFullYear();
     const operationMonth = operationDate.getMonth() + 1; // getMonth() returns 0-based month
     const statusMatch =
-      statusFilter === 'all' ||
-      (statusFilter === 'open' && operation.estado === 'En Curso') ||
-      (statusFilter === 'closed' && operation.estado === 'Cerrada');
+      statusFilter === OperationStatus.TODAS ||
+      (statusFilter === OperationStatus.EN_CURSO &&
+        operation.estado === OperationStatus.EN_CURSO) ||
+      (statusFilter === OperationStatus.CERRADA &&
+        operation.estado === OperationStatus.CERRADA);
 
     const yearMatch =
-      (yearFilter === '2023' && operationYear === 2023) ||
-      (yearFilter === '2024' && operationYear === 2024);
+      (yearFilter === YearFilter.DOS_MIL_VEINTITRES &&
+        operationYear === 2023) ||
+      (yearFilter === YearFilter.DOS_MIL_VEINTICUATRO &&
+        operationYear === 2024);
 
     const monthMatch =
       monthFilter === 'all' || operationMonth === parseInt(monthFilter, 10);

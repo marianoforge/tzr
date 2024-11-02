@@ -19,6 +19,8 @@ import Select from '@/components/PrivateComponente/FormComponents/Select';
 import { formatDateForUser } from '@/common/utils/formatDateForUser';
 
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
+import { provinciasArgentinas, tiposOperaciones } from '@/lib/data';
+import { PATHS, QueryKeys, UserRole } from '@/common/enums';
 
 type FormData = InferType<typeof schema>;
 
@@ -35,7 +37,7 @@ const OperationsForm = () => {
       estado: 'En Curso',
       punta_compradora: false,
       punta_vendedora: false,
-      fecha_operacion: '', // Set a default value for the date field
+      fecha_operacion: '',
     },
   });
 
@@ -47,6 +49,7 @@ const OperationsForm = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [honorariosBroker, setHonorariosBroker] = useState(0);
   const [honorariosAsesor, setHonorariosAsesor] = useState(0);
+  const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -68,7 +71,6 @@ const OperationsForm = () => {
       : []),
   ];
 
-  // Fetch the user ID from Firebase authentication
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUserUID(user ? user.uid : null);
@@ -86,7 +88,6 @@ const OperationsForm = () => {
 
   const formattedDate = date ? formatDateForUser(date, userTimeZone) : '';
 
-  // Calculate honorarios based on form values
   useEffect(() => {
     const valor_reserva = parseFloat(String(watchAllFields.valor_reserva)) || 0;
     const porcentaje_honorarios_asesor =
@@ -112,7 +113,9 @@ const OperationsForm = () => {
     mutationFn: createOperation,
     onSuccess: () => {
       if (userUID) {
-        queryClient.invalidateQueries({ queryKey: ['operations', userUID] });
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.OPERATIONS, userUID],
+        });
       }
       setModalMessage('Operación guardada exitosamente');
       setShowModal(true);
@@ -124,7 +127,6 @@ const OperationsForm = () => {
     },
   });
 
-  // Handle form submission
   const onSubmit: SubmitHandler<FormData> = (data) => {
     if (!userUID) {
       setModalMessage('Usuario no autenticado. Por favor, inicia sesión.');
@@ -136,6 +138,7 @@ const OperationsForm = () => {
     const selectedUser = usersMapped.find(
       (member: { name: string }) => member.name === data.realizador_venta
     );
+
     const assignedUserUID =
       selectedUser && selectedUser.uid !== userUID ? selectedUser.uid : userUID;
 
@@ -143,6 +146,7 @@ const OperationsForm = () => {
       (member: { name: string }) =>
         member.name === data.realizador_venta_adicional
     );
+
     const assignedUserUIDAdicional =
       selectedUserAdicional && selectedUserAdicional.uid !== userUID
         ? selectedUserAdicional.uid
@@ -150,7 +154,7 @@ const OperationsForm = () => {
 
     const dataToSubmit = {
       ...data,
-      fecha_operacion: data.fecha_operacion, // Guardamos la fecha como cadena, sin conversión
+      fecha_operacion: data.fecha_operacion,
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
       user_uid: assignedUserUID,
@@ -168,10 +172,8 @@ const OperationsForm = () => {
   };
 
   const handleModalAccept = () => {
-    router.push('/dashboard');
+    router.push(PATHS.DASHBOARD);
   };
-
-  const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
 
   const toggleAdditionalAdvisor = () => {
     setShowAdditionalAdvisor((prev) => !prev);
@@ -192,7 +194,7 @@ const OperationsForm = () => {
             <Input
               label="Fecha de la Operación*"
               type="date"
-              defaultValue={formattedDate} // Se usa la fecha como string
+              defaultValue={formattedDate}
               {...register('fecha_operacion')}
               error={errors.fecha_operacion?.message}
               required
@@ -217,36 +219,10 @@ const OperationsForm = () => {
             />
 
             <Select
-              label="Provincia*" // Add the missing label prop
-              register={register} // Add the missing register prop
+              label="Provincia*"
+              register={register}
               {...register('provincia_reserva')}
-              options={[
-                { value: '', label: 'Selecciona la Provincia' },
-                { value: 'Buenos Aires', label: 'Buenos Aires' },
-                { value: 'CABA', label: 'CABA' },
-                { value: 'Catamarca', label: 'Catamarca' },
-                { value: 'Chaco', label: 'Chaco' },
-                { value: 'Chubut', label: 'Chubut' },
-                { value: 'Córdoba', label: 'Córdoba' },
-                { value: 'Corrientes', label: 'Corrientes' },
-                { value: 'Entre Ríos', label: 'Entre Ríos' },
-                { value: 'Formosa', label: 'Formosa' },
-                { value: 'Jujuy', label: 'Jujuy' },
-                { value: 'La Pampa', label: 'La Pampa' },
-                { value: 'La Rioja', label: 'La Rioja' },
-                { value: 'Mendoza', label: 'Mendoza' },
-                { value: 'Misiones', label: 'Misiones' },
-                { value: 'Neuquén', label: 'Neuquén' },
-                { value: 'Río Negro', label: 'Río Negro' },
-                { value: 'Salta', label: 'Salta' },
-                { value: 'San Juan', label: 'San Juan' },
-                { value: 'San Luis', label: 'San Luis' },
-                { value: 'Santa Cruz', label: 'Santa Cruz' },
-                { value: 'Santa Fe', label: 'Santa Fe' },
-                { value: 'Santiago del Estero', label: 'Santiago del Estero' },
-                { value: 'Tierra del Fuego', label: 'Tierra del Fuego' },
-                { value: 'Tucumán', label: 'Tucumán' },
-              ]}
+              options={provinciasArgentinas}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
             />
@@ -258,26 +234,7 @@ const OperationsForm = () => {
               label="Tipo de operación*"
               register={register}
               {...register('tipo_operacion')}
-              options={[
-                { value: '', label: 'Selecciona el Tipo de Operación' },
-                { value: 'Venta', label: 'Venta' },
-                { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
-                {
-                  value: 'Alquiler Tradicional',
-                  label: 'Alquiler Tradicional',
-                },
-                { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
-                { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
-                { value: 'Desarrollo', label: 'Desarrollo Inmobiliario' },
-                { value: 'Cochera', label: 'Cochera' },
-                { value: 'Locales Comerciales', label: 'Locales Comerciales' },
-                { value: 'Loteamiento', label: 'Loteamiento' },
-                { value: 'Naves Industriales', label: 'Naves Industriales' },
-                {
-                  value: 'Lotes Para Desarrollos',
-                  label: 'Lotes para Desarrollos',
-                },
-              ]}
+              options={tiposOperaciones}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
             />
@@ -404,17 +361,14 @@ const OperationsForm = () => {
               compartida, primero te pones como asesor participante al 50% y
               agregas un asesor más con el porcentaje de ganancia de el. Ej: 55%
             </p>
-            {userRole === 'team_leader_broker' && (
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
               <>
                 <Select
                   label="Asesor que realizó la venta"
                   register={register}
+                  placeholder="Selecciona el asesor que realizó la operación"
                   {...register('realizador_venta')}
                   options={[
-                    {
-                      value: '',
-                      label: 'Selecciona el asesor que realizó la operación',
-                    },
                     ...usersMapped
                       .sort((a, b) => a.name.localeCompare(b.name))
                       .map((member) => ({
@@ -483,7 +437,7 @@ const OperationsForm = () => {
                 />
               </>
             )}
-            {userRole === 'team_leader_broker' && (
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
               <p
                 className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
                 onClick={toggleAdditionalAdvisor}

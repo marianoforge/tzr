@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from './NavBar/Navbar';
 import VerticalNavbar from './NavBar/VerticalNavbar';
 import Footer from './Footer';
+import { PATHS } from '@/common/enums';
 
 interface PrivateLayoutProps {
   children: React.ReactNode;
@@ -13,38 +14,38 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
 
   const setActiveView = (view: string) => {
     switch (view) {
-      case 'reservationInput':
-        router.push('/reservationInput');
+      case PATHS.RESERVATION_INPUT:
+        router.push(PATHS.RESERVATION_INPUT);
         break;
-      case 'dashboard':
-        router.push('/dashboard');
+      case PATHS.DASHBOARD:
+        router.push(PATHS.DASHBOARD);
         break;
-      case 'eventForm':
-        router.push('/eventForm');
+      case PATHS.EVENT_FORM:
+        router.push(PATHS.EVENT_FORM);
         break;
-      case 'calendar':
+      case PATHS.CALENDAR:
         router.push('/calendar');
         break;
-      case 'settings':
-        router.push('/settings');
+      case PATHS.SETTINGS:
+        router.push(PATHS.SETTINGS);
         break;
-      case 'operationsList':
-        router.push('/operationsList');
+      case PATHS.OPERATIONS_LIST:
+        router.push(PATHS.OPERATIONS_LIST);
         break;
-      case 'expenses':
-        router.push('/expenses');
+      case PATHS.EXPENSES:
+        router.push(PATHS.EXPENSES);
         break;
-      case 'expensesList':
-        router.push('/expensesList');
+      case PATHS.EXPENSES_LIST:
+        router.push(PATHS.EXPENSES_LIST);
         break;
-      case 'agents':
-        router.push('/agents');
+      case PATHS.AGENTS:
+        router.push(PATHS.AGENTS);
         break;
-      case 'expensesBroker':
-        router.push('/expensesBroker');
+      case PATHS.EXPENSES_BROKER:
+        router.push(PATHS.EXPENSES_BROKER);
         break;
-      case 'resetPassword':
-        router.push('/reset-password');
+      case PATHS.RESET_PASSWORD:
+        router.push(PATHS.RESET_PASSWORD);
         break;
     }
   };

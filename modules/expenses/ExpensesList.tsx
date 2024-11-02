@@ -26,6 +26,8 @@ import useUserAuth from '@/common/hooks/useUserAuth';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
+import { ExpenseType, YearFilter } from '@/common/enums';
+import { QueryKeys } from '@/common/enums';
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -43,7 +45,7 @@ const ExpensesList = () => {
     isLoading,
     error: expensesError,
   } = useQuery({
-    queryKey: ['expenses', userUID],
+    queryKey: [QueryKeys.EXPENSES, userUID],
     queryFn: () => fetchUserExpenses(userUID as string),
     enabled: !!userUID,
   });
@@ -55,12 +57,12 @@ const ExpensesList = () => {
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
         const matchesYear =
-          yearFilter === 'all' || expense.date.includes(yearFilter);
+          yearFilter === YearFilter.TODOS || expense.date.includes(yearFilter);
         const matchesMonth =
           monthFilter === 'all' ||
           new Date(expense.date).getMonth() + 1 === parseInt(monthFilter);
         const matchesType =
-          expenseTypeFilter === 'all' ||
+          expenseTypeFilter === ExpenseType.ALL ||
           expense.expenseType === expenseTypeFilter;
 
         return matchesSearch && matchesYear && matchesMonth && matchesType;
@@ -113,7 +115,9 @@ const ExpensesList = () => {
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.EXPENSES, userUID],
+      });
       calculateTotals();
     },
   });
@@ -121,7 +125,9 @@ const ExpensesList = () => {
   const mutationUpdate = useMutation({
     mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['expenses', userUID] });
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.EXPENSES, userUID],
+      });
       calculateTotals();
     },
   });

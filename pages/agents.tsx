@@ -6,11 +6,12 @@ import AgentsReportCarousel from '@/modules/agents/AgentsReportCarousel';
 import AgentsReportByOps from '@/modules/agents/AgentsReportByOps';
 import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
 import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
+import { UserRole } from '@/common/enums';
 
 const Agents = () => {
   const { userData } = useUserDataStore();
   return (
-    <PrivateRoute requiredRole="team_leader_broker">
+    <PrivateRoute requiredRole={UserRole.TEAM_LEADER_BROKER}>
       <PrivateLayout>
         {userData && (
           <>

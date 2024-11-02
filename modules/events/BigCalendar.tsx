@@ -12,6 +12,8 @@ import { Event } from '@/common/types/';
 import { ViewButton } from './ViewButton';
 import { NavButton } from '@/components/PrivateComponente/NavComponents/NavButton';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import { CalendarView } from '@/common/enums';
+import { CalendarAction } from '@/common/enums';
 
 const localizer = momentLocalizer(moment);
 
@@ -50,21 +52,21 @@ const BigCalendar = () => {
           <NavButton
             className="text-white bg-mediumBlue hover:bg-lightBlue"
             onClick={() =>
-              navigateCalendar('PREV', view as 'day' | 'week' | 'month')
+              navigateCalendar(CalendarAction.PREV, view as CalendarView)
             }
             label="<"
           />
           <NavButton
             className="text-white bg-mediumBlue hover:bg-lightBlue"
             onClick={() =>
-              navigateCalendar('TODAY', view as 'day' | 'week' | 'month')
+              navigateCalendar(CalendarAction.TODAY, view as CalendarView)
             }
             label="Hoy"
           />
           <NavButton
             className="text-white bg-mediumBlue hover:bg-lightBlue"
             onClick={() =>
-              navigateCalendar('NEXT', view as 'day' | 'week' | 'month')
+              navigateCalendar(CalendarAction.NEXT, view as CalendarView)
             }
             label=">"
           />

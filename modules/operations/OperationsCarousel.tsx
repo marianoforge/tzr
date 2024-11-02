@@ -20,12 +20,14 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import OperationsModal from './OperationsModal';
+import { OperationStatus, PATHS, QueryKeys } from '@/common/enums';
 
 const OperationsCarousel: React.FC = () => {
   const router = useRouter();
   const currentPath = router.pathname;
 
-  const marginTopStyle = currentPath.includes('operationsList') && 'mt-[96px]';
+  const marginTopStyle =
+    currentPath.includes(PATHS.OPERATIONS_LIST) && 'mt-[96px]';
 
   const settings = {
     dots: true,
@@ -47,7 +49,7 @@ const OperationsCarousel: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { data: operations = [], isLoading } = useQuery({
-    queryKey: ['operations', userID],
+    queryKey: [QueryKeys.OPERATIONS, userID],
     queryFn: () => fetchUserOperations(userID!),
   });
 
@@ -56,7 +58,7 @@ const OperationsCarousel: React.FC = () => {
       updateOperation({ id, data }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userID],
+        queryKey: [QueryKeys.OPERATIONS, userID],
       });
     },
   });
@@ -65,7 +67,7 @@ const OperationsCarousel: React.FC = () => {
     mutationFn: (id: string) => deleteOperation(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userID],
+        queryKey: [QueryKeys.OPERATIONS, userID],
       });
     },
   });
@@ -100,7 +102,10 @@ const OperationsCarousel: React.FC = () => {
   }
 
   const handleEstadoChange = (id: string, currentEstado: string) => {
-    const newEstado = currentEstado === 'En Curso' ? 'Cerrada' : 'En Curso';
+    const newEstado =
+      currentEstado === OperationStatus.EN_CURSO
+        ? OperationStatus.CERRADA
+        : OperationStatus.EN_CURSO;
     updateEstadoMutation.mutate({ id, data: { estado: newEstado } });
   };
 

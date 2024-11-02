@@ -19,6 +19,7 @@ import { Operation } from '@/common/types/';
 
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
+import { OperationData, OperationStatus } from '@/common/enums';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -57,7 +58,7 @@ const MonthlyBarChart: React.FC = () => {
     queryFn: async () => {
       const allOperations = await fetchUserOperations(userID || '');
       return allOperations.filter(
-        (operation: Operation) => operation.estado === 'Cerrada'
+        (operation: Operation) => operation.estado === OperationStatus.CERRADA
       );
     },
     enabled: !!userID, // Solo ejecuta la query si hay un userID
@@ -67,11 +68,11 @@ const MonthlyBarChart: React.FC = () => {
   useEffect(() => {
     if (operations.length > 0) {
       const closedOperations = operations.filter(
-        (operation: Operation) => operation.estado === 'Cerrada'
+        (operation: Operation) => operation.estado === OperationStatus.CERRADA
       );
       const formattedData = formatOperationsData(
         closedOperations,
-        'honorarios_asesor'
+        OperationData.HONORARIOS_ASESOR
       );
 
       // Verificar que los datos estén correctamente formateados

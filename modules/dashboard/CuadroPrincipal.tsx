@@ -3,6 +3,7 @@ import { useOperationsData } from '@/common/hooks/useOperationsData';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { calculatePercentage } from '@/common/utils/calculationsPrincipal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import { OperationType } from '@/common/enums';
 
 const CuadroPrincipal = () => {
   const {
@@ -14,6 +15,8 @@ const CuadroPrincipal = () => {
     totalCantidad,
     adjustedTotalVentaSum,
   } = useOperationsData();
+
+  console.log(operationData);
 
   const typedOperationData = operationData as Record<
     string,
@@ -33,7 +36,7 @@ const CuadroPrincipal = () => {
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
-
+  console.log(typedOperationData);
   return (
     <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[610px] overflow-y-auto">
       <div>
@@ -89,14 +92,14 @@ const CuadroPrincipal = () => {
                       </td>
                       <td className="py-3 px-4 text-base">
                         {[
-                          'Alquiler',
-                          'Cochera',
-                          'Alquiler Temporal',
-                          'Alquiler Tradicional',
-                          'Alquiler Comercial',
-                          'Locales Comerciales',
-                          'Fondo de Comercio',
-                        ].includes(tipo)
+                          OperationType.ALQUILER,
+                          OperationType.COCHERA,
+                          OperationType.ALQUILER_TEMPORAL,
+                          OperationType.ALQUILER_TRADICIONAL,
+                          OperationType.ALQUILER_COMERCIAL,
+                          OperationType.LOCALES_COMERCIALES,
+                          OperationType.FONDO_DE_COMERCIO,
+                        ].includes(tipo as OperationType)
                           ? ''
                           : `$${formatNumber(
                               (data.totalVenta ?? 0) / (data.cantidad || 1)

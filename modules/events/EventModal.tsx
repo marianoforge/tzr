@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EventModalProps } from '@/common/types/';
 import { formatEventDateTime } from '@/common/utils/formatEventDateTime';
 import { deleteEvent } from '@/lib/api/eventsApi';
+import { QueryKeys } from '@/common/enums';
 
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   const queryClient = useQueryClient();
@@ -11,7 +12,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   const mutationDelete = useMutation({
     mutationFn: (id: string) => deleteEvent(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.EVENTS] });
       onClose();
     },
   });

@@ -38,6 +38,7 @@ import {
   statusOptions,
 } from '@/lib/data';
 import { yearsFilter } from '@/lib/data';
+import { OperationStatus, OperationType, QueryKeys } from '@/common/enums';
 
 const OperationsTable: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -82,7 +83,7 @@ const OperationsTable: React.FC = () => {
     isLoading,
     error: operationsError,
   } = useQuery({
-    queryKey: ['operations', userUID],
+    queryKey: [QueryKeys.OPERATIONS, userUID],
     queryFn: () => fetchUserOperations(userUID || ''),
     enabled: !!userUID,
   });
@@ -90,17 +91,17 @@ const OperationsTable: React.FC = () => {
   const transformedOperations = useMemo(() => {
     return operations
       ?.map((operation: Operation) => {
-        if (operation.tipo_operacion === 'Desarrollo') {
+        if (operation.tipo_operacion === OperationType.DESARROLLO) {
           return {
             ...operation,
-            tipo_operacion: 'Desarrollo Inmobiliario',
+            tipo_operacion: OperationType.DESARROLLO_INMOBILIARIO,
           };
         }
         return operation;
       })
       .filter(
         (operation: Operation) =>
-          !operation.tipo_operacion.startsWith('Alquiler')
+          !operation.tipo_operacion.startsWith(OperationType.ALQUILER)
       );
   }, [operations]);
 
@@ -108,7 +109,7 @@ const OperationsTable: React.FC = () => {
     mutationFn: deleteOperation,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userUID],
+        queryKey: [QueryKeys.OPERATIONS, userUID],
       });
     },
   });
@@ -118,7 +119,7 @@ const OperationsTable: React.FC = () => {
       updateOperation({ id, data }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['operations', userUID],
+        queryKey: [QueryKeys.OPERATIONS, userUID],
       });
     },
   });
@@ -201,7 +202,10 @@ const OperationsTable: React.FC = () => {
 
   const handleEstadoChange = useCallback(
     (id: string, currentEstado: string) => {
-      const newEstado = currentEstado === 'En Curso' ? 'Cerrada' : 'En Curso';
+      const newEstado =
+        currentEstado === OperationStatus.EN_CURSO
+          ? OperationStatus.CERRADA
+          : OperationStatus.EN_CURSO;
 
       const existingOperation = transformedOperations.find(
         (op: Operation) => op.id === id
@@ -642,7 +646,7 @@ const OperationsTable: React.FC = () => {
             operation={selectedOperation}
             onUpdate={() =>
               queryClient.invalidateQueries({
-                queryKey: ['operations', userUID],
+                queryKey: [QueryKeys.OPERATIONS, userUID],
               })
             }
             currentUser={userData!}

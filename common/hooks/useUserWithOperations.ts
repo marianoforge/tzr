@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { Operation, UserData } from '@/common/types/';
+import { QueryKeys, UserRole } from '../enums';
 
 interface UserWithOperations {
   uid: string;
@@ -27,7 +28,7 @@ const fetchUsersWithOperations = async (
 
   const { usersWithOperations } = await response.json();
 
-  if (user.role === 'team_leader_broker') {
+  if (user.role === UserRole.TEAM_LEADER_BROKER) {
     return usersWithOperations.filter(
       (usuario: UserWithOperations) => usuario.uid === user.uid
     );
@@ -38,7 +39,7 @@ const fetchUsersWithOperations = async (
 
 const useUsersWithOperations = (user: UserData) => {
   return useQuery({
-    queryKey: ['usersWithOperations', user],
+    queryKey: [QueryKeys.USERS_WITH_OPERATIONS, user],
     queryFn: () => fetchUsersWithOperations(user),
     staleTime: 1000 * 60 * 5,
   });

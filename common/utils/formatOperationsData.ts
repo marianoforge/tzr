@@ -1,4 +1,5 @@
 import { months } from '@/lib/data';
+import { OperationData } from '../enums';
 
 export const formatOperationsData = (
   operations: {
@@ -6,7 +7,7 @@ export const formatOperationsData = (
     honorarios_asesor?: number;
     honorarios_broker?: number;
   }[],
-  field: 'honorarios_asesor' | 'honorarios_broker'
+  field: OperationData.HONORARIOS_ASESOR | OperationData.HONORARIOS_BROKER
 ) => {
   // Inicializamos el array con los meses y valores en 0
   const data = months.map((month) => ({

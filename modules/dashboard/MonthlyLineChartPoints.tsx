@@ -17,21 +17,22 @@ import { calculateTotals } from '@/common/utils/calculations';
 import { Operation } from '@/common/types/';
 import { useAuthStore } from '@/stores/authStore';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import { MonthNames, OperationStatus } from '@/common/enums';
 
 // Datos proporcionados
 const monthNames = [
-  'Enero',
-  'Febrero',
-  'Marzo',
-  'Abril',
-  'Mayo',
-  'Junio',
-  'Julio',
-  'Agosto',
-  'Septiembre',
-  'Octubre',
-  'Noviembre',
-  'Diciembre',
+  MonthNames.ENERO,
+  MonthNames.FEBRERO,
+  MonthNames.MARZO,
+  MonthNames.ABRIL,
+  MonthNames.MAYO,
+  MonthNames.JUNIO,
+  MonthNames.JULIO,
+  MonthNames.AGOSTO,
+  MonthNames.SEPTIEMBRE,
+  MonthNames.OCTUBRE,
+  MonthNames.NOVIEMBRE,
+  MonthNames.DICIEMBRE,
 ];
 
 const CustomTooltip = ({
@@ -74,7 +75,7 @@ const MonthlyLineChartPoints = () => {
     queryFn: async () => {
       const allOperations = await fetchUserOperations(userID || '');
       return allOperations.filter(
-        (operation: Operation) => operation.estado === 'Cerrada'
+        (operation: Operation) => operation.estado === OperationStatus.CERRADA
       );
     },
     enabled: !!userID,

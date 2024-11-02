@@ -9,6 +9,7 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import ModalCancel from '@/components/PrivateComponente/CommonComponents/Modal';
 import ModalUpdate from '@/components/PrivateComponente/CommonComponents/Modal';
 import router from 'next/router';
+import { QueryKeys } from '@/common/enums';
 
 const Settings = () => {
   const { userID } = useAuthStore();
@@ -50,7 +51,7 @@ const Settings = () => {
   }, [userDataQuery]);
 
   const { data: subscriptionData, isLoading } = useQuery({
-    queryKey: ['subscriptionData', userID],
+    queryKey: [QueryKeys.SUBSCRIPTION_DATA, userID],
     queryFn: async () => {
       if (!subscriptionId) {
         throw new Error('No Subscription ID');

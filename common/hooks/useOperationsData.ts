@@ -9,6 +9,7 @@ import {
   calculateTotalLastColumnSum,
 } from '@/common/utils/calculationsPrincipal';
 import { calculateTotals } from '@/common/utils/calculations';
+import { OperationStatus } from '../enums';
 
 export const useOperationsData = () => {
   const { userID } = useAuthStore();
@@ -24,7 +25,7 @@ export const useOperationsData = () => {
   });
 
   const closedOperations = operations.filter(
-    (op: Operation) => op.estado === 'Cerrada'
+    (op: Operation) => op.estado === OperationStatus.CERRADA
   );
 
   const totals = calculateTotals(closedOperations);

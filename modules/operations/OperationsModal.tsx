@@ -13,7 +13,7 @@ import { updateOperation } from '@/lib/api/operationsApi';
 import { TeamMember, UserData } from '@/common/types/';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { operationTypes, provincias } from '@/lib/data';
+import { operationTypes, provinciasArgentinas } from '@/lib/data';
 
 type FormData = InferType<typeof schema>;
 
@@ -181,7 +181,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
           <Select
             label="Provincia de la Operación"
-            options={provincias}
+            options={provinciasArgentinas}
             register={register}
             name="provincia_reserva"
             error={errors.provincia_reserva?.message}

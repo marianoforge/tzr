@@ -13,6 +13,7 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { Tooltip } from 'react-tooltip';
 
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { QueryKeys } from '@/common/enums';
 
 const Profitability = () => {
   const { userID } = useAuthStore();
@@ -24,7 +25,7 @@ const Profitability = () => {
     isLoading: isLoadingExpenses,
     error: expensesError,
   } = useQuery({
-    queryKey: ['expenses', validUserID],
+    queryKey: [QueryKeys.EXPENSES, validUserID],
     queryFn: () => fetchUserExpenses(validUserID),
   });
 
@@ -33,7 +34,7 @@ const Profitability = () => {
     isLoading: isLoadingOperations,
     error: operationsError,
   } = useQuery({
-    queryKey: ['operations', validUserID],
+    queryKey: [QueryKeys.OPERATIONS, validUserID],
     queryFn: () => fetchUserOperations(validUserID),
     enabled: !!userID,
   });
