@@ -139,28 +139,26 @@ const Settings = () => {
   }
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 md:p-8">
       {isLoadingQuery ? (
         <p>Loading...</p>
       ) : (
         <form
           onSubmit={handleUpdate}
-          className="bg-white p-6 mt-20 rounded-xl shadow-md w-[100%]"
+          className="bg-white p-4 sm:p-6 md:p-8 mt-10 rounded-xl shadow-md w-full"
         >
-          <h2 className="text-2xl mb-4 text-center font-semibold">
+          <h2 className="text-xl sm:text-2xl mb-4 text-center font-semibold">
             Datos Personales
           </h2>
-          {/* {error && <p className="text-red-500 mb-4">{error}</p>}
-          {success && <p className="text-green-500 mb-4">{success}</p>} */}
-          <div className="flex lg:flex-row flex-col items-center justify-center lg:gap-10 w-full mt-10">
-            <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-end">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 w-full mt-6">
+            <div className="mb-4 flex w-full sm:w-1/2 gap-2 justify-center sm:justify-end">
               <input
                 type="text"
                 placeholder="Nombre"
                 name="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
+                className="w-full p-2 mb-2 border border-gray-300 rounded"
                 disabled={!editMode.firstName}
                 required
               />
@@ -171,20 +169,20 @@ const Settings = () => {
                     ? handleSave('firstName')
                     : toggleEditMode('firstName')
                 }
-                className=" bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
+                className="bg-lightBlue text-white px-2 h-[40px] rounded hover:bg-mediumBlue w-[75px]"
               >
                 {editMode.firstName ? 'Guardar' : 'Editar'}
               </button>
             </div>
 
-            <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-start">
+            <div className="mb-4 flex w-full sm:w-1/2 gap-2 justify-center sm:justify-start">
               <input
                 type="text"
                 placeholder="Apellido"
                 name="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
+                className="w-full p-2 mb-2 border border-gray-300 rounded"
                 disabled={!editMode.lastName}
                 required
               />
@@ -201,15 +199,15 @@ const Settings = () => {
               </button>
             </div>
           </div>
-          <div className="flex lg:flex-row flex-col items-center justify-center lg:gap-10 w-full">
-            <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-end">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 w-full">
+            <div className="mb-4 flex w-full sm:w-1/2 gap-2 justify-center sm:justify-end">
               <input
                 type="text"
                 placeholder="Agencia o Broker"
                 name="agenciaBroker"
                 value={agenciaBroker}
                 onChange={(e) => setAgenciaBroker(e.target.value)}
-                className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
+                className="w-full p-2 mb-2 border border-gray-300 rounded"
                 disabled={!editMode.agenciaBroker}
                 required
               />
@@ -226,14 +224,14 @@ const Settings = () => {
               </button>
             </div>
 
-            <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-start">
+            <div className="mb-4 flex w-full sm:w-1/2 gap-2 justify-center sm:justify-start">
               <input
                 type="tel"
                 placeholder="Número de Teléfono"
                 name="numeroTelefono"
                 value={numeroTelefono}
                 onChange={(e) => setNumeroTelefono(e.target.value)}
-                className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
+                className="w-full p-2 mb-2 border border-gray-300 rounded"
                 disabled={!editMode.numeroTelefono}
                 required
               />
@@ -250,8 +248,8 @@ const Settings = () => {
               </button>
             </div>
           </div>
-          <div className="flex lg:flex-row flex-col w-full">
-            <div className="mb-4 flex lg:w-[50%] gap-2 lg:justify-end pr-5">
+          <div className="flex flex-col sm:flex-row w-full">
+            <div className="mb-4 flex w-full sm:w-1/2 gap-2 justify-center sm:justify-end pr-5">
               <input
                 type="text"
                 placeholder="Objetivo de Anual de Ventas"
@@ -261,7 +259,7 @@ const Settings = () => {
                   const value = e.target.value.replace(/[^0-9]/g, '');
                   setObjetivoAnual(Number(value) || 0);
                 }}
-                className="w-full p-2 mb-2 border border-gray-300 rounded lg:max-w-[50%]"
+                className="w-full p-2 mb-2 border border-gray-300 rounded"
                 disabled={!editMode.objetivoAnual}
                 required
               />
@@ -278,10 +276,10 @@ const Settings = () => {
               </button>
             </div>
           </div>
-          <div className="flex items-center w-[80%] justify-end ml-2 mt-6">
+          <div className="flex items-center justify-center sm:justify-end w-full mt-6">
             <button
               type="submit"
-              className="w-[200px] bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue"
+              className="w-full sm:w-[200px] bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue"
             >
               Actualizar
             </button>
@@ -290,11 +288,13 @@ const Settings = () => {
       )}
 
       {/* SUBSCRIPTION */}
-      <div className="bg-white p-6 mt-10 rounded-xl shadow-md w-[100%]">
-        <h3 className="text-2xl font-semibold text-center">Suscripción</h3>
-        <div className="flex gap-20 justify-center items-center">
+      <div className="bg-white p-4 sm:p-6 md:p-8 mt-10 rounded-xl shadow-md w-full">
+        <h3 className="text-xl sm:text-2xl font-semibold text-center">
+          Suscripción
+        </h3>
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-20 justify-center items-center">
           <div className="flex flex-col gap-2 justify-center items-center">
-            <ul className="mb-8 mt-4 font-semibold text-md flex flex-col gap-2 text-mediumBlue border-dashed border-2 border-mediumBlue rounded-lg p-4 w-[400px]">
+            <ul className="mb-8 mt-4 font-semibold text-md flex flex-col gap-2 text-mediumBlue border-dashed border-2 border-mediumBlue rounded-lg p-4 w-full sm:w-[400px]">
               <li>
                 Plan Activo:{' '}
                 {subscriptionData?.plan?.active ? (
@@ -339,21 +339,9 @@ const Settings = () => {
           </div>
 
           <div className="flex flex-col items-center justify-center gap-4">
-            {/* {subscriptionId && (
-              <>
-                <button
-                  onClick={handleCancelSubscription}
-                  className="bg-mediumBlue text-white px-4 py-2 rounded hover:bg-lightBlue w-[200px]"
-                  disabled={isCanceling}
-                >
-                  {isCanceling ? 'Actualizando...' : 'Actualizar suscripción'}
-                </button>
-                {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
-              </>
-            )} */}
             <button
               onClick={() => setOpenModalCancel(true)}
-              className={`px-4 py-2 rounded w-[200px] ${
+              className={`px-4 py-2 rounded w-full sm:w-[200px] ${
                 subscriptionId
                   ? 'bg-lightBlue text-white hover:bg-mediumBlue'
                   : 'bg-mutedBlue text-white cursor-not-allowed'
@@ -382,7 +370,7 @@ const Settings = () => {
           handleCancelSubscription();
           router.push('/');
         }}
-        className="w-[760px]"
+        className="w-full sm:w-[760px]"
       />
 
       <ModalUpdate
@@ -392,7 +380,7 @@ const Settings = () => {
           setOpenModalUpdate(false);
         }}
         message={errorMessage ? errorMessage : success}
-        className="w-[760px]"
+        className="w-full sm:w-[760px]"
       />
     </div>
   );
