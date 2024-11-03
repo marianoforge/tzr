@@ -24,6 +24,7 @@ export const useCalendarEvents = () => {
     startTime: new Date(`${event.date}T${event.startTime}`),
     endTime: new Date(`${event.date}T${event.endTime}`),
     description: event.description,
+    address: event.address,
     user_uid: event.user_uid,
   });
 

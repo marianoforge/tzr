@@ -1,7 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
@@ -38,15 +37,26 @@ const FormularioEvento: React.FC = () => {
               error={errors.title?.message}
               required
             />
-
-            <Input
-              label="Fecha del evento"
-              type="date"
-              {...register('date')}
-              error={errors.date?.message}
-              required
-            />
-
+            <div className="flex gap-4 mb-4">
+              <div className="w-1/2">
+                <Input
+                  label="Fecha del evento"
+                  type="date"
+                  {...register('date')}
+                  error={errors.date?.message}
+                  required
+                />
+              </div>
+              <div className="w-1/2">
+                <Input
+                  label="Dirección del Evento"
+                  type="text"
+                  {...register('address')}
+                  error={errors.address?.message}
+                  required
+                />
+              </div>
+            </div>
             <div className="flex gap-4 mb-4">
               <div className="w-1/2">
                 <Input

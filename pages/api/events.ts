@@ -52,9 +52,10 @@ const getUserEvents = async (userUID: string, res: NextApiResponse) => {
 };
 
 const createEvent = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { title, date, startTime, endTime, description, user_uid } = req.body;
+  const { title, date, startTime, endTime, description, address, user_uid } =
+    req.body;
 
-  if (!title || !date || !startTime || !endTime || !description || !user_uid) {
+  if (!title || !date || !startTime || !endTime || !user_uid) {
     return res.status(400).json({
       message: 'Todos los campos son obligatorios, incluyendo el user_uid',
     });
@@ -67,6 +68,7 @@ const createEvent = async (req: NextApiRequest, res: NextApiResponse) => {
       startTime,
       endTime,
       description,
+      address,
       user_uid, // user_uid debería ser incluido aquí
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

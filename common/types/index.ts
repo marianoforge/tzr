@@ -56,6 +56,7 @@ export interface Event {
   startTime: string;
   endTime: string;
   description: string;
+  address: string;
   user_uid: string;
   createdAt?: Date;
   updatedAt?: Date;

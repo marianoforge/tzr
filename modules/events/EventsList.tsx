@@ -34,8 +34,9 @@ const EventsList: React.FC = () => {
                 {new Date(event.endTime).toLocaleTimeString()}
               </span>
             </div>
-            <div className="2xl:hidden">
-              <p className="mt-2 text-gray-400 text-sm">
+            <div className="mt-2">
+              <p className="text-gray-400 text-sm">{event.address}</p>
+              <p className="mt-2 text-gray-400 text-sm 2xl:hidden">
                 {event.description.length > 49
                   ? `${event.description.substring(0, 100)}`
                   : event.description}

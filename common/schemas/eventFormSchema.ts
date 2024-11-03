@@ -5,5 +5,6 @@ export const schema = yup.object().shape({
   date: yup.string().required('La fecha es obligatoria'),
   startTime: yup.string().required('La hora de inicio es obligatoria'),
   endTime: yup.string().required('La hora de fin es obligatoria'),
+  address: yup.string(),
   description: yup.string(),
 });
