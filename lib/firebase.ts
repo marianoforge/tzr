@@ -24,13 +24,22 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Configure Firestore with persistence
-initializeFirestore(app, {
-  localCache: persistentLocalCache(), // Enables IndexedDb caching
-});
+// Configure Firestore with persistence only once
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache(),
+  });
+} catch (error: unknown) {
+  if ((error as { code?: string }).code === 'failed-precondition') {
+    // If Firestore was already initialized, just get the instance
+    db = getFirestore(app);
+  } else {
+    throw error;
+  }
+}
 
-// Get Firestore and Auth
-const db = getFirestore(app);
+// Get Auth instance
 const auth = getAuth(app);
 
 // Export necessary Firebase utilities

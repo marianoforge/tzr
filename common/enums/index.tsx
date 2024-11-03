@@ -16,6 +16,10 @@ export enum OperationStatus {
   CERRADA = 'Cerrada',
 }
 
+export enum ALQUILER {
+  ALQUILER = 'Alquiler',
+}
+
 export enum OperationType {
   ALL = 'all',
   VENTA = 'Venta',

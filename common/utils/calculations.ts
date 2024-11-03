@@ -1,6 +1,11 @@
 import { Operation } from '@/common/types';
 import { calculateGrossByMonth } from './calculationsGrossByMonth';
-import { OperationData, OperationStatus, OperationType } from '../enums';
+import {
+  ALQUILER,
+  OperationData,
+  OperationStatus,
+  OperationType,
+} from '../enums';
 
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
@@ -184,7 +189,7 @@ export const calculateTotals = (operations: Operation[]) => {
   // Operaciones sin Alquileres
   const filtroOperacionsSinAlquileres = filterOperationsExcludingType(
     operations,
-    OperationType.ALQUILER_TRADICIONAL
+    ALQUILER.ALQUILER
   ).filter((op) => op.estado === OperationStatus.CERRADA);
 
   // Total Punta Compradora Porcentaje
@@ -248,7 +253,7 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Filtrar operaciones donde ambas puntas son distintas de cero
   const validOperations = filtroOperacionsSinAlquileres.filter(
-    (op) => Number(op.punta_compradora) + Number(op.punta_vendedora) === 2
+    (op) => Number(op.punta_compradora) + Number(op.punta_vendedora) > 1
   );
 
   const validOperationsTotalValorReserva = sumField(
