@@ -190,7 +190,7 @@ const MonthlyLineChartPoints = () => {
               />
             </Line>
             <Line
-              name={`Acumulado 2024 : ${formatNumber(average2024)}%`}
+              name={`Promedio Acumulado 2024 : ${formatNumber(average2024)}%`}
             ></Line>
           </LineChart>
         </ResponsiveContainer>

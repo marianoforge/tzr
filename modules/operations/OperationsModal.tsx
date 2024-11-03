@@ -14,6 +14,7 @@ import { TeamMember, UserData } from '@/common/types/';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { operationTypes, provinciasArgentinas } from '@/lib/data';
+import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 
 type FormData = InferType<typeof schema>;
 
@@ -396,6 +397,12 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
                 : 'Agregar Otro Asesor'}
             </p>
           )}
+
+          <TextArea
+            label="Observaciones"
+            {...register('observaciones')}
+            error={errors.observaciones?.message}
+          />
 
           <div className="flex justify-around items-center ">
             <div className="flex items-center gap-2 my-4">

@@ -168,6 +168,14 @@ const OperationsCarousel: React.FC = () => {
                     %
                   </p>
                   <p>
+                    <strong>Porcentaje Puntas</strong>{' '}
+                    {formatNumber(
+                      Number(operacion.porcentaje_punta_compradora) +
+                        Number(operacion.porcentaje_punta_vendedora)
+                    )}
+                    %
+                  </p>
+                  <p>
                     <strong>Honorarios Totales Brutos:</strong> $
                     {formatNumber(operacion.honorarios_broker)}
                   </p>

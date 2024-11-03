@@ -21,6 +21,7 @@ import { formatDateForUser } from '@/common/utils/formatDateForUser';
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
 import { provinciasArgentinas, tiposOperaciones } from '@/lib/data';
 import { PATHS, QueryKeys, UserRole } from '@/common/enums';
+import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 
 type FormData = InferType<typeof schema>;
 
@@ -299,10 +300,6 @@ const OperationsForm = () => {
               {...register('monto_sobre_reserva')}
               error={errors.monto_sobre_reserva?.message}
             />
-          </div>
-
-          <div className="w-full md:w-[40%] px-2">
-            {/* Right column */}
             <Input
               label="Número sobre de refuerzo"
               type="text"
@@ -310,6 +307,10 @@ const OperationsForm = () => {
               {...register('numero_sobre_refuerzo')}
               error={errors.numero_sobre_refuerzo?.message}
             />
+          </div>
+
+          <div className="w-full md:w-[40%] px-2">
+            {/* Right column */}
 
             <Input
               label="Monto sobre refuerzo"
@@ -450,7 +451,7 @@ const OperationsForm = () => {
             <label className="font-semibold text-mediumBlue">
               Cantidad de puntas*
             </label>
-            <div className="flex gap-10 mt-2">
+            <div className="flex gap-10 mt-2 mb-6">
               <div className="flex items-center gap-2">
                 <input type="checkbox" {...register('punta_vendedora')} />
                 <label>Punta Vendedora</label>
@@ -469,6 +470,12 @@ const OperationsForm = () => {
                 </p>
               )}
             </div>
+            <TextArea
+              className=""
+              label="Observaciones"
+              {...register('observaciones')}
+              error={errors.observaciones?.message}
+            />
           </div>
         </div>
         <div className="flex justify-center items-center mt-8 w-full">

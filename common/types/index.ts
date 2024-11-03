@@ -38,6 +38,7 @@ export interface Operation {
   user_uid: string;
   user_uid_adicional?: string | null;
   teamId: string;
+  observaciones?: string | null;
 }
 
 export interface EventFormData {

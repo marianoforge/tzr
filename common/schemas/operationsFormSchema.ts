@@ -86,4 +86,5 @@ export const schema = yup.object().shape({
     .min(0, 'No puede ser negativo')
     .nullable(),
   estado: yup.string().required('El estado es requerido'),
+  observaciones: yup.string().nullable(),
 });

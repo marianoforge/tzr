@@ -133,6 +133,10 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             <span className="font-semibold">Estado de la Operacion: </span>{' '}
             {displayValue(operation.estado)}
           </p>
+          <p>
+            <span className="font-semibold">Observaciones: </span>{' '}
+            {displayValue(operation.observaciones)}
+          </p>
         </div>
         <div
           className="flex justify-center items-center
