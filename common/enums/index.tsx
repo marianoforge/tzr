@@ -19,15 +19,18 @@ export enum OperationStatus {
 export enum OperationType {
   ALL = 'all',
   VENTA = 'Venta',
-  ALQUILER = 'Alquiler',
+  ALQUILER_TRADICIONAL = 'Alquiler Tradicional',
   DESARROLLO_INMOBILIARIO = 'Desarrollo Inmobiliario',
   COCHERA = 'Cochera',
   ALQUILER_TEMPORAL = 'Alquiler Temporal',
-  ALQUILER_TRADICIONAL = 'Alquiler Tradicional',
   ALQUILER_COMERCIAL = 'Alquiler Comercial',
   LOCALES_COMERCIALES = 'Locales Comerciales',
   FONDO_DE_COMERCIO = 'Fondo de Comercio',
   DESARROLLO = 'Desarrollo',
+  LOTEAMIENTO = 'Loteamiento',
+  NAVES_INDUSTRIALES = 'Naves Industriales',
+  LOTES_PARA_DESARROLLOS = 'Lotes Para Desarrollos',
+  //   ALQUILER = 'Alquiler',
 }
 
 export enum APIMethods {
@@ -104,13 +107,12 @@ export enum MonthNames {
 
 export enum ExpenseType {
   ALL = 'all',
-  GASTOS_ADMINISTRATIVOS = 'Gastos Administrativos',
   FEE_FRANQUICIA = 'Fee (Franquicia)',
   CARTELERIA = 'Carteleria',
   MARKETING = 'Marketing',
   VARIOS = 'Varios',
   CONTADOR = 'Contador',
-  MATRICULA = 'Matricula',
+  MATRICULA = 'Matrícula',
   ABAO = 'ABAO',
   FIANZA = 'Fianza',
   ALQUILER_OFICINA = 'Alquiler Oficina',
@@ -118,5 +120,6 @@ export enum ExpenseType {
   CRM = 'CRM',
   VIATICOS = 'Viaticos',
   EXPENSAS = 'Expensas',
+  SERVICIOS_OFICINA = 'Servicios de Oficina',
   OTROS = 'Otros',
 }

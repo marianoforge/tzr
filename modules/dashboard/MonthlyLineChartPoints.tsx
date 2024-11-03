@@ -48,8 +48,8 @@ const CustomTooltip = ({
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded shadow-md">
         <p className="label font-semibold">{`${label}`}</p>
-        <p className="intro">{`2023: ${payload[0].value}%`}</p>
-        <p className="intro">{`2024: ${payload[1].value}%`}</p>
+        <p className="intro">{`2023: ${payload[1].value}%`}</p>
+        <p className="intro">{`2024: ${payload[0].value}%`}</p>
         <p className="intro">{`Diferencia Interanual: ${formatNumber(
           payload[0].value - payload[1].value
         )}%`}</p>
@@ -65,7 +65,7 @@ const MonthlyLineChartPoints = () => {
   const [chartData, setChartData] = useState<
     { name: string; value2023: number; value2024: number }[]
   >([]);
-
+  const [average2024, setAverage2024] = useState<number>(0);
   const {
     data: operations = [],
     isLoading,
@@ -118,6 +118,16 @@ const MonthlyLineChartPoints = () => {
       });
 
       setChartData(mergedData);
+
+      // Calculate the sum of all 2024 percentages
+      const total2024 = mergedData.reduce(
+        (sum, data) => sum + data.value2024,
+        0
+      );
+      const currentMonth = new Date().getMonth(); // 0-based index, so January is 0
+      const completedMonths = currentMonth; // Exclude the current month
+      const average2024 = total2024 / completedMonths;
+      setAverage2024(average2024);
     }
   }, [operations]);
 
@@ -179,6 +189,9 @@ const MonthlyLineChartPoints = () => {
                 formatter={(value: number) => `${value}%`}
               />
             </Line>
+            <Line
+              name={`Acumulado 2024 : ${formatNumber(average2024)}%`}
+            ></Line>
           </LineChart>
         </ResponsiveContainer>
       </div>

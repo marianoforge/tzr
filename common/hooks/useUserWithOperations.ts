@@ -12,7 +12,7 @@ interface UserWithOperations {
   operaciones: Operation[];
 }
 
-const fetchUsersWithOperations = async (
+export const fetchUsersWithOperations = async (
   user: UserData
 ): Promise<UserWithOperations[]> => {
   const response = await fetch('/api/users/usersWithOps', {
@@ -41,7 +41,6 @@ const useUsersWithOperations = (user: UserData) => {
   return useQuery({
     queryKey: [QueryKeys.USERS_WITH_OPERATIONS, user],
     queryFn: () => fetchUsersWithOperations(user),
-    staleTime: 1000 * 60 * 5,
   });
 };
 

@@ -9,6 +9,10 @@ export const calculateOperationData = (closedOperations: Operation[]) => {
       >,
       op: Operation
     ) => {
+      if (new Date(op.fecha_operacion).getFullYear() !== 2024) {
+        return acc;
+      }
+
       if (!acc[op.tipo_operacion]) {
         acc[op.tipo_operacion] = {
           cantidad: 0,
@@ -17,7 +21,7 @@ export const calculateOperationData = (closedOperations: Operation[]) => {
         };
       }
       acc[op.tipo_operacion].cantidad += 1;
-      acc[op.tipo_operacion].totalHonorarios += Number(op.honorarios_asesor);
+      acc[op.tipo_operacion].totalHonorarios += Number(op.honorarios_broker);
       acc[op.tipo_operacion].totalVenta += Number(op.valor_reserva);
       return acc;
     },
@@ -50,6 +54,7 @@ export const calculateTotalLastColumnSum = (
         'Alquiler Comercial',
         'Locales Comerciales',
         'Fondo de Comercio',
+        'Lotes Para Desarrollos',
       ].includes(tipo)
     ) {
       return acc + data.totalVenta / data.cantidad;

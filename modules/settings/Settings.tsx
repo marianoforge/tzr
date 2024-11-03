@@ -44,6 +44,7 @@ const Settings = () => {
     },
     enabled: !!userID,
   });
+
   useEffect(() => {
     setSubscriptionId(
       userDataQuery?.stripeSubscriptionId ?? 'No Subscription ID'

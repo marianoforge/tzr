@@ -114,18 +114,18 @@ const ExpensesBarchart: React.FC = () => {
 
   const groupExpensesByMonth = (expenses: Expense[]) => {
     const allMonths = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
 
     const expensesByMonth = expenses.reduce(

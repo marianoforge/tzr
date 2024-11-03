@@ -1,62 +1,120 @@
-import React, { useState, useCallback } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import {
-  PencilIcon,
-  TrashIcon,
-  UserPlusIcon,
-} from '@heroicons/react/24/outline';
-
-import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { UserData, TeamMember } from '@/common/types/';
-import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
+// components/AgentsReport.tsx
+import React, { useCallback, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
-  calculateTotalOperations,
   calculateTotalBuyerTips,
+  calculateTotalOperations,
+  calculateTotalReservationValue,
   calculateTotalSellerTips,
   calculateTotalTips,
-  calculateTotalReservationValue,
 } from '@/common/utils/calculationsAgents';
-import useAgentsData from '@/common/hooks/useAgentsData';
-
-import AddUserModal from './AddUserModal';
-
-import EditAgentsModal from './EditAgentsModal';
+import { Operation } from '@/common/types';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
-import { QueryKeys } from '@/common/enums';
-const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
+import { UserPlusIcon } from '@heroicons/react/24/solid';
+import AddUserModal from './AddUserModal';
+import EditAgentsModal from './EditAgentsModal';
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import { calculateTotals } from '@/common/utils/calculations';
+import { currentYearOperations } from '@/common/utils/currentYearOps';
+import { fetchUserOperations } from '@/lib/api/operationsApi';
+
+export type TeamMember = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  teamLeadId: string;
+  numeroTelefono: string;
+  operations: Operation[];
+  [key: string]: any;
+};
+
+type AgentsReportProps = {
+  userId: string;
+};
+
+const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
+  const response = await fetch('/api/getTeamsWithOperations');
+  if (!response.ok) {
+    throw new Error('Failed to fetch data');
+  }
+  return response.json();
+};
+
+const deleteMember = async (memberId: string) => {
+  const response = await fetch(`/api/teamMembers/${memberId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete member');
+  }
+};
+
+const updateMember = async (updatedMember: TeamMember) => {
+  const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedMember),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update member');
+  }
+  return response.json();
+};
+
+const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   const queryClient = useQueryClient();
 
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Callbacks
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['teamMembersWithOperations'],
+    queryFn: fetchTeamMembersWithOperations,
+  });
+  const { data: operations = [] } = useQuery({
+    queryKey: ['operations', userId],
+    queryFn: () => fetchUserOperations(userId || ''),
+    enabled: !!userId,
+  });
+
+  const deleteMemberMutation = useMutation({
+    mutationFn: deleteMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['teamMembersWithOperations'],
+      });
+    },
+  });
+
+  const updateMemberMutation = useMutation({
+    mutationFn: updateMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['teamMembersWithOperations'],
+      });
+    },
+  });
+
   const handleAddAdvisorClick = useCallback(() => {
     setIsAddUserModalOpen(true);
   }, []);
 
   const handleDeleteClick = useCallback(
-    async (memberId: string) => {
-      try {
-        const response = await fetch(`/api/teamMembers/${memberId}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          queryClient.invalidateQueries({
-            queryKey: [QueryKeys.TEAM_MEMBERS],
-          });
-        } else {
-          console.error('Error al borrar el miembro');
-        }
-      } catch (error) {
-        console.error('Error en la petición DELETE:', error);
-      }
+    (memberId: string) => {
+      deleteMemberMutation.mutate(memberId);
     },
-    [queryClient, currentUser.uid]
+    [deleteMemberMutation]
   );
 
   const handleEditClick = useCallback((member: TeamMember) => {
@@ -70,53 +128,52 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
   }, []);
 
   const handleSubmit = useCallback(
-    async (updatedMember: TeamMember) => {
-      try {
-        const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedMember),
-        });
-
-        if (response.ok) {
-          queryClient.invalidateQueries({
-            queryKey: [QueryKeys.TEAM_MEMBERS],
-          });
-        } else {
-          console.error('Error al actualizar el miembro');
-        }
-      } catch (error) {
-        console.error('Error en la petición PUT:', error);
-      }
+    (updatedMember: TeamMember) => {
+      updateMemberMutation.mutate(updatedMember, {
+        onSuccess: () => {
+          setIsModalOpen(false);
+        },
+      });
     },
-    [queryClient, currentUser.uid]
+    [updateMemberMutation]
   );
 
-  const {
-    currentAgents,
-    isLoading,
-    error,
-    searchQuery,
-    setSearchQuery,
-    currentPage,
-    totalPages,
-    handlePageChange,
-  } = useAgentsData(currentUser);
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
-  console.log(
-    currentAgents.map((agent) =>
-      agent.operaciones.map((op) => op.fecha_operacion)
-    )
+  if (isLoading) return <div>Loading...</div>;
+  if (error instanceof Error) return <div>Error: {error.message}</div>;
+
+  // Filter, sort, and paginate members
+  const filteredMembers =
+    data
+      ?.filter((member) => {
+        const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
+        const searchWords = searchQuery.toLowerCase().split(' ');
+        return (
+          member.teamLeadID === userId &&
+          searchWords.every((word) => fullName.includes(word))
+        );
+      })
+      .sort(
+        (a, b) =>
+          calculateAdjustedBrokerFees(b.operations) -
+          calculateAdjustedBrokerFees(a.operations)
+      ) || [];
+  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+
+  const paginatedMembers = filteredMembers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
-  // Render logic
+  const totals = calculateTotals(currentYearOperations(operations));
+
+  const totalHonorariosBroker = Number(totals.honorarios_broker_cerradas);
+
   if (isLoading) {
     return <SkeletonLoader height={60} count={14} />;
-  }
-  if (error) {
-    return <p>Error: {error?.message || 'An unknown error occurred'}</p>;
   }
 
   return (
@@ -140,15 +197,11 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
           </button>
         </div>
       </div>
-      {currentAgents.length === 0 ? (
-        <p className="text-center text-gray-600">No existen agentes</p>
-      ) : (
+      {paginatedMembers.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr
-                className={`bg-lightBlue/10 ${OPERATIONS_LIST_COLORS.headerText}`}
-              >
+              <tr className="bg-lightBlue/10">
                 <th className="py-3 px-4 font-semibold text-start">
                   Nombre y Apellido
                 </th>
@@ -179,23 +232,23 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
               </tr>
             </thead>
             <tbody>
-              {currentAgents.map((usuario, index) => (
+              {paginatedMembers.map((member, index) => (
                 <tr
-                  key={usuario.id}
+                  key={member.id}
                   className={`border-b text-center h-[75px] ${
                     currentPage === 1 && index === 0 ? 'bg-green-100' : ''
                   }`}
                 >
                   <td className="py-3 px-4 font-semibold text-start w-1/5">
-                    {usuario.firstName} {usuario.lastName}
+                    {member.firstName} {member.lastName}
                   </td>
                   <td className="py-3 px-4">
-                    {usuario.operaciones.length > 0 ? (
+                    {member.operations.length > 0 ? (
                       <ul>
                         <li>
                           $
                           {formatNumber(
-                            calculateAdjustedBrokerFees(usuario.operaciones)
+                            calculateAdjustedBrokerFees(member.operations)
                           )}
                         </li>
                       </ul>
@@ -204,43 +257,50 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
                     )}
                   </td>
                   <td className="py-3 px-4 text-center">
-                    {usuario.operaciones.length > 0 ? (
+                    {member.operations.length > 0 ? (
                       <ul>
-                        <li>{formatNumber(usuario.percentage * 100)}%</li>
+                        <li>
+                          {formatNumber(
+                            (calculateAdjustedBrokerFees(member.operations) *
+                              100) /
+                              Number(totalHonorariosBroker ?? 1)
+                          )}
+                          %
+                        </li>
                       </ul>
                     ) : (
                       <span>No operations</span>
                     )}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalOperations(usuario.operaciones)}
+                    {calculateTotalOperations(member.operations)}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalBuyerTips(usuario.operaciones)}
+                    {calculateTotalBuyerTips(member.operations)}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalSellerTips(usuario.operaciones)}
+                    {calculateTotalSellerTips(member.operations)}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalTips(usuario.operaciones)}
+                    {calculateTotalTips(member.operations)}
                   </td>
                   <td className="py-3 px-4">
                     $
                     {formatNumber(
-                      calculateTotalReservationValue(usuario.operaciones)
+                      calculateTotalReservationValue(member.operations)
                     )}
                   </td>
                   <td className="py-3 px-4">
-                    {usuario.id !== currentUser.uid && ( // Check if the user is not the current user
+                    {member.id !== userId && (
                       <>
                         <button
-                          onClick={() => handleEditClick(usuario)}
+                          onClick={() => handleEditClick(member)}
                           className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
                         >
                           <PencilIcon className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteButtonClick(usuario)}
+                          onClick={() => handleDeleteButtonClick(member)}
                           className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
                         >
                           <TrashIcon className="h-5 w-5" />
@@ -253,6 +313,8 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
             </tbody>
           </table>
         </div>
+      ) : (
+        <p>No team members found for this team lead.</p>
       )}
 
       <div className="flex justify-center mt-4">
@@ -282,6 +344,7 @@ const AgentsReport = ({ currentUser }: { currentUser: UserData }) => {
         <EditAgentsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
+          onCloseAndUpdate={() => setIsModalOpen(false)}
           member={selectedMember}
           onSubmit={handleSubmit}
         />

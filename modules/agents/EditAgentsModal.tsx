@@ -1,15 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
-import { TeamMember } from '@/common/types/';
+import { TeamMember } from './AgentsReport';
 
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  onCloseAndUpdate: () => void;
   member: TeamMember;
   onSubmit: (member: TeamMember) => void;
 };
 
-const EditAgentsModal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
+const EditAgentsModal = ({
+  isOpen,
+  onClose,
+  onCloseAndUpdate,
+  member,
+  onSubmit,
+}: ModalProps) => {
   const [firstName, setFirstName] = useState(member.firstName);
   const [lastName, setLastName] = useState(member.lastName);
   const [email, setEmail] = useState(member.email);
@@ -31,8 +37,9 @@ const EditAgentsModal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
         email,
       };
       onSubmit(updatedMember);
+      onCloseAndUpdate();
     },
-    [member, firstName, lastName, email, onSubmit]
+    [member, firstName, lastName, email, onSubmit, onCloseAndUpdate]
   );
 
   if (!isOpen) return null;
@@ -76,7 +83,7 @@ const EditAgentsModal = ({ isOpen, onClose, member, onSubmit }: ModalProps) => {
             <button
               type="button"
               className="bg-mediumBlue hover:bg-lightBlue transition-all duration-300 text-white p-2 rounded-lg w-48"
-              onClick={onClose}
+              onClick={onCloseAndUpdate}
             >
               Cancelar
             </button>

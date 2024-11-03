@@ -14,13 +14,12 @@ const usePromedioSumaPuntas = (operations: Operation[]): MonthlyData[] => {
     const operationsFiltered = operations.filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        !op.tipo_operacion.includes(OperationType.ALQUILER) &&
+        !op.tipo_operacion.includes(OperationType.ALQUILER_TRADICIONAL) &&
         (op.porcentaje_punta_compradora !== 0 ||
           op.porcentaje_punta_compradora === null) &&
         (op.porcentaje_punta_vendedora !== 0 ||
           op.porcentaje_punta_vendedora === null)
     );
-    console.log(operationsFiltered);
     const monthlyDataMap: {
       [key: string]: {
         year: number;

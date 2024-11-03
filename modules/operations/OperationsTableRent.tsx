@@ -72,7 +72,7 @@ const OperationsTableTent: React.FC = () => {
         return operation;
       })
       .filter((operation: Operation) =>
-        operation.tipo_operacion.startsWith(OperationType.ALQUILER)
+        operation.tipo_operacion.startsWith('Alquiler')
       );
   }, [operations]);
 

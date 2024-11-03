@@ -39,7 +39,7 @@ const getUserOperations = async (userUID: string, res: NextApiResponse) => {
   try {
     const q = query(
       collection(db, 'operations'),
-      where('teamId', '==', userUID), // Filtra por teamId igual a userUID
+      where('teamId', '==', userUID),
       orderBy('fecha_operacion', 'asc')
     );
     const querySnapshot = await getDocs(q);

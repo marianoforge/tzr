@@ -1,3 +1,5 @@
+import { OperationStatus, OperationType } from '@/common/enums';
+
 export const calendarEvents = [
   {
     title: 'Evento 1',
@@ -48,13 +50,13 @@ export const expenseTypes = [
   { value: 'Marketing', label: 'Marketing' },
   { value: 'Varios', label: 'Varios' },
   { value: 'Contador', label: 'Contador' },
-  { value: 'Matricula', label: 'Matricula' },
+  { value: 'Matrícula', label: 'Matricula' },
   { value: 'ABAO', label: 'ABAO' },
   { value: 'Fianza', label: 'Fianza' },
   { value: 'Alquiler Oficina', label: 'Alquiler Oficina' },
   { value: 'Portales Inmobiliarios', label: 'Portales Inmobiliarios' },
   { value: 'CRM', label: 'CRM' },
-  { value: 'Viaticos', label: 'Viaticos' },
+  { value: 'Viáticos', label: 'Viáticos' },
   { value: 'Expensas', label: 'Expensas' },
   { value: 'Servicios de Oficina', label: 'Servicios de Oficina' },
   { value: 'Otros', label: 'Otros' },
@@ -88,14 +90,20 @@ export const provincias = [
 ];
 
 export const operationTypes = [
-  { value: 'Venta', label: 'Venta' },
-  { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
-  { value: 'Alquiler Tradicional', label: 'Alquiler Tradicional' },
-  { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
-  { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
-  { value: 'Desarrollo', label: 'Desarrollo Inmobiliario' },
-  { value: 'Cochera', label: 'Cochera' },
-  { value: 'Locales Comerciales', label: 'Locales Comerciales' },
+  { value: OperationType.VENTA, label: 'Venta' },
+  { value: OperationType.ALQUILER_TEMPORAL, label: 'Alquiler Temporal' },
+  { value: OperationType.ALQUILER_TRADICIONAL, label: 'Alquiler Tradicional' },
+  { value: OperationType.ALQUILER_COMERCIAL, label: 'Alquiler Comercial' },
+  { value: OperationType.FONDO_DE_COMERCIO, label: 'Fondo de Comercio' },
+  { value: OperationType.DESARROLLO, label: 'Desarrollo Inmobiliario' },
+  { value: OperationType.COCHERA, label: 'Cochera' },
+  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
+  { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
+  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
+  {
+    value: OperationType.LOTES_PARA_DESARROLLOS,
+    label: 'Lotes Para Desarrollos',
+  },
 ];
 
 export const yearsFilter = [
@@ -105,41 +113,49 @@ export const yearsFilter = [
 
 export const statusOptions = [
   { value: 'all', label: 'Estado de la Op.' },
-  { value: 'open', label: 'En Curso / Reservas' },
-  { value: 'closed', label: 'Operaciones Cerradas' },
+  { value: OperationStatus.EN_CURSO, label: 'En Curso / Reservas' },
+  { value: OperationStatus.CERRADA, label: 'Operaciones Cerradas' },
 ];
 
 export const operationVentasTypeFilter = [
   { value: 'all', label: 'Tipo de la Op.' },
-  { value: 'Venta', label: 'Venta' },
-  { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
+  { value: OperationType.VENTA, label: 'Venta' },
+  { value: OperationType.FONDO_DE_COMERCIO, label: 'Fondo de Comercio' },
   {
-    value: 'Desarrollo Inmobiliario',
+    value: OperationType.DESARROLLO_INMOBILIARIO,
     label: 'Desarrollo Inmobiliario',
   },
-  { value: 'Cochera', label: 'Cochera' },
-  { value: 'Locales Comerciales', label: 'Locales Comerciales' },
-  { value: 'Loteamiento', label: 'Loteamiento' },
-  { value: 'Naves Industriales', label: 'Naves Industriales' },
+  { value: OperationType.COCHERA, label: 'Cochera' },
+  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
+  { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
+  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
   {
-    value: 'Lotes Para Desarrollos',
+    value: OperationType.LOTES_PARA_DESARROLLOS,
     label: 'Lotes Para Desarrollos',
   },
 ];
 
 export const monthsFilter = [
   { value: 'all', label: 'Todos los Meses' },
-  ...Array.from({ length: 12 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: new Date(0, i).toLocaleString('default', { month: 'long' }),
-  })),
+  { value: '1', label: 'Enero' },
+  { value: '2', label: 'Febrero' },
+  { value: '3', label: 'Marzo' },
+  { value: '4', label: 'Abril' },
+  { value: '5', label: 'Mayo' },
+  { value: '6', label: 'Junio' },
+  { value: '7', label: 'Julio' },
+  { value: '8', label: 'Agosto' },
+  { value: '9', label: 'Septiembre' },
+  { value: '10', label: 'Octubre' },
+  { value: '11', label: 'Noviembre' },
+  { value: '12', label: 'Diciembre' },
 ];
 
 export const operationTypeRentFilter = [
   { value: 'all', label: 'Todos los Tipos' },
-  { value: 'Alquiler', label: 'Alquiler Tradicional' },
-  { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
-  { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
+  { value: OperationType.ALQUILER_TRADICIONAL, label: 'Alquiler Tradicional' },
+  { value: OperationType.ALQUILER_TEMPORAL, label: 'Alquiler Temporal' },
+  { value: OperationType.ALQUILER_COMERCIAL, label: 'Alquiler Comercial' },
 ];
 
 export const provinciasArgentinas = [
@@ -172,21 +188,21 @@ export const provinciasArgentinas = [
 
 export const tiposOperaciones = [
   { value: '', label: 'Selecciona el Tipo de Operación' },
-  { value: 'Venta', label: 'Venta' },
-  { value: 'Alquiler Temporal', label: 'Alquiler Temporal' },
+  { value: OperationType.VENTA, label: 'Venta' },
+  { value: OperationType.ALQUILER_TEMPORAL, label: 'Alquiler Temporal' },
   {
-    value: 'Alquiler Tradicional',
+    value: OperationType.ALQUILER_TRADICIONAL,
     label: 'Alquiler Tradicional',
   },
-  { value: 'Alquiler Comercial', label: 'Alquiler Comercial' },
-  { value: 'Fondo de Comercio', label: 'Fondo de Comercio' },
-  { value: 'Desarrollo', label: 'Desarrollo Inmobiliario' },
-  { value: 'Cochera', label: 'Cochera' },
-  { value: 'Locales Comerciales', label: 'Locales Comerciales' },
-  { value: 'Loteamiento', label: 'Loteamiento' },
-  { value: 'Naves Industriales', label: 'Naves Industriales' },
+  { value: OperationType.ALQUILER_COMERCIAL, label: 'Alquiler Comercial' },
+  { value: OperationType.FONDO_DE_COMERCIO, label: 'Fondo de Comercio' },
+  { value: OperationType.DESARROLLO, label: 'Desarrollo Inmobiliario' },
+  { value: OperationType.COCHERA, label: 'Cochera' },
+  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
+  { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
+  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
   {
-    value: 'Lotes Para Desarrollos',
+    value: OperationType.LOTES_PARA_DESARROLLOS,
     label: 'Lotes para Desarrollos',
   },
 ];

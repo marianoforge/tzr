@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import Slider from 'react-slick';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PencilIcon, TrashIcon, ServerIcon } from '@heroicons/react/24/outline';
 
-import { TeamMember, UserData, UserWithOperations } from '@/common/types/';
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
@@ -13,15 +12,13 @@ import {
   calculateTotalTips,
   calculateTotalReservationValue,
 } from '@/common/utils/calculationsAgents';
-import useUsersWithOperations from '@/common/hooks/useUserWithOperations';
-import { useTeamMembersOps } from '@/common/hooks/useTeamMembersOps';
 
 import Loader from '@/components/PrivateComponente/Loader';
-
 import EditAgentsModal from './EditAgentsModal';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { APIMethods, QueryKeys } from '@/common/enums';
+import { TeamMember } from './AgentsReport';
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
 // Configuración del slider
 const settings = {
@@ -33,144 +30,138 @@ const settings = {
   arrows: true,
 };
 
-const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
+const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
+  const response = await fetch('/api/getTeamsWithOperations');
+  if (!response.ok) {
+    throw new Error('Failed to fetch data');
+  }
+  return response.json();
+};
+
+const deleteMember = async (memberId: string) => {
+  const response = await fetch(`/api/teamMembers/${memberId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete member');
+  }
+};
+
+const updateMember = async (updatedMember: TeamMember) => {
+  const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updatedMember),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update member');
+  }
+  return response.json();
+};
+
+const AgentsReportCarousel = ({ userId }: { userId: string }) => {
   const queryClient = useQueryClient();
-
-  // Usa Tanstack Query para obtener los datos de usuarios con operaciones
-  const {
-    data: usersData,
-    isLoading: isLoadingUsers,
-    error: usersError,
-  } = useUsersWithOperations(currentUser);
-  const {
-    data: membersData,
-    isLoading: isLoadingMembers,
-    error: membersError,
-  } = useTeamMembersOps(currentUser.uid ?? '');
-
-  const [combinedData, setCombinedData] = useState<TeamMember[]>([]);
+  // All hooks should be declared at the top level
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Combina los datos de usersData y membersData
-  useEffect(() => {
-    if (usersData && membersData) {
-      const initialData: TeamMember[] = [
-        ...usersData.map((user: UserWithOperations) => ({
-          id: user.uid,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          numeroTelefono: '',
-          operaciones: user.operaciones,
-        })),
-        ...membersData.membersWithOperations,
-      ];
-      setCombinedData(initialData);
-    }
-  }, [usersData, membersData]);
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['teamMembersWithOperations'],
+    queryFn: fetchTeamMembersWithOperations,
+  });
 
-  // Filtrar datos combinados por nombre o apellido
-  const filteredData = useMemo(() => {
-    return combinedData.filter((member) =>
-      `${member.firstName} ${member.lastName}`
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    );
-  }, [combinedData, searchQuery]);
-
-  // Eliminar un miembro
-  const handleDeleteClick = useCallback(
-    async (memberId: string) => {
-      if (
-        window.confirm('¿Estás seguro de que deseas eliminar este miembro?')
-      ) {
-        try {
-          const response = await fetch(`/api/teamMembers/${memberId}`, {
-            method: APIMethods.DELETE,
-          });
-
-          if (response.ok) {
-            setCombinedData((prevData) =>
-              prevData.filter((member) => member.id !== memberId)
-            );
-            queryClient.invalidateQueries({
-              queryKey: [QueryKeys.TEAM_MEMBERS],
-            });
-          } else {
-            console.error('Error al borrar el miembro');
-          }
-        } catch (error) {
-          console.error('Error en la petición DELETE:', error);
-        }
-      }
+  const deleteMemberMutation = useMutation({
+    mutationFn: deleteMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['teamMembersWithOperations'],
+      });
     },
-    [queryClient, currentUser.uid]
+  });
+
+  const updateMemberMutation = useMutation({
+    mutationFn: updateMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['teamMembersWithOperations'],
+      });
+    },
+  });
+
+  const handleDeleteClick = useCallback(
+    (memberId: string) => {
+      deleteMemberMutation.mutate(memberId);
+    },
+    [deleteMemberMutation]
   );
 
-  // Editar un miembro
   const handleEditClick = useCallback((member: TeamMember) => {
     setSelectedMember(member);
     setIsModalOpen(true);
   }, []);
 
-  // Guardar los cambios del miembro editado
-  const handleSubmit = async (updatedMember: TeamMember) => {
-    try {
-      const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
-        method: APIMethods.PUT,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedMember),
-      });
+  const handleDeleteButtonClick = useCallback((member: TeamMember) => {
+    setSelectedMember(member);
+    setIsDeleteModalOpen(true);
+  }, []);
 
-      if (response.ok) {
-        setCombinedData((prevData) =>
-          prevData.map((member) =>
-            member.id === updatedMember.id ? updatedMember : member
-          )
-        );
-        setIsModalOpen(false);
-        queryClient.invalidateQueries({
-          queryKey: [QueryKeys.TEAM_MEMBERS],
-        });
-      } else {
-        console.error('Error al actualizar el miembro');
-      }
-    } catch (error) {
-      console.error('Error en la petición PUT:', error);
-    }
+  const handleSubmit = useCallback(
+    (updatedMember: TeamMember) => {
+      updateMemberMutation.mutate(updatedMember, {
+        onSuccess: () => {
+          setIsModalOpen(false);
+        },
+      });
+    },
+    [updateMemberMutation]
+  );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
   };
 
-  // Calcular honorarios totales
-  const honorariosBrokerTotales = useMemo(() => {
-    return combinedData.reduce((acc, usuario) => {
+  // Ensure hooks are called unconditionally before the return
+  if (isLoading) return <Loader />;
+  if (error instanceof Error) return <div>Error: {error.message}</div>;
+
+  // Filter members and paginate them
+  const filteredMembers =
+    data?.filter((member) => {
+      const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
+      const searchWords = searchQuery.toLowerCase().split(' ');
+      return (
+        member.teamLeadID === userId &&
+        searchWords.every((word) => fullName.includes(word))
+      );
+    }) || [];
+
+  const paginatedMembers = filteredMembers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const honorariosBrokerTotales = () => {
+    return paginatedMembers.reduce((acc, usuario) => {
       return (
         acc +
-        usuario.operaciones.reduce(
+        usuario.operations.reduce(
           (sum: number, op: { honorarios_broker: number }) =>
             sum + op.honorarios_broker,
           0
         )
       );
     }, 0);
-  }, [combinedData]);
-
-  if (isLoadingUsers || isLoadingMembers) return <Loader />;
-
-  if (usersError || membersError) {
-    return (
-      <p>
-        Error:{' '}
-        {usersError?.message ||
-          membersError?.message ||
-          'An unknown error occurred'}
-      </p>
-    );
+  };
+  if (isLoading) {
+    return <SkeletonLoader height={60} count={14} />;
   }
-
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md pb-10">
       <div className="flex justify-center mb-4 flex-col items-center">
@@ -183,9 +174,9 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
           className="w-[320px] p-2 my-4 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
         />
       </div>
-      {searchQuery && filteredData.length > 0 ? (
+      {searchQuery && filteredMembers.length > 0 ? (
         <Slider {...settings}>
-          {filteredData.map((usuario) => (
+          {filteredMembers.map((usuario) => (
             <div key={usuario.id} className="p-4 expense-card">
               <div className="bg-mediumBlue mb-4 text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-auto min-h-[300px]">
                 <div className="space-y-2 sm:space-y-4 flex flex-col w-[100%]">
@@ -198,9 +189,9 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   </p>
                   <p>
                     <strong>Total Facturación Bruta:</strong>{' '}
-                    {usuario.operaciones.length > 0 ? (
+                    {usuario.operations.length > 0 ? (
                       `$${formatNumber(
-                        calculateAdjustedBrokerFees(usuario.operaciones)
+                        calculateAdjustedBrokerFees(usuario.operations)
                       )}`
                     ) : (
                       <span>No operations</span>
@@ -208,13 +199,13 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   </p>
                   <p>
                     <strong>Aporte a la Facturación Bruta:</strong>{' '}
-                    {usuario.operaciones.length > 0 ? (
+                    {usuario.operations.length > 0 ? (
                       <ul>
                         <li>
                           {formatNumber(
-                            (calculateAdjustedBrokerFees(usuario.operaciones) *
+                            (calculateAdjustedBrokerFees(usuario.operations) *
                               100) /
-                              honorariosBrokerTotales
+                              honorariosBrokerTotales()
                           )}
                           %
                         </li>
@@ -225,32 +216,31 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
                   </p>
                   <p>
                     <strong>Cantidad de Operaciones:</strong>{' '}
-                    {usuario.operaciones.length > 0 ? (
-                      calculateTotalOperations(usuario.operaciones)
+                    {usuario.operations.length > 0 ? (
+                      calculateTotalOperations(usuario.operations)
                     ) : (
                       <span>No operations</span>
                     )}
                   </p>
                   <p>
                     <strong>Puntas Compradoras:</strong>{' '}
-                    {calculateTotalBuyerTips(usuario.operaciones)}
+                    {calculateTotalBuyerTips(usuario.operations)}
                   </p>
                   <p>
                     <strong>Puntas Vendedoras:</strong>{' '}
-                    {calculateTotalSellerTips(usuario.operaciones)}
+                    {calculateTotalSellerTips(usuario.operations)}
                   </p>
                   <p>
                     <strong>Puntas Totales:</strong>{' '}
-                    {calculateTotalTips(usuario.operaciones)}
+                    {calculateTotalTips(usuario.operations)}
                   </p>
                   <p>
                     <strong>Monto Total Operaciones:</strong>{' '}
                     {formatNumber(
-                      calculateTotalReservationValue(usuario.operaciones)
+                      calculateTotalReservationValue(usuario.operations)
                     )}
                   </p>
-                  {/* Botones de acción (Editar y Eliminar) */}
-                  {usuario.id !== currentUser.uid && ( // Check if the user is not the current user
+                  {usuario.id !== userId && (
                     <div className="flex w-full justify-center gap-8">
                       <button
                         onClick={() => handleEditClick(usuario)}
@@ -277,13 +267,13 @@ const AgentsReportCarousel = ({ currentUser }: { currentUser: UserData }) => {
           <p className="text-center font-semibold">No hay agentes</p>
         </div>
       )}
-
       {isModalOpen && selectedMember && (
         <EditAgentsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           member={selectedMember}
           onSubmit={handleSubmit}
+          onCloseAndUpdate={() => setIsModalOpen(false)}
         />
       )}
     </div>

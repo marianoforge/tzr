@@ -1,19 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { UserData, Operation } from '@/common/types/';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { formatNumber } from '@/common/utils/formatNumber';
 
-import useAgentsData from '@/common/hooks/useAgentsData';
 import usePagination from '@/common/hooks/usePagination';
 import { OperationStatus } from '@/common/enums';
+import { TeamMember } from './AgentsReport';
+import { useQuery } from '@tanstack/react-query';
 
-const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
-  const { currentAgents, isLoading, error, searchQuery, setSearchQuery } =
-    useAgentsData(currentUser);
+const AgentsReportByOps = ({ userId }: { userId: string }) => {
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const allOperations = currentAgents.flatMap((usuario) =>
-    usuario.operaciones
+  const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
+    const response = await fetch('/api/getTeamsWithOperations');
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
+    }
+    return response.json();
+  };
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['teamMembersWithOperations'],
+    queryFn: fetchTeamMembersWithOperations,
+  });
+
+  const filteredMembers =
+    data?.filter((member) => {
+      const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
+      const searchWords = searchQuery.toLowerCase().split(' ');
+      return (
+        member.teamLeadID === userId &&
+        searchWords.every((word) => fullName.includes(word))
+      );
+    }) || [];
+
+  const allOperations = filteredMembers.flatMap((usuario) =>
+    usuario.operations
       .map((operacion) => ({
         ...operacion,
         agente: `${usuario.firstName} ${usuario.lastName}`,
@@ -32,6 +55,7 @@ const AgentsReportByOps = ({ currentUser }: { currentUser: UserData }) => {
   if (isLoading) {
     return <SkeletonLoader height={60} count={14} />;
   }
+
   if (error) {
     return <p>Error: {error?.message || 'An unknown error occurred'}</p>;
   }

@@ -101,7 +101,7 @@ const OperationsTable: React.FC = () => {
       })
       .filter(
         (operation: Operation) =>
-          !operation.tipo_operacion.startsWith(OperationType.ALQUILER)
+          !operation.tipo_operacion.startsWith('Alquiler')
       );
   }, [operations]);
 
@@ -646,7 +646,7 @@ const OperationsTable: React.FC = () => {
             operation={selectedOperation}
             onUpdate={() =>
               queryClient.invalidateQueries({
-                queryKey: [QueryKeys.OPERATIONS, userUID],
+                queryKey: ['operations', userUID],
               })
             }
             currentUser={userData!}

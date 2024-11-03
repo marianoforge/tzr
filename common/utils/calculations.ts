@@ -184,7 +184,7 @@ export const calculateTotals = (operations: Operation[]) => {
   // Operaciones sin Alquileres
   const filtroOperacionsSinAlquileres = filterOperationsExcludingType(
     operations,
-    OperationType.ALQUILER
+    OperationType.ALQUILER_TRADICIONAL
   ).filter((op) => op.estado === OperationStatus.CERRADA);
 
   // Total Punta Compradora Porcentaje

@@ -16,14 +16,16 @@ const Agents = () => {
         {userData && (
           <>
             <div className="hidden lg:block">
-              {userData && <AgentsReport currentUser={userData} />}
+              {userData && <AgentsReport userId={userData?.uid || ''} />}
             </div>
             <div className="hidden lg:block">
-              {userData && <AgentsReportByOps currentUser={userData} />}
+              {userData && <AgentsReportByOps userId={userData?.uid || ''} />}
             </div>
 
             <div className="block lg:hidden">
-              {userData && <AgentsReportCarousel currentUser={userData} />}
+              {userData && (
+                <AgentsReportCarousel userId={userData?.uid || ''} />
+              )}
             </div>
           </>
         )}

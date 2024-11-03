@@ -12,11 +12,9 @@ const CuadroPrincipal = () => {
     operationsError,
     totals,
     operationData,
-    totalCantidad,
     adjustedTotalVentaSum,
+    totalCantidad2024,
   } = useOperationsData();
-
-  console.log(operationData);
 
   const typedOperationData = operationData as Record<
     string,
@@ -36,7 +34,6 @@ const CuadroPrincipal = () => {
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
-  console.log(typedOperationData);
   return (
     <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[610px] overflow-y-auto">
       <div>
@@ -79,26 +76,20 @@ const CuadroPrincipal = () => {
                       <td className="py-3 px-4 text-base">
                         {calculatePercentageCallback(
                           data.cantidad,
-                          operations.length
+                          totalCantidad2024
                         )}
                         %
                       </td>
-                      <td className="py-3 px-4 text-base">
-                        {calculatePercentageCallback(
-                          data.totalHonorarios,
-                          totals.honorarios_asesor
-                        )}
-                        %
-                      </td>
+                      <td className="py-3 px-4 text-base">TBD %</td>
                       <td className="py-3 px-4 text-base">
                         {[
-                          OperationType.ALQUILER,
                           OperationType.COCHERA,
                           OperationType.ALQUILER_TEMPORAL,
                           OperationType.ALQUILER_TRADICIONAL,
                           OperationType.ALQUILER_COMERCIAL,
                           OperationType.LOCALES_COMERCIALES,
                           OperationType.FONDO_DE_COMERCIO,
+                          OperationType.LOTES_PARA_DESARROLLOS,
                         ].includes(tipo as OperationType)
                           ? ''
                           : `$${formatNumber(
@@ -110,7 +101,7 @@ const CuadroPrincipal = () => {
                 )}
                 <tr className="font-bold bg-lightBlue/10 h-16 text-center">
                   <td className="py-3 px-4 text-start text-base">Total</td>
-                  <td className="py-3 px-4 text-base">{totalCantidad}</td>
+                  <td className="py-3 px-4 text-base">{totalCantidad2024}</td>
                   <td className="py-3 px-4 text-base"></td>
                   <td className="py-3 px-4 text-base"></td>
                   <td className="py-3 px-4 text-base">

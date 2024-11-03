@@ -40,13 +40,17 @@ export const useOperationsData = () => {
     [operationData]
   );
 
+  const totalCantidad2024 = closedOperations.filter(
+    (op: Operation) => new Date(op.fecha_operacion).getFullYear() === 2024
+  ).length;
+
   const totalLastColumnSum = useMemo(
     () => calculateTotalLastColumnSum(operationData),
     [operationData]
   );
 
   const adjustedTotalVentaSum = useMemo(
-    () => totalLastColumnSum / 2,
+    () => totalLastColumnSum / 3,
     [totalLastColumnSum]
   );
 
@@ -58,5 +62,6 @@ export const useOperationsData = () => {
     operationData,
     totalCantidad,
     adjustedTotalVentaSum,
+    totalCantidad2024,
   };
 };
