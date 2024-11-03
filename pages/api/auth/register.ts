@@ -64,6 +64,15 @@ export default async function handler(
           createdAt: Timestamp.now(), // Timestamp para createdAt
         });
 
+        // Crear documento en la colección 'teams'
+        await setDoc(doc(db, 'teams', uid), {
+          email,
+          firstName,
+          lastName,
+          numeroTelefono,
+          teamLeadId: uid, // Asignar el uid como teamLeadId
+        });
+
         return res
           .status(201)
           .json({ message: 'Usuario registrado exitosamente (Google)' });
@@ -91,6 +100,15 @@ export default async function handler(
         priceId,
         uid: user.uid,
         createdAt: Timestamp.now(), // Timestamp para createdAt
+      });
+
+      // Crear documento en la colección 'teams'
+      await setDoc(doc(db, 'teams', user.uid), {
+        email: user.email,
+        firstName,
+        lastName,
+        numeroTelefono,
+        teamLeadId: user.uid, // Asignar el uid como teamLeadId
       });
 
       return res

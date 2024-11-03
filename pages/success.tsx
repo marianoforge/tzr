@@ -56,6 +56,7 @@ export default function Success() {
 
         localStorage.setItem('userID', userId);
         setUserId(userId);
+        setSubscriptionId(subscriptionId);
       } catch (error) {
         console.error('Error fetching user ID:', error);
       }
@@ -64,24 +65,10 @@ export default function Success() {
     fetchUserIdByEmail();
   }, [router.query.session_id]);
 
-  const { data: userDataQuery } = useQuery({
-    queryKey: [QueryKeys.USER_DATA, userId],
-    queryFn: async () => {
-      const response = await axios.get(`/api/users/${userId}`);
-      return response.data;
-    },
-    enabled: !!userId,
-  });
-  useEffect(() => {
-    setSubscriptionId(
-      userDataQuery?.stripeSubscriptionId ?? 'No Subscription ID'
-    );
-  }, [userDataQuery]);
-
   const { data: subscriptionInfo, isLoading } = useQuery({
-    queryKey: [QueryKeys.SUBSCRIPTION_DATA, userId],
+    queryKey: [QueryKeys.SUBSCRIPTION_DATA, subscriptionId],
     queryFn: async () => {
-      if (!subscriptionId) {
+      if (!subscriptionId || subscriptionId === 'No Subscription ID') {
         throw new Error('No Subscription ID');
       }
       const response = await fetch(
@@ -89,7 +76,7 @@ export default function Success() {
       );
       return response.json();
     },
-    enabled: !!userId && !!subscriptionId,
+    enabled: !!subscriptionId && subscriptionId !== 'No Subscription ID',
   });
 
   const timestamp = subscriptionInfo?.trial_end;
