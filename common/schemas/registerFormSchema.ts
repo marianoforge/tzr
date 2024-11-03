@@ -10,7 +10,6 @@ export const createSchema = (googleUser: boolean) =>
       .required('Correo es requerido'),
     agenciaBroker: yup.string().required('Agencia o Broker es requerido'),
     numeroTelefono: yup.string().required('Número de Teléfono es requerido'),
-    role: yup.string().required('Rol es requerido'),
     // Validación condicional para contraseña solo si el usuario NO es de Google
     ...(googleUser !== true && {
       password: yup

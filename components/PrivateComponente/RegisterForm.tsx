@@ -102,7 +102,6 @@ const RegisterForm = () => {
             googleUser !== 'true' ? data.confirmPassword : undefined,
         }),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error al registrar usuario');
@@ -243,7 +242,7 @@ const RegisterForm = () => {
           required
         />
 
-        <Select
+        {/* <Select
           label="¿Sos Team Leader / Broker o Asesor?"
           options={[
             { value: 'agente_asesor', label: 'Asesor' },
@@ -252,7 +251,7 @@ const RegisterForm = () => {
           register={register}
           name="role"
           required
-        />
+        /> */}
 
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">

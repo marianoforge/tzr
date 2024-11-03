@@ -8,7 +8,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { email } = req.query;
-
   if (!email || typeof email !== 'string') {
     return res.status(400).json({ message: 'Email is required' });
   }
@@ -22,7 +21,7 @@ export default async function handler(
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const userId = querySnapshot.docs[0].id; // Obtener el ID del usuario
+    const userId = querySnapshot.docs[0].id;
     res.status(200).json({ userId });
   } catch (error) {
     console.error('Error fetching user by email:', error);

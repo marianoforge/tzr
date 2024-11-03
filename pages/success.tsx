@@ -10,6 +10,8 @@ import { SessionType } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { QueryKeys } from '@/common/enums';
+import { PRICE_ID_GROWTH } from '@/lib/data';
+import { PRICE_ID_STARTER } from '@/lib/data';
 
 export default function Success() {
   const router = useRouter();
@@ -25,11 +27,32 @@ export default function Success() {
         const res = await fetch(`/api/checkout/${sessionId}`);
         const session: SessionType = await res.json();
         const email = session.customer_details.email;
-
+        const customerId = session.customer;
+        const subscriptionId = session.subscription;
+        const selectedPriceId = localStorage.getItem('selectedPriceId');
+        const role =
+          selectedPriceId === PRICE_ID_STARTER
+            ? 'agente_asesor'
+            : selectedPriceId === PRICE_ID_GROWTH
+              ? 'team_leader_broker'
+              : 'enterprise_broker';
         const userIdRes = await fetch(
           `/api/users/getUserIdByEmail?email=${email}`
         );
         const { userId } = await userIdRes.json();
+
+        await fetch(`/api/users/updateUser`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId,
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId,
+            role,
+          }),
+        });
 
         localStorage.setItem('userID', userId);
         setUserId(userId);
@@ -49,7 +72,6 @@ export default function Success() {
     },
     enabled: !!userId,
   });
-
   useEffect(() => {
     setSubscriptionId(
       userDataQuery?.stripeSubscriptionId ?? 'No Subscription ID'

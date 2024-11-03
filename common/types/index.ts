@@ -173,7 +173,6 @@ export interface RegisterData {
   confirmPassword?: string;
   agenciaBroker: string;
   numeroTelefono: string;
-  role: string;
 }
 
 export interface LoginData {

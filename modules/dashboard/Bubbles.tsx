@@ -45,7 +45,7 @@ const Bubbles = () => {
         'Este es el monto total de honorarios brutos obtenido de las operaciones cerradas.',
     },
     {
-      title: 'Monto Sobre Operaciones Cerradas',
+      title: 'Monto Ops. Cerradas',
       figure: formatValue(totals.valor_reserva_cerradas ?? 0, 'currency'),
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',

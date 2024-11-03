@@ -206,3 +206,7 @@ export const tiposOperaciones = [
     label: 'Lotes para Desarrollos',
   },
 ];
+
+export const PRICE_ID_STARTER = 'price_1QAASbJkIrtwQiz3PcJiJebj';
+export const PRICE_ID_GROWTH = 'price_1QAAT6JkIrtwQiz3J0HLDRTQ';
+export const PRICE_ID_ENTERPRISE = 'price_1QAAT6JkIrtwQiz3J0HLDRTQ';

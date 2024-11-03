@@ -1,6 +1,11 @@
 // CardsSection.tsx
 import { useRouter } from 'next/router';
 import LicenseCard from './LicensesCard';
+import {
+  PRICE_ID_ENTERPRISE,
+  PRICE_ID_GROWTH,
+  PRICE_ID_STARTER,
+} from '@/lib/data';
 
 interface LicensesSectionProps {
   onClose?: () => void;
@@ -8,10 +13,6 @@ interface LicensesSectionProps {
 
 const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
   const router = useRouter();
-
-  const PRICE_ID_STARTER = 'price_1QAASbJkIrtwQiz3PcJiJebj';
-  const PRICE_ID_GROWTH = 'price_1QAAT6JkIrtwQiz3J0HLDRTQ';
-  const PRICE_ID_ENTERPRISE = 'price_1QAAT6JkIrtwQiz3J0HLDRTQ';
 
   const handleLicenseSelect = (priceId: string) => {
     // Almacena el priceId en el almacenamiento local

@@ -41,8 +41,7 @@ export default async function handler(
       !agenciaBroker ||
       !numeroTelefono ||
       !firstName ||
-      !lastName ||
-      !role
+      !lastName
     ) {
       return res
         .status(400)
@@ -89,7 +88,6 @@ export default async function handler(
         numeroTelefono,
         firstName,
         lastName,
-        role,
         priceId,
         uid: user.uid,
         createdAt: Timestamp.now(), // Timestamp para createdAt
