@@ -6,17 +6,24 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Google Tag Manager */}
+        {/* DNS Prefetch for Firebase/Firestore */}
+        <link rel="dns-prefetch" href="https://firebase.googleapis.com" />
+        <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+        <link rel="dns-prefetch" href="https://www.googleapis.com" />
+
+        {/* Preconnect to Firebase/Firestore */}
+        <link rel="preconnect" href="https://firebase.googleapis.com" />
+        <link rel="preconnect" href="https://firestore.googleapis.com" />
+        <link rel="preconnect" href="https://www.googleapis.com" />
+
         <script
           dangerouslySetInnerHTML={{
             __html: GTM_SCRIPT,
           }}
         />
-        {/* Fin Google Tag Manager */}
       </Head>
       <SpeedInsights />
       <body className="antialiased">
-        {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
@@ -25,7 +32,7 @@ export default function Document() {
             style={{ display: 'none', visibility: 'hidden' }}
           ></iframe>
         </noscript>
-        {/* Fin Google Tag Manager (noscript) */}
+
         <Main />
         <NextScript />
       </body>

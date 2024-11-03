@@ -145,7 +145,7 @@ const MonthlyLineChartPoints = () => {
         Porcentaje de Honorarios Brutos por Mes
       </h2>
       <h2 className="text-[30px] text-gray-400 lg:text-[12px] font-semibold text-center">
-        Corresponde a Las operciones cerradas, que no sean alquileres y tengan
+        Corresponde a las operaciones cerradas, que no sean alquileres y tengan
         ambas puntas.
       </h2>
       <div className="h-80 w-full">
