@@ -2,15 +2,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { EventFormData } from '@/common/types/';
-
-// Esquema de validación con Yup
-const schema = yup.object().shape({
-  title: yup.string().required('El título es requerido'),
-  date: yup.string().required('La fecha es requerida'),
-  startTime: yup.string().required('La hora de inicio es requerida'),
-  endTime: yup.string().required('La hora de fin es requerida'),
-  description: yup.string().required('La descripción es requerida'),
-});
+import { schema } from '../schemas/eventFormSchema';
 
 export const useEventForm = () => {
   const {
