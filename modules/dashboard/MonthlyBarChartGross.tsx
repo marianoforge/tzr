@@ -117,14 +117,14 @@ const MonthlyBarChartGross: React.FC = () => {
             <Bar
               dataKey="previousYear"
               fill={COLORS[1]}
-              name="Año Anterior"
+              name="Año 2023"
               maxBarSize={MAX_BAR_SIZE}
               radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="currentYear"
               fill={COLORS[2]}
-              name="Año Actual"
+              name="Año 2024"
               maxBarSize={MAX_BAR_SIZE}
               radius={[4, 4, 0, 0]}
             />
