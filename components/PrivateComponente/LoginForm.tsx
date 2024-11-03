@@ -16,7 +16,7 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   db,
-} from '@/lib/firebase'; // Import Firebase Auth
+} from '@/lib/firebase';
 import { schema } from '@/common/schemas/loginFormSchema';
 import { LoginData } from '@/common/types/';
 

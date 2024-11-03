@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Operation } from '@/common/types';
-import { OperationStatus } from '../enums';
+import { ALQUILER, OperationStatus } from '../enums';
 import { OperationType } from '../enums';
 
 interface MonthlyData {
@@ -14,7 +14,7 @@ const usePromedioSumaPuntas = (operations: Operation[]): MonthlyData[] => {
     const operationsFiltered = operations.filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        !op.tipo_operacion.includes(OperationType.ALQUILER_TRADICIONAL) &&
+        !op.tipo_operacion.includes(ALQUILER.ALQUILER) &&
         (op.porcentaje_punta_compradora !== 0 ||
           op.porcentaje_punta_compradora === null) &&
         (op.porcentaje_punta_vendedora !== 0 ||

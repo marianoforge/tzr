@@ -3,6 +3,7 @@ import {
   getFirestore,
   initializeFirestore,
   persistentLocalCache,
+  Firestore,
 } from 'firebase/firestore';
 import {
   getAuth,
@@ -25,7 +26,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Configure Firestore with persistence only once
-let db;
+let db: Firestore; // Explicitly type db as Firestore
 try {
   db = initializeFirestore(app, {
     localCache: persistentLocalCache(),
