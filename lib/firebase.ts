@@ -3,7 +3,6 @@ import {
   getFirestore,
   initializeFirestore,
   persistentLocalCache,
-  CACHE_SIZE_UNLIMITED,
 } from 'firebase/firestore';
 import {
   getAuth,
@@ -28,7 +27,6 @@ const app = initializeApp(firebaseConfig);
 // Configure Firestore with persistence
 initializeFirestore(app, {
   localCache: persistentLocalCache(), // Enables IndexedDb caching
-  cacheSizeBytes: CACHE_SIZE_UNLIMITED,
 });
 
 // Get Firestore and Auth
