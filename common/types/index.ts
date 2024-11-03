@@ -45,7 +45,7 @@ export interface EventFormData {
   date: string;
   startTime: string;
   endTime: string;
-  description: string;
+  description?: string;
 }
 
 export interface Event {

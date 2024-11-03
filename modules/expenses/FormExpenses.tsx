@@ -25,7 +25,6 @@ const FormularioExpenses: React.FC = () => {
 
   const { isOpen: isModalOpen, openModal, closeModal } = useModal();
   const [modalMessage, setModalMessage] = useState('');
-  const [expenseAssociationType, setExpenseAssociationType] = useState('agent');
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
@@ -98,10 +97,6 @@ const FormularioExpenses: React.FC = () => {
 
   const amountInDollars =
     amount && dollarRate ? (amount / dollarRate).toFixed(2) : 0;
-
-  const handleAssociationTypeChange = (newType: string) => {
-    setExpenseAssociationType(newType);
-  };
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">

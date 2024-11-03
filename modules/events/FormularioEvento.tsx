@@ -1,12 +1,23 @@
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
-import { useEventForm } from '@/common/hooks/useEventForm';
 import { useEventMutation } from '@/common/hooks/useEventMutation';
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
+import { schema } from '@/common/schemas/eventFormSchema';
+
 const FormularioEvento: React.FC = () => {
-  const { register, handleSubmit, errors, reset } = useEventForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
   const { isModalOpen, modalMessage, onSubmit, closeModal, acceptModal } =
     useEventMutation(reset);
 
@@ -62,7 +73,6 @@ const FormularioEvento: React.FC = () => {
               placeholder="Descripción del evento"
               {...register('description')}
               error={errors.description?.message}
-              required
             />
           </div>
         </div>
