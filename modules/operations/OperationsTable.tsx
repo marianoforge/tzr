@@ -701,7 +701,7 @@ const OperationsTable: React.FC = () => {
           onThirdButtonClick={() => {
             if (selectedOperation?.id) {
               handleFallenOperation(selectedOperation.id);
-              // setIsDeleteModalOpen(false);
+              setIsDeleteModalOpen(false);
             }
           }}
         />
