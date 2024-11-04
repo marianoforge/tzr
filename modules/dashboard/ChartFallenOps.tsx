@@ -11,16 +11,14 @@ import { COLORS } from '@/lib/constants';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { useOperationsData } from '@/common/hooks/useOperationsData';
 import { Operation } from '@/common/types';
-import { tiposOperacionesPieChartData } from '@/common/utils/calculationsPrincipal';
 
-const CuadroPrincipalChart = () => {
+import { OperationStatus } from '@/common/enums';
+import { tiposOperacionesCaidasPieChartData } from '@/common/utils/calculationsPrincipal';
+
+const ChartFallenOps = () => {
   const { operations, isLoading, operationsError } = useOperationsData();
 
-  const closedOperations = useMemo(() => {
-    return operations.filter((op: Operation) => op.estado === 'Cerrada');
-  }, [operations]);
-
-  const pieChartData = tiposOperacionesPieChartData(closedOperations);
+  const pieChartData = tiposOperacionesCaidasPieChartData(operations);
 
   if (isLoading) {
     return <SkeletonLoader height={550} count={1} />;
@@ -34,11 +32,11 @@ const CuadroPrincipalChart = () => {
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px] overflow-y-auto">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-6">
-        Tipo de Operaciones
+        Operaciones Caídas
       </h2>
-      {pieChartData.length === 0 ? (
-        <p className="text-center text-[20px] xl:text-[20px] 2xl:text-[22px] font-semibold">
-          No existen operaciones
+      {pieChartData.every((op) => op.value <= 0) ? (
+        <p className="text-center text-[20px] xl:text-[20px] 2xl:text-[22px] mt-32 font-semibold">
+          No existen operaciones caídas
         </p>
       ) : (
         <div className="h-[300px] w-full align-middle">
@@ -80,4 +78,4 @@ const CuadroPrincipalChart = () => {
   );
 };
 
-export default CuadroPrincipalChart;
+export default ChartFallenOps;

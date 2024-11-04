@@ -144,7 +144,11 @@ const OperationsTable: React.FC = () => {
       searchQuery
     );
 
-    const dateSortedOps = searchedOps.sort((a, b) => {
+    const nonFallenOps = searchedOps.filter(
+      (op) => op.estado !== OperationStatus.CAIDA
+    );
+
+    const dateSortedOps = nonFallenOps.sort((a, b) => {
       return b.fecha_operacion.localeCompare(a.fecha_operacion);
     });
 
@@ -231,6 +235,27 @@ const OperationsTable: React.FC = () => {
       deleteMutation.mutate(id);
     },
     [deleteMutation]
+  );
+
+  const handleFallenOperation = useCallback(
+    (id: string) => {
+      const existingOperation = transformedOperations.find(
+        (op: Operation) => op.id === id
+      );
+
+      if (!existingOperation) {
+        console.error('Operación no encontrada');
+        return;
+      }
+
+      const updatedOperation: Operation = {
+        ...existingOperation,
+        estado: OperationStatus.CAIDA,
+      };
+
+      updateMutation.mutate({ id: id, data: updatedOperation });
+    },
+    [transformedOperations, updateMutation]
   );
 
   const handleDeleteButtonClick = useCallback((operation: Operation) => {
@@ -663,15 +688,22 @@ const OperationsTable: React.FC = () => {
         <ModalDelete
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
-          message="¿Estás seguro de querer eliminar esta operación?"
+          message="¿Queres eliminar la operación o tratarla como operación caída?"
           onSecondButtonClick={() => {
             if (selectedOperation?.id) {
               handleDeleteClick(selectedOperation.id);
               setIsDeleteModalOpen(false);
             }
           }}
-          secondButtonText="Borrar Operación"
+          secondButtonText="Borrar"
           className="w-[450px]"
+          thirdButtonText="Caída"
+          onThirdButtonClick={() => {
+            if (selectedOperation?.id) {
+              handleFallenOperation(selectedOperation.id);
+              // setIsDeleteModalOpen(false);
+            }
+          }}
         />
       </div>
     </div>

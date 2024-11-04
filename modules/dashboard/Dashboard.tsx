@@ -11,6 +11,7 @@ import MonthlyBarChartGross from './MonthlyBarChartGross';
 import ObjectiveChart from './ObjectiveChart';
 import Profitability from './Profitability';
 import MonthlyLineChartPoints from './MonthlyLineChartPoints';
+import ChartFallenOps from './ChartFallenOps';
 
 const DashBoard = () => {
   return (
@@ -52,8 +53,9 @@ const DashBoard = () => {
           <div className="col-span-1 lg:col-span-2">
             <CuadroPrincipal />
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1 space-y-6">
             <CuadroPrincipalChart />
+            <ChartFallenOps />
           </div>
         </div>
         {/* Sacar el Mocked */}

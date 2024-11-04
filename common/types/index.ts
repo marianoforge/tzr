@@ -158,6 +158,8 @@ export interface ModalProps {
   secondButtonText?: string;
   onSecondButtonClick?: () => void;
   className?: string;
+  thirdButtonText?: string;
+  onThirdButtonClick?: () => void;
 }
 
 export interface UserInfoProps {

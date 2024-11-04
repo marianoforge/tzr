@@ -14,6 +14,7 @@ export enum OperationStatus {
   TODAS = 'all',
   EN_CURSO = 'En Curso',
   CERRADA = 'Cerrada',
+  CAIDA = 'Caída',
 }
 
 export enum ALQUILER {

@@ -1,5 +1,6 @@
 import { Operation } from '@/common/types';
 import { OperationType } from '../enums';
+import { OperationStatus } from '../enums';
 
 //TABLE//
 
@@ -79,68 +80,56 @@ const operacionCerrada2024 = (closedOperations: Operation[]) => {
     .filter((op: Operation) => op.estado === 'Cerrada');
 };
 
-const ventasPieChartData = (closedOperations: Operation[]) => {
+const operacionCaida2024 = (operations: Operation[]) => {
+  return operations
+    .filter(
+      (op: Operation) => new Date(op.fecha_operacion).getFullYear() === 2024
+    )
+    .filter((op: Operation) => op.estado === 'Caída');
+};
+
+const pieChartData = (
+  closedOperations: Operation[],
+  operationType: OperationType
+) => {
   return {
-    name: OperationType.VENTA,
+    name: operationType,
     value: operacionCerrada2024(closedOperations).filter(
-      (op: Operation) => op.tipo_operacion === OperationType.VENTA
+      (op: Operation) => op.tipo_operacion === operationType
     ).length,
   };
 };
 
-const alquileresTradicionalesPieChartData = (closedOperations: Operation[]) => {
+const pieChartDataFallen = (
+  operations: Operation[],
+  operationType: OperationType
+) => {
   return {
-    name: OperationType.ALQUILER_TRADICIONAL,
-    value: operacionCerrada2024(closedOperations).filter(
-      (op: Operation) =>
-        op.tipo_operacion === OperationType.ALQUILER_TRADICIONAL
-    ).length,
-  };
-};
-
-const alquileresComercialesPieChartData = (closedOperations: Operation[]) => {
-  return {
-    name: OperationType.ALQUILER_COMERCIAL,
-    value: operacionCerrada2024(closedOperations).filter(
-      (op: Operation) => op.tipo_operacion === OperationType.ALQUILER_COMERCIAL
-    ).length,
-  };
-};
-
-const alquileresTemporalesPieChartData = (closedOperations: Operation[]) => {
-  return {
-    name: OperationType.ALQUILER_TEMPORAL,
-    value: operacionCerrada2024(closedOperations).filter(
-      (op: Operation) => op.tipo_operacion === OperationType.ALQUILER_TEMPORAL
-    ).length,
-  };
-};
-const fondosComercioPieChartData = (closedOperations: Operation[]) => {
-  return {
-    name: OperationType.FONDO_DE_COMERCIO,
-    value: operacionCerrada2024(closedOperations).filter(
-      (op: Operation) => op.tipo_operacion === OperationType.FONDO_DE_COMERCIO
-    ).length,
-  };
-};
-
-const desarrolloInmobiliarioPieChartData = (closedOperations: Operation[]) => {
-  return {
-    name: OperationType.DESARROLLO_INMOBILIARIO,
-    value: operacionCerrada2024(closedOperations).filter(
-      (op: Operation) =>
-        op.tipo_operacion === OperationType.DESARROLLO_INMOBILIARIO
+    name: operationType,
+    value: operacionCaida2024(operations).filter(
+      (op: Operation) => op.tipo_operacion === operationType
     ).length,
   };
 };
 
 export const tiposOperacionesPieChartData = (closedOperations: Operation[]) => {
   return [
-    ventasPieChartData(closedOperations),
-    alquileresTradicionalesPieChartData(closedOperations),
-    alquileresComercialesPieChartData(closedOperations),
-    alquileresTemporalesPieChartData(closedOperations),
-    fondosComercioPieChartData(closedOperations),
-    desarrolloInmobiliarioPieChartData(closedOperations),
+    pieChartData(closedOperations, OperationType.VENTA),
+    pieChartData(closedOperations, OperationType.ALQUILER_TRADICIONAL),
+    pieChartData(closedOperations, OperationType.ALQUILER_COMERCIAL),
+    pieChartData(closedOperations, OperationType.ALQUILER_TEMPORAL),
+    pieChartData(closedOperations, OperationType.FONDO_DE_COMERCIO),
+    pieChartData(closedOperations, OperationType.DESARROLLO_INMOBILIARIO),
+  ];
+};
+
+export const tiposOperacionesCaidasPieChartData = (operations: Operation[]) => {
+  return [
+    pieChartDataFallen(operations, OperationType.VENTA),
+    pieChartDataFallen(operations, OperationType.ALQUILER_TRADICIONAL),
+    pieChartDataFallen(operations, OperationType.ALQUILER_COMERCIAL),
+    pieChartDataFallen(operations, OperationType.ALQUILER_TEMPORAL),
+    pieChartDataFallen(operations, OperationType.FONDO_DE_COMERCIO),
+    pieChartDataFallen(operations, OperationType.DESARROLLO_INMOBILIARIO),
   ];
 };

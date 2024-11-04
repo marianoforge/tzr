@@ -9,6 +9,8 @@ const Modal: React.FC<ModalProps> = ({
   onAccept,
   secondButtonText, // Nuevo prop para el texto del segundo botón
   onSecondButtonClick, // Nuevo prop para la función de clic del segundo botón
+  thirdButtonText, // Nuevo prop para el texto del tercer botón
+  onThirdButtonClick, // Nuevo prop para la función de clic del tercer botón
   className,
 }) => {
   if (!isOpen) return null;
@@ -37,6 +39,14 @@ const Modal: React.FC<ModalProps> = ({
               className="bg-lightBlue text-white p-2 rounded hover:bg-mediumBlue transition-all duration-300 font-bold w-full h-[40px]"
             >
               {secondButtonText}
+            </button>
+          )}
+          {thirdButtonText && onThirdButtonClick && (
+            <button
+              onClick={onThirdButtonClick}
+              className="bg-redAccent text-white p-2 rounded hover:bg-mediumBlue transition-all duration-300 font-bold w-full h-[40px]"
+            >
+              {thirdButtonText}
             </button>
           )}
         </div>
