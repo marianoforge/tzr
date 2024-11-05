@@ -5,10 +5,8 @@ import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { Operation } from '@/common/types/';
 import {
   calculateOperationData,
-  calculateTotalCantidad,
   calculateTotalLastColumnSum,
 } from '@/common/utils/calculationsPrincipal';
-import { calculateTotals } from '@/common/utils/calculations';
 import { OperationStatus } from '../enums';
 
 export const useOperationsData = () => {
@@ -28,40 +26,20 @@ export const useOperationsData = () => {
     (op: Operation) => op.estado === OperationStatus.CERRADA
   );
 
-  const totals = calculateTotals(closedOperations);
-
   const operationData = useMemo(
     () => calculateOperationData(closedOperations),
     [closedOperations]
-  );
-
-  const totalCantidad = useMemo(
-    () => calculateTotalCantidad(operationData),
-    [operationData]
   );
 
   const totalCantidad2024 = closedOperations.filter(
     (op: Operation) => new Date(op.fecha_operacion).getFullYear() === 2024
   ).length;
 
-  const totalLastColumnSum = useMemo(
-    () => calculateTotalLastColumnSum(operationData),
-    [operationData]
-  );
-
-  const adjustedTotalVentaSum = useMemo(
-    () => totalLastColumnSum / 3,
-    [totalLastColumnSum]
-  );
-
   return {
     operations,
     isLoading,
     operationsError,
-    totals,
     operationData,
-    totalCantidad,
-    adjustedTotalVentaSum,
     totalCantidad2024,
   };
 };
