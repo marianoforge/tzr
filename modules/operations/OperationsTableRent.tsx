@@ -103,18 +103,23 @@ const OperationsTableTent: React.FC = () => {
       monthFilter
     );
 
-    const typeFilteredOps = filteredOps?.filter(
-      (operation: Operation) =>
-        operationTypeFilter === OperationType.ALL ||
-        operation.tipo_operacion === operationTypeFilter
-    );
+    const typeFilteredOps =
+      operationTypeFilter === 'all'
+        ? filteredOps
+        : filteredOps?.filter(
+            (op) => op.tipo_operacion === operationTypeFilter
+          );
 
     const searchedOps = filterOperationsBySearch(
       typeFilteredOps || [],
       searchQuery
     );
 
-    const dateSortedOps = searchedOps.sort((a, b) => {
+    const nonFallenOps = searchedOps.filter(
+      (op) => op.estado !== OperationStatus.CAIDA
+    );
+
+    const dateSortedOps = nonFallenOps.sort((a, b) => {
       return b.fecha_operacion.localeCompare(a.fecha_operacion);
     });
 
