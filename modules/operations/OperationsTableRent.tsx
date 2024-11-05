@@ -35,7 +35,7 @@ import {
   statusOptions,
   yearsFilter,
 } from '@/lib/data';
-import { OperationType, QueryKeys } from '@/common/enums';
+import { OperationStatus, OperationType, QueryKeys } from '@/common/enums';
 const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -214,6 +214,27 @@ const OperationsTableTent: React.FC = () => {
     setViewOperation(operation);
     setIsViewModalOpen(true);
   }, []);
+
+  const handleFallenOperation = useCallback(
+    (id: string) => {
+      const existingOperation = transformedOperations.find(
+        (op: Operation) => op.id === id
+      );
+
+      if (!existingOperation) {
+        console.error('Operación no encontrada');
+        return;
+      }
+
+      const updatedOperation: Operation = {
+        ...existingOperation,
+        estado: OperationStatus.CAIDA,
+      };
+
+      updateMutation.mutate({ id: id, data: updatedOperation });
+    },
+    [transformedOperations, updateMutation]
+  );
 
   const styleTotalRow = 'py-3 px-4 text-center';
 
@@ -531,6 +552,13 @@ const OperationsTableTent: React.FC = () => {
         }}
         secondButtonText="Borrar Operación"
         className="w-[450px]"
+        thirdButtonText="Caída"
+        onThirdButtonClick={() => {
+          if (selectedOperation?.id) {
+            handleFallenOperation(selectedOperation.id);
+            setIsDeleteModalOpen(false);
+          }
+        }}
       />
     </div>
   );
