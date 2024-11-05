@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   PieChart,
   Pie,
@@ -10,15 +10,16 @@ import {
 import { COLORS } from '@/lib/constants';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { useOperationsData } from '@/common/hooks/useOperationsData';
-import { Operation } from '@/common/types';
 
-import { OperationStatus } from '@/common/enums';
 import { tiposOperacionesCaidasPieChartData } from '@/common/utils/calculationsPrincipal';
+import useResponsiveOuterRadius from '@/common/hooks/useResponsiveOuterRadius';
 
 const ChartFallenOps = () => {
   const { operations, isLoading, operationsError } = useOperationsData();
 
   const pieChartData = tiposOperacionesCaidasPieChartData(operations);
+
+  const outerRadius = useResponsiveOuterRadius();
 
   if (isLoading) {
     return <SkeletonLoader height={550} count={1} />;
@@ -47,7 +48,7 @@ const ChartFallenOps = () => {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={100}
+                outerRadius={outerRadius}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -65,7 +66,7 @@ const ChartFallenOps = () => {
               <Tooltip />
               <Legend
                 wrapperStyle={{
-                  paddingTop: '40px',
+                  paddingTop: '20px',
                   fontSize: '14px',
                   fontWeight: 'bold',
                 }}

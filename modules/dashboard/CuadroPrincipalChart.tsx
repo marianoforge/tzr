@@ -12,6 +12,7 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { useOperationsData } from '@/common/hooks/useOperationsData';
 import { Operation } from '@/common/types';
 import { tiposOperacionesPieChartData } from '@/common/utils/calculationsPrincipal';
+import useResponsiveOuterRadius from '@/common/hooks/useResponsiveOuterRadius';
 
 const CuadroPrincipalChart = () => {
   const { operations, isLoading, operationsError } = useOperationsData();
@@ -21,6 +22,8 @@ const CuadroPrincipalChart = () => {
   }, [operations]);
 
   const pieChartData = tiposOperacionesPieChartData(closedOperations);
+
+  const outerRadius = useResponsiveOuterRadius();
 
   if (isLoading) {
     return <SkeletonLoader height={550} count={1} />;
@@ -33,7 +36,7 @@ const CuadroPrincipalChart = () => {
 
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px] overflow-y-auto">
-      <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-6">
+      <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
         Tipo de Operaciones
       </h2>
       {pieChartData.length === 0 ? (
@@ -49,7 +52,7 @@ const CuadroPrincipalChart = () => {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={100}
+                outerRadius={outerRadius}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -67,7 +70,7 @@ const CuadroPrincipalChart = () => {
               <Tooltip />
               <Legend
                 wrapperStyle={{
-                  paddingTop: '40px',
+                  paddingTop: '20px',
                   fontSize: '14px',
                   fontWeight: 'bold',
                 }}

@@ -1,7 +1,7 @@
 const FAQSection = () => {
   return (
     <section className="relative flex flex-col  items-center justify-center w-full">
-      <div className="flex flex-col justify-around items-center mb-[120px]">
+      <div className="flex flex-col justify-around items-center mb-[120px] mt-32">
         <h3 className="text-sm text-gray-400 font-bold">
           PREGUNTAS FRECUENTES
         </h3>
