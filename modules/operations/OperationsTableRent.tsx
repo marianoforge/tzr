@@ -550,7 +550,7 @@ const OperationsTableTent: React.FC = () => {
             setIsDeleteModalOpen(false);
           }
         }}
-        secondButtonText="Borrar Operación"
+        secondButtonText="Borrar"
         className="w-[450px]"
         thirdButtonText="Caída"
         onThirdButtonClick={() => {
