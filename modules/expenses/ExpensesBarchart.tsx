@@ -82,6 +82,8 @@ const ExpensesBarchart: React.FC = () => {
     }
   }, [expenses, calculateTotals]);
 
+  console.log(expenses);
+
   const filteredExpenses = expenses || [];
 
   const {
@@ -143,24 +145,26 @@ const ExpensesBarchart: React.FC = () => {
         const date = new Date(expense.date);
         const year = date.getFullYear();
         if (year === 2024) {
-          const month = date.toLocaleString('default', { month: 'long' });
-          if (!acc[month]) {
-            acc[month] = {
-              month,
+          const month = date.toLocaleString('es-ES', { month: 'long' });
+          const capitalizedMonth =
+            month.charAt(0).toUpperCase() + month.slice(1);
+          if (!acc[capitalizedMonth]) {
+            acc[capitalizedMonth] = {
+              month: capitalizedMonth,
               amount: 0,
               amountInDollars: 0,
               amountInPesos: 0,
             };
           }
-          acc[month].amount += expense.amount;
-          acc[month].amountInDollars += expense.amountInDollars;
-          acc[month].amountInPesos += expense.amount;
+          acc[capitalizedMonth].amount += expense.amount;
+          acc[capitalizedMonth].amountInDollars += expense.amountInDollars;
+          acc[capitalizedMonth].amountInPesos += expense.amount;
         }
         return acc;
       },
       {}
     );
-
+    console.log(expensesByMonth);
     // Ensure all months are present and in the correct order
     const orderedExpensesByMonth = allMonths.map((month) => {
       return (
@@ -177,6 +181,8 @@ const ExpensesBarchart: React.FC = () => {
   };
 
   const groupedExpenses = groupExpensesByMonth(filteredExpenses);
+
+  console.log(groupedExpenses);
 
   if (isLoading) {
     return (
