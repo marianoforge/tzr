@@ -7,7 +7,7 @@ interface FooterProps {
 
 const Footer = ({ setActiveView }: FooterProps) => {
   return (
-    <footer className="p-4 relative h-[600px] w-full rounded-xl mt-20">
+    <footer className="p-4 relative h-[600px] w-full rounded-xl">
       <div className="absolute inset-2 bottom-0 rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-mediumBlue via-lightBlue to-darkBlue -z-10"></div>
       <div className="flex flex-col mx-auto  justify-around text-white items-center mt-10 z-50">
         <div className="text-white text-[40px] text-center mt-10 leading-tight">
@@ -19,7 +19,7 @@ const Footer = ({ setActiveView }: FooterProps) => {
           <p>team's revenue potential.</p>
         </div>
         <Link href="/register">
-          <button className="w-[182px] px-4 mt-10 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white">
+          <button className="w-[182px] px-4 lg:mt-10 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white">
             Empieza Gratis
           </button>
         </Link>

@@ -30,30 +30,25 @@ const BounceCard: React.FC<BounceCardProps> = ({
         delay: delay,
       }}
     >
-      <div className="bg-white py-10 px-6 shadow-lg w-[500px] max-h-[220px] min-h-[220px] text-center rounded-xl flex flex-row items-center justify-center">
-        <div className="icon w-[20%]">
-          <Image
-            src="/isortp.png"
-            alt="Logo"
-            width={200}
-            height={200}
-            className="w-19 h-17"
-          />
-        </div>
-        <div className="flex flex-col justify-center w-[90%]">
-          <h3>{title}</h3>
-          <p>{description}</p>
+      <div className="w-full flex justify-center mb-10">
+        <div className="bg-white lg:w-[500px] lg:h-[200px] py-10 px-6 shadow-lg w-[75%] text-center rounded-xl flex flex-col md:flex-row items-center justify-center">
+          <div className="icon w-[20%] hidden md:block">
+            <Image
+              src="/isortp.png"
+              alt="Logo"
+              width={200}
+              height={200}
+              className="w-19 h-17"
+            />
+          </div>
+          <div className="flex flex-col justify-center w-[90%]">
+            <h3>{title}</h3>
+            <p>{description}</p>
+          </div>
         </div>
       </div>
     </motion.div>
   );
 };
-// .card {
-//   background-color: white;
-//   border-radius: 8px;
-//   padding: 20px;
-//   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-//   width: 300px;
-//   text-align: center;
-// }
+
 export default BounceCard;

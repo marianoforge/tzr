@@ -29,10 +29,7 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
   };
 
   return (
-    <div
-      className="absolute text-[#2d3748] flex flex-col justify-around items-center gap-20 pb-10 mt-20 lg:flex-row"
-      style={{ top: '100%', transform: 'translateY(-30%)' }}
-    >
+    <div className="absolute text-[#2d3748] flex flex-col xl:flex-row justify-around items-center gap-20 pb-10 mt-20 top-full transform -translate-y-[48px] xl:-translate-y-1/4">
       <LicenseCard
         title="ASESOR"
         description="Lo que necesitás para empezar."

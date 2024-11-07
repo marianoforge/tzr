@@ -15,7 +15,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <HeroSection />
         </div>
       </div>
-      <main className=" flex flex-col justify-center items-center">
+      <main className="flex flex-col justify-center items-center">
         {children}
       </main>
     </>

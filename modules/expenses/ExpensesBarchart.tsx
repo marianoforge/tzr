@@ -23,7 +23,7 @@ import { COLORS } from '@/lib/constants';
 
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { QueryKeys } from '@/common/enums';
+import { MonthNames, QueryKeys } from '@/common/enums';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -82,8 +82,6 @@ const ExpensesBarchart: React.FC = () => {
     }
   }, [expenses, calculateTotals]);
 
-  console.log(expenses);
-
   const filteredExpenses = expenses || [];
 
   const {
@@ -116,18 +114,18 @@ const ExpensesBarchart: React.FC = () => {
 
   const groupExpensesByMonth = (expenses: Expense[]) => {
     const allMonths = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
+      MonthNames.ENERO,
+      MonthNames.FEBRERO,
+      MonthNames.MARZO,
+      MonthNames.ABRIL,
+      MonthNames.MAYO,
+      MonthNames.JUNIO,
+      MonthNames.JULIO,
+      MonthNames.AGOSTO,
+      MonthNames.SEPTIEMBRE,
+      MonthNames.OCTUBRE,
+      MonthNames.NOVIEMBRE,
+      MonthNames.DICIEMBRE,
     ];
 
     const expensesByMonth = expenses.reduce(

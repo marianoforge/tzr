@@ -58,8 +58,8 @@ const FAQSection = () => {
     },
   ];
   return (
-    <section className="relative flex flex-col items-center justify-center w-full">
-      <div className="flex flex-col justify-around items-center mb-[40px] mt-20">
+    <section className="relative  flex-col items-center justify-center w-full hidden xl:flex">
+      <div className="flex flex-col justify-around items-center mb-[40px] mt-40">
         <h3 className="text-sm text-gray-400 font-bold">
           PREGUNTAS FRECUENTES
         </h3>

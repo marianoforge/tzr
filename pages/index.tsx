@@ -9,7 +9,6 @@ const Home = () => {
     <>
       <MainLayout>
         <PersonSection />
-
         <FAQSection />
         <CardsSection />
         <Footer setActiveView={() => {}} />

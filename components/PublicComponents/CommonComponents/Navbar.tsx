@@ -7,7 +7,7 @@ const Navbar = () => {
   return (
     <header className="pt-6 sm:pt-12 lg:pt-16 w-full">
       <div className="relative flex flex-wrap items-center justify-center md:justify-between px-4 sm:px-8 md:px-16">
-        <div className="w-full lg:w-[35%] flex items-center justify-center lg:justify-start">
+        <div className="w-full lg:w-[35%] flex items-center justify-center lg:justify-start mt-8 lg:mt-0">
           <Link href="/" title="Home">
             <Image
               src="/trackproLogoWhite.png"
