@@ -24,9 +24,14 @@ const PersonSection = () => {
               </p>
             </div>
             <div className="flex flex-col mb-20 mt-10">
-              <p className="text-base  text-white">Gustavo de Simone</p>
-              <span className="text-sm bg-gradient-to-r from-[#fff1be] ] via-[#ee87cb] bg-clip-text  to-[#b060ff] text-transparent">
-                CEO de Gustavo De Simone Soluciones Inmobiliarias
+              <p className="text-[18px] text-white mb-1">Gustavo De Simone</p>
+              <span className="text-sm bg-gradient-to-r from-[#fff1be]  via-[#ee87cb] bg-clip-text  to-[#b060ff] text-transparent">
+                CEO de Gustavo De Simone Soluciones Inmobiliarias, Buenos Aires
+                - Argentina
+                <br />
+                CEO ULTRA Real Estate, Asunción - Paraguay
+                <br />
+                Broker Owner Remax, Lima - Perú
               </span>
             </div>
           </div>
