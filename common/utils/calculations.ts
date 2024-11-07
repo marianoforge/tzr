@@ -5,10 +5,25 @@ import {
   OperationData,
   OperationStatus,
   OperationType,
+  UserRole,
 } from '../enums';
 
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
+
+export const totalHonorariosTeamLead = (
+  operation: Operation,
+  userRole: UserRole
+) => {
+  if (userRole === UserRole.TEAM_LEADER_BROKER) {
+    return (
+      ((100 - operation.porcentaje_honorarios_asesor) *
+        operation.honorarios_broker) /
+      100
+    );
+  }
+  return operation.honorarios_asesor;
+};
 
 // Funcion para sumatoria de un campo en operaciones
 const sumField = (operations: Operation[], field: keyof Operation) =>
@@ -325,5 +340,6 @@ export const calculateTotals = (operations: Operation[]) => {
       porcentajeHonorariosBrokerPorMes2024,
     porcentaje_honorarios_broker_por_mes_2023:
       porcentajeHonorariosBrokerPorMes2023,
+    total_honorarios_team_lead: totalHonorariosTeamLead,
   };
 };

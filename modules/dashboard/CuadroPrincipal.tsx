@@ -21,19 +21,6 @@ const CuadroPrincipal = () => {
 
   const { totalMontoHonorariosBroker, summaryArray } = chartCalculations;
 
-  const totalPromVentasyDevs = summaryArray.map(
-    (calcs) => calcs.totalMontoOperaciones
-  );
-
-  const totalPromVentasyDev2 = summaryArray.map(
-    (calcs) => calcs.cantidadOperaciones
-  );
-
-  console.log(totalPromVentasyDevs);
-  console.log(totalPromVentasyDev2);
-
-  console.log(chartCalculations.summaryArray.map((calcs) => calcs.group));
-
   const nonRentalOperations = summaryArray.filter(
     (calcs) =>
       ![

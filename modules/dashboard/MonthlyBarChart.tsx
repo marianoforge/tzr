@@ -30,8 +30,8 @@ const CustomTooltip: React.FC<{
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`Año Anterior: $${formatNumber(payload[0].value)}`}</p>
-        <p className="intro">{`Año Actual: $${formatNumber(payload[1].value)}`}</p>
+        <p className="intro">{`Año 2023: $${formatNumber(payload[0].value)}`}</p>
+        <p className="intro">{`Año 2024: $${formatNumber(payload[1].value)}`}</p>
         <p className="intro">{`Diferencia Interanual: $${formatNumber(
           payload[1].value - payload[0].value
         )}`}</p>

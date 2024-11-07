@@ -20,7 +20,10 @@ import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { calculateTotals } from '@/common/utils/calculations';
+import {
+  calculateTotals,
+  totalHonorariosTeamLead,
+} from '@/common/utils/calculations';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperations';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -35,7 +38,14 @@ import {
   statusOptions,
   yearsFilter,
 } from '@/lib/data';
-import { OperationStatus, OperationType, QueryKeys } from '@/common/enums';
+import {
+  ALQUILER,
+  OperationStatus,
+  OperationType,
+  QueryKeys,
+  UserRole,
+} from '@/common/enums';
+
 const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
@@ -72,7 +82,7 @@ const OperationsTableTent: React.FC = () => {
         return operation;
       })
       .filter((operation: Operation) =>
-        operation.tipo_operacion.startsWith('Alquiler')
+        operation.tipo_operacion.startsWith(ALQUILER.ALQUILER)
       );
   }, [operations]);
 
@@ -263,6 +273,10 @@ const OperationsTableTent: React.FC = () => {
     setIsDateAscending(!isDateAscending);
   };
 
+  const calculateNetFees = (operation: Operation) => {
+    return totalHonorariosTeamLead(operation, userData?.role as UserRole);
+  };
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
@@ -417,7 +431,7 @@ const OperationsTableTent: React.FC = () => {
                   ${formatNumber(operacion.honorarios_broker)}
                 </td>
                 <td className="py-3 px-2 before:content-['Honorarios Netos:'] md:before:content-none">
-                  ${formatNumber(operacion.honorarios_asesor)}
+                  {`$${formatNumber(calculateNetFees(operacion))}`}
                 </td>
                 <td className="py-3 px-2 md:before:content-none">
                   <button

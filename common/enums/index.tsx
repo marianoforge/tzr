@@ -35,7 +35,6 @@ export enum OperationType {
   LOTEAMIENTO = 'Loteamiento',
   NAVES_INDUSTRIALES = 'Naves Industriales',
   LOTES_PARA_DESARROLLOS = 'Lotes Para Desarrollos',
-  //   ALQUILER = 'Alquiler',
 }
 
 export enum APIMethods {

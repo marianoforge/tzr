@@ -7,7 +7,6 @@ export function filteredOperations(
   yearFilter: string,
   monthFilter: string
 ) {
-  const currentYear = new Date().getFullYear();
   return operations?.filter((operation: Operation) => {
     const operationDate = new Date(operation.fecha_operacion);
     const operationYear = operationDate.getFullYear();

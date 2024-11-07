@@ -22,7 +22,10 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { Operation } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { calculateTotals } from '@/common/utils/calculations';
+import {
+  calculateTotals,
+  totalHonorariosTeamLead,
+} from '@/common/utils/calculations';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperations';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -38,7 +41,13 @@ import {
   statusOptions,
 } from '@/lib/data';
 import { yearsFilter } from '@/lib/data';
-import { OperationStatus, OperationType, QueryKeys } from '@/common/enums';
+import {
+  ALQUILER,
+  OperationStatus,
+  OperationType,
+  QueryKeys,
+  UserRole,
+} from '@/common/enums';
 
 const OperationsTable: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -101,7 +110,7 @@ const OperationsTable: React.FC = () => {
       })
       .filter(
         (operation: Operation) =>
-          !operation.tipo_operacion.startsWith('Alquiler')
+          !operation.tipo_operacion.startsWith(ALQUILER.ALQUILER)
       );
   }, [operations]);
 
@@ -293,6 +302,10 @@ const OperationsTable: React.FC = () => {
 
   const toggleDateSortOrder = () => {
     setIsDateAscending(!isDateAscending);
+  };
+
+  const calculateNetFees = (operation: Operation) => {
+    return totalHonorariosTeamLead(operation, userData?.role as UserRole);
   };
 
   if (isLoading) {
@@ -500,7 +513,7 @@ const OperationsTable: React.FC = () => {
                   ${formatNumber(operacion.honorarios_broker)}
                 </td>
                 <td className="py-3 px-2 before:content-['Honorarios Netos:'] md:before:content-none">
-                  ${formatNumber(operacion.honorarios_asesor)}
+                  {`$${formatNumber(calculateNetFees(operacion))}`}
                 </td>
 
                 <td className="py-3 px-2 md:before:content-none">
