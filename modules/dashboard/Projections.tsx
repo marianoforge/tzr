@@ -82,10 +82,12 @@ const VentasAcumuladas = () => {
 
   const data = generateData(closedOperationsByMonth, openOperationsByMonth);
 
+  console.log(data);
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold text-center">
-        Monto Acumulado de Honorarios Brutos por Mes
+        Monto Acumulado de Honorarios Brutos y Proyección
       </h2>
       <h2 className="text-[30px] text-gray-400 lg:text-[12px] font-semibold text-center">
         Corresponde a las operaciones cerradas, que no sean alquileres y tengan
@@ -125,7 +127,9 @@ const VentasAcumuladas = () => {
               dot={false}
               strokeWidth={3}
               strokeDasharray="4"
-              name="Proyección"
+              name={`Proyección: $${formatNumber(
+                data[data.length - 1].proyeccion
+              )}`}
             />
           </LineChart>
         </ResponsiveContainer>
