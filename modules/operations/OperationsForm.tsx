@@ -180,6 +180,11 @@ const OperationsForm = () => {
     setShowAdditionalAdvisor((prev) => !prev);
   };
 
+  const porcentajePuntaCompradora = watch('porcentaje_punta_compradora') || 0;
+  const porcentajePuntaVendedora = watch('porcentaje_punta_vendedora') || 0;
+  const porcentajeHonorariosTotales =
+    porcentajePuntaCompradora + porcentajePuntaVendedora;
+
   return (
     <div className="flex justify-center items-center w-full mt-20">
       <form
@@ -277,12 +282,9 @@ const OperationsForm = () => {
             <Input
               label="Porcentaje honorarios totales*"
               type="text"
-              placeholder="Por ejemplo: 7%"
-              {...register('porcentaje_honorarios_broker', {
-                setValueAs: (value) => parseFloat(value) || 0,
-              })}
+              value={`${porcentajeHonorariosTotales.toFixed(2)}%`}
               error={errors.porcentaje_honorarios_broker?.message}
-              required
+              disabled
             />
 
             <Input
