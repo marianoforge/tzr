@@ -140,7 +140,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     // Ensure realizador_venta is not null before submitting
     const sanitizedPayload = {
       ...payload,
-      realizador_venta: payload.realizador_venta || undefined,
+      realizador_venta: payload.realizador_venta || 'No se selecciono vendedor',
     };
 
     mutation.mutate({ id: operation.id, data: sanitizedPayload });
@@ -334,6 +334,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
                     })),
                 ]}
                 className="w-full p-2 mb-8 border border-gray-300 rounded"
+                defaultValue={operation?.realizador_venta || ''}
                 required
               />
               {errors.realizador_venta && (
