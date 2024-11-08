@@ -1,4 +1,4 @@
-import { Operation } from '@/common/types';
+import { Operation, UserData } from '@/common/types';
 import { calculateGrossByMonth } from './calculationsGrossByMonth';
 import {
   ALQUILER,
@@ -13,15 +13,27 @@ const currentYear = new Date().getFullYear();
 
 export const totalHonorariosTeamLead = (
   operation: Operation,
-  userRole: UserRole
+  userRole: UserRole,
+  userData?: UserData
 ) => {
-  if (userRole === UserRole.TEAM_LEADER_BROKER) {
+  if (!userData) {
+    console.error('UserData is undefined');
+    return 0;
+  }
+
+  if (
+    userRole === UserRole.TEAM_LEADER_BROKER &&
+    userData.uid !== operation.user_uid
+  ) {
     return (
       ((100 - operation.porcentaje_honorarios_asesor) *
         operation.honorarios_broker) /
       100
     );
+  } else if (userData.uid === operation.user_uid) {
+    return operation.honorarios_broker;
   }
+
   return operation.honorarios_asesor;
 };
 

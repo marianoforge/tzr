@@ -82,8 +82,6 @@ const VentasAcumuladas = () => {
 
   const data = generateData(closedOperationsByMonth, openOperationsByMonth);
 
-  console.log(data);
-
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold text-center">

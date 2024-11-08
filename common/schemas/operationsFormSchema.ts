@@ -71,9 +71,7 @@ export const schema = yup.object().shape({
         ? 0
         : value
     ),
-  realizador_venta: yup
-    .string()
-    .required('El realizador de la venta es requerido'),
+  realizador_venta: yup.string().nullable(),
   porcentaje_honorarios_asesor: yup
     .number()
     .typeError('Debe ser un número')

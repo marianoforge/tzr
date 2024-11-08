@@ -367,9 +367,13 @@ const OperationsForm = () => {
                 <Select
                   label="Asesor que realizó la venta"
                   register={register}
-                  placeholder="Selecciona el asesor que realizó la operación"
+                  placeholder=""
                   {...register('realizador_venta')}
                   options={[
+                    {
+                      value: '',
+                      label: 'Selecciona un asesor',
+                    },
                     ...usersMapped
                       .sort((a, b) => a.name.localeCompare(b.name))
                       .map((member) => ({
@@ -378,7 +382,7 @@ const OperationsForm = () => {
                       })),
                   ]}
                   className="w-full p-2 mb-8 border border-gray-300 rounded"
-                  required
+                  required={userRole === UserRole.TEAM_LEADER_BROKER}
                 />
                 {errors.realizador_venta && (
                   <p className="text-red-500">

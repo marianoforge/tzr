@@ -20,7 +20,7 @@ import {
 import { auth } from '@/lib/firebase';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
-import { Operation } from '@/common/types/';
+import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import {
   calculateTotals,
@@ -295,7 +295,7 @@ const OperationsTable: React.FC = () => {
       return 'Fecha inválida';
     }
   };
-
+  console.log(userData?.uid);
   const toggleValueSortOrder = () => {
     setIsValueAscending(!isValueAscending);
   };
@@ -305,7 +305,11 @@ const OperationsTable: React.FC = () => {
   };
 
   const calculateNetFees = (operation: Operation) => {
-    return totalHonorariosTeamLead(operation, userData?.role as UserRole);
+    return totalHonorariosTeamLead(
+      operation,
+      userData?.role as UserRole,
+      userData as UserData
+    );
   };
 
   if (isLoading) {
