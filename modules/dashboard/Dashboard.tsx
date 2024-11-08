@@ -12,6 +12,7 @@ import ObjectiveChart from './ObjectiveChart';
 import Profitability from './Profitability';
 import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 import ChartFallenOps from './ChartFallenOps';
+import Projections from './Projections';
 
 const DashBoard = () => {
   return (
@@ -40,6 +41,7 @@ const DashBoard = () => {
       <div className="space-y-6">
         <div className="hidden lg:block space-y-8">
           {/* <OperationsTable /> */}
+
           <MonthlyLineChartPoints />
           {/* <OperationsTableRent /> */}
         </div>
@@ -59,6 +61,7 @@ const DashBoard = () => {
           </div>
         </div>
         {/* Sacar el Mocked */}
+        <Projections />
         <div style={{ marginTop: '2.5rem' }}>
           <MonthlyBarChart />
           {/* <MonthlyMockedBarchart /> */}

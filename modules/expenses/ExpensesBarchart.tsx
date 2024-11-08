@@ -162,7 +162,6 @@ const ExpensesBarchart: React.FC = () => {
       },
       {}
     );
-    console.log(expensesByMonth);
     // Ensure all months are present and in the correct order
     const orderedExpensesByMonth = allMonths.map((month) => {
       return (
@@ -179,8 +178,6 @@ const ExpensesBarchart: React.FC = () => {
   };
 
   const groupedExpenses = groupExpensesByMonth(filteredExpenses);
-
-  console.log(groupedExpenses);
 
   if (isLoading) {
     return (
