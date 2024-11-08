@@ -137,7 +137,13 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       user_uid_adicional: selectedUser_idAdicional, // Add this line
     };
 
-    mutation.mutate({ id: operation.id, data: payload });
+    // Ensure realizador_venta is not null before submitting
+    const sanitizedPayload = {
+      ...payload,
+      realizador_venta: payload.realizador_venta || undefined,
+    };
+
+    mutation.mutate({ id: operation.id, data: sanitizedPayload });
   };
 
   const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);

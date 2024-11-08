@@ -295,7 +295,7 @@ const OperationsTable: React.FC = () => {
       return 'Fecha inválida';
     }
   };
-  console.log(userData?.uid);
+
   const toggleValueSortOrder = () => {
     setIsValueAscending(!isValueAscending);
   };
