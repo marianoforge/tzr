@@ -22,6 +22,7 @@ import { formatNumber } from '@/common/utils/formatNumber';
 
 const generateData = (closedOperations: any, openOperations: any) => {
   const currentMonthIndex = new Date().getMonth();
+  const previousMonthIndex = currentMonthIndex - 1;
 
   return months.map((month, index) => {
     let ventas = null;
@@ -43,7 +44,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     const labelMonthIndex = new Date(Date.parse(label + ' 1, 2024')).getMonth();
 
     const isFutureOrCurrentMonth = labelMonthIndex >= currentMonthIndex;
-    const ventasOrProyeccion = isFutureOrCurrentMonth ? 'proyeccion' : 'ventas';
+    const ventasOrProyeccion = isFutureOrCurrentMonth
+      ? 'Proyeccion Honorarios Brutos'
+      : 'Honorarios Brutos Acumulados';
     const value = payload[0]?.value ?? 'N/A';
 
     return (
@@ -66,10 +69,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 const VentasAcumuladas = () => {
   const { userID } = useAuthStore();
+  const currentMonthIndex = new Date().getMonth();
+  const previousMonthIndex = currentMonthIndex - 1;
 
   const { data: operations = [] } = useQuery({
     queryKey: ['operations', userID],
-
     enabled: !!userID,
   });
 
@@ -103,7 +107,6 @@ const VentasAcumuladas = () => {
             <Tooltip content={<CustomTooltip />} />
             <Legend />
 
-            {/* Línea para ventas reales con color condicional */}
             <Line
               type="monotone"
               dataKey="ventas"
@@ -114,18 +117,33 @@ const VentasAcumuladas = () => {
                 fill: '#FFFFFF',
               }}
               activeDot={{ r: 6 }}
-              name="Ventas Acumuladas"
+              name={`Honorarios Brutos Acumulados: $${formatNumber(
+                closedOperationsByMonth[months[previousMonthIndex]] || 0
+              )}`}
+              label={({ x, y, stroke, value }) => (
+                <text
+                  x={x}
+                  y={y}
+                  dy={-10}
+                  fill={stroke}
+                  fontWeight="bold"
+                  fontSize={14}
+                  opacity={0.5}
+                  textAnchor="middle"
+                >
+                  ${value}
+                </text>
+              )}
             />
 
-            {/* Línea punteada para proyección */}
             <Line
               type="monotone"
               dataKey="proyeccion"
               stroke="#04B574"
               dot={false}
-              strokeWidth={3}
+              strokeWidth={4}
               strokeDasharray="4"
-              name={`Proyección: $${formatNumber(
+              name={`Proyección de Honorarios Brutos: $${formatNumber(
                 data[data.length - 1].proyeccion
               )}`}
             />
