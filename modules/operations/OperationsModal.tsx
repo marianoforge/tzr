@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import {
+  useForm,
+  SubmitHandler,
+  UseFormSetValue,
+  FieldValues,
+} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { InferType } from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,10 +18,19 @@ import { updateOperation } from '@/lib/api/operationsApi';
 import { TeamMember, UserData } from '@/common/types/';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { operationTypes, provinciasArgentinas } from '@/lib/data';
+import { operationTypes } from '@/lib/data';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
+import AddressAutocompleteManual from '@/components/PrivateComponente/PlacesComponents/AddressAutocomplete';
+import { UserRole } from '@/common/enums';
 
 type FormData = InferType<typeof schema>;
+type AddressData = {
+  address: string;
+  city: string | null;
+  province: string | null;
+  country: string | null;
+  houseNumber: string;
+};
 
 interface OperationsModalProps {
   isOpen: boolean;
@@ -37,13 +51,22 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     reset,
   } = useForm<FormData>({
-    resolver: yupResolver(schema),
+    // resolver: yupResolver(schema),
     defaultValues: {
       ...operation,
       realizador_venta: operation?.realizador_venta || '', // Asegúrate de incluir realizador_venta aquí
     },
+  });
+
+  const [addressData, setAddressData] = useState<AddressData>({
+    address: '',
+    city: null,
+    province: null,
+    country: null,
+    houseNumber: '',
   });
 
   const queryClient = useQueryClient();
@@ -110,10 +133,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     );
     const selectedUser_id = selectedUser ? selectedUser.uid : null;
 
-    if (!selectedUser_id) {
+    if (userData?.role === UserRole.TEAM_LEADER_BROKER && !selectedUser_id) {
       console.error('Selected user ID is missing');
       return;
     }
+
+    const realizador_venta =
+      userData?.role === UserRole.AGENTE_ASESOR && !selectedUser_id
+        ? `${currentUser.firstName} ${currentUser.lastName}`
+        : data.realizador_venta;
 
     // Find the additional advisor by name to get the uid
     const selectedUserAdicional = usersMapped.find(
@@ -126,7 +154,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
       data.porcentaje_honorarios_asesor,
-      data.porcentaje_honorarios_broker
+      data.porcentaje_honorarios_broker || 0
     );
 
     const payload = {
@@ -134,13 +162,23 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
       user_uid: selectedUser_id,
-      user_uid_adicional: selectedUser_idAdicional, // Add this line
+      user_uid_adicional: selectedUser_idAdicional,
+      pais: addressData.country,
+      numero_casa: addressData.houseNumber,
+      direccion_reserva: addressData.address,
+      localidad_reserva: addressData.city,
+      provincia_reserva: addressData.province,
     };
 
     // Ensure realizador_venta is not null before submitting
     const sanitizedPayload = {
       ...payload,
-      realizador_venta: payload.realizador_venta || 'No se selecciono vendedor',
+      realizador_venta: realizador_venta || 'No se selecciono vendedor',
+      localidad_reserva: payload.localidad_reserva || undefined,
+      provincia_reserva: payload.provincia_reserva || undefined,
+      pais: payload.pais || undefined,
+      numero_casa: payload.numero_casa || undefined,
+      direccion_reserva: payload.direccion_reserva || undefined,
     };
 
     mutation.mutate({ id: operation.id, data: sanitizedPayload });
@@ -167,32 +205,16 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             error={errors.fecha_operacion?.message}
             required
           />
-
-          <Input
-            label="Dirección de la Reserva"
-            type="text"
-            {...register('direccion_reserva')}
-            placeholder="Dirección de la Reserva"
-            error={errors.direccion_reserva?.message}
-            required
-          />
-
-          <Input
-            label="Localidad de la Operación"
-            type="text"
-            {...register('localidad_reserva')}
-            placeholder="Por ejemplo: San Isidro"
-            error={errors.localidad_reserva?.message}
-            required
-          />
-
-          <Select
-            label="Provincia de la Operación"
-            options={provinciasArgentinas}
-            register={register}
-            name="provincia_reserva"
-            error={errors.provincia_reserva?.message}
-            required
+          <AddressAutocompleteManual
+            onAddressSelect={(address) => {
+              setAddressData((prev) => ({ ...prev, ...address }));
+              setValue('direccion_reserva', address.address);
+              setValue('localidad_reserva', address.city);
+              setValue('provincia_reserva', address.province);
+            }}
+            onHouseNumberChange={(houseNumber) =>
+              setAddressData((prev) => ({ ...prev, houseNumber }))
+            }
           />
 
           <Select
@@ -242,7 +264,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             error={errors.porcentaje_honorarios_broker?.message}
-            required
           />
 
           <Input

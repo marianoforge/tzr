@@ -33,7 +33,6 @@ export const totalHonorariosTeamLead = (
   } else if (userData.uid === operation.user_uid) {
     return operation.honorarios_broker;
   }
-
   return operation.honorarios_asesor;
 };
 

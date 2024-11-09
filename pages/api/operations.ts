@@ -69,51 +69,31 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     porcentaje_honorarios_broker,
     user_uid,
     user_uid_adicional,
-    teamId, // Añadir teamId aquí
+    teamId,
     ...rest
   } = req.body;
 
-  // Validar que todos los campos requeridos estén presentes.
-  // Asegúrate de que los porcentajes permitan valores de 0.
-  if (
-    !fecha_operacion ||
-    !direccion_reserva ||
-    !localidad_reserva ||
-    !provincia_reserva ||
-    !tipo_operacion ||
-    valor_reserva === undefined || // Acepta valores numéricos incluyendo 0
-    porcentaje_honorarios_asesor === undefined || // Acepta 0
-    porcentaje_honorarios_broker === undefined || // Acepta 0
-    porcentaje_punta_compradora === undefined || // Acepta 0
-    porcentaje_punta_vendedora === undefined || // Acepta 0
-    !user_uid ||
-    !teamId
-  ) {
-    return res
-      .status(400)
-      .json({ message: 'Todos los campos son obligatorios' });
-  }
+  // Set default values for optional fields if they are undefined
+  const newOperation: Operation = {
+    fecha_operacion,
+    direccion_reserva,
+    localidad_reserva,
+    provincia_reserva,
+    tipo_operacion,
+    valor_reserva,
+    porcentaje_punta_compradora: porcentaje_punta_compradora ?? 0,
+    porcentaje_punta_vendedora: porcentaje_punta_vendedora ?? 0,
+    porcentaje_honorarios_asesor: porcentaje_honorarios_asesor ?? 0,
+    porcentaje_honorarios_broker: porcentaje_honorarios_broker ?? 0,
+    user_uid,
+    user_uid_adicional: user_uid_adicional || null,
+    teamId,
+    ...rest,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
 
   try {
-    const newOperation: Operation = {
-      fecha_operacion,
-      direccion_reserva,
-      localidad_reserva,
-      provincia_reserva,
-      tipo_operacion,
-      valor_reserva,
-      porcentaje_punta_compradora,
-      porcentaje_punta_vendedora,
-      porcentaje_honorarios_asesor,
-      porcentaje_honorarios_broker,
-      user_uid,
-      user_uid_adicional: user_uid_adicional || null, // Asigna null si es undefined
-      teamId,
-      ...rest,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
     const docRef = await addDoc(collection(db, 'operations'), newOperation);
     return res
       .status(201)

@@ -2,15 +2,9 @@ import * as yup from 'yup';
 
 export const schema = yup.object().shape({
   fecha_operacion: yup.string().required('La fecha de operación es requerida'),
-  direccion_reserva: yup
-    .string()
-    .required('La dirección de reserva es requerida'),
-  localidad_reserva: yup
-    .string()
-    .required('La localidad de reserva es requerida'),
-  provincia_reserva: yup
-    .string()
-    .required('La provincia de reserva es requerida'),
+  direccion_reserva: yup.string(),
+  localidad_reserva: yup.string().nullable(),
+  provincia_reserva: yup.string().nullable(),
   tipo_operacion: yup.string().required('El tipo de operación es requerido'),
   valor_reserva: yup
     .number()
@@ -21,8 +15,8 @@ export const schema = yup.object().shape({
   porcentaje_honorarios_broker: yup
     .number()
     .typeError('Debe ser un número')
-    .min(0, 'No puede ser negativo')
-    .required('Porcentaje de honorarios broker es requerido'),
+    .min(0, 'No puede ser negativo'),
+
   porcentaje_punta_compradora: yup
     .number()
     .required('Porcentaje de punta compradora es requerido')
@@ -85,4 +79,5 @@ export const schema = yup.object().shape({
     .nullable(),
   estado: yup.string().required('El estado es requerido'),
   observaciones: yup.string().nullable(),
+  pais: yup.string(),
 });

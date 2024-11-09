@@ -19,11 +19,19 @@ import Select from '@/components/PrivateComponente/FormComponents/Select';
 import { formatDateForUser } from '@/common/utils/formatDateForUser';
 
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
-import { provinciasArgentinas, tiposOperaciones } from '@/lib/data';
+import { tiposOperaciones } from '@/lib/data';
 import { PATHS, QueryKeys, UserRole } from '@/common/enums';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
+import AddressAutocompleteManual from '@/components/PrivateComponente/PlacesComponents/AddressAutocomplete';
 
 type FormData = InferType<typeof schema>;
+type AddressData = {
+  address: string;
+  city: string | null;
+  province: string | null;
+  country: string | null;
+  houseNumber: string;
+};
 
 const OperationsForm = () => {
   const {
@@ -32,6 +40,7 @@ const OperationsForm = () => {
     formState: { errors },
     watch,
     reset,
+    setValue,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -39,6 +48,9 @@ const OperationsForm = () => {
       punta_compradora: false,
       punta_vendedora: false,
       fecha_operacion: '',
+      direccion_reserva: '',
+      localidad_reserva: null,
+      provincia_reserva: null,
     },
   });
 
@@ -50,7 +62,16 @@ const OperationsForm = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [honorariosBroker, setHonorariosBroker] = useState(0);
   const [honorariosAsesor, setHonorariosAsesor] = useState(0);
+  const [porcentajeHonorariosBroker, setPorcentajeHonorariosBroker] =
+    useState(0);
   const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
+  const [addressData, setAddressData] = useState<AddressData>({
+    address: '',
+    city: null,
+    province: null,
+    country: null,
+    houseNumber: '',
+  });
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -85,6 +106,7 @@ const OperationsForm = () => {
   }, []);
 
   const watchAllFields = watch();
+
   const date = watch('fecha_operacion');
 
   const formattedDate = date ? formatDateForUser(date, userTimeZone) : '';
@@ -93,21 +115,27 @@ const OperationsForm = () => {
     const valor_reserva = parseFloat(String(watchAllFields.valor_reserva)) || 0;
     const porcentaje_honorarios_asesor =
       parseFloat(String(watchAllFields.porcentaje_honorarios_asesor)) || 0;
-    const porcentaje_honorarios_broker =
-      parseFloat(String(watchAllFields.porcentaje_honorarios_broker)) || 0;
+    const porcentaje_punta_compradora =
+      parseFloat(String(watchAllFields.porcentaje_punta_compradora)) || 0;
+    const porcentaje_punta_vendedora =
+      parseFloat(String(watchAllFields.porcentaje_punta_vendedora)) || 0;
 
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       valor_reserva,
       porcentaje_honorarios_asesor,
-      porcentaje_honorarios_broker
+      porcentajeHonorariosBroker
     );
 
     setHonorariosBroker(honorariosBroker);
     setHonorariosAsesor(honorariosAsesor);
+    setPorcentajeHonorariosBroker(
+      porcentaje_punta_compradora + porcentaje_punta_vendedora
+    );
   }, [
     watchAllFields.valor_reserva,
     watchAllFields.porcentaje_honorarios_asesor,
-    watchAllFields.porcentaje_honorarios_broker,
+    watchAllFields.porcentaje_punta_compradora,
+    watchAllFields.porcentaje_punta_vendedora,
   ]);
 
   const mutation = useMutation({
@@ -135,7 +163,6 @@ const OperationsForm = () => {
       return;
     }
 
-    // No convertimos la fecha a Date, la tratamos como cadena
     const selectedUser = usersMapped.find(
       (member: { name: string }) => member.name === data.realizador_venta
     );
@@ -155,6 +182,11 @@ const OperationsForm = () => {
 
     const dataToSubmit = {
       ...data,
+      direccion_reserva: addressData.address,
+      numero_casa: addressData.houseNumber,
+      localidad_reserva: addressData.city,
+      provincia_reserva: addressData.province,
+      pais: addressData.country,
       fecha_operacion: data.fecha_operacion,
       honorarios_broker: honorariosBroker,
       honorarios_asesor: honorariosAsesor,
@@ -166,9 +198,10 @@ const OperationsForm = () => {
       estado: 'En Curso',
       porcentaje_punta_compradora: data.porcentaje_punta_compradora || 0,
       porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
+      porcentaje_honorarios_broker: porcentajeHonorariosBroker,
     };
 
-    // Ejecutamos la mutación para crear la operación
+    // // Ejecutamos la mutación para crear la operación
     mutation.mutate(dataToSubmit as unknown as Operation);
   };
 
@@ -179,11 +212,6 @@ const OperationsForm = () => {
   const toggleAdditionalAdvisor = () => {
     setShowAdditionalAdvisor((prev) => !prev);
   };
-
-  const porcentajePuntaCompradora = watch('porcentaje_punta_compradora') || 0;
-  const porcentajePuntaVendedora = watch('porcentaje_punta_vendedora') || 0;
-  const porcentajeHonorariosTotales =
-    porcentajePuntaCompradora + porcentajePuntaVendedora;
 
   return (
     <div className="flex justify-center items-center w-full mt-20">
@@ -206,35 +234,17 @@ const OperationsForm = () => {
               required
             />
 
-            <Input
-              label="Dirección de la operación*"
-              type="text"
-              placeholder="Dirección de la Reserva"
-              {...register('direccion_reserva')}
-              error={errors.direccion_reserva?.message}
-              required
+            <AddressAutocompleteManual
+              onAddressSelect={(address) => {
+                setAddressData((prev) => ({ ...prev, ...address }));
+                setValue('direccion_reserva', address.address); // Update react-hook-form state
+                setValue('localidad_reserva', address.city);
+                setValue('provincia_reserva', address.province);
+              }}
+              onHouseNumberChange={(houseNumber) =>
+                setAddressData((prev) => ({ ...prev, houseNumber }))
+              }
             />
-
-            <Input
-              label="Localidad*"
-              type="text"
-              placeholder="Por ejemplo: San Isidro"
-              {...register('localidad_reserva')}
-              error={errors.localidad_reserva?.message}
-              required
-            />
-
-            <Select
-              label="Provincia*"
-              register={register}
-              {...register('provincia_reserva')}
-              options={provinciasArgentinas}
-              className="w-full p-2 mb-8 border border-gray-300 rounded"
-              required
-            />
-            {errors.provincia_reserva && (
-              <p className="text-red-500">{errors.provincia_reserva.message}</p>
-            )}
 
             <Select
               label="Tipo de operación*"
@@ -282,8 +292,7 @@ const OperationsForm = () => {
             <Input
               label="Porcentaje honorarios totales*"
               type="text"
-              value={`${porcentajeHonorariosTotales.toFixed(2)}%`}
-              error={errors.porcentaje_honorarios_broker?.message}
+              value={`${porcentajeHonorariosBroker.toFixed(2)}%`}
               disabled
             />
 

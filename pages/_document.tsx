@@ -1,6 +1,7 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { GTM_ID, GTM_SCRIPT } from '../lib/gtm'; // Ajusta la ruta según la ubicación de tu archivo gtm.js
+import Script from 'next/script';
 
 export default function Document() {
   return (
@@ -21,6 +22,10 @@ export default function Document() {
             __html: GTM_SCRIPT,
           }}
         />
+        {/* <Script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+          strategy="beforeInteractive"
+        /> */}
       </Head>
       <SpeedInsights />
       <body className="antialiased">
