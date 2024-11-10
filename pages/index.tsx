@@ -11,7 +11,7 @@ const Home = () => {
         <PersonSection />
         <FAQSection />
         <CardsSection />
-        <Footer setActiveView={() => {}} />
+        <Footer />
       </MainLayout>
     </>
   );
