@@ -237,7 +237,7 @@ const OperationsForm = () => {
             <AddressAutocompleteManual
               onAddressSelect={(address) => {
                 setAddressData((prev) => ({ ...prev, ...address }));
-                setValue('direccion_reserva', address.address); // Update react-hook-form state
+                setValue('direccion_reserva', address.address);
                 setValue('localidad_reserva', address.city);
                 setValue('provincia_reserva', address.province);
               }}

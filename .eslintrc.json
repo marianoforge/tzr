@@ -11,13 +11,6 @@
 
   "rules": {
     "no-unused-vars": "off",
-    "settings": {
-      "import/resolver": {
-        "typescript": {
-          "project": "./tsconfig.json"
-        }
-      }
-    },
     "import/order": [
       "warn",
       {

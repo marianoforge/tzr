@@ -19,8 +19,8 @@ export const usePlacesAutocomplete = (input: string) => {
   return useQuery({
     queryKey: ['places-autocomplete', input],
     queryFn: () => fetchAutocompleteSuggestions(input),
-    enabled: !!input, // Only fetch if input is not empty
-    staleTime: 60 * 1000, // Cache for 1 minute
+    enabled: !!input,
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
   });
 };

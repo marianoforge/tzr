@@ -2,7 +2,10 @@ import * as yup from 'yup';
 
 export const schema = yup.object().shape({
   fecha_operacion: yup.string().required('La fecha de operación es requerida'),
-  direccion_reserva: yup.string(),
+  direccion_reserva: yup
+    .string()
+    .required('La dirección de reserva es requerida'),
+  numero_casa: yup.string().required('El número de casa es requerido'),
   localidad_reserva: yup.string().nullable(),
   provincia_reserva: yup.string().nullable(),
   tipo_operacion: yup.string().required('El tipo de operación es requerido'),

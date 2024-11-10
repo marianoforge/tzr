@@ -8,8 +8,13 @@ export const filterOperationsBySearch = (
 
   const lowercasedQuery = searchQuery.toLowerCase();
 
-  return operations.filter((operation) =>
-    operation.direccion_reserva.toLowerCase().includes(lowercasedQuery)
+  return operations.filter(
+    (operation) =>
+      operation.direccion_reserva.toLowerCase().includes(lowercasedQuery) ||
+      (operation.realizador_venta &&
+        operation.realizador_venta.toLowerCase().includes(lowercasedQuery)) ||
+      (operation.numero_casa &&
+        operation.numero_casa.toLowerCase().includes(lowercasedQuery))
   );
 };
 

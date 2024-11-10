@@ -15,6 +15,8 @@ export interface Operation {
   direccion_reserva: string;
   localidad_reserva: string;
   provincia_reserva: string;
+  pais: string;
+  numero_casa: string;
   tipo_operacion: string;
   valor_reserva: number;
   numero_sobre_reserva?: string | null;

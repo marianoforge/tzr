@@ -9,6 +9,7 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
   InformationCircleIcon,
+  EllipsisHorizontalIcon,
 } from '@heroicons/react/24/outline';
 import { Tooltip } from 'react-tooltip';
 
@@ -485,7 +486,22 @@ const OperationsTable: React.FC = () => {
                   {formatDate(operacion.fecha_operacion)}
                 </td>
                 <td className="py-3 px-2 text-sm before:content-['Dirección:'] md:before:content-none">
-                  {operacion.direccion_reserva}
+                  {(
+                    operacion.direccion_reserva +
+                    'Piso / Apto: ' +
+                    operacion.numero_casa
+                  ).slice(0, 22)}
+                  <EllipsisHorizontalIcon
+                    className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                    data-tooltip-id="tooltip-direccion"
+                    data-tooltip-content={
+                      operacion.direccion_reserva +
+                      ', ' +
+                      'Piso / Apto: ' +
+                      operacion.numero_casa
+                    }
+                  />
+                  <Tooltip id="tooltip-direccion" place="top" />
                 </td>
                 <td className="py-3 px-2 before:content-['Tipo:'] md:before:content-none">
                   {operacion.tipo_operacion}

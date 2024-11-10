@@ -104,6 +104,7 @@ export default function AddressAutocompleteManual({
         placeholder="Enter an address"
         className="p-2 border rounded w-full"
         error={error || undefined}
+        required
       />
       {isDropdownOpen && suggestions && suggestions.length > 0 && (
         <ul className="border rounded mt-1">
@@ -129,6 +130,7 @@ export default function AddressAutocompleteManual({
         onChange={handleHouseNumberInputChange}
         placeholder="Por Ejemplo: Piso 4 - Apto D"
         className="p-2 border rounded w-full"
+        required
       />
       {country && city && province && (
         <div className="-mt-2 mb-4">
