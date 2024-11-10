@@ -1,5 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Tooltip } from 'react-tooltip';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { fetchUserExpenses } from '@/lib/api/expensesApi'; // Asume que tienes este método
@@ -8,11 +10,7 @@ import { Expense } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/common/utils/calculations';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
-
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { Tooltip } from 'react-tooltip';
-
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { QueryKeys } from '@/common/enums';
 
 const Profitability = () => {

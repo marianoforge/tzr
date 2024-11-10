@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Operation } from '@/common/types/';
 import { formatNumber } from '@/common/utils/formatNumber';
-
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 
 interface FullScreenModalProps {
@@ -12,7 +11,7 @@ interface FullScreenModalProps {
 }
 
 // Utility function to handle displaying 'N/A'
-const displayValue = (value: any) => {
+const displayValue = (value: string | number | null | undefined) => {
   return !value || value === 0 ? 'N/A' : value;
 };
 

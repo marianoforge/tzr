@@ -5,10 +5,9 @@ import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { onAuthStateChanged } from 'firebase/auth';
 
-import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-
 import ExpensesModal from './ExpensesModal';
 
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { Expense } from '@/common/types/';
 

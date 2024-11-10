@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+import { TeamMember } from './AgentsReport';
+
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { UserData, Operation } from '@/common/types/';
+import { Operation } from '@/common/types/';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { formatNumber } from '@/common/utils/formatNumber';
-
 import usePagination from '@/common/hooks/usePagination';
 import { OperationStatus } from '@/common/enums';
-import { TeamMember } from './AgentsReport';
-import { useQuery } from '@tanstack/react-query';
 
 const AgentsReportByOps = ({ userId }: { userId: string }) => {
   const [searchQuery, setSearchQuery] = useState('');

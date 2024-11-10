@@ -1,13 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+
+import { OperationStatus } from '../enums';
+
 import { useAuthStore } from '@/stores/authStore';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { Operation } from '@/common/types/';
-import {
-  calculateOperationData,
-  calculateTotalLastColumnSum,
-} from '@/common/utils/calculationsPrincipal';
-import { OperationStatus } from '../enums';
+import { calculateOperationData } from '@/common/utils/calculationsPrincipal';
 
 export const useOperationsData = () => {
   const { userID } = useAuthStore();

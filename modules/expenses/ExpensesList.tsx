@@ -26,8 +26,7 @@ import useUserAuth from '@/common/hooks/useUserAuth';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
-import { ExpenseType, YearFilter } from '@/common/enums';
-import { QueryKeys } from '@/common/enums';
+import { ExpenseType, YearFilter, QueryKeys } from '@/common/enums';
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();

@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import { useOperationsData } from '@/common/hooks/useOperationsData';
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
@@ -46,7 +47,11 @@ const CuadroPrincipal = () => {
     );
   };
 
-  const formatOperationAmount = (calcs: any) => {
+  const formatOperationAmount = (calcs: {
+    group: string;
+    totalMontoOperaciones?: number;
+    cantidadOperaciones: number;
+  }) => {
     return [
       OperationType.ALQUILER_TEMPORAL,
       OperationType.ALQUILER_TRADICIONAL,

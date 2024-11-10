@@ -16,7 +16,6 @@ import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { COLORS, MAX_BAR_SIZE } from '@/lib/constants';
 import { formatOperationsData } from '@/common/utils/formatOperationsData';
 import { Operation } from '@/common/types/';
-
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { OperationData, OperationStatus } from '@/common/enums';
@@ -30,8 +29,8 @@ const CustomTooltip: React.FC<{
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`Año 2023: $${formatNumber(payload[0].value)}`}</p>
-        <p className="intro">{`Año 2024: $${formatNumber(payload[1].value)}`}</p>
+        <p className="intro">{`2023: $${formatNumber(payload[0].value)}`}</p>
+        <p className="intro">{`2024: $${formatNumber(payload[1].value)}`}</p>
         <p className="intro">{`Diferencia Interanual: $${formatNumber(
           payload[1].value - payload[0].value
         )}`}</p>

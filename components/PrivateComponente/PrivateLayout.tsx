@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from './NavBar/Navbar';
 import VerticalNavbar from './NavBar/VerticalNavbar';
 import Footer from './Footer';
+
 import { PATHS } from '@/common/enums';
 
 interface PrivateLayoutProps {

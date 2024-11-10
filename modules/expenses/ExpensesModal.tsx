@@ -9,8 +9,6 @@ import Button from '@/components/PrivateComponente/FormComponents/Button';
 import Select from '@/components/PrivateComponente/FormComponents/Select'; // Reutilizamos Select
 import { Expense } from '@/common/types/';
 import { updateExpense } from '@/lib/api/expensesApi';
-import { useUserDataStore } from '@/stores/userDataStore';
-
 import { expenseTypes } from '@/lib/data';
 import { schema } from '@/common/schemas/expensesModalSchema';
 import { QueryKeys } from '@/common/enums';
@@ -41,9 +39,6 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
     resolver: yupResolver(schema),
     defaultValues: expense || {},
   });
-
-  const { userData } = useUserDataStore();
-  const userRole = userData?.role;
 
   useEffect(() => {
     if (expense) {

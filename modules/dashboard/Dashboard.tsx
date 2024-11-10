@@ -1,8 +1,3 @@
-import EventsList from '@/modules/events/EventsList';
-
-import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
-import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
-
 import Bubbles from './Bubbles';
 import CuadroPrincipal from './CuadroPrincipal';
 import CuadroPrincipalChart from './CuadroPrincipalChart';
@@ -13,6 +8,10 @@ import Profitability from './Profitability';
 import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 import ChartFallenOps from './ChartFallenOps';
 import Projections from './Projections';
+
+import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
+import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
+import EventsList from '@/modules/events/EventsList';
 
 const DashBoard = () => {
   return (
@@ -40,14 +39,9 @@ const DashBoard = () => {
       </div>
       <div className="space-y-6">
         <div className="hidden lg:block space-y-8">
-          {/* <OperationsTable /> */}
-
           <MonthlyLineChartPoints />
-          {/* <OperationsTableRent /> */}
         </div>
-        {/* <div className="block lg:hidden">
-          <OperationsCarousel />
-        </div> */}
+
         <div
           className="grid grid-cols-1 lg:grid-cols-3 md:gap-10"
           style={{ marginTop: '2.5rem' }}

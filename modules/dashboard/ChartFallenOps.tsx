@@ -1,4 +1,3 @@
-import { useMemo, useState, useEffect } from 'react';
 import {
   PieChart,
   Pie,
@@ -7,10 +6,10 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
+
 import { COLORS } from '@/lib/constants';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { useOperationsData } from '@/common/hooks/useOperationsData';
-
 import { tiposOperacionesCaidasPieChartData } from '@/common/utils/calculationsPrincipal';
 import useResponsiveOuterRadius from '@/common/hooks/useResponsiveOuterRadius';
 

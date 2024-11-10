@@ -90,12 +90,16 @@ export const provincias = [
 ];
 
 export const operationTypes = [
+  { value: '', label: 'Selecciona el Tipo de Operación' },
   { value: OperationType.VENTA, label: 'Venta' },
   { value: OperationType.ALQUILER_TEMPORAL, label: 'Alquiler Temporal' },
   { value: OperationType.ALQUILER_TRADICIONAL, label: 'Alquiler Tradicional' },
   { value: OperationType.ALQUILER_COMERCIAL, label: 'Alquiler Comercial' },
   { value: OperationType.FONDO_DE_COMERCIO, label: 'Fondo de Comercio' },
-  { value: OperationType.DESARROLLO, label: 'Desarrollo Inmobiliario' },
+  {
+    value: OperationType.DESARROLLO_INMOBILIARIO,
+    label: 'Desarrollo Inmobiliario',
+  },
   { value: OperationType.COCHERA, label: 'Cochera' },
   { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
   { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
@@ -184,27 +188,6 @@ export const provinciasArgentinas = [
   { value: 'Santiago del Estero', label: 'Santiago del Estero' },
   { value: 'Tierra del Fuego', label: 'Tierra del Fuego' },
   { value: 'Tucumán', label: 'Tucumán' },
-];
-
-export const tiposOperaciones = [
-  { value: '', label: 'Selecciona el Tipo de Operación' },
-  { value: OperationType.VENTA, label: 'Venta' },
-  { value: OperationType.ALQUILER_TEMPORAL, label: 'Alquiler Temporal' },
-  {
-    value: OperationType.ALQUILER_TRADICIONAL,
-    label: 'Alquiler Tradicional',
-  },
-  { value: OperationType.ALQUILER_COMERCIAL, label: 'Alquiler Comercial' },
-  { value: OperationType.FONDO_DE_COMERCIO, label: 'Fondo de Comercio' },
-  { value: OperationType.DESARROLLO, label: 'Desarrollo Inmobiliario' },
-  { value: OperationType.COCHERA, label: 'Cochera' },
-  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
-  { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
-  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
-  {
-    value: OperationType.LOTES_PARA_DESARROLLOS,
-    label: 'Lotes para Desarrollos',
-  },
 ];
 
 export const PRICE_ID_STARTER = 'price_1QAASbJkIrtwQiz3PcJiJebj';

@@ -1,4 +1,3 @@
-import { formatNumber } from '@/common/utils/formatNumber';
 import React, { useState, useEffect } from 'react';
 import {
   LineChart,
@@ -12,6 +11,8 @@ import {
   LabelList,
 } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
+
+import { formatNumber } from '@/common/utils/formatNumber';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { calculateTotals } from '@/common/utils/calculations';
 import { Operation } from '@/common/types/';
@@ -35,23 +36,19 @@ const monthNames = [
   MonthNames.DICIEMBRE,
 ];
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: {
-  active: boolean;
-  payload: any;
-  label: boolean;
-}) => {
+const CustomTooltip: React.FC<{
+  active?: boolean;
+  payload?: Array<{ value: number }>;
+  label?: string;
+}> = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded shadow-md">
         <p className="label font-semibold">{`${label}`}</p>
-        <p className="intro">{`2023: ${payload[1].value}%`}</p>
-        <p className="intro">{`2024: ${payload[0].value}%`}</p>
+        <p className="intro">{`2023: ${formatNumber(payload[0]?.value)}%`}</p>
+        <p className="intro">{`2024: ${formatNumber(payload[1]?.value)}%`}</p>
         <p className="intro">{`Diferencia Interanual: ${formatNumber(
-          payload[0].value - payload[1].value
+          (payload[1]?.value || 0) - (payload[0]?.value || 0)
         )}%`}</p>
       </div>
     );
@@ -102,7 +99,7 @@ const MonthlyLineChartPoints = () => {
           )
         : [];
 
-      const mergedData = monthNames.map((month, index) => {
+      const mergedData = monthNames.map((month) => {
         const data2023 = formattedData2023.find(
           (data) => data.name === month
         ) || { value2023: 0 };
@@ -157,7 +154,7 @@ const MonthlyLineChartPoints = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip content={<CustomTooltip active payload label />} />
+            <Tooltip content={<CustomTooltip />} />
             <Legend />
             <Line
               type="monotone"

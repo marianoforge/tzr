@@ -19,7 +19,7 @@ import Select from '@/components/PrivateComponente/FormComponents/Select';
 import { formatDateForUser } from '@/common/utils/formatDateForUser';
 
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
-import { tiposOperaciones } from '@/lib/data';
+import { operationTypes } from '@/lib/data';
 import { PATHS, QueryKeys, UserRole } from '@/common/enums';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import AddressAutocompleteManual from '@/components/PrivateComponente/PlacesComponents/AddressAutocomplete';
@@ -250,7 +250,7 @@ const OperationsForm = () => {
               label="Tipo de operación*"
               register={register}
               {...register('tipo_operacion')}
-              options={tiposOperaciones}
+              options={operationTypes}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
             />

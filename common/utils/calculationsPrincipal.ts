@@ -1,6 +1,6 @@
+import { OperationType, OperationStatus } from '../enums';
+
 import { Operation } from '@/common/types';
-import { OperationType } from '../enums';
-import { OperationStatus } from '../enums';
 
 //TABLE//
 
@@ -188,8 +188,6 @@ export const calculateClosedOperations2024SummaryByGroup = (
 
       switch (op.tipo_operacion) {
         case OperationType.VENTA:
-        case OperationType.LOCALES_COMERCIALES:
-        case OperationType.COCHERA:
           groupKey = 'Venta Locales Comerciales y Cochera';
           break;
         case OperationType.FONDO_DE_COMERCIO:

@@ -2,12 +2,11 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { onAuthStateChanged } from 'firebase/auth';
 
+import Loader from './Loader';
+
 import { useAuthStore } from '@/stores/authStore';
 import { useUserDataStore } from '@/stores/userDataStore';
-
-import { auth } from '../../lib/firebase';
-
-import Loader from './Loader';
+import { auth } from '@/lib/firebase';
 import { PATHS } from '@/common/enums';
 
 interface PrivateRouteProps {

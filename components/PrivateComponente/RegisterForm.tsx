@@ -7,11 +7,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 
-import ModalOK from '../PrivateComponente/CommonComponents/Modal';
-import Input from '../PrivateComponente/FormComponents/Input';
-import Button from '../PrivateComponente/FormComponents/Button';
-import LicensesModal from '../PublicComponents/LicensesModal';
-
+import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
+import Input from '@/components/PrivateComponente/FormComponents/Input';
+import Button from '@/components/PrivateComponente/FormComponents/Button';
+import LicensesModal from '@/components/PublicComponents/LicensesModal';
 import { APIMethods, PATHS } from '@/common/enums';
 import { cleanString } from '@/common/utils/cleanString';
 import { RegisterData } from '@/common/types';

@@ -1,5 +1,3 @@
-import { Operation, UserData } from '@/common/types';
-import { calculateGrossByMonth } from './calculationsGrossByMonth';
 import {
   ALQUILER,
   OperationData,
@@ -7,6 +5,10 @@ import {
   OperationType,
   UserRole,
 } from '../enums';
+
+import { calculateGrossByMonth } from './calculationsGrossByMonth';
+
+import { Operation, UserData } from '@/common/types';
 
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
@@ -282,15 +284,6 @@ export const calculateTotals = (operations: Operation[]) => {
     (op) => Number(op.punta_compradora) + Number(op.punta_vendedora) > 1
   );
 
-  const validOperationsTotalValorReserva = sumField(
-    validOperations,
-    OperationData.VALOR_RESERVA
-  );
-
-  const validOperationsTotalHonorariosBroker = sumField(
-    validOperations,
-    OperationData.HONORARIOS_BROKER
-  );
   // Calcular la suma de las puntas compradora y vendedora
   const totalPuntaCompradoraPorcentajeDevVentas = sumField(
     validOperations,

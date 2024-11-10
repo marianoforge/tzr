@@ -1,6 +1,12 @@
 // components/AgentsReport.tsx
 import React, { useCallback, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon } from '@heroicons/react/24/solid';
+
+import AddUserModal from './AddUserModal';
+import EditAgentsModal from './EditAgentsModal';
+
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
@@ -11,11 +17,7 @@ import {
   calculateTotalTips,
 } from '@/common/utils/calculationsAgents';
 import { Operation } from '@/common/types';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
-import { UserPlusIcon } from '@heroicons/react/24/solid';
-import AddUserModal from './AddUserModal';
-import EditAgentsModal from './EditAgentsModal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { calculateTotals } from '@/common/utils/calculations';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
@@ -29,7 +31,7 @@ export type TeamMember = {
   teamLeadId: string;
   numeroTelefono: string;
   operations: Operation[];
-  [key: string]: any;
+  [key: string]: string | Operation[];
 };
 
 type AgentsReportProps = {

@@ -3,6 +3,8 @@ import React, { PureComponent } from 'react';
 import { PieChart, Pie, Cell } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import router from 'next/router';
+import { Tooltip } from 'react-tooltip';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import { useUserDataStore } from '@/stores/userDataStore'; // Import the store
 import { OBJECTIVE_CHART_COLORS } from '@/lib/constants';
@@ -14,8 +16,6 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import 'react-tooltip/dist/react-tooltip.css';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { Tooltip } from 'react-tooltip';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 const RADIAN = Math.PI / 180;
 

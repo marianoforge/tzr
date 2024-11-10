@@ -37,7 +37,6 @@ export default function AddressAutocompleteManual({
     error: queryError,
   } = usePlacesAutocomplete(value);
 
-  // Handle errors from the query
   useEffect(() => {
     if (isError && queryError instanceof Error) {
       setError(queryError.message);
@@ -105,10 +104,10 @@ export default function AddressAutocompleteManual({
   return (
     <div>
       <Input
-        label="Dirección de la Operación"
+        label="Dirección de la Operación*"
         value={value}
         onChange={handleInputChange}
-        placeholder="Enter an address"
+        placeholder="Por Ejemplo: Caldas 123"
         className="p-2 border rounded w-full"
         error={error || undefined}
         required
@@ -139,7 +138,6 @@ export default function AddressAutocompleteManual({
         onChange={handleHouseNumberInputChange}
         placeholder="Por Ejemplo: Piso 4 - Apto D"
         className="p-2 border rounded w-full"
-        required
       />
       {country && city && province && (
         <div className="-mt-2 mb-4">

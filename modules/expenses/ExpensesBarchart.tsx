@@ -20,7 +20,6 @@ import useModal from '@/common/hooks/useModal';
 import { Expense } from '@/common/types/';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { COLORS } from '@/lib/constants';
-
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { MonthNames, QueryKeys } from '@/common/enums';
