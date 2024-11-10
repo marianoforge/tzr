@@ -1,5 +1,5 @@
-import { Operation } from '@/common/types';
 import { OperationStatus, YearFilter } from '../enums';
+import { Operation } from '../types';
 
 export function filteredOperations(
   operations: Operation[] | undefined,

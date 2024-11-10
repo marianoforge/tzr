@@ -7,13 +7,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 
-import { APIMethods, PATHS } from '@/common/enums';
 import ModalOK from '../PrivateComponente/CommonComponents/Modal';
 import Input from '../PrivateComponente/FormComponents/Input';
 import Button from '../PrivateComponente/FormComponents/Button';
 import LicensesModal from '../PublicComponents/LicensesModal';
-import Select from '../PrivateComponente/FormComponents/Select';
 
+import { APIMethods, PATHS } from '@/common/enums';
 import { cleanString } from '@/common/utils/cleanString';
 import { RegisterData } from '@/common/types';
 import { createSchema } from '@/common/schemas/registerFormSchema';
@@ -241,17 +240,6 @@ const RegisterForm = () => {
           error={errors.numeroTelefono?.message}
           required
         />
-
-        {/* <Select
-          label="¿Sos Team Leader / Broker o Asesor?"
-          options={[
-            { value: 'agente_asesor', label: 'Asesor' },
-            { value: 'team_leader_broker', label: 'Team Leader / Broker' },
-          ]}
-          register={register}
-          name="role"
-          required
-        /> */}
 
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">

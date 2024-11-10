@@ -17,10 +17,10 @@ const PersonSection = () => {
           <div className="flex flex-col">
             <div className="flex flex-col lg:mb-20 mb-40 lg:mt-20 leading-[3rem] w-[90%] xl:w-full ">
               <p className="text-[36px] text-white">
-                "No saber como manejar tus finanzas
+                &quot;No saber como manejar tus finanzas
               </p>
               <p className="text-[36px] text-white">
-                es el camino directo a la ruina"
+                es el camino directo a la ruina&quot;
               </p>
             </div>
             <div className="flex flex-col mb-20 mt-10">

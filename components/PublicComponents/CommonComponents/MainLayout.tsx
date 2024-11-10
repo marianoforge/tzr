@@ -1,5 +1,3 @@
-import Footer from '@/components/PublicComponents/CommonComponents/Footer';
-
 import HeroSection from '../HeroSections';
 
 import Navbar from './Navbar';

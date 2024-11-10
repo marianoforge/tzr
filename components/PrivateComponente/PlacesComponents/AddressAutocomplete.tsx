@@ -3,6 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { usePlacesAutocomplete } from '@/common/hooks/useAutocompleteSuggestions';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 
+// Define a type for address components
+interface AddressComponent {
+  types: string[];
+  long_name: string;
+}
+
 interface AddressAutocompleteProps {
   onAddressSelect: (address: {
     address: string;
@@ -51,14 +57,15 @@ export default function AddressAutocompleteManual({
       if (data.status === 'OK') {
         const addressComponents = data.result.address_components;
 
-        const countryComponent = addressComponents.find((comp: any) =>
-          comp.types.includes('country')
+        const countryComponent = addressComponents.find(
+          (comp: AddressComponent) => comp.types.includes('country')
         );
-        const localityComponent = addressComponents.find((comp: any) =>
-          comp.types.includes('locality')
+        const localityComponent = addressComponents.find(
+          (comp: AddressComponent) => comp.types.includes('locality')
         );
-        const provinceComponent = addressComponents.find((comp: any) =>
-          comp.types.includes('administrative_area_level_1')
+        const provinceComponent = addressComponents.find(
+          (comp: AddressComponent) =>
+            comp.types.includes('administrative_area_level_1')
         );
 
         const selectedAddress = {
@@ -108,20 +115,22 @@ export default function AddressAutocompleteManual({
       />
       {isDropdownOpen && suggestions && suggestions.length > 0 && (
         <ul className="border rounded mt-1">
-          {suggestions.map((suggestion: any) => (
-            <li
-              key={suggestion.place_id}
-              onClick={() =>
-                handleSelectSuggestion(
-                  suggestion.description,
-                  suggestion.place_id
-                )
-              }
-              className="p-2 hover:bg-gray-200 cursor-pointer"
-            >
-              {suggestion.description}
-            </li>
-          ))}
+          {suggestions.map(
+            (suggestion: { place_id: string; description: string }) => (
+              <li
+                key={suggestion.place_id}
+                onClick={() =>
+                  handleSelectSuggestion(
+                    suggestion.description,
+                    suggestion.place_id
+                  )
+                }
+                className="p-2 hover:bg-gray-200 cursor-pointer"
+              >
+                {suggestion.description}
+              </li>
+            )
+          )}
         </ul>
       )}
       <Input
