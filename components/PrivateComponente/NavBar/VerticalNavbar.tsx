@@ -73,14 +73,14 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
         label="Form de Operaciones"
       />
       <NavLink
-        href="/eventForm"
-        icon={<TableCellsIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Form de Eventos"
-      />
-      <NavLink
         href="/expenses"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Form de Gastos"
+      />
+      <NavLink
+        href="/eventForm"
+        icon={<TableCellsIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Form de Eventos"
       />
     </>
   );
