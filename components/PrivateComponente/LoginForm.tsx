@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { signInWithPopup } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore'; // Importar Firestore para verificar el usuario
+import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
 

@@ -9,11 +9,11 @@ import {
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
+import { NavLink } from '../NavComponents/NavLink';
+
 import { auth } from '@/lib/firebase';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
-
-import { NavLink } from '../NavComponents/NavLink';
 import { UserRole } from '@/common/enums';
 
 interface VerticalNavbarProps {

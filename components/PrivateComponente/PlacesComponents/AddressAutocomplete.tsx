@@ -1,9 +1,7 @@
-// components/AddressAutocompleteManual.tsx
 import React, { useState, useEffect } from 'react';
+
 import { usePlacesAutocomplete } from '@/common/hooks/useAutocompleteSuggestions';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
-
-// Define a type for address components
 interface AddressComponent {
   types: string[];
   long_name: string;
@@ -17,11 +15,15 @@ interface AddressAutocompleteProps {
     country: string | null;
   }) => void;
   onHouseNumberChange: (houseNumber: string) => void;
+  initialAddress?: string;
+  initialHouseNumber?: string;
 }
 
 export default function AddressAutocompleteManual({
   onAddressSelect,
   onHouseNumberChange,
+  initialAddress = '',
+  initialHouseNumber = '',
 }: AddressAutocompleteProps) {
   const [value, setValue] = useState('');
   const [houseNumber, setHouseNumber] = useState<string>('');
@@ -36,6 +38,11 @@ export default function AddressAutocompleteManual({
     isError,
     error: queryError,
   } = usePlacesAutocomplete(value);
+
+  useEffect(() => {
+    setValue(initialAddress);
+    setHouseNumber(initialHouseNumber);
+  }, [initialAddress, initialHouseNumber]);
 
   useEffect(() => {
     if (isError && queryError instanceof Error) {

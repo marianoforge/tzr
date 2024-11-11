@@ -51,10 +51,10 @@ const OperationsTableFilters: React.FC<OperationsTableFiltersProps> = ({
           />
           <InformationCircleIcon
             className="flex items-center justify-center mb-8  ml-1 text-lightBlue h-6 w-6 cursor-pointer"
-            data-tooltip-id="tooltip-vendedora"
+            data-tooltip-id="tooltip-buscador"
             data-tooltip-content="Puedes buscar una operacion por nombre del realizador de la misma o por dirección."
           />
-          <Tooltip id="tooltip-vendedora" place="top" />
+          <Tooltip id="tooltip-buscador" place="top" />
         </div>
         <Select
           options={statusOptions}

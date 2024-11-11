@@ -1,5 +1,6 @@
 // pages/api/getTeamsWithOperations.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { db } from '@/lib/firebaseAdmin';
 
 type TeamMember = {
@@ -7,13 +8,14 @@ type TeamMember = {
   email: string;
   firstName: string;
   lastName: string;
-  [key: string]: any; // Extendable properties
+  [key: string]: string | Operation[]; // Extendable properties
 };
 
 type Operation = {
   id: string;
   user_uid: string;
-  [key: string]: any; // Extendable properties
+  user_uid_Adicional: string;
+  [key: string]: string | Operation[]; // Extendable properties
 };
 
 type TeamMemberWithOperations = TeamMember & {
@@ -44,7 +46,7 @@ export default async function handler(
     // Step 3: Combine data
     const result: TeamMemberWithOperations[] = teamMembers.map((member) => {
       const memberOperations = operations.filter(
-        (op) => op.user_uid === member.id
+        (op) => op.user_uid === member.id || op.user_uid_adicional === member.id
       );
 
       return { ...member, operations: memberOperations };

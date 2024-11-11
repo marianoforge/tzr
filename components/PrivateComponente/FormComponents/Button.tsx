@@ -22,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({
       type={type}
       className={`${
         className || 'bg-blue-500 text-white p-2 rounded hover:bg-blue-600'
-      } !cursor-pointer`} // Ensure cursor-pointer is applied
+      } !cursor-pointer`}
       onClick={onClick}
     >
       {label}

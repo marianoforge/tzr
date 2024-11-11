@@ -2,31 +2,29 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { onAuthStateChanged } from 'firebase/auth';
 
-import { auth } from '@/lib/firebase';
+import OperationsFullScreenTable from './OperationsFullScreenTable';
+import OperationsModal from './OperationsModal';
+import OperationsTableHeader from './OperationsTableHeader';
+import OperationsTableBody from './OperationsTableBody';
+import OperationsTableFilters from './OperationsTableFilter';
 
+import { auth } from '@/lib/firebase';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/common/utils/calculations';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperationsBySearch';
 import { sortOperationValue } from '@/common/utils/sortUtils';
-
-import OperationsFullScreenTable from './OperationsFullScreenTable';
-import OperationsModal from './OperationsModal';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import {
   monthsFilter,
   operationVentasTypeFilter,
   statusOptions,
+  yearsFilter,
 } from '@/lib/data';
-import { yearsFilter } from '@/lib/data';
 import { OperationStatus } from '@/common/enums';
 import { useOperations } from '@/common/hooks/useOperactions';
-
-import OperationsTableHeader from './OperationsTableHeader';
-import OperationsTableBody from './OperationsTableBody';
-import OperationsTableFilters from './OperationsTableFilter';
 
 const OperationsTable: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -125,6 +123,7 @@ const OperationsTable: React.FC = () => {
     const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
 
     return { currentOperations: currentOps, filteredTotals: totals };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     transformedOperations,
     statusFilter,

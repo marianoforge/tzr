@@ -17,7 +17,6 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import Select from '@/components/PrivateComponente/FormComponents/Select';
 import { formatDateForUser } from '@/common/utils/formatDateForUser';
-
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
 import { operationTypes } from '@/lib/data';
 import { PATHS, QueryKeys, UserRole } from '@/common/enums';
@@ -136,6 +135,7 @@ const OperationsForm = () => {
     watchAllFields.porcentaje_honorarios_asesor,
     watchAllFields.porcentaje_punta_compradora,
     watchAllFields.porcentaje_punta_vendedora,
+    porcentajeHonorariosBroker,
   ]);
 
   const mutation = useMutation({
@@ -201,7 +201,6 @@ const OperationsForm = () => {
       porcentaje_honorarios_broker: porcentajeHonorariosBroker,
     };
 
-    // // Ejecutamos la mutación para crear la operación
     mutation.mutate(dataToSubmit as unknown as Operation);
   };
 

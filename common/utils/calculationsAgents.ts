@@ -78,4 +78,4 @@ export const calculateTotalReservationValue = (operations: Operation[]) =>
         op.estado === OperationStatus.CERRADA &&
         new Date(op.fecha_operacion).getFullYear() === 2024
     )
-    .reduce((acc, op) => acc + op.valor_reserva, 0);
+    .reduce((acc, op) => acc + Number(op.valor_reserva), 0);

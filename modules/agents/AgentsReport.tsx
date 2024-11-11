@@ -144,9 +144,6 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
     setCurrentPage(newPage);
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error instanceof Error) return <div>Error: {error.message}</div>;
-
   // Filter, sort, and paginate members
   const filteredMembers =
     data
@@ -177,6 +174,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   if (isLoading) {
     return <SkeletonLoader height={60} count={14} />;
   }
+  if (error instanceof Error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md">

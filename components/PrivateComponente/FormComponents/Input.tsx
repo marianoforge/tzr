@@ -5,11 +5,11 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   marginBottom?: string;
   marginTop?: string;
-  label?: string; // New prop for label
-  error?: string; // New prop for error message
-  showPasswordToggle?: boolean; // New prop to toggle password visibility
-  onTogglePassword?: () => void; // Callback for toggling password visibility
-  isPasswordVisible?: boolean; // State to determine password visibility
+  label?: string;
+  error?: string;
+  showPasswordToggle?: boolean;
+  onTogglePassword?: () => void;
+  isPasswordVisible?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(

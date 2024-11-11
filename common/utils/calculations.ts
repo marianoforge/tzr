@@ -23,6 +23,29 @@ export const totalHonorariosTeamLead = (
     return 0;
   }
 
+  if (operation.user_uid_adicional && userData.uid === operation.user_uid) {
+    return Number(
+      operation.honorarios_broker * 0.5 +
+        (operation.honorarios_broker *
+          0.5 *
+          (100 - (operation.porcentaje_honorarios_asesor_adicional ?? 0))) /
+          100
+    );
+  }
+
+  if (operation.user_uid_adicional && userData.uid !== operation.user_uid) {
+    return Number(
+      (operation.honorarios_broker *
+        0.5 *
+        (100 - operation.porcentaje_honorarios_asesor)) /
+        100 +
+        (operation.honorarios_broker *
+          0.5 *
+          (100 - (operation.porcentaje_honorarios_asesor_adicional ?? 0))) /
+          100
+    );
+  }
+
   if (
     userRole === UserRole.TEAM_LEADER_BROKER &&
     userData.uid !== operation.user_uid

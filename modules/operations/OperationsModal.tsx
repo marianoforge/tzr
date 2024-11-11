@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  useForm,
-  SubmitHandler,
-  UseFormSetValue,
-  FieldValues,
-} from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { InferType } from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -54,10 +49,10 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     setValue,
     reset,
   } = useForm<FormData>({
-    // resolver: yupResolver(schema),
+    resolver: yupResolver(schema),
     defaultValues: {
       ...operation,
-      realizador_venta: operation?.realizador_venta || '', // Asegúrate de incluir realizador_venta aquí
+      realizador_venta: operation?.realizador_venta || '',
     },
   });
 
@@ -102,7 +97,13 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       };
       reset(formattedOperation);
 
-      // Open additional advisor section if realizador_venta_adicional exists
+      setAddressData({
+        address: operation.direccion_reserva || '',
+        city: operation.localidad_reserva || null,
+        province: operation.provincia_reserva || null,
+        country: operation.pais || null,
+        houseNumber: operation.numero_casa || '',
+      });
       if (operation.realizador_venta_adicional) {
         setShowAdditionalAdvisor(true);
       }
@@ -215,6 +216,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             onHouseNumberChange={(houseNumber) =>
               setAddressData((prev) => ({ ...prev, houseNumber }))
             }
+            initialAddress={addressData.address}
+            initialHouseNumber={addressData.houseNumber}
           />
 
           <Select
