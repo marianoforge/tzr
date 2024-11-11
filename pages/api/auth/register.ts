@@ -70,7 +70,7 @@ export default async function handler(
           firstName,
           lastName,
           numeroTelefono,
-          teamLeadID: uid, // Asignar el uid como teamLeadId
+          teamLeadID: uid,
         });
 
         return res
@@ -108,7 +108,7 @@ export default async function handler(
         firstName,
         lastName,
         numeroTelefono,
-        teamLeadId: user.uid, // Asignar el uid como teamLeadId
+        teamLeadID: user.uid,
       });
 
       return res

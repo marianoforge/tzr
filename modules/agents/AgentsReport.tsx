@@ -28,7 +28,7 @@ export type TeamMember = {
   email: string;
   firstName: string;
   lastName: string;
-  teamLeadId: string;
+  teamLeadID: string;
   numeroTelefono: string;
   operations: Operation[];
   [key: string]: string | Operation[];
