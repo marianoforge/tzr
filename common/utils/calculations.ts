@@ -222,11 +222,11 @@ export const calculateTotals = (operations: Operation[]) => {
 
   // Total Punta Compradora
   const puntaCompradora = closedOperations.reduce((sum, operation) => {
-    return sum + (operation.porcentaje_punta_compradora ? 1 : 0);
+    return sum + (operation.punta_compradora ? 1 : 0);
   }, 0);
 
   const puntaVendedora = closedOperations.reduce((sum, operation) => {
-    return sum + (operation.porcentaje_punta_vendedora ? 1 : 0);
+    return sum + (operation.punta_vendedora ? 1 : 0);
   }, 0);
 
   // Total Suma Total de Puntas
