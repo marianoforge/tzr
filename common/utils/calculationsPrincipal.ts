@@ -188,22 +188,22 @@ export const calculateClosedOperations2024SummaryByGroup = (
 
       switch (op.tipo_operacion) {
         case OperationType.VENTA:
-          groupKey = 'Venta';
+          groupKey = 'Ventas';
           break;
         case OperationType.FONDO_DE_COMERCIO:
-          groupKey = 'Fondo de Comercio';
+          groupKey = 'Fondos de Comercio';
           break;
         case OperationType.ALQUILER_TRADICIONAL:
-          groupKey = 'Alquiler Tradicional';
+          groupKey = 'Alquileres Tradicionales';
           break;
         case OperationType.DESARROLLO_INMOBILIARIO:
-          groupKey = 'Desarrollo Inmobiliario';
+          groupKey = 'Desarrollos Inmobiliarios';
           break;
         case OperationType.ALQUILER_TEMPORAL:
-          groupKey = 'Alquiler Temporal';
+          groupKey = 'Alquileres Temporales';
           break;
         case OperationType.ALQUILER_COMERCIAL:
-          groupKey = 'Alquiler Comercial';
+          groupKey = 'Alquileres Comerciales';
           break;
         default:
           return acc; // Skip operations that don't match any group
