@@ -188,7 +188,7 @@ export const calculateClosedOperations2024SummaryByGroup = (
 
       switch (op.tipo_operacion) {
         case OperationType.VENTA:
-          groupKey = 'Venta Locales Comerciales y Cochera';
+          groupKey = 'Venta';
           break;
         case OperationType.FONDO_DE_COMERCIO:
           groupKey = 'Fondo de Comercio';
