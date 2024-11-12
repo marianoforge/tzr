@@ -43,13 +43,20 @@ const Profitability = () => {
   const totalHonorariosBroker = totals.honorarios_broker_cerradas;
 
   const totalAmountInDollarsExpenses = expenses.reduce(
-    (acc: number, exp: Expense) => acc + exp.amountInDollars,
+    (acc: number, exp: Expense) => {
+      const expenseYear = new Date(exp.date).getFullYear();
+      return expenseYear === 2024 ? acc + exp.amountInDollars : acc;
+    },
     0
   );
   const totalExpensesTeamBroker = expenses.reduce(
-    (acc: number, exp: Expense) => acc + exp.amountInDollars || 0,
+    (acc: number, exp: Expense) => {
+      const expenseYear = new Date(exp.date).getFullYear();
+      return expenseYear === 2024 ? acc + exp.amountInDollars : acc;
+    },
     0
   );
+
   const profitability =
     totalHonorariosNetosAsesor && totalHonorariosNetosAsesor > 0
       ? ((totalHonorariosNetosAsesor - totalAmountInDollarsExpenses) /
