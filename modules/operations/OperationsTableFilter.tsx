@@ -10,8 +10,8 @@ interface OperationsTableFiltersProps {
   setSearchQuery: (query: string) => void;
   statusFilter: string;
   setStatusFilter: (status: string) => void;
-  yearFilter: string;
-  setYearFilter: (year: string) => void;
+  yearFilter: number;
+  setYearFilter: (year: number) => void;
   monthFilter: string;
   setMonthFilter: (month: string) => void;
   operationTypeFilter: string;
@@ -59,7 +59,9 @@ const OperationsTableFilters: React.FC<OperationsTableFiltersProps> = ({
         <Select
           options={statusOptions}
           value={statusFilter}
-          onChange={setStatusFilter}
+          onChange={(value: string | number) =>
+            setStatusFilter(value.toString())
+          }
           className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
         />
       </div>
@@ -67,7 +69,7 @@ const OperationsTableFilters: React.FC<OperationsTableFiltersProps> = ({
         <Select
           options={yearsFilter}
           value={yearFilter}
-          onChange={setYearFilter}
+          onChange={(value: string | number) => setYearFilter(Number(value))}
           className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
         />
       </div>
@@ -75,13 +77,17 @@ const OperationsTableFilters: React.FC<OperationsTableFiltersProps> = ({
         <Select
           options={monthsFilter}
           value={monthFilter}
-          onChange={setMonthFilter}
+          onChange={(value: string | number) =>
+            setMonthFilter(value.toString())
+          }
           className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
         />
         <Select
           options={operationVentasTypeFilter}
           value={operationTypeFilter}
-          onChange={setOperationTypeFilter}
+          onChange={(value: string | number) =>
+            setOperationTypeFilter(value.toString())
+          }
           className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
         />
       </div>

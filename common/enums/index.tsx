@@ -72,9 +72,9 @@ export enum OperationData {
 }
 
 export enum YearFilter {
-  TODOS = 'all',
-  DOS_MIL_VEINTITRES = '2023',
-  DOS_MIL_VEINTICUATRO = '2024',
+  DOS_MIL_VEINTITRES = 2023,
+  DOS_MIL_VEINTICUATRO = 2024,
+  DOS_MIL_VEINTICINCO = 2025,
 }
 
 export enum PATHS {

@@ -141,7 +141,7 @@ const ExpensesBarchart: React.FC = () => {
       ) => {
         const date = new Date(expense.date);
         const year = date.getFullYear();
-        if (year === 2024) {
+        if (year === new Date().getFullYear()) {
           const month = date.toLocaleString('es-ES', { month: 'long' });
           const capitalizedMonth =
             month.charAt(0).toUpperCase() + month.slice(1);

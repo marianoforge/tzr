@@ -26,7 +26,7 @@ import useUserAuth from '@/common/hooks/useUserAuth';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
-import { ExpenseType, YearFilter, QueryKeys } from '@/common/enums';
+import { ExpenseType, QueryKeys } from '@/common/enums';
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -35,7 +35,7 @@ const ExpensesList = () => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [yearFilter, setYearFilter] = useState('all');
+  const [yearFilter, setYearFilter] = useState(new Date().getFullYear());
   const [monthFilter, setMonthFilter] = useState('all');
   const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
 
@@ -55,8 +55,7 @@ const ExpensesList = () => {
         const matchesSearch = expense.description
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
-        const matchesYear =
-          yearFilter === YearFilter.TODOS || expense.date.includes(yearFilter);
+        const matchesYear = expense.date.includes(yearFilter.toString());
         const matchesMonth =
           monthFilter === 'all' ||
           new Date(expense.date).getMonth() + 1 === parseInt(monthFilter);
@@ -188,7 +187,9 @@ const ExpensesList = () => {
             <Select
               options={yearsFilter}
               value={yearFilter}
-              onChange={setYearFilter}
+              onChange={(value: string | number) =>
+                setYearFilter(Number(value))
+              }
               className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
             />
           </div>
@@ -196,13 +197,17 @@ const ExpensesList = () => {
             <Select
               options={monthsFilter}
               value={monthFilter}
-              onChange={setMonthFilter}
+              onChange={(value: string | number) =>
+                setMonthFilter(value.toString())
+              }
               className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
             />
             <Select
               options={expenseTypes}
               value={expenseTypeFilter}
-              onChange={setExpenseTypeFilter}
+              onChange={(value: string | number) =>
+                setExpenseTypeFilter(value.toString())
+              }
               className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
             />
           </div>

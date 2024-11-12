@@ -2,18 +2,17 @@ import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import React, { useState } from 'react';
+
+import EventModal from './EventModal';
+import { ViewButton } from './ViewButton';
+
 import { useCalendarEvents } from '@/common/hooks/useCalendarEvents';
 import { useDateNavigation } from '@/common/hooks/useDateNavigation';
 import { useCalendarResponsiveView } from '@/common/hooks/useCalendarResponsiveView';
-
-import EventModal from './EventModal';
-
 import { Event } from '@/common/types/';
-import { ViewButton } from './ViewButton';
 import { NavButton } from '@/components/PrivateComponente/NavComponents/NavButton';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { CalendarView } from '@/common/enums';
-import { CalendarAction } from '@/common/enums';
+import { CalendarView, CalendarAction } from '@/common/enums';
 
 const localizer = momentLocalizer(moment);
 
@@ -99,8 +98,8 @@ const BigCalendar = () => {
         date={date}
         onNavigate={setDate}
         onView={setView}
-        min={new Date(2024, 0, 1, 8, 0, 0)}
-        max={new Date(2024, 11, 31, 22, 0, 0)}
+        min={new Date(new Date().getFullYear(), 0, 1, 8, 0, 0)}
+        max={new Date(new Date().getFullYear(), 11, 31, 22, 0, 0)}
         className="rounded-xl overflow-hidden"
         style={{ height: 'calc(100vh - 200px)' }}
         formats={{

@@ -37,7 +37,9 @@ const OperationsTableTent: React.FC = () => {
   const [viewOperation, setViewOperation] = useState<Operation | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
-  const [yearFilter, setYearFilter] = useState('2024');
+  const [yearFilter, setYearFilter] = useState(
+    new Date().getFullYear().toString()
+  );
   const [monthFilter, setMonthFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isValueAscending, setIsValueAscending] = useState<boolean | null>(
@@ -91,7 +93,7 @@ const OperationsTableTent: React.FC = () => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
-      yearFilter,
+      Number(yearFilter),
       monthFilter
     );
 
@@ -151,7 +153,7 @@ const OperationsTableTent: React.FC = () => {
       (filteredOperations(
         transformedOperations,
         statusFilter,
-        yearFilter,
+        Number(yearFilter),
         monthFilter
       )?.length || 0) / itemsPerPage
     );
@@ -252,8 +254,8 @@ const OperationsTableTent: React.FC = () => {
           setSearchQuery={setSearchQuery}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
-          yearFilter={yearFilter}
-          setYearFilter={setYearFilter}
+          yearFilter={Number(yearFilter)}
+          setYearFilter={(year: number) => setYearFilter(year.toString())}
           monthFilter={monthFilter}
           setMonthFilter={setMonthFilter}
           operationTypeFilter={operationTypeFilter}

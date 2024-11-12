@@ -4,7 +4,7 @@ import { Operation } from '../types';
 export function filteredOperations(
   operations: Operation[] | undefined,
   statusFilter: string,
-  yearFilter: string,
+  yearFilter: number,
   monthFilter: string
 ) {
   return operations?.filter((operation: Operation) => {

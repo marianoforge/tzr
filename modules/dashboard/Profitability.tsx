@@ -45,14 +45,18 @@ const Profitability = () => {
   const totalAmountInDollarsExpenses = expenses.reduce(
     (acc: number, exp: Expense) => {
       const expenseYear = new Date(exp.date).getFullYear();
-      return expenseYear === 2024 ? acc + exp.amountInDollars : acc;
+      return expenseYear === new Date().getFullYear()
+        ? acc + exp.amountInDollars
+        : acc;
     },
     0
   );
   const totalExpensesTeamBroker = expenses.reduce(
     (acc: number, exp: Expense) => {
       const expenseYear = new Date(exp.date).getFullYear();
-      return expenseYear === 2024 ? acc + exp.amountInDollars : acc;
+      return expenseYear === new Date().getFullYear()
+        ? acc + exp.amountInDollars
+        : acc;
     },
     0
   );

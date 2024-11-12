@@ -45,8 +45,8 @@ const CustomTooltip: React.FC<{
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded shadow-md">
         <p className="label font-semibold">{`${label}`}</p>
-        <p className="intro">{`2023: ${formatNumber(payload[0]?.value)}%`}</p>
-        <p className="intro">{`2024: ${formatNumber(payload[1]?.value)}%`}</p>
+        <p className="intro">{`${new Date().getFullYear()}: ${formatNumber(payload[0]?.value)}%`}</p>
+        <p className="intro">{`${new Date().getFullYear() - 1}: ${formatNumber(payload[1]?.value)}%`}</p>
         <p className="intro">{`Diferencia Interanual: ${formatNumber(
           (payload[1]?.value || 0) - (payload[0]?.value || 0)
         )}%`}</p>
@@ -161,7 +161,7 @@ const MonthlyLineChartPoints = () => {
               dataKey="value2024"
               stroke="#00b4d8"
               strokeWidth={3}
-              name="2024"
+              name={new Date().getFullYear().toString()}
             >
               <LabelList
                 dataKey="value2024"
@@ -176,7 +176,7 @@ const MonthlyLineChartPoints = () => {
               dataKey="value2023"
               stroke="#0077b6"
               strokeWidth={3}
-              name="2023"
+              name={(new Date().getFullYear() - 1).toString()}
             >
               <LabelList
                 dataKey="value2023"
@@ -187,7 +187,7 @@ const MonthlyLineChartPoints = () => {
               />
             </Line>
             <Line
-              name={`Promedio Acumulado 2024 : ${formatNumber(average2024)}%`}
+              name={`Promedio Acumulado ${new Date().getFullYear()} : ${formatNumber(average2024)}%`}
               stroke="#3f37c9"
             ></Line>
           </LineChart>

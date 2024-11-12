@@ -29,8 +29,8 @@ const CustomTooltip: React.FC<{
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`2023: $${formatNumber(payload[0].value)}`}</p>
-        <p className="intro">{`2024: $${formatNumber(payload[1].value)}`}</p>
+        <p className="intro">{`${new Date().getFullYear() - 1}: $${formatNumber(payload[0].value)}`}</p>
+        <p className="intro">{`${new Date().getFullYear()}: $${formatNumber(payload[1].value)}`}</p>
         <p className="intro">{`Diferencia Interanual: $${formatNumber(
           payload[1].value - payload[0].value
         )}`}</p>
@@ -120,14 +120,14 @@ const MonthlyBarChart: React.FC = () => {
             <Bar
               dataKey="previousYear"
               fill={COLORS[1]}
-              name="Año 2023"
+              name={(new Date().getFullYear() - 1).toString()}
               maxBarSize={MAX_BAR_SIZE}
               radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="currentYear"
               fill={COLORS[0]}
-              name="Año 2024"
+              name={new Date().getFullYear().toString()}
               maxBarSize={MAX_BAR_SIZE}
               radius={[4, 4, 0, 0]}
             />

@@ -31,7 +31,8 @@ export const useOperationsData = () => {
   );
 
   const totalCantidad2024 = closedOperations.filter(
-    (op: Operation) => new Date(op.fecha_operacion).getFullYear() === 2024
+    (op: Operation) =>
+      new Date(op.fecha_operacion).getFullYear() === new Date().getFullYear()
   ).length;
 
   return {

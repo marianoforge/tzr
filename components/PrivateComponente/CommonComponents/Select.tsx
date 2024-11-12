@@ -2,8 +2,8 @@ import React from 'react';
 
 interface SelectProps {
   options: { value: string; label: string }[];
-  value: string;
-  onChange: (value: string) => void;
+  value: string | number;
+  onChange: (value: string | number) => void;
   className?: string;
 }
 

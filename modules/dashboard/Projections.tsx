@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import {
   LineChart,
@@ -9,20 +10,19 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   months,
   openOperationsByMonth2024,
+  closedOperationsByMonth2024,
 } from '@/common/utils/currentYearOps';
-import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/common/types';
-import { closedOperationsByMonth2024 } from '@/common/utils/currentYearOps';
 import { formatNumber } from '@/common/utils/formatNumber';
 
 const generateData = (closedOperations: any, openOperations: any) => {
   const currentMonthIndex = new Date().getMonth();
-  const previousMonthIndex = currentMonthIndex - 1;
 
   return months.map((month, index) => {
     let ventas = null;
@@ -41,7 +41,9 @@ const generateData = (closedOperations: any, openOperations: any) => {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const currentMonthIndex = new Date().getMonth();
-    const labelMonthIndex = new Date(Date.parse(label + ' 1, 2024')).getMonth();
+    const labelMonthIndex = new Date(
+      Date.parse(label + ` 1, ${new Date().getFullYear()}`)
+    ).getMonth();
 
     const isFutureOrCurrentMonth = labelMonthIndex >= currentMonthIndex;
     const ventasOrProyeccion = isFutureOrCurrentMonth

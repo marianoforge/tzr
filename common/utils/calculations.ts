@@ -327,12 +327,12 @@ export const calculateTotals = (operations: Operation[]) => {
   // Calculate the percentage for each month
   const porcentajeHonorariosBrokerPorMes2024 = calculateGrossByMonth(
     validOperations,
-    2024
+    new Date().getFullYear()
   );
 
   const porcentajeHonorariosBrokerPorMes2023 = calculateGrossByMonth(
     validOperations,
-    2023
+    new Date().getFullYear() - 1
   );
 
   return {
