@@ -104,7 +104,7 @@ const CuadroPrincipal = () => {
                     } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-[90px]`}
                   >
                     <td className="py-3 px-4 text-start text-base w-1/5 pl-8">
-                      {calcs.group}
+                      {calcs.operationType}
                     </td>
                     <td className="py-3 px-4 text-base">
                       {calcs.cantidadOperaciones}

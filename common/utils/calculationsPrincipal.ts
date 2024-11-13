@@ -185,28 +185,35 @@ export const calculateClosedOperations2024SummaryByGroup = (
   const summaryByGroup = filteredOperations.reduce(
     (acc, op) => {
       let groupKey: string;
+      let operationType: string;
 
       switch (op.tipo_operacion) {
         case OperationType.VENTA:
-          groupKey = 'Ventas';
+          groupKey = 'Venta';
+          operationType = OperationType.VENTA;
           break;
         case OperationType.FONDO_DE_COMERCIO:
-          groupKey = 'Fondos de Comercio';
+          groupKey = 'Fondo de Comercio';
+          operationType = OperationType.FONDO_DE_COMERCIO;
           break;
         case OperationType.ALQUILER_TRADICIONAL:
-          groupKey = 'Alquileres Tradicionales';
+          groupKey = 'Alquiler Tradicional';
+          operationType = OperationType.ALQUILER_TRADICIONAL;
           break;
         case OperationType.DESARROLLO_INMOBILIARIO:
-          groupKey = 'Desarrollos Inmobiliarios';
+          groupKey = 'Desarrollo Inmobiliario';
+          operationType = OperationType.DESARROLLO_INMOBILIARIO;
           break;
         case OperationType.ALQUILER_TEMPORAL:
-          groupKey = 'Alquileres Temporales';
+          groupKey = 'Alquiler Temporal';
+          operationType = OperationType.ALQUILER_TEMPORAL;
           break;
         case OperationType.ALQUILER_COMERCIAL:
-          groupKey = 'Alquileres Comerciales';
+          groupKey = 'Alquiler Comercial';
+          operationType = OperationType.ALQUILER_COMERCIAL;
           break;
         default:
-          return acc; // Skip operations that don't match any group
+          return acc;
       }
 
       if (!acc[groupKey]) {
@@ -214,6 +221,7 @@ export const calculateClosedOperations2024SummaryByGroup = (
           totalHonorariosBrutos: 0,
           cantidadOperaciones: 0,
           totalMontoOperaciones: 0,
+          operationType,
         };
       }
 
@@ -229,15 +237,17 @@ export const calculateClosedOperations2024SummaryByGroup = (
         totalHonorariosBrutos: number;
         cantidadOperaciones: number;
         totalMontoOperaciones: number;
+        operationType: string;
       }
     >
   );
 
-  // Convert the summaryByGroup object to an array of objects
   const summaryArray = Object.entries(summaryByGroup).map(([group, data]) => ({
     group,
     ...data,
   }));
 
-  return { summaryArray, totalMontoHonorariosBroker };
+  const groupKeys = Object.keys(summaryByGroup);
+
+  return { summaryArray, totalMontoHonorariosBroker, groupKeys };
 };
