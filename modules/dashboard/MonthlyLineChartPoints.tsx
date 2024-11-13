@@ -121,7 +121,7 @@ const MonthlyLineChartPoints = () => {
         (sum, data) => sum + data.value2024,
         0
       );
-      const currentMonth = new Date().getMonth(); // 0-based index, so January is 0
+      const currentMonth = new Date().getMonth() + 1; // 0-based index, so January is 0
       const completedMonths = currentMonth; // Exclude the current month
       const average2024 = total2024 / completedMonths;
       setAverage2024(average2024);
