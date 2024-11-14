@@ -34,8 +34,7 @@ const generateData = (closedOperations: any, openOperations: any) => {
     }
 
     if (index >= currentMonthIndex && index <= 11) {
-      proyeccion =
-        (closedOperations[months[currentMonthIndex]] || 0) + openOperations;
+      proyeccion = (closedOperations.Octubre || 0) + openOperations;
     }
 
     return { mes: month, ventas, proyeccion };
@@ -124,7 +123,7 @@ const VentasAcumuladas = () => {
               }}
               activeDot={{ r: 6 }}
               name={`Honorarios Brutos Acumulados: $${formatNumber(
-                closedOperationsByMonth[months[previousMonthIndex]] || 0
+                closedOperationsByMonth[months[currentMonthIndex]] || 0
               )}`}
               label={({ x, y, stroke, value }) => (
                 <text
