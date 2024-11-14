@@ -81,14 +81,33 @@ const filterOperationsExcludingType = (operations: Operation[], type: string) =>
 export const calculateHonorarios = (
   valor_reserva: number,
   porcentaje_honorarios_asesor: number,
-  porcentaje_honorarios_broker: number
+  porcentaje_honorarios_broker: number,
+  porcentaje_compartido: number,
+  porcentaje_referido: number
 ) => {
-  const honorariosBroker = (valor_reserva * porcentaje_honorarios_broker) / 100;
+  //HONORARIOS BROKER
+  const porcentaje_honorarios_broker_comp =
+    valor_reserva * (porcentaje_honorarios_broker - porcentaje_compartido);
+
+  const porcentaje_honorarios_broker_normal =
+    valor_reserva * porcentaje_honorarios_broker;
+
+  let honorariosBroker = porcentaje_honorarios_broker_normal;
+
+  if (porcentaje_compartido) {
+    honorariosBroker = porcentaje_honorarios_broker_comp / 100;
+  } else {
+    honorariosBroker = porcentaje_honorarios_broker_normal / 100;
+  }
+
+  if (porcentaje_referido) {
+    honorariosBroker =
+      honorariosBroker - (honorariosBroker * porcentaje_referido) / 100;
+  }
+
+  //HONORARIOS ASESOR
   const honorariosAsesor =
-    (valor_reserva *
-      porcentaje_honorarios_broker *
-      porcentaje_honorarios_asesor) /
-    10000;
+    (honorariosBroker * porcentaje_honorarios_asesor) / 100;
 
   return { honorariosBroker, honorariosAsesor };
 };

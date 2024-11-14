@@ -234,7 +234,19 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           ${formatNumber(Number(filteredTotals?.honorarios_broker))}
         </td>
         <td className="py-3 px-2 text-center">
-          ${formatNumber(Number(filteredTotals?.honorarios_asesor))}
+          {currentOperations.length > 0 ? (
+            <>
+              {formatNumber(
+                currentOperations.reduce(
+                  (total, operation) =>
+                    total + calculateNetFees(operation, userData),
+                  0
+                )
+              )}
+            </>
+          ) : (
+            'Cálculo no disponible'
+          )}
         </td>
         <td className="py-3 px-2 text-center" colSpan={4}></td>
       </tr>

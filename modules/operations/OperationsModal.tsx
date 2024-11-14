@@ -155,7 +155,9 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
       data.porcentaje_honorarios_asesor,
-      data.porcentaje_honorarios_broker || 0
+      data.porcentaje_honorarios_broker || 0,
+      data.porcentaje_compartido || 0,
+      data.porcentaje_referido || 0
     );
 
     const payload = {
@@ -175,6 +177,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     const sanitizedPayload = {
       ...payload,
       realizador_venta: realizador_venta || 'No se selecciono vendedor',
+      realizador_venta_adicional: showAdditionalAdvisor
+        ? payload.realizador_venta_adicional
+        : '',
+      porcentaje_honorarios_asesor_adicional: showAdditionalAdvisor
+        ? payload.porcentaje_honorarios_asesor_adicional
+        : null,
+      user_uid_adicional: showAdditionalAdvisor
+        ? selectedUser_idAdicional
+        : null,
       localidad_reserva: payload.localidad_reserva || undefined,
       provincia_reserva: payload.provincia_reserva || undefined,
       pais: payload.pais || undefined,

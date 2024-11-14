@@ -118,11 +118,17 @@ const OperationsForm = () => {
       parseFloat(String(watchAllFields.porcentaje_punta_compradora)) || 0;
     const porcentaje_punta_vendedora =
       parseFloat(String(watchAllFields.porcentaje_punta_vendedora)) || 0;
+    const porcentaje_compartido =
+      parseFloat(String(watchAllFields.porcentaje_compartido)) || 0;
+    const porcentaje_referido =
+      parseFloat(String(watchAllFields.porcentaje_referido)) || 0;
 
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       valor_reserva,
       porcentaje_honorarios_asesor,
-      porcentajeHonorariosBroker
+      porcentajeHonorariosBroker,
+      porcentaje_compartido,
+      porcentaje_referido
     );
 
     setHonorariosBroker(honorariosBroker);
@@ -136,6 +142,8 @@ const OperationsForm = () => {
     watchAllFields.porcentaje_punta_compradora,
     watchAllFields.porcentaje_punta_vendedora,
     porcentajeHonorariosBroker,
+    watchAllFields.porcentaje_compartido,
+    watchAllFields.porcentaje_referido,
   ]);
 
   const mutation = useMutation({
