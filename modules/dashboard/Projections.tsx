@@ -22,15 +22,18 @@ import { Operation } from '@/common/types';
 import { formatNumber } from '@/common/utils/formatNumber';
 
 const generateData = (closedOperations: any, openOperations: any) => {
-  const currentMonthIndex = new Date().getMonth();
+  const currentDate = new Date();
+  const currentMonthIndex = currentDate.getMonth();
 
   return months.map((month, index) => {
     let ventas = null;
     let proyeccion = null;
 
-    if (index < currentMonthIndex) {
+    if (index <= currentMonthIndex) {
       ventas = closedOperations[month] || null;
-    } else if (index >= currentMonthIndex) {
+    }
+
+    if (index >= currentMonthIndex && index <= 11) {
       proyeccion = (closedOperations.Octubre || 0) + openOperations;
     }
 
