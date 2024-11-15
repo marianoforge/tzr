@@ -272,25 +272,48 @@ const ExpensesList = () => {
                     key={expense.id}
                     className="border-b transition duration-150 ease-in-out text-center"
                   >
-                    <td className="py-3 px-4">{formatDate(expense.date)}</td>
                     <td className="py-3 px-4">
-                      ${formatNumber(expense.amount)}
+                      {'date' in expense ? formatDate(expense.date) : 'N/A'}
                     </td>
                     <td className="py-3 px-4">
-                      ${formatNumber(expense.amountInDollars)}
+                      ${formatNumber('amount' in expense ? expense.amount : 0)}
                     </td>
-                    <td className="py-3 px-4">{expense.expenseType}</td>
-                    <td className="py-3 px-4">{expense.description}</td>
+                    <td className="py-3 px-4">
+                      $
+                      {formatNumber(
+                        'amountInDollars' in expense
+                          ? expense.amountInDollars
+                          : 0
+                      )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {'expenseType' in expense ? expense.expenseType : 'N/A'}
+                    </td>
+                    <td className="py-3 px-4">
+                      {'description' in expense ? expense.description : 'N/A'}
+                    </td>
 
                     <td className="py-3 px-4">
                       <button
-                        onClick={() => handleEditClick(expense)}
+                        onClick={() => {
+                          if ('date' in expense && 'amount' in expense) {
+                            handleEditClick(expense);
+                          }
+                        }}
                         className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
                       >
                         <PencilIcon className="h-5 w-5" />
                       </button>
                       <button
-                        onClick={() => handleDeleteButtonClick(expense)}
+                        onClick={() => {
+                          if (
+                            'id' in expense &&
+                            'date' in expense &&
+                            'amount' in expense
+                          ) {
+                            handleDeleteButtonClick(expense);
+                          }
+                        }}
                         className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
                       >
                         <TrashIcon className="h-5 w-5" />
