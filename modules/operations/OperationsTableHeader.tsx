@@ -1,4 +1,3 @@
-// gds-si/modules/operations/OperationsTableHeader.tsx
 import React from 'react';
 import {
   ArrowUpIcon,

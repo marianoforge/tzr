@@ -1,4 +1,3 @@
-// hooks/usePlacesAutocomplete.ts
 import { useQuery } from '@tanstack/react-query';
 
 const fetchAutocompleteSuggestions = async (input: string) => {

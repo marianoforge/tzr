@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 import React, { PureComponent } from 'react';
 import { PieChart, Pie, Cell } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
@@ -6,7 +5,7 @@ import router from 'next/router';
 import { Tooltip } from 'react-tooltip';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
-import { useUserDataStore } from '@/stores/userDataStore'; // Import the store
+import { useUserDataStore } from '@/stores/userDataStore';
 import { OBJECTIVE_CHART_COLORS } from '@/lib/constants';
 import { Operation, UserData } from '@/common/types/';
 import { calculateTotals } from '@/common/utils/calculations';

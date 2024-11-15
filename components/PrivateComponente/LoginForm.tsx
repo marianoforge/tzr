@@ -46,8 +46,7 @@ const LoginForm = () => {
       );
       const user = userCredential.user;
 
-      // Verificamos si el usuario está en Firestore
-      const userDocRef = doc(db, 'usuarios', user.uid); // Usamos el UID del usuario
+      const userDocRef = doc(db, 'usuarios', user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
@@ -78,18 +77,15 @@ const LoginForm = () => {
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
       const user = result.user;
 
-      // Verificar si el usuario ya existe en Firestore
-      const userDocRef = doc(db, 'usuarios', user.uid); // Usamos el UID de Firebase
+      const userDocRef = doc(db, 'usuarios', user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        // Si el usuario no existe, redirigir al formulario de registro para completar los datos
         router.push({
           pathname: '/register',
           query: { email: user.email, googleUser: 'true', uid: user.uid },
         });
       } else {
-        // Si el usuario ya existe, simplemente redirige al dashboard
         router.push('/dashboard');
       }
     } catch {

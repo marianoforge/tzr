@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { TeamMember, UserData } from '@/common/types/';
+
 import { APIMethods, QueryKeys } from '../enums';
+
+import { TeamMember, UserData } from '@/common/types/';
 
 const useAgentsManagement = (currentUser: UserData) => {
   const queryClient = useQueryClient();

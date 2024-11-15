@@ -1,6 +1,8 @@
 // CardsSection.tsx
 import { useRouter } from 'next/router';
+
 import LicenseCard from './LicensesCard';
+
 import {
   PRICE_ID_ENTERPRISE,
   PRICE_ID_GROWTH,
@@ -15,10 +17,8 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
   const router = useRouter();
 
   const handleLicenseSelect = (priceId: string) => {
-    // Almacena el priceId en el almacenamiento local
     localStorage.setItem('selectedPriceId', priceId);
 
-    // Check if the current path is not '/register' before redirecting
     if (router.pathname !== '/register') {
       router.push('/register');
     }

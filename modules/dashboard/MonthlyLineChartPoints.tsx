@@ -116,13 +116,12 @@ const MonthlyLineChartPoints = () => {
 
       setChartData(mergedData);
 
-      // Calculate the sum of all 2024 percentages
       const total2024 = mergedData.reduce(
         (sum, data) => sum + data.value2024,
         0
       );
-      const currentMonth = new Date().getMonth() + 1; // 0-based index, so January is 0
-      const completedMonths = currentMonth; // Exclude the current month
+      const currentMonth = new Date().getMonth() + 1;
+      const completedMonths = currentMonth;
       const average2024 = total2024 / completedMonths;
       setAverage2024(average2024);
     }

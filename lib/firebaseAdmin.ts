@@ -1,7 +1,5 @@
-// lib/firebaseAdmin.ts
 import * as admin from 'firebase-admin';
 
-// Check if the app is already initialized to prevent re-initialization
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({

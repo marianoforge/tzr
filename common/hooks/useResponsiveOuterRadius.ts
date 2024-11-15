@@ -16,7 +16,7 @@ const useResponsiveOuterRadius = () => {
       }
     };
 
-    updateOuterRadius(); // Set initial value
+    updateOuterRadius();
     window.addEventListener('resize', updateOuterRadius);
 
     return () => window.removeEventListener('resize', updateOuterRadius);

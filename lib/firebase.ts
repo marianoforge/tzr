@@ -22,26 +22,21 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Configure Firestore with persistence only once
-let db: Firestore; // Explicitly type db as Firestore
+let db: Firestore;
 try {
   db = initializeFirestore(app, {
     localCache: persistentLocalCache(),
   });
 } catch (error: unknown) {
   if ((error as { code?: string }).code === 'failed-precondition') {
-    // If Firestore was already initialized, just get the instance
     db = getFirestore(app);
   } else {
     throw error;
   }
 }
 
-// Get Auth instance
 const auth = getAuth(app);
 
-// Export necessary Firebase utilities
 export { db, auth, GoogleAuthProvider, signInWithEmailAndPassword };

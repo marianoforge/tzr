@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { Operation, UserData } from '@/common/types/';
 import { QueryKeys, UserRole } from '../enums';
+
+import { Operation, UserData } from '@/common/types/';
 
 interface UserWithOperations {
   uid: string;

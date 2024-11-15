@@ -4,8 +4,8 @@ import { Tooltip } from 'react-tooltip';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import { fetchUserOperations } from '@/lib/api/operationsApi';
-import { fetchUserExpenses } from '@/lib/api/expensesApi'; // Asume que tienes este método
-import { useAuthStore } from '@/stores/authStore'; // Esto sigue para obtener el userID
+import { fetchUserExpenses } from '@/lib/api/expensesApi';
+import { useAuthStore } from '@/stores/authStore';
 import { Expense } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/common/utils/calculations';

@@ -98,8 +98,6 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
             height={250}
           />
         </div>
-
-        {/* Desktop user info */}
       </div>
 
       {/* Mobile menu */}

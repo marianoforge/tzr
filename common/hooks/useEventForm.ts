@@ -1,8 +1,9 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { EventFormData } from '@/common/types/';
+
 import { schema } from '../schemas/eventFormSchema';
+
+import { EventFormData } from '@/common/types/';
 
 export const useEventForm = () => {
   const {

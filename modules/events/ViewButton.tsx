@@ -1,6 +1,7 @@
+import { View } from 'react-big-calendar';
+
 import { CalendarView } from '@/common/enums';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
-import { View } from 'react-big-calendar';
 
 export const ViewButton = ({
   view,

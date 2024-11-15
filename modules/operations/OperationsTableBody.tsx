@@ -1,4 +1,3 @@
-// gds-si/modules/operations/OperationsTableBody.tsx
 import React from 'react';
 import {
   PencilIcon,

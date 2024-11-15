@@ -7,7 +7,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore'; // Importar Firestore para verificar el usuario
+import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -33,12 +33,10 @@ const LoginForm = () => {
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
 
   const [formError, setFormError] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Iniciar sesión con correo y contraseña usando Firebase
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
-      // Utilizamos Firebase Auth para iniciar sesión con correo y contraseña
       const userCredential = await signInWithEmailAndPassword(
         auth,
         data.email,
@@ -46,8 +44,7 @@ const LoginForm = () => {
       );
       const user = userCredential.user;
 
-      // Verificamos si el usuario está en Firestore
-      const userDocRef = doc(db, 'usuarios', user.uid); // Usamos el UID del usuario
+      const userDocRef = doc(db, 'usuarios', user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
@@ -78,18 +75,15 @@ const LoginForm = () => {
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
       const user = result.user;
 
-      // Verificar si el usuario ya existe en Firestore
-      const userDocRef = doc(db, 'usuarios', user.uid); // Usamos el UID de Firebase
+      const userDocRef = doc(db, 'usuarios', user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        // Si el usuario no existe, redirigir al formulario de registro para completar los datos
         router.push({
           pathname: '/register',
           query: { email: user.email, googleUser: 'true', uid: user.uid },
         });
       } else {
-        // Si el usuario ya existe, simplemente redirige al dashboard
         router.push('/dashboard');
       }
     } catch {

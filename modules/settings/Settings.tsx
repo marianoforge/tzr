@@ -1,6 +1,8 @@
+/* eslint-disable import/no-duplicates */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import router from 'next/router';
 
 import { useAuthStore } from '@/stores/authStore';
 import { cleanString } from '@/common/utils/cleanString';
@@ -8,7 +10,6 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import ModalCancel from '@/components/PrivateComponente/CommonComponents/Modal';
 import ModalUpdate from '@/components/PrivateComponente/CommonComponents/Modal';
-import router from 'next/router';
 import { QueryKeys } from '@/common/enums';
 
 const Settings = () => {

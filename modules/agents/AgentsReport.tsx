@@ -1,4 +1,3 @@
-// components/AgentsReport.tsx
 import React, { useCallback, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';

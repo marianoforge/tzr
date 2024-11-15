@@ -1,12 +1,13 @@
 import React from 'react';
+import router from 'next/router';
 
 import LicenseCard from './LicensesCard';
+
 import {
   PRICE_ID_STARTER,
   PRICE_ID_GROWTH,
   PRICE_ID_ENTERPRISE,
 } from '@/lib/data';
-import router from 'next/router';
 
 interface LicensesModalProps {
   isOpen: boolean;

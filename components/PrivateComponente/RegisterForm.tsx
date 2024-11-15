@@ -1,4 +1,3 @@
-// RegisterForm.tsx
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, SubmitHandler, Resolver } from 'react-hook-form';

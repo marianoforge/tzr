@@ -1,12 +1,11 @@
 import React from 'react';
-import { UseFormRegister, Path, FieldValues } from 'react-hook-form'; // Importa FieldValues
+import { UseFormRegister, Path, FieldValues } from 'react-hook-form';
 
-// Agregamos 'extends FieldValues' para cumplir con las restricciones de react-hook-form
 interface SelectProps<T extends FieldValues> {
   label: string;
   options: { value: string; label: string }[];
   register: UseFormRegister<T>;
-  name: Path<T>; // Usamos Path<T> para asegurarnos de que sea una ruta válida dentro de T
+  name: Path<T>;
   required?: boolean;
   className?: string;
   mb?: string;

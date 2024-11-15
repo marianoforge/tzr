@@ -11,13 +11,13 @@ export function setCsrfCookie(res: NextApiResponse): string {
     sameSite: 'strict', // Prevenir ataques CSRF
     path: '/', // Hacer que la cookie sea accesible en todo el sitio
   });
-  res.setHeader('Set-Cookie', csrfCookie); // Establecer la cookie con el token CSRF en la respuesta
+  res.setHeader('Set-Cookie', csrfCookie);
   return token;
 }
 
 // Validar el token CSRF
 export function validateCsrfToken(req: NextApiRequest): boolean {
-  const cookies: { [key: string]: string } = parse(req.headers.cookie || ''); // Parsear las cookies de la solicitud
+  const cookies: { [key: string]: string } = parse(req.headers.cookie || '');
   const csrfTokenFromCookie: string | undefined = cookies['csrfToken'];
   const csrfTokenFromHeader: string | undefined = req.headers['csrf-token'] as
     | string
@@ -27,5 +27,5 @@ export function validateCsrfToken(req: NextApiRequest): boolean {
     return false;
   }
 
-  return csrfTokenFromCookie === csrfTokenFromHeader; // Comparar el token de la cookie con el token del encabezado
+  return csrfTokenFromCookie === csrfTokenFromHeader;
 }

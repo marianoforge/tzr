@@ -1,4 +1,5 @@
 import Link from 'next/link';
+
 import LicensesSection from './LicensesSection';
 
 const HeroSection = () => {

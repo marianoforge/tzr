@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { TeamMember } from '@/common/types/';
 import { QueryKeys } from '../enums';
+
+import { TeamMember } from '@/common/types/';
 
 const fetchTeamMembers = async (
   teamLeadID: string

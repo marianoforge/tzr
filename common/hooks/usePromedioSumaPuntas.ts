@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { Operation } from '@/common/types';
+
 import { ALQUILER, OperationStatus } from '../enums';
-import { OperationType } from '../enums';
+
+import { Operation } from '@/common/types';
 
 interface MonthlyData {
   year: number;
@@ -45,7 +46,8 @@ const usePromedioSumaPuntas = (operations: Operation[]): MonthlyData[] => {
     });
 
     return Object.entries(monthlyDataMap).map(
-      ([key, { year, month, total, count }]) => ({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ([_, { year, month, total, count }]) => ({
         year,
         month,
         promedioSumaPuntas: total / count,

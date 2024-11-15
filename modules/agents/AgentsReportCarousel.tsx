@@ -1,7 +1,10 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import Slider from 'react-slick';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PencilIcon, TrashIcon, ServerIcon } from '@heroicons/react/24/outline';
+
+import EditAgentsModal from './EditAgentsModal';
+import { TeamMember } from './AgentsReport';
 
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
@@ -12,12 +15,11 @@ import {
   calculateTotalTips,
   calculateTotalReservationValue,
 } from '@/common/utils/calculationsAgents';
-
 import Loader from '@/components/PrivateComponente/Loader';
-import EditAgentsModal from './EditAgentsModal';
+
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { TeamMember } from './AgentsReport';
+
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
 // Configuración del slider
@@ -66,10 +68,8 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
   // All hooks should be declared at the top level
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const itemsPerPage = 10;
 
   const { data, error, isLoading } = useQuery({
@@ -107,11 +107,6 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
     setIsModalOpen(true);
   }, []);
 
-  const handleDeleteButtonClick = useCallback((member: TeamMember) => {
-    setSelectedMember(member);
-    setIsDeleteModalOpen(true);
-  }, []);
-
   const handleSubmit = useCallback(
     (updatedMember: TeamMember) => {
       updateMemberMutation.mutate(updatedMember, {
@@ -122,10 +117,6 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
     },
     [updateMemberMutation]
   );
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
 
   // Ensure hooks are called unconditionally before the return
   if (isLoading) return <Loader />;

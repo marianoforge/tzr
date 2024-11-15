@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import Button from '@/components/PrivateComponente/FormComponents/Button';

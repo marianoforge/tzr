@@ -2,7 +2,6 @@ import axios from 'axios';
 
 import { Operation } from '@/common/types/';
 
-// Crear una nueva operación
 export const createOperation = async (operationData: Operation) => {
   const response = await axios.post('/api/operations', operationData);
   return response.data;

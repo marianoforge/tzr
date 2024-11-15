@@ -1,4 +1,3 @@
-// gds-si/modules/operations/OperationsTableFilters.tsx
 import React from 'react';
 import { Tooltip } from 'react-tooltip';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';

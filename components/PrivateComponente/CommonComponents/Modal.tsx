@@ -7,10 +7,10 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   message,
   onAccept,
-  secondButtonText, // Nuevo prop para el texto del segundo botón
-  onSecondButtonClick, // Nuevo prop para la función de clic del segundo botón
-  thirdButtonText, // Nuevo prop para el texto del tercer botón
-  onThirdButtonClick, // Nuevo prop para la función de clic del tercer botón
+  secondButtonText,
+  onSecondButtonClick,
+  thirdButtonText,
+  onThirdButtonClick,
   className,
 }) => {
   if (!isOpen) return null;

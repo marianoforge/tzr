@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+
 import { TeamMember } from './AgentsReport';
 
 type ModalProps = {
@@ -11,7 +12,6 @@ type ModalProps = {
 
 const EditAgentsModal = ({
   isOpen,
-  onClose,
   onCloseAndUpdate,
   member,
   onSubmit,

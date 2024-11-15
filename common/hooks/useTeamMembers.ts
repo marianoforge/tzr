@@ -1,17 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { useAuthStore } from '@/stores/authStore'; // Suponiendo que aquí manejas la autenticación
 import { QueryKeys } from '../enums';
 
+import { useAuthStore } from '@/stores/authStore';
+
 export const useTeamMembers = () => {
-  const { userID } = useAuthStore(); // Obtener el UID del usuario logueado
+  const { userID } = useAuthStore();
 
   const fetchTeamMembers = async () => {
-    // Hacer la solicitud al endpoint existente
     const response = await axios.get('/api/users/teamMembers');
 
-    // Filtrar los miembros del equipo por teamLeadID en el frontend
     const teamMembers = response.data.teamMembers.filter(
       (member: { teamLeadID: string | null }) => member.teamLeadID === userID
     );
@@ -19,11 +18,10 @@ export const useTeamMembers = () => {
     return teamMembers;
   };
 
-  // Usar react-query para manejar la solicitud y el caché de los datos
   const query = useQuery({
     queryKey: [QueryKeys.TEAM_MEMBERS, userID],
     queryFn: fetchTeamMembers,
-    enabled: !!userID, // Habilitar la consulta solo si hay un userID
+    enabled: !!userID,
   });
 
   return query;

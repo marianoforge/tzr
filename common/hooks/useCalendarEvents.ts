@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+
 import { useAuthStore } from '@/stores/authStore';
 import { fetchUserEvents } from '@/lib/api/eventsApi';
 import { Event } from '@/common/types/';

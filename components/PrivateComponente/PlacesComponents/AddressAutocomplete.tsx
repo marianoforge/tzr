@@ -84,7 +84,7 @@ export default function AddressAutocompleteManual({
         setCountry(selectedAddress.country);
         setCity(selectedAddress.city);
         setProvince(selectedAddress.province);
-        onAddressSelect(selectedAddress); // Send data to parent form
+        onAddressSelect(selectedAddress);
         setError(null);
       } else {
         setError(`Error in Details API: ${data.status}`);

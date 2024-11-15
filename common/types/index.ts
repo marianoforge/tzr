@@ -123,7 +123,7 @@ export interface UserData {
   objetivoAnual: number | null;
   role: string | null;
   uid: string | null;
-  trialEndsAt: Date | { toDate: () => Date } | null; // Allow for Firestore Timestamp
+  trialEndsAt: Date | { toDate: () => Date } | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
 }
