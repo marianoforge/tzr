@@ -171,7 +171,10 @@ const OperationsTableTent: React.FC = () => {
 
   const handleEstadoChange = useCallback(
     (id: string, currentEstado: string) => {
-      const newEstado = currentEstado === 'En Curso' ? 'Cerrada' : 'En Curso';
+      const newEstado =
+        currentEstado === OperationStatus.EN_CURSO
+          ? OperationStatus.CERRADA
+          : OperationStatus.EN_CURSO;
 
       const existingOperation = transformedOperations.find(
         (op: Operation) => op.id === id

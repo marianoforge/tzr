@@ -202,19 +202,19 @@ const OperationsCarousel: React.FC = () => {
                         handleEstadoChange(operacion.id, operacion.estado)
                       }
                       className={`relative inline-flex items-center h-6 rounded-full w-11 transition duration-150 ease-in-out ${
-                        operacion.estado === 'En Curso'
+                        operacion.estado === OperationStatus.EN_CURSO
                           ? `bg-mediumBlue`
                           : `bg-darkBlue`
                       }`}
                     >
                       <span
                         className={`${
-                          operacion.estado === 'En Curso'
+                          operacion.estado === OperationStatus.EN_CURSO
                             ? 'translate-x-6'
                             : 'translate-x-1'
                         } inline-block w-4 h-4 transform bg-white rounded-full transition duration-150 ease-in-out`}
                       >
-                        {operacion.estado === 'En Curso' ? (
+                        {operacion.estado === OperationStatus.EN_CURSO ? (
                           <p className="h-4 w-4 text-mediumBlue flex justify-center items-center">
                             A
                           </p>

@@ -34,7 +34,7 @@ const generateData = (closedOperations: any, openOperations: any) => {
     }
 
     if (index >= currentMonthIndex && index <= 11) {
-      proyeccion = (closedOperations.Octubre || 0) + openOperations;
+      proyeccion = (closedOperations[month] || 0) + openOperations;
     }
 
     return { mes: month, ventas, proyeccion };
@@ -89,6 +89,8 @@ const VentasAcumuladas = () => {
   );
 
   const data = generateData(closedOperationsByMonth, openOperationsByMonth);
+
+  console.log(data);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">

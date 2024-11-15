@@ -1,5 +1,6 @@
-import { Operation } from '@/common/types';
 import { OperationStatus } from '../enums';
+
+import { Operation } from '@/common/types';
 
 const currentYear = new Date().getFullYear();
 
@@ -54,7 +55,7 @@ const getOperationsByMonth = (
 
 // Función para calcular operaciones cerradas
 export const closedOperationsByMonth2024 = (operations: Operation[]) => {
-  const targetYear = 2024;
+  const targetYear = new Date().getFullYear();
   const monthlyResults = getOperationsByMonth(
     operations,
     targetYear,
@@ -73,7 +74,7 @@ export const closedOperationsByMonth2024 = (operations: Operation[]) => {
 
 // Función para calcular operaciones abiertas
 export const openOperationsByMonth2024 = (operations: Operation[]) => {
-  const targetYear = 2024;
+  const targetYear = new Date().getFullYear();
   const monthlyResults = getOperationsByMonth(
     operations,
     targetYear,
