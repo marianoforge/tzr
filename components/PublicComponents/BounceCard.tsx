@@ -31,7 +31,7 @@ const BounceCard: React.FC<BounceCardProps> = ({
       }}
     >
       <div className="w-full flex justify-center mb-10">
-        <div className="bg-white lg:w-[500px] lg:h-[200px] py-10 px-6 shadow-lg w-[75%] text-center rounded-xl flex flex-col md:flex-row items-center justify-center">
+        <div className="bg-white lg:w-[500px] h-[250px] sm:h-[200px] py-10 px-6 shadow-lg w-[75%] text-center rounded-xl flex flex-col md:flex-row items-center justify-center">
           <div className="icon w-[20%] hidden md:block">
             <Image
               src="/isortp.png"

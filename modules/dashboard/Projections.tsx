@@ -75,7 +75,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 const VentasAcumuladas = () => {
   const { userID } = useAuthStore();
   const currentMonthIndex = new Date().getMonth();
-  const previousMonthIndex = currentMonthIndex - 1;
 
   const { data: operations = [] } = useQuery({
     queryKey: ['operations', userID],

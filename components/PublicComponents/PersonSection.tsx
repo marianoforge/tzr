@@ -5,7 +5,7 @@ const PersonSection = () => {
       <div className="absolute -top-[400px] lg:top-0 inset-2 bottom-0 rounded-xl ring-1 ring-black/5 bg-gradient-to-r bg-black"></div>
       <div className="w-full ">
         <div className="flex relative flex-col top-16 xl:top-24 lg:flex-row justify-center items-center gap-24 mb-[120px]">
-          <div className="bg-transparent/10 border ml-20 border-gray-100/15 rounded-[5%] px-[6px] py-[6px]">
+          <div className="bg-transparent/10 border lg:ml-20 border-gray-100/15 rounded-[5%] px-[6px] py-[6px]">
             <Image
               src={'/gustavoDeSimone.jpg'}
               width={330}
@@ -14,16 +14,16 @@ const PersonSection = () => {
               className="rounded-[5%] shadow-xl 0"
             />
           </div>
-          <div className="flex flex-col">
-            <div className="flex flex-col lg:mb-20 mb-40 lg:mt-20 leading-[3rem] w-[90%] xl:w-full ">
-              <p className="text-[36px] text-white">
+          <div className="flex flex-col mb-80 sm:mb-20 md:mb-0 md:flex-row justify-center lg:justify-start lg:flex-col lg:mr-8">
+            <div className="flex flex-col mb-6 md:pl-10 lg:pl-0 lg:mb-20 md:mb-40 lg:mt-20 lg:leading-[3rem] lg:w-full items-center w-full md:w-1/2 ">
+              <p className="text-[20px] lg:text-[32px] xl:text-[36px] text-white">
                 &quot;No saber como manejar tus finanzas
               </p>
-              <p className="text-[36px] text-white">
+              <p className="text-[20px] lg:text-[36px] text-white">
                 es el camino directo a la ruina&quot;
               </p>
             </div>
-            <div className="flex flex-col mb-20 mt-10">
+            <div className="flex flex-col sm:mb-60 lg:mb-20 lg:mt-10 md:items-start lg:w-full w-full md:w-1/2 items-center">
               <p className="text-[18px] text-white mb-1">Gustavo De Simone</p>
               <span className="text-sm bg-gradient-to-r from-[#fff1be]  via-[#ee87cb] bg-clip-text  to-[#b060ff] text-transparent">
                 CEO de Gustavo De Simone Soluciones Inmobiliarias, Buenos Aires

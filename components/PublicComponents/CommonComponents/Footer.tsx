@@ -1,31 +1,62 @@
 import Link from 'next/link';
 import React from 'react';
-
+import Image from 'next/image';
 const Footer = () => {
   return (
-    <footer className="p-4 relative h-[600px] w-full rounded-xl">
-      <div className="absolute inset-2 bottom-0 rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-mediumBlue via-lightBlue to-darkBlue -z-10"></div>
-      <div className="flex flex-col mx-auto  justify-around text-white items-center mt-10 z-50">
+    <footer className="p-4 pt-0 relative h-auto w-full rounded-xl">
+      <div className="absolute inset-2 bottom-0 rounded-b-xl ring-1 ring-black/5 bg-gradient-to-r from-mediumBlue via-lightBlue to-darkBlue -z-10"></div>
+      <div className="flex flex-col mx-auto justify-around text-white items-center z-50">
         <div className="text-white text-[40px] text-center mt-10 leading-tight">
           <p>¿Estás listo para emprender</p>
           <p>como los profesionales?</p>
         </div>
         <div className="text-white text-md text-center mt-6">
-          <p>Get the cheat codes for selling and unlock your</p>
-          <p>team&apos;s revenue potential.</p>
+          <p>Descubre la herramienta que cambiará tu vida</p>
+          <p>y te permitirá maximizar tus ingresos.</p>
         </div>
         <Link href="/register">
-          <button className="w-[182px] px-4 lg:mt-10 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white">
+          <button className="w-full max-w-[182px] px-4 lg:mt-10 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white">
             Empieza Gratis
           </button>
         </Link>
 
-        <hr className="w-full border-t border-dotted border-opacity-50  border-white mt-10" />
-        <hr className="w-full border-t border-dotted border-opacity-50  border-white my-1" />
-        <hr className="w-full border-t border-dotted border-opacity-50  border-white mt-24" />
-        <hr className="w-full border-t border-dotted border-opacity-50  border-white my-1" />
-        <hr className="w-full border-t border-dotted border-opacity-50  border-white mt-10" />
-        <hr className="w-full border-t border-dotted border-opacity-50  border-white my-1" />
+        <hr className="w-full border-t border-dotted border-opacity-50 border-white mt-10" />
+        <hr className="w-full border-t border-dotted border-opacity-50 border-white my-1" />
+        <div className="flex flex-col md:flex-row justify-center md:justify-start w-full h-auto items-center md:items-start text-center md:text-left">
+          <div className="flex flex-row justify-center md:justify-start h-32 items-center md:items-start w-full md:w-2/5 ml-2">
+            <Image
+              src="/trackproLogoWhite.png"
+              alt="logo"
+              width={200}
+              height={100}
+            />
+          </div>
+          <div className="flex flex-col md:flex-row justify-center md:justify-start h-auto items-center md:items-start w-full md:w-3/5 gap-10 md:gap-20">
+            <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
+              <h5 className="mt-1 mb-6 text-slate-300">Companía</h5>
+              <p className="hover:underline mb-3">Términos y condiciones</p>
+              <p className="hover:underline">Política de privacidad</p>
+            </div>
+            <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
+              <h5 className="mt-1 mb-6 text-slate-300">Contacto</h5>
+              <p className="hover:underline mb-3">info@realtortrackpro.com</p>
+              <p className="hover:underline">+56 9 1234 5678</p>
+            </div>
+            <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
+              <h5 className="mt-1 mb-6 text-slate-300">Producto</h5>
+              <p className="hover:underline mb-3">FAQs</p>
+              <p className="hover:underline">Pricing</p>
+            </div>
+          </div>
+        </div>
+        <hr className="w-full border-t border-dotted border-opacity-50 border-white" />
+        <hr className="w-full border-t border-dotted border-opacity-50 border-white my-1" />
+
+        <div className="flex flex-col md:flex-row justify-center md:justify-start w-full h-16 items-center ml-4 text-center md:text-left">
+          <p>© 2024 Realtor Track Pro - Aquila Ventures</p>
+        </div>
+        <hr className="w-full border-t border-dotted border-opacity-50 border-white" />
+        <hr className="w-full border-t border-dotted border-opacity-50 border-white my-1" />
       </div>
     </footer>
   );
