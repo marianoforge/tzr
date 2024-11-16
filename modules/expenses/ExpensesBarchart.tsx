@@ -11,16 +11,14 @@ import {
 } from 'recharts';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { auth } from '@/lib/firebase';
 import { useExpensesStore } from '@/stores/useExpensesStore';
-import { fetchUserExpenses, deleteExpense } from '@/lib/api/expensesApi';
-import useModal from '@/common/hooks/useModal';
+import { fetchUserExpenses } from '@/lib/api/expensesApi';
 import { Expense } from '@/common/types/';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { COLORS } from '@/lib/constants';
-import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { MonthNames, QueryKeys } from '@/common/enums';
 
@@ -48,8 +46,6 @@ const CustomTooltip: React.FC<{
 
 const ExpensesBarchart: React.FC = () => {
   const { calculateTotals } = useExpensesStore();
-  const queryClient = useQueryClient();
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [userUID, setUserUID] = useState<string | null>(null); // Initialize userUID state
   const router = useRouter();
 
@@ -82,34 +78,6 @@ const ExpensesBarchart: React.FC = () => {
   }, [expenses, calculateTotals]);
 
   const filteredExpenses = expenses || [];
-
-  const {
-    isOpen: isDeleteModalOpen,
-    openModal: openDeleteModal,
-    closeModal: closeDeleteModal,
-  } = useModal();
-
-  const mutationDelete = useMutation({
-    mutationFn: (id: string) => deleteExpense(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.EXPENSES, userUID],
-      });
-      calculateTotals();
-    },
-  });
-
-  const handleDeleteClick = (expense: Expense) => {
-    setSelectedExpense(expense);
-    openDeleteModal();
-  };
-
-  const confirmDelete = () => {
-    if (selectedExpense?.id) {
-      mutationDelete.mutate(selectedExpense.id);
-      closeDeleteModal();
-    }
-  };
 
   const groupExpensesByMonth = (expenses: Expense[]) => {
     const allMonths = [
@@ -207,20 +175,10 @@ const ExpensesBarchart: React.FC = () => {
               fill={COLORS[3]}
               name="Monto en Dólares"
               barSize={50}
-              onClick={(data) => handleDeleteClick(data)}
             />
           </BarChart>
         </ResponsiveContainer>
       </div>
-
-      <ModalDelete
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        message="¿Estás seguro de querer eliminar este gasto?"
-        onSecondButtonClick={confirmDelete}
-        secondButtonText="Borrar Gasto"
-        className="w-[450px]"
-      />
     </div>
   );
 };

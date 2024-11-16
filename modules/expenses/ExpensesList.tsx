@@ -359,7 +359,7 @@ const ExpensesList = () => {
       <ModalDelete
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
-        message="¿Estás seguro de querer eliminar esta operación?"
+        message="¿Estás seguro de querer eliminar este gasto?"
         onSecondButtonClick={() => {
           confirmDelete();
         }}

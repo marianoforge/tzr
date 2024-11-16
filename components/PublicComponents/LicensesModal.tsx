@@ -58,7 +58,7 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
 
           <LicenseCard
             title="TEAM LEADER"
-            description="All the extras for your growing team."
+            description="Todo lo que necesitas para liderar tu equipo."
             price="$12.99"
             annualPrice="$129.99"
             buttonText="Empieza Gratis"
@@ -74,7 +74,7 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
 
           <LicenseCard
             title="ENTERPRISE"
-            description="Added flexibility to close deals at scale."
+            description="Flexibilidad para cerrar operaciones a gran escala."
             price="Contáctanos"
             buttonText="Contáctanos"
             priceId={PRICE_ID_ENTERPRISE}

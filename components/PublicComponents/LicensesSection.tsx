@@ -1,7 +1,9 @@
 // CardsSection.tsx
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
 import LicenseCard from './LicensesCard';
+import ContactForm from './ContactForm';
 
 import {
   PRICE_ID_ENTERPRISE,
@@ -15,14 +17,25 @@ interface LicensesSectionProps {
 
 const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
   const router = useRouter();
+  const [isContactFormOpen, setIsContactFormOpen] = useState(false);
 
   const handleLicenseSelect = (priceId: string) => {
-    localStorage.setItem('selectedPriceId', priceId);
+    if (priceId === PRICE_ID_ENTERPRISE) {
+      setIsContactFormOpen(true);
+    } else {
+      localStorage.setItem('selectedPriceId', priceId);
 
-    if (router.pathname !== '/register') {
-      router.push('/register');
+      if (router.pathname !== '/register') {
+        router.push('/register');
+      }
+      if (onClose) {
+        onClose();
+      }
     }
-    // Close the modal
+  };
+
+  const handleCloseContactForm = () => {
+    setIsContactFormOpen(false);
     if (onClose) {
       onClose();
     }
@@ -50,7 +63,7 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
 
       <LicenseCard
         title="TEAM LEADER"
-        description="All the extras for your growing team."
+        description="Todo lo que necesitas para liderar tu equipo."
         price="$12.99"
         annualPrice="$129.99"
         buttonText="Empieza Gratis"
@@ -66,7 +79,7 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
 
       <LicenseCard
         title="ENTERPRISE"
-        description="Added flexibility to close deals at scale."
+        description="Flexibilidad para operaciones a gran escala."
         price="Contáctanos"
         buttonText="Contáctanos"
         priceId={PRICE_ID_ENTERPRISE}
@@ -78,6 +91,8 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
         ]}
         onSelect={handleLicenseSelect}
       />
+
+      {isContactFormOpen && <ContactForm onClose={handleCloseContactForm} />}
     </div>
   );
 };
