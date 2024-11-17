@@ -29,6 +29,7 @@ const RegisterForm = () => {
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
+  const [referral, setReferral] = useState<string | null>(null);
 
   const schema = createSchema(googleUser === 'true');
   const {
@@ -144,6 +145,14 @@ const RegisterForm = () => {
     }
   };
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.rewardful) {
+      window.rewardful('ready', function () {
+        setReferral(window.rewardful?.referral || null);
+      });
+    }
+  }, []);
+
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
       <div className="flex items-center justify-center lg:justify-start">
@@ -238,7 +247,9 @@ const RegisterForm = () => {
           error={errors.numeroTelefono?.message}
           required
         />
-
+        {referral ? (
+          <input type="hidden" name="referral" value={referral} />
+        ) : null}
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">
           <Button

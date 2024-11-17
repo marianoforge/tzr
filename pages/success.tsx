@@ -5,13 +5,11 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 
 import { formatDateTime } from '@/common/utils/formatEventDateTime';
-import axios from 'axios';
 import { SessionType } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { QueryKeys } from '@/common/enums';
-import { PRICE_ID_GROWTH } from '@/lib/data';
-import { PRICE_ID_STARTER } from '@/lib/data';
+import { PRICE_ID_GROWTH, PRICE_ID_STARTER } from '@/lib/data';
 
 export default function Success() {
   const router = useRouter();
