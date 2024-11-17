@@ -4,30 +4,24 @@ import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import Image from 'next/image';
-import { loadStripe } from '@stripe/stripe-js';
+import { nanoid } from 'nanoid';
 
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import LicensesModal from '@/components/PublicComponents/LicensesModal';
-import { APIMethods, PATHS } from '@/common/enums';
-import { cleanString } from '@/common/utils/cleanString';
 import { RegisterData } from '@/common/types';
 import { createSchema } from '@/common/schemas/registerFormSchema';
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
-
 const RegisterForm = () => {
   const router = useRouter();
-  const { googleUser, email, uid } = router.query; // Capturar priceId directamente de la query
+  const { googleUser, email } = router.query;
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [formError, setFormError] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
+  const [showPassword, setShowPassword] = useState(false);
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
 
   const schema = createSchema(googleUser === 'true');
@@ -44,16 +38,20 @@ const RegisterForm = () => {
     const fetchCsrfToken = async () => {
       try {
         const res = await fetch('/api/auth/register', {
-          method: APIMethods.GET,
+          method: 'GET',
+          credentials: 'include', // Asegúrate de incluir las cookies
         });
-        const data = await res.json();
-        setCsrfToken(data.csrfToken);
+        const { csrfToken } = await res.json();
+        setCsrfToken(csrfToken);
       } catch (error) {
-        console.error('Error al obtener el token CSRF:', error);
+        console.error('Error fetching CSRF token:', error);
       }
     };
-    fetchCsrfToken();
-  }, []);
+
+    if (!csrfToken) {
+      fetchCsrfToken();
+    }
+  }, [csrfToken]);
 
   useEffect(() => {
     if (googleUser === 'true' && email) {
@@ -78,61 +76,49 @@ const RegisterForm = () => {
 
     try {
       const storedPriceId = localStorage.getItem('selectedPriceId');
+      const verificationToken = nanoid();
 
-      const response = await fetch('/api/auth/register', {
-        method: APIMethods.POST,
+      const registerResponse = await fetch('/api/auth/register', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'CSRF-Token': csrfToken || '',
+          'X-CSRF-Token': csrfToken,
         },
+        credentials: 'include', // Asegura que las cookies se envíen con la solicitud
         body: JSON.stringify({
           ...data,
-          agenciaBroker: cleanString(data.agenciaBroker),
-          googleUser: googleUser === 'true',
-          uid: googleUser === 'true' ? uid : undefined,
-          priceId: storedPriceId || null,
-          ...(storedPriceId
-            ? {}
-            : { trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) }),
-          password: googleUser !== 'true' ? data.password : undefined,
-          confirmPassword:
-            googleUser !== 'true' ? data.confirmPassword : undefined,
+          priceId: storedPriceId,
+          verificationToken,
         }),
       });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al registrar usuario');
+
+      if (!registerResponse.ok) {
+        throw new Error('Error al registrar el usuario.');
       }
 
-      if (storedPriceId) {
-        const stripeRes = await fetch('/api/checkout/checkout_session', {
-          method: APIMethods.POST,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            priceId: storedPriceId,
-          }),
-        });
+      // Enviar correo de verificación
+      const emailResponse = await fetch('/api/auth/sendVerificationEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          verificationToken,
+        }),
+      });
 
-        const { sessionId } = await stripeRes.json();
-        const stripe = await stripePromise;
-
-        if (sessionId) {
-          const { error } = await stripe!.redirectToCheckout({ sessionId });
-          if (error) {
-            throw new Error(
-              'Error en la redirección a Stripe: ' + error.message
-            );
-          }
-        } else {
-          throw new Error('No se pudo obtener el sessionId para Stripe.');
-        }
-      } else {
-        setModalMessage('Registro exitoso. Ahora puedes iniciar sesión.');
-        setIsModalOpen(true);
-        router.push(PATHS.DASHBOARD);
+      if (!emailResponse.ok) {
+        throw new Error('Error al enviar el correo de verificación.');
       }
+
+      setModalMessage(
+        'Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada.'
+      );
+      setIsModalOpen(true);
+
+      // Detener el flujo aquí hasta que el usuario verifique su correo
+      return;
     } catch (err: unknown) {
       if (err instanceof Error) {
         setFormError(err.message);

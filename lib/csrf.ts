@@ -4,12 +4,18 @@ import { serialize, parse } from 'cookie';
 
 // Generar un token CSRF y establecerlo en una cookie
 export function setCsrfCookie(res: NextApiResponse): string {
-  const token: string = nanoid(); // Genera un token aleatorio
-  const csrfCookie: string = serialize('csrfToken', token, {
-    httpOnly: true, // Evitar acceso desde JavaScript
-    secure: process.env.NODE_ENV === 'production', // Usar HTTPS en producción
-    sameSite: 'strict', // Prevenir ataques CSRF
-    path: '/', // Hacer que la cookie sea accesible en todo el sitio
+  const existingToken = res.getHeader('Set-Cookie');
+  if (existingToken) {
+    // Si ya hay un token, no generamos uno nuevo
+    return existingToken.toString();
+  }
+
+  const token = nanoid();
+  const csrfCookie = serialize('csrfToken', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
   });
   res.setHeader('Set-Cookie', csrfCookie);
   return token;
@@ -17,13 +23,15 @@ export function setCsrfCookie(res: NextApiResponse): string {
 
 // Validar el token CSRF
 export function validateCsrfToken(req: NextApiRequest): boolean {
-  const cookies: { [key: string]: string } = parse(req.headers.cookie || '');
-  const csrfTokenFromCookie: string | undefined = cookies['csrfToken'];
-  const csrfTokenFromHeader: string | undefined = req.headers['csrf-token'] as
-    | string
-    | undefined;
+  const cookies = parse(req.headers.cookie || '');
+  const csrfTokenFromCookie = cookies['csrfToken'];
+  const csrfTokenFromHeader = req.headers['x-csrf-token'] as string;
 
   if (!csrfTokenFromCookie || !csrfTokenFromHeader) {
+    console.error('CSRF token missing:', {
+      csrfTokenFromCookie,
+      csrfTokenFromHeader,
+    });
     return false;
   }
 

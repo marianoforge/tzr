@@ -198,6 +198,7 @@ export interface RegisterRequestBody {
   stripeCustomerId: string;
   stripeSubscriptionId: string;
   trialEndsAt: string;
+  verificationToken: string;
 }
 
 export interface LoginRequestBody {

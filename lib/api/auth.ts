@@ -1,8 +1,4 @@
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import axios from 'axios';
 
 import { auth } from '@/lib/firebase';
@@ -22,21 +18,6 @@ export const loginWithEmailAndPassword = async (
   } catch (error) {
     console.error(error);
     throw new Error('Error al iniciar sesión con email y contraseña.');
-  }
-};
-
-// Login con Google
-export const loginWithGoogle = async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    return {
-      message: 'Inicio de sesión con Google exitoso',
-      user: result.user,
-    };
-  } catch (error) {
-    console.error(error);
-    throw new Error('Error al iniciar sesión con Google.');
   }
 };
 

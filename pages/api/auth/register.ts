@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, Timestamp } from 'firebase/firestore'; // Importa Timestamp
 
-import { auth, db } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { setCsrfCookie, validateCsrfToken } from '@/lib/csrf';
 import { RegisterRequestBody } from '@/common/types/';
 
@@ -11,8 +10,17 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'GET') {
-    const token = setCsrfCookie(res);
-    return res.status(200).json({ csrfToken: token });
+    const existingToken = req.cookies['csrfToken'];
+    if (!existingToken) {
+      const token = setCsrfCookie(res);
+      // eslint-disable-next-line no-console
+      console.log('Generated CSRF token:', token);
+      return res.status(200).json({ csrfToken: token });
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('CSRF token already exists:', existingToken);
+      return res.status(200).json({ csrfToken: existingToken });
+    }
   }
 
   if (req.method === 'POST') {
@@ -29,6 +37,7 @@ export default async function handler(
       firstName,
       lastName,
       priceId,
+      verificationToken,
     }: RegisterRequestBody = req.body;
 
     if (
@@ -36,7 +45,8 @@ export default async function handler(
       !agenciaBroker ||
       !numeroTelefono ||
       !firstName ||
-      !lastName
+      !lastName ||
+      !verificationToken
     ) {
       return res
         .status(400)
@@ -44,54 +54,26 @@ export default async function handler(
     }
 
     try {
-      // Si falta la contraseña para el registro con email y contraseña
-      if (!password) {
-        return res.status(400).json({ message: 'La contraseña es requerida' });
-      }
-
-      // Registro con email y contraseña
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      // Almacenar datos preliminares
+      await setDoc(doc(db, 'verifications', email), {
         email,
-        password
-      );
-      const user = userCredential.user;
-
-      await setDoc(doc(db, 'usuarios', user.uid), {
-        email: user.email,
+        password, // Considera encriptar la contraseña antes de almacenarla
         agenciaBroker,
         numeroTelefono,
         firstName,
         lastName,
         priceId,
-        uid: user.uid,
+        verificationToken,
         createdAt: Timestamp.now(),
       });
 
-      await setDoc(doc(db, 'teams', user.uid), {
-        email: user.email,
-        firstName,
-        lastName,
-        numeroTelefono,
-        teamLeadID: user.uid,
-      });
-
-      return res
-        .status(201)
-        .json({ message: 'Usuario registrado exitosamente' });
+      // Devuelve el token al cliente
+      return res.status(200).json({ verificationToken });
     } catch (error) {
-      console.error(error);
-      if (error instanceof Error) {
-        return res.status(500).json({
-          message: error.message.includes('email-already-in-use')
-            ? 'El email ya está registrado'
-            : 'Error en el registro',
-        });
-      } else {
-        return res.status(500).json({
-          message: 'Error desconocido en el registro',
-        });
-      }
+      console.error('Error in registration process:', error);
+      return res
+        .status(500)
+        .json({ message: 'Error en el registro preliminar' });
     }
   }
 
