@@ -1,6 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import Script from 'next/script';
 
 import { GTM_ID, GTM_SCRIPT } from '../lib/gtm'; // Ajusta la ruta según la ubicación de tu archivo gtm.js
 
@@ -23,10 +22,6 @@ export default function Document() {
             __html: GTM_SCRIPT,
           }}
         />
-        <Script src="https://r.wdfl.co/rw.js" data-rewardful="8ee8ed"></Script>
-        <Script id="rewardful-queue" strategy="beforeInteractive">
-          {`(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`}
-        </Script>
         {/* <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           strategy="beforeInteractive"

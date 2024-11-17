@@ -2,11 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -69,28 +65,6 @@ const LoginForm = () => {
     }
   };
 
-  // Iniciar sesión con Google
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, new GoogleAuthProvider());
-      const user = result.user;
-
-      const userDocRef = doc(db, 'usuarios', user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        router.push({
-          pathname: '/register',
-          query: { email: user.email, googleUser: 'true', uid: user.uid },
-        });
-      } else {
-        router.push('/dashboard');
-      }
-    } catch {
-      setFormError('Error al iniciar sesión con Google');
-    }
-  };
-
   return (
     <>
       <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
@@ -149,16 +123,8 @@ const LoginForm = () => {
             >
               Iniciar Sesión con Email
             </Button>
-            <Button
-              type="button"
-              onClick={handleGoogleLogin}
-              className="bg-redAccent hover:bg-redAccent/90 text-white py-2 px-4 rounded-md w-[200px] text-sm"
-            >
-              Iniciar sesión con Google
-            </Button>
           </div>
 
-          {/* Google Login Button */}
           <hr className="hidden sm:block sm:my-4" />
           <div className="flex flex-col gap-4 mt-4 justify-center items-center sm:flex-row sm:mt-0 ">
             <Link

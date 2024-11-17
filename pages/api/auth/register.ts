@@ -28,12 +28,7 @@ export default async function handler(
       numeroTelefono,
       firstName,
       lastName,
-      role,
-      googleUser,
-      uid,
       priceId,
-      stripeCustomerId,
-      stripeSubscriptionId,
     }: RegisterRequestBody = req.body;
 
     if (
@@ -49,35 +44,6 @@ export default async function handler(
     }
 
     try {
-      // Si el usuario se está registrando con Google
-      if (googleUser && uid) {
-        await setDoc(doc(db, 'usuarios', uid), {
-          email,
-          agenciaBroker,
-          numeroTelefono,
-          firstName,
-          lastName,
-          role,
-          priceId,
-          stripeCustomerId,
-          stripeSubscriptionId,
-          createdAt: Timestamp.now(), // Timestamp para createdAt
-        });
-
-        // Crear documento en la colección 'teams'
-        await setDoc(doc(db, 'teams', uid), {
-          email,
-          firstName,
-          lastName,
-          numeroTelefono,
-          teamLeadID: uid,
-        });
-
-        return res
-          .status(201)
-          .json({ message: 'Usuario registrado exitosamente (Google)' });
-      }
-
       // Si falta la contraseña para el registro con email y contraseña
       if (!password) {
         return res.status(400).json({ message: 'La contraseña es requerida' });
@@ -99,10 +65,9 @@ export default async function handler(
         lastName,
         priceId,
         uid: user.uid,
-        createdAt: Timestamp.now(), // Timestamp para createdAt
+        createdAt: Timestamp.now(),
       });
 
-      // Crear documento en la colección 'teams'
       await setDoc(doc(db, 'teams', user.uid), {
         email: user.email,
         firstName,

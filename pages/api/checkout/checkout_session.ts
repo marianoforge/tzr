@@ -10,7 +10,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const { priceId, userId, referral } = req.body;
+    const { priceId, userId } = req.body; // Asegúrate de recibir el userId también
 
     try {
       // Crear la sesión de pago con un período de prueba de 7 días
@@ -26,10 +26,8 @@ export default async function handler(
         subscription_data: {
           trial_period_days: 7,
         },
-        metadata: {
-          referral: referral || 'no-referral',
-        },
-        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}&user_id=${userId}`,
+        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}&user_id=${userId}`, // Pasamos también el userId aquí
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
       });
 
       res.status(200).json({ sessionId: session.id });
