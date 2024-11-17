@@ -9,7 +9,7 @@ import { SessionType } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { QueryKeys } from '@/common/enums';
-import { PRICE_ID_GROWTH, PRICE_ID_STARTER } from '@/lib/data';
+import { PRICE_ID_STARTER } from '@/lib/data';
 
 export default function Success() {
   const router = useRouter();
@@ -28,12 +28,13 @@ export default function Success() {
         const customerId = session.customer;
         const subscriptionId = session.subscription;
         const selectedPriceId = localStorage.getItem('selectedPriceId');
+        console.log('Selected price ID:', selectedPriceId);
+
         const role =
           selectedPriceId === PRICE_ID_STARTER
             ? 'agente_asesor'
-            : selectedPriceId === PRICE_ID_GROWTH
-              ? 'team_leader_broker'
-              : 'enterprise_broker';
+            : 'team_leader_broker';
+
         const userIdRes = await fetch(
           `/api/users/getUserIdByEmail?email=${email}`
         );

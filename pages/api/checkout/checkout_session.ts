@@ -13,10 +13,9 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const { email } = req.body; // Asegúrate de recibir el email
+    const { email } = req.body;
 
     try {
-      // Obtener el usuario de la base de datos
       const userDocRef = doc(db, 'usuarios', email);
       const userDoc = await getDoc(userDocRef);
 

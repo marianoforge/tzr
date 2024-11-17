@@ -57,7 +57,7 @@ export default async function handler(
       // Almacenar datos preliminares
       await setDoc(doc(db, 'verifications', email), {
         email,
-        password, // Considera encriptar la contraseña antes de almacenarla
+        password,
         agenciaBroker,
         numeroTelefono,
         firstName,
