@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ValidationError } from 'yup'; // Import the ValidationError type
 
-import { loginWithEmailAndPassword, loginWithGoogle } from '@/lib/api/auth'; // Usamos las funciones refactorizadas
+import { loginWithEmailAndPassword } from '@/lib/api/auth'; // Usamos las funciones refactorizadas
 import { LoginRequestBody } from '@/common/types/';
 import { schema } from '@/common/schemas/loginFormSchema'; // Importa el esquema de validación
 
@@ -13,17 +13,10 @@ export default async function handler(
     return res.status(405).json({ message: 'Método no permitido' });
   }
 
-  const { email, password, googleAuth }: LoginRequestBody = req.body;
+  const { email, password }: LoginRequestBody = req.body;
 
   try {
     await schema.validate(req.body, { abortEarly: false });
-
-    if (googleAuth) {
-      const response = await loginWithGoogle();
-      return res
-        .status(200)
-        .json({ message: response.message, user: response.user });
-    }
 
     // Validar si se pasó email y password
     if (!email || !password) {
