@@ -91,6 +91,7 @@ export enum PATHS {
   EXPENSES_LIST = '/expensesList',
   AGENTS = '/agents',
   EXPENSES_BROKER = '/expensesBroker',
+  PROYECTIONS = '/proyections',
   NOT_AUTHORIZED = '/not-authorized',
 }
 

@@ -10,6 +10,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   showPasswordToggle?: boolean;
   onTogglePassword?: () => void;
   isPasswordVisible?: boolean;
+  width?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -35,9 +36,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative mt-2">
           <input
             ref={ref}
-            className={`${
-              className || 'w-full p-2 border border-gray-300 rounded'
-            }`}
+            className={`w-full p-2 border border-gray-300 rounded ${className}`}
             {...props}
             type={showPasswordToggle && isPasswordVisible ? 'text' : props.type}
           />

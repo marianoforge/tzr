@@ -20,9 +20,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`${
-        className || 'bg-blue-500 text-white p-2 rounded hover:bg-blue-600'
-      } !cursor-pointer`}
+      className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 !cursor-pointer ${className} `}
       onClick={onClick}
     >
       {label}
