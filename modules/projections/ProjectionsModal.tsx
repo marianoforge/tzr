@@ -178,10 +178,18 @@ const ProjectionsModal: React.FC<ProjectionsModalProps> = ({
             )}
           />
           <div className="flex justify-center gap-4">
-            <Button type="submit" disabled={mutation.isPending}>
+            <Button
+              type="submit"
+              disabled={mutation.isPending}
+              className="bg-mediumBlue text-white hover:bg-lightBlue transition-colors duration-300 w-[210px]"
+            >
               {mutation.isPending ? 'Guardando...' : 'Guardar'}
             </Button>
-            <Button type="button" onClick={onClose}>
+            <Button
+              type="button"
+              onClick={onClose}
+              className="bg-lightBlue text-white hover:bg-mediumBlue transition-colors duration-300 w-[210px]"
+            >
               Cancelar
             </Button>
           </div>

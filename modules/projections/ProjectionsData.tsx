@@ -174,9 +174,9 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
         <Button
           type="button"
           onClick={handleSubmit(onSubmit)}
-          className="h-[42px] w-[200px]"
+          className="h-[42px] w-[200px] bg-mediumBlue text-white hover:bg-lightBlue transition-colors duration-300"
         >
-          Calcular
+          Calcular Proyección
         </Button>
       </div>
     </div>

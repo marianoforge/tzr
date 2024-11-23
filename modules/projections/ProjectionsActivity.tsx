@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { PencilIcon } from '@heroicons/react/24/outline';
 
 import ProjectionsModal, { WeekData } from './ProjectionsModal';
 
@@ -85,9 +86,9 @@ const ProjectionsActivity = () => {
           <tr>
             <th className="w-2/12 px-4 py-2">Semana</th>
             <th className="w-2/12 px-4 py-2">Actividad Verde</th>
-            <th className="w-2/12 px-4 py-2">Contactos o referidos</th>
-            <th className="w-1/12 px-4 py-2">PreBuying</th>
-            <th className="w-1/12 px-4 py-2">PreListing</th>
+            <th className="w-2/12 px-4 py-2">Contactos o Referidos</th>
+            <th className="w-1/12 px-4 py-2">Pre Buying</th>
+            <th className="w-1/12 px-4 py-2">Pre Listing</th>
             <th className="w-1/12 px-4 py-2">Captaciones</th>
             <th className="w-1/12 px-4 py-2">Reservas</th>
             <th className="w-1/12 px-4 py-2">Cierres</th>
@@ -126,7 +127,7 @@ const ProjectionsActivity = () => {
                   onClick={() => handleEditClick(index)}
                   className="text-blue-500 hover:text-blue-700"
                 >
-                  Editar
+                  <PencilIcon className="h-5 w-5" />
                 </button>
               </td>
             </tr>
