@@ -48,8 +48,8 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
       case PATHS.RESET_PASSWORD:
         router.push(PATHS.RESET_PASSWORD);
         break;
-      case PATHS.PROYECTIONS:
-        router.push(PATHS.PROYECTIONS);
+      case PATHS.PROJECTIONS:
+        router.push(PATHS.PROJECTIONS);
         break;
     }
   };

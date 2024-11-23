@@ -64,7 +64,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
         label="Calendario de Eventos"
       />
       <NavLink
-        href="/proyections"
+        href="/projections"
         icon={<ChartBarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Proyecciones"
       />

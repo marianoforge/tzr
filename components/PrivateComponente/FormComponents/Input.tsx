@@ -11,6 +11,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onTogglePassword?: () => void;
   isPasswordVisible?: boolean;
   width?: string;
+  labelSize?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -24,6 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       showPasswordToggle,
       onTogglePassword,
       isPasswordVisible,
+      labelSize = 'text-base',
       ...props
     },
     ref
@@ -31,7 +33,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`${marginBottom} ${marginTop}`}>
         {label && (
-          <label className="font-semibold text-mediumBlue">{label}</label>
+          <label className={`font-semibold text-mediumBlue ${labelSize}`}>
+            {label}
+          </label>
         )}
         <div className="relative mt-2">
           <input

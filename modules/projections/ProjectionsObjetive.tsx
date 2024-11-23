@@ -13,19 +13,19 @@ const schema = yup.object().shape({
     .positive('Must be positive'),
 });
 
-interface ProyectionsObjetiveProps {
+interface ProjectionsObjetiveProps {
   ticketPromedio: number;
   promedioHonorariosNetos: number;
   efectividad: number;
   semanasDelAno: number;
 }
 
-const ProyectionsObjective = ({
+const ProjectionsObjective = ({
   ticketPromedio,
   promedioHonorariosNetos,
   efectividad,
   semanasDelAno,
-}: ProyectionsObjetiveProps) => {
+}: ProjectionsObjetiveProps) => {
   const {
     control,
     watch,
@@ -54,50 +54,55 @@ const ProyectionsObjective = ({
   ).toFixed(2);
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full items-center">
       <h2 className="text-lg font-bold mb-4">
         Información sobre movimientos a efectar
       </h2>
-      <div className="flex flex-row w-full gap-4 justify-around">
+      <div className="flex flex-col w-full items-center">
         <Controller
           name="objetivoHonorariosAnuales"
           control={control}
           render={({ field }) => (
             <Input
-              label="Objetivo Honorarios Anuales (USD)"
+              label="Objetivo Hon. Anuales"
               type="number"
-              className="w-[240px] max-w-[240px]"
+              className="w-[200px] max-w-[200px]"
               {...field}
               error={errors.objetivoHonorariosAnuales?.message}
+              labelSize="text-sm"
             />
           )}
         />
         <Input
           label="Volumen a Facturar"
           type="number"
-          className="w-[240px] max-w-[240px]"
+          className="w-[200px] max-w-[200px]"
           value={volumenAFacturar}
           disabled
+          labelSize="text-sm"
         />
         <Input
           label="Total de Puntas o Cierres"
           type="number"
-          className="w-[240px] max-w-[240px]"
+          className="w-[200px] max-w-[200px]"
           value={totalPuntasCierres}
+          labelSize="text-sm"
           disabled
         />
         <Input
           label="Total de Pre Listings"
           type="number"
-          className="w-[240px] max-w-[240px]"
+          className="w-[200px] max-w-[200px]"
           value={totalPuntasCierresAnuales}
+          labelSize="text-sm"
           disabled
         />
         <Input
-          label="Total de Puntas o Cierres Semanales"
+          label="Total de Puntas Semanales"
           type="number"
-          className="w-[240px] max-w-[240px]"
+          className="w-[200px] max-w-[200px]"
           value={totalPuntasCierresSemanales}
+          labelSize="text-sm"
           disabled
         />
       </div>
@@ -105,4 +110,4 @@ const ProyectionsObjective = ({
   );
 };
 
-export default ProyectionsObjective;
+export default ProjectionsObjective;
