@@ -5,6 +5,7 @@ interface SelectProps {
   value: string | number;
   onChange: (value: string | number) => void;
   className?: string;
+  required?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -12,12 +13,14 @@ const Select: React.FC<SelectProps> = ({
   value,
   onChange,
   className,
+  required,
 }) => {
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className={className}
+      required={required}
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>

@@ -12,6 +12,8 @@ import Button from '@/components/PrivateComponente/FormComponents/Button';
 import LicensesModal from '@/components/PublicComponents/LicensesModal';
 import { RegisterData } from '@/common/types';
 import { createSchema } from '@/common/schemas/registerFormSchema';
+import { useCurrenciesByRegion } from '@/common/hooks/useCurrenciesByRegion';
+import Select from '@/components/PrivateComponente/CommonComponents/Select';
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -23,6 +25,19 @@ const RegisterForm = () => {
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
+
+  // Hook para regiones y monedas
+  const { region, setRegion, currencies } =
+    useCurrenciesByRegion('SouthAmerica');
+  const [selectedCurrency, setSelectedCurrency] = useState('');
+  const [selectedSymbol, setSelectedSymbol] = useState('');
+
+  const handleCurrencyChange = (value: string | number) => {
+    const currencyCode = value as string;
+    const currency = currencies.find((c) => c.code === currencyCode);
+    setSelectedCurrency(currencyCode);
+    setSelectedSymbol(currency?.symbol || '');
+  };
 
   const schema = createSchema(googleUser === 'true');
   const {
@@ -39,7 +54,7 @@ const RegisterForm = () => {
       try {
         const res = await fetch('/api/auth/register', {
           method: 'GET',
-          credentials: 'include', // Asegúrate de incluir las cookies
+          credentials: 'include',
         });
         const { csrfToken } = await res.json();
         setCsrfToken(csrfToken);
@@ -84,11 +99,14 @@ const RegisterForm = () => {
           'Content-Type': 'application/json',
           'X-CSRF-Token': csrfToken,
         },
-        credentials: 'include', // Asegura que las cookies se envíen con la solicitud
+        credentials: 'include',
         body: JSON.stringify({
           ...data,
           priceId: storedPriceId,
           verificationToken,
+          currency: selectedCurrency,
+          currencySymbol: selectedSymbol,
+          region,
         }),
       });
 
@@ -96,7 +114,6 @@ const RegisterForm = () => {
         throw new Error('Error al registrar el usuario.');
       }
 
-      // Enviar correo de verificación
       const emailResponse = await fetch('/api/auth/sendVerificationEmail', {
         method: 'POST',
         headers: {
@@ -117,7 +134,6 @@ const RegisterForm = () => {
       );
       setIsModalOpen(true);
 
-      // Detener el flujo aquí hasta que el usuario verifique su correo
       return;
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -151,6 +167,7 @@ const RegisterForm = () => {
           <p className="text-redAccent mb-4 text-center">{formError}</p>
         )}
 
+        {/* Campos del formulario */}
         <Input
           label="Nombre"
           type="text"
@@ -222,6 +239,48 @@ const RegisterForm = () => {
           placeholder="+54 11 6348 8465"
           {...register('numeroTelefono')}
           error={errors.numeroTelefono?.message}
+          required
+        />
+
+        <label
+          htmlFor="region"
+          className="font-semibold text-mediumBlue text-base"
+        >
+          Región de la moneda en la que va a efectuar las operaciones
+        </label>
+        <Select
+          options={[
+            { value: 'SouthAmerica', label: 'Suramérica' },
+            { value: 'CentralAmerica', label: 'Centroamérica' },
+            { value: 'NorthAmerica', label: 'Norteamérica' },
+          ]}
+          value={region}
+          onChange={(value) =>
+            setRegion(
+              value as 'SouthAmerica' | 'CentralAmerica' | 'NorthAmerica'
+            )
+          }
+          className="border rounded-md w-full p-2 mb-4"
+          required
+        />
+
+        <label
+          htmlFor="currency"
+          className="font-semibold text-mediumBlue text-base"
+        >
+          Moneda en la que va a efectura las opercaiones
+        </label>
+        <Select
+          options={[
+            { value: '', label: 'Seleccione una moneda' },
+            ...currencies.map((currency) => ({
+              value: currency.code,
+              label: `${currency.code} - ${currency.currency}`,
+            })),
+          ]}
+          value={selectedCurrency}
+          onChange={handleCurrencyChange}
+          className="border rounded-md w-full p-2 mb-4"
           required
         />
 

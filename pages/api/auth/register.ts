@@ -38,8 +38,10 @@ export default async function handler(
       lastName,
       priceId,
       verificationToken,
+      currency,
+      region,
+      currencySymbol,
     }: RegisterRequestBody = req.body;
-
     if (
       !email ||
       !agenciaBroker ||
@@ -64,6 +66,9 @@ export default async function handler(
         lastName,
         priceId,
         verificationToken,
+        currency,
+        region,
+        currencySymbol,
         createdAt: Timestamp.now(),
       });
 

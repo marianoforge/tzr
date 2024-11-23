@@ -51,6 +51,9 @@ export default async function handler(
       firstName,
       lastName,
       priceId,
+      currency,
+      region,
+      currencySymbol,
     } = verificationDoc.data();
 
     // Completar el registro del usuario
@@ -69,6 +72,9 @@ export default async function handler(
       lastName,
       priceId,
       uid: user.uid,
+      currency,
+      region,
+      currencySymbol,
       createdAt: Timestamp.now(),
     });
 

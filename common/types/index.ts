@@ -178,6 +178,9 @@ export interface RegisterData {
   confirmPassword?: string;
   agenciaBroker: string;
   numeroTelefono: string;
+  currency: string;
+  region: string;
+  currencySymbol: string;
 }
 
 export interface LoginData {
@@ -199,6 +202,9 @@ export interface RegisterRequestBody {
   stripeSubscriptionId: string;
   trialEndsAt: string;
   verificationToken: string;
+  currency: string;
+  region: string;
+  currencySymbol: string;
 }
 
 export interface LoginRequestBody {
