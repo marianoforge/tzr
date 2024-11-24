@@ -179,7 +179,6 @@ export interface RegisterData {
   agenciaBroker: string;
   numeroTelefono: string;
   currency: string;
-  region: string;
   currencySymbol: string;
 }
 
@@ -203,7 +202,6 @@ export interface RegisterRequestBody {
   trialEndsAt: string;
   verificationToken: string;
   currency: string;
-  region: string;
   currencySymbol: string;
 }
 

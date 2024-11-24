@@ -39,7 +39,6 @@ export default async function handler(
       priceId,
       verificationToken,
       currency,
-      region,
       currencySymbol,
     }: RegisterRequestBody = req.body;
     if (
@@ -48,7 +47,9 @@ export default async function handler(
       !numeroTelefono ||
       !firstName ||
       !lastName ||
-      !verificationToken
+      !verificationToken ||
+      !currency ||
+      !currencySymbol
     ) {
       return res
         .status(400)
@@ -67,7 +68,6 @@ export default async function handler(
         priceId,
         verificationToken,
         currency,
-        region,
         currencySymbol,
         createdAt: Timestamp.now(),
       });

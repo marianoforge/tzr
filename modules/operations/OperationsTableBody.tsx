@@ -31,6 +31,7 @@ interface OperationsTableBodyProps {
   handleDeleteButtonClick: (operation: Operation) => void;
   handleViewClick: (operation: Operation) => void;
   filteredTotals: OperationTotal;
+  currencySymbol: string;
 }
 
 const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
@@ -41,6 +42,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
   handleDeleteButtonClick,
   handleViewClick,
   filteredTotals,
+  currencySymbol,
 }) => {
   return (
     <tbody>
@@ -76,7 +78,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
             {operacion.tipo_operacion}
           </td>
           <td className="py-3 px-2 before:content-['Valor:'] md:before:content-none">
-            ${formatNumber(operacion.valor_reserva)}
+            {`${currencySymbol}${formatNumber(operacion.valor_reserva)}`}
           </td>
           <td className="py-3 px-2 before:content-['Punta Vendedora:'] md:before:content-none">
             {formatNumber(operacion.porcentaje_punta_vendedora ?? 0)}%
@@ -98,10 +100,10 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
             )}
           </td>
           <td className="py-3 px-2 before:content-['Honorarios Agencia:'] md:before:content-none">
-            ${formatNumber(operacion.honorarios_broker)}
+            {`${currencySymbol}${formatNumber(operacion.honorarios_broker)}`}
           </td>
           <td className="py-3 px-2 before:content-['Honorarios Netos:'] md:before:content-none">
-            {`$${formatNumber(calculateNetFees(operacion, userData))}`}
+            {`${currencySymbol}${formatNumber(calculateNetFees(operacion, userData))}`}
           </td>
           <td className="py-3 px-2 md:before:content-none">
             <button

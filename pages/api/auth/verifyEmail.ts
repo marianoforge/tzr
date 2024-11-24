@@ -52,7 +52,6 @@ export default async function handler(
       lastName,
       priceId,
       currency,
-      region,
       currencySymbol,
     } = verificationDoc.data();
 
@@ -73,7 +72,6 @@ export default async function handler(
       priceId,
       uid: user.uid,
       currency,
-      region,
       currencySymbol,
       createdAt: Timestamp.now(),
     });

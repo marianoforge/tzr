@@ -9,10 +9,13 @@ import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import { formatNumber } from '@/common/utils/formatNumber';
 import usePagination from '@/common/hooks/usePagination';
 import { OperationStatus } from '@/common/enums';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { useAuthStore } from '@/stores/authStore';
 
 const AgentsReportByOps = ({ userId }: { userId: string }) => {
   const [searchQuery, setSearchQuery] = useState('');
-
+  const { userID } = useAuthStore();
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
   const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
     const response = await fetch('/api/getTeamsWithOperations');
     if (!response.ok) {
@@ -117,7 +120,8 @@ const AgentsReportByOps = ({ userId }: { userId: string }) => {
                       {operacion.direccion_reserva}
                     </td>
                     <td className="py-3 px-4">
-                      ${formatNumber(operacion.valor_reserva)}
+                      {currencySymbol}
+                      {formatNumber(operacion.valor_reserva)}
                     </td>
                     <td className="py-3 px-4">{operacion.tipo_operacion}</td>
                     <td className="py-3 px-4">{operacion.fecha_operacion}</td>

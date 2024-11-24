@@ -10,9 +10,13 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { useAuthStore } from '@/stores/authStore';
 import { formatValue } from '@/common/utils/formatValue';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
+import { formatNumber } from '@/common/utils/formatNumber';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
+
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const {
     data: operations = [],
@@ -30,7 +34,7 @@ const Bubbles = () => {
   const bubbleData = [
     {
       title: 'Honorarios Netos',
-      figure: formatValue(totals.honorarios_asesor_cerradas ?? 0, 'currency'),
+      figure: `${currencySymbol}${formatNumber(totals.honorarios_asesor_cerradas ?? 0)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip:
@@ -38,7 +42,9 @@ const Bubbles = () => {
     },
     {
       title: 'Honorarios Brutos',
-      figure: formatValue(totals.honorarios_broker_cerradas ?? 0, 'currency'),
+      figure: `${currencySymbol}${formatNumber(
+        totals.honorarios_broker_cerradas ?? 0
+      )}`,
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
       tooltip:
@@ -46,7 +52,7 @@ const Bubbles = () => {
     },
     {
       title: 'Monto Ops. Cerradas',
-      figure: formatValue(totals.valor_reserva_cerradas ?? 0, 'currency'),
+      figure: `${currencySymbol}${formatNumber(totals.valor_reserva_cerradas ?? 0)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Este es el valor total de las operaciones cerradas.',
@@ -87,14 +93,14 @@ const Bubbles = () => {
     },
     {
       title: 'Honorarios Netos en Curso',
-      figure: formatValue(totals.honorarios_asesor_abiertas ?? 0, 'currency'),
+      figure: `${currencySymbol}${formatNumber(totals.honorarios_asesor_abiertas ?? 0)}`,
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Netos sobre las operaciones en curso.',
     },
     {
       title: 'Honorarios Brutos en Curso',
-      figure: formatValue(totals.honorarios_broker_abiertas ?? 0, 'currency'),
+      figure: `${currencySymbol}${formatNumber(totals.honorarios_broker_abiertas ?? 0)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Brutos sobre las operaciones en curso.',

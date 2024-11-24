@@ -27,6 +27,7 @@ import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
 import { ExpenseType, QueryKeys } from '@/common/enums';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -38,6 +39,7 @@ const ExpensesList = () => {
   const [yearFilter, setYearFilter] = useState(new Date().getFullYear());
   const [monthFilter, setMonthFilter] = useState('all');
   const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
+  const { currencySymbol } = useUserCurrencySymbol(userUID || '');
 
   const {
     data: expenses,
@@ -274,10 +276,10 @@ const ExpensesList = () => {
                   >
                     <td className="py-3 px-4">{formatDate(expense.date)}</td>
                     <td className="py-3 px-4">
-                      ${formatNumber(expense.amount)}
+                      {`${currencySymbol}${formatNumber(expense.amount)}`}
                     </td>
                     <td className="py-3 px-4">
-                      ${formatNumber(expense.amountInDollars)}
+                      {`${currencySymbol}${formatNumber(expense.amountInDollars)}`}
                     </td>
                     <td className="py-3 px-4">{expense.expenseType}</td>
                     <td className="py-3 px-4">{expense.description}</td>
@@ -303,7 +305,7 @@ const ExpensesList = () => {
                     Total
                   </td>
                   <td className="py-3 px-4 text-center">
-                    $
+                    {currencySymbol}
                     {formatNumber(
                       filteredExpenses.reduce(
                         (acc: number, expense: Expense) => acc + expense.amount,
@@ -312,7 +314,7 @@ const ExpensesList = () => {
                     )}
                   </td>
                   <td className="py-3 px-4 text-center">
-                    $
+                    {currencySymbol}
                     {formatNumber(
                       filteredExpenses.reduce(
                         (acc: number, expense: Expense) =>

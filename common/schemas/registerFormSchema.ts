@@ -21,7 +21,6 @@ export const createSchema = (googleUser: boolean) =>
         .oneOf([yup.ref('password'), undefined], 'Las contraseñas no coinciden')
         .required('Confirmar contraseña es requerido'),
     }),
-    currency: yup.string().required('Moneda es requerida'),
-    region: yup.string().required('Región es requerida'),
-    currencySymbol: yup.string().required('Símbolo de moneda es requerido'),
+    currency: yup.string(),
+    currencySymbol: yup.string(),
   });

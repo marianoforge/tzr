@@ -12,7 +12,7 @@ import Button from '@/components/PrivateComponente/FormComponents/Button';
 import LicensesModal from '@/components/PublicComponents/LicensesModal';
 import { RegisterData } from '@/common/types';
 import { createSchema } from '@/common/schemas/registerFormSchema';
-import { useCurrenciesByRegion } from '@/common/hooks/useCurrenciesByRegion';
+import { useCurrenciesForAmericas } from '@/common/hooks/useCurrenciesByRegion';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 
 const RegisterForm = () => {
@@ -26,9 +26,7 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
 
-  // Hook para regiones y monedas
-  const { region, setRegion, currencies } =
-    useCurrenciesByRegion('SouthAmerica');
+  const { currencies } = useCurrenciesForAmericas();
   const [selectedCurrency, setSelectedCurrency] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('');
 
@@ -37,6 +35,7 @@ const RegisterForm = () => {
     const currency = currencies.find((c) => c.code === currencyCode);
     setSelectedCurrency(currencyCode);
     setSelectedSymbol(currency?.symbol || '');
+    setValue('currency', currencyCode); // Asegúrate de actualizar el formulario
   };
 
   const schema = createSchema(googleUser === 'true');
@@ -106,7 +105,6 @@ const RegisterForm = () => {
           verificationToken,
           currency: selectedCurrency,
           currencySymbol: selectedSymbol,
-          region,
         }),
       });
 
@@ -135,12 +133,9 @@ const RegisterForm = () => {
       setIsModalOpen(true);
 
       return;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setFormError(err.message);
-      } else {
-        setFormError('Ocurrió un error desconocido');
-      }
+    } catch (error) {
+      console.error('Error al enviar la solicitud:', error);
+      setFormError('Ocurrió un error al enviar la solicitud.');
     } finally {
       setLoading(false);
     }
@@ -243,46 +238,28 @@ const RegisterForm = () => {
         />
 
         <label
-          htmlFor="region"
-          className="font-semibold text-mediumBlue text-base"
-        >
-          Región de la moneda en la que va a efectuar las operaciones
-        </label>
-        <Select
-          options={[
-            { value: 'SouthAmerica', label: 'Suramérica' },
-            { value: 'CentralAmerica', label: 'Centroamérica' },
-            { value: 'NorthAmerica', label: 'Norteamérica' },
-          ]}
-          value={region}
-          onChange={(value) =>
-            setRegion(
-              value as 'SouthAmerica' | 'CentralAmerica' | 'NorthAmerica'
-            )
-          }
-          className="border rounded-md w-full p-2 mb-4"
-          required
-        />
-
-        <label
           htmlFor="currency"
           className="font-semibold text-mediumBlue text-base"
         >
-          Moneda en la que va a efectura las opercaiones
+          Moneda en la que va a efectuar las operaciones
         </label>
         <Select
           options={[
             { value: '', label: 'Seleccione una moneda' },
             ...currencies.map((currency) => ({
               value: currency.code,
-              label: `${currency.code} - ${currency.currency}`,
+              label: `${currency.code} - ${currency.name}`,
             })),
           ]}
           value={selectedCurrency}
-          onChange={handleCurrencyChange}
+          onChange={(value) => handleCurrencyChange(value)}
           className="border rounded-md w-full p-2 mb-4"
-          required
         />
+        {selectedCurrency && (
+          <p>
+            Moneda seleccionada: {selectedCurrency} ({selectedSymbol})
+          </p>
+        )}
 
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">

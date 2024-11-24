@@ -25,6 +25,7 @@ import {
 } from '@/lib/data';
 import { OperationStatus } from '@/common/enums';
 import { useOperations } from '@/common/hooks/useOperactions';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 const OperationsTable: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -50,6 +51,7 @@ const OperationsTable: React.FC = () => {
 
   const router = useRouter();
   const { userData } = useUserDataStore();
+  const { currencySymbol } = useUserCurrencySymbol(userUID || '');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -287,6 +289,7 @@ const OperationsTable: React.FC = () => {
             handleDeleteButtonClick={handleDeleteButtonClick}
             handleViewClick={handleViewClick}
             filteredTotals={filteredTotals}
+            currencySymbol={currencySymbol}
           />
         </table>
         <div className="flex justify-center mt-4 mb-4">

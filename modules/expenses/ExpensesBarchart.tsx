@@ -21,22 +21,25 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import { COLORS } from '@/lib/constants';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { MonthNames, QueryKeys } from '@/common/enums';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { useAuthStore } from '@/stores/authStore';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
   payload?: Array<{ value: number; payload: { amountInPesos: number } }>;
   label?: string;
 }> = ({ active, payload, label }) => {
+  const { userID } = useAuthStore();
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`Monto en Dólares: $${formatNumber(
+        <p className="intro">{`Monto en Dólares: ${currencySymbol}${formatNumber(
           payload[0].value
         )}`}</p>
-        <p className="intro">{`Monto en Pesos: AR$${formatNumber(
-          payload[0].payload.amountInPesos
-        )}`}</p>
+        <p className="intro">{`Monto en Pesos: AR${currencySymbol}
+${formatNumber(payload[0].payload.amountInPesos)}`}</p>
       </div>
     );
   }

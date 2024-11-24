@@ -27,6 +27,7 @@ import {
   yearsFilter,
 } from '@/lib/data';
 import { ALQUILER, OperationStatus, QueryKeys } from '@/common/enums';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -51,6 +52,7 @@ const OperationsTableTent: React.FC = () => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
   const { userData } = useUserDataStore();
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const itemsPerPage = 10;
 
@@ -283,6 +285,7 @@ const OperationsTableTent: React.FC = () => {
             handleDeleteButtonClick={handleDeleteButtonClick}
             handleViewClick={handleViewClick}
             filteredTotals={filteredTotals}
+            currencySymbol={currencySymbol}
           />
         </table>
         <div className="flex justify-center mt-4 mb-4">

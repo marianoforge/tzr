@@ -21,6 +21,8 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { calculateTotals } from '@/common/utils/calculations';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
+import { useAuthStore } from '@/stores/authStore';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 export type TeamMember = {
   id: string;
@@ -70,7 +72,8 @@ const updateMember = async (updatedMember: TeamMember) => {
 
 const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   const queryClient = useQueryClient();
-
+  const { userID } = useAuthStore();
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -245,7 +248,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                     {member.operations.length > 0 ? (
                       <ul>
                         <li>
-                          $
+                          {currencySymbol}
                           {formatNumber(
                             calculateAdjustedBrokerFees(member.operations)
                           )}
@@ -284,7 +287,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                     {calculateTotalTips(member.operations)}
                   </td>
                   <td className="py-3 px-4">
-                    $
+                    {currencySymbol}
                     {formatNumber(
                       calculateTotalReservationValue(member.operations)
                     )}
