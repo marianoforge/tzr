@@ -283,7 +283,6 @@ const RegisterForm = () => {
             ref={recaptchaRef}
             onChange={(token) => {
               if (token) {
-                console.log('Captcha completado:', token);
                 setCaptchaError(''); // Limpia cualquier error previo
               }
             }}
