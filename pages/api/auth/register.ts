@@ -1,9 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { doc, setDoc, Timestamp } from 'firebase/firestore'; // Importa Timestamp
+import axios from 'axios';
 
 import { db } from '@/lib/firebase';
 import { setCsrfCookie, validateCsrfToken } from '@/lib/csrf';
 import { RegisterRequestBody } from '@/common/types/';
+
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 export default async function handler(
   req: NextApiRequest,
@@ -40,7 +43,9 @@ export default async function handler(
       verificationToken,
       currency,
       currencySymbol,
+      captchaToken,
     }: RegisterRequestBody = req.body;
+
     if (
       !email ||
       !agenciaBroker ||
@@ -49,7 +54,8 @@ export default async function handler(
       !lastName ||
       !verificationToken ||
       !currency ||
-      !currencySymbol
+      !currencySymbol ||
+      !captchaToken
     ) {
       return res
         .status(400)
@@ -57,6 +63,30 @@ export default async function handler(
     }
 
     try {
+      const captchaResponse = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify`,
+        null,
+        {
+          params: {
+            secret: RECAPTCHA_SECRET_KEY,
+            response: captchaToken,
+          },
+        }
+      );
+
+      const {
+        success,
+        score,
+        'error-codes': errorCodes,
+      } = captchaResponse.data;
+
+      if (!success || (score !== undefined && score < 0.5)) {
+        return res.status(400).json({
+          message: 'Fallo la validación del captcha',
+          errors: errorCodes || [],
+        });
+      }
+
       // Almacenar datos preliminares
       await setDoc(doc(db, 'verifications', email), {
         email,
@@ -69,6 +99,7 @@ export default async function handler(
         verificationToken,
         currency,
         currencySymbol,
+        captchaToken,
         createdAt: Timestamp.now(),
       });
 

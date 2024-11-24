@@ -103,10 +103,13 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
 
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md flex flex-col items-center w-full">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+        Proyeccion de Efectividad
+      </h2>
       <div className="flex flex-row">
         <form className="flex flex-col items-center">
           <div className="flex flex-col w-full mb-8">
-            <h2 className="text-lg font-bold mb-4">
+            <h2 className=" font-bold mb-4">
               Edita tus números para ver distintas proyecciones
             </h2>
             <div className="flex flex-col w-full  items-center">
@@ -117,7 +120,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                   <Input
                     label="Ticket Promedio"
                     type="number"
-                    className="w-[200px] max-w-[200px]"
+                    className="w-[240px] max-w-[240px] min-w-[240px]"
                     labelSize="text-sm"
                     {...field}
                     error={errors.ticketPromedio?.message}
@@ -129,9 +132,9 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                 control={control}
                 render={({ field }) => (
                   <Input
-                    label="Promedio % de hon. netos"
+                    label="Promedio en % de honorarios netos"
                     type="number"
-                    className="w-[200px] max-w-[200px]"
+                    className="w-[240px] max-w-[240px] min-w-[240px]"
                     labelSize="text-sm"
                     {...field}
                     error={errors.promedioHonorariosNetos?.message}
@@ -145,7 +148,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                   <Input
                     label="Efectividad (%)"
                     type="number"
-                    className="w-[200px] max-w-[200px]"
+                    className="w-[240px] max-w-[240px] min-w-[240px]"
                     labelSize="text-sm"
                     {...field}
                     error={errors.efectividad?.message}
@@ -155,7 +158,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
               <Input
                 label="Semanas del Año"
                 type="number"
-                className="w-[200px] max-w-[200px]"
+                className="w-[240px] max-w-[240px] min-w-[240px]"
                 labelSize="text-sm"
                 disabled
                 value={semanasDelAno}

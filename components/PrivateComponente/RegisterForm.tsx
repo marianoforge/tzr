@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import Image from 'next/image';
 import { nanoid } from 'nanoid';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
@@ -25,6 +26,8 @@ const RegisterForm = () => {
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const [captchaError, setCaptchaError] = useState('');
 
   const { currencies } = useCurrenciesForAmericas();
   const [selectedCurrency, setSelectedCurrency] = useState('');
@@ -82,8 +85,19 @@ const RegisterForm = () => {
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     setLoading(true);
+    setCaptchaError('');
+
+    // Obtén el captchaToken
+    const captchaToken = recaptchaRef.current?.getValue();
+
     if (!csrfToken) {
       setFormError('No se pudo obtener el token CSRF, intenta nuevamente.');
+      setLoading(false);
+      return;
+    }
+
+    if (!captchaToken) {
+      setCaptchaError('Por favor, completa el captcha');
       setLoading(false);
       return;
     }
@@ -105,6 +119,7 @@ const RegisterForm = () => {
           verificationToken,
           currency: selectedCurrency,
           currencySymbol: selectedSymbol,
+          captchaToken,
         }),
       });
 
@@ -140,6 +155,8 @@ const RegisterForm = () => {
       setLoading(false);
     }
   };
+
+  const sitekey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
@@ -260,7 +277,29 @@ const RegisterForm = () => {
             Moneda seleccionada: {selectedCurrency} ({selectedSymbol})
           </p>
         )}
-
+        <div className="flex justify-center">
+          <ReCAPTCHA
+            sitekey={sitekey || ''}
+            ref={recaptchaRef}
+            onChange={(token) => {
+              if (token) {
+                console.log('Captcha completado:', token);
+                setCaptchaError(''); // Limpia cualquier error previo
+              }
+            }}
+            onErrored={() =>
+              setCaptchaError(
+                'Error al completar el captcha. Intenta nuevamente.'
+              )
+            }
+            onExpired={() =>
+              setCaptchaError(
+                'El captcha expiró. Por favor, completa el captcha nuevamente.'
+              )
+            }
+          />
+        </div>
+        {captchaError && <p className="text-red-500">{captchaError}</p>}
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">
           <Button
@@ -285,6 +324,7 @@ const RegisterForm = () => {
         onClose={() => setIsModalOpen(false)}
         message={modalMessage}
         onAccept={() => router.push('/login')}
+        messageClassName="text-base"
       />
 
       <LicensesModal

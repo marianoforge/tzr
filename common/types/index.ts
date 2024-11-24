@@ -162,6 +162,7 @@ export interface ModalProps {
   className?: string;
   thirdButtonText?: string;
   onThirdButtonClick?: () => void;
+  messageClassName?: string;
 }
 
 export interface UserInfoProps {
@@ -203,6 +204,7 @@ export interface RegisterRequestBody {
   verificationToken: string;
   currency: string;
   currencySymbol: string;
+  captchaToken: string;
 }
 
 export interface LoginRequestBody {

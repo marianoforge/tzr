@@ -55,7 +55,7 @@ const ProjectionsObjective = ({
 
   return (
     <div className="flex flex-col w-full items-center">
-      <h2 className="text-lg font-bold mb-4">
+      <h2 className=" font-bold mb-4">
         Información sobre movimientos a efectar
       </h2>
       <div className="flex flex-col w-full items-center">
@@ -66,7 +66,7 @@ const ProjectionsObjective = ({
             <Input
               label="Objetivo Hon. Anuales"
               type="number"
-              className="w-[200px] max-w-[200px]"
+              className="w-[240px] max-w-[240px] min-w-[240px]"
               {...field}
               error={errors.objetivoHonorariosAnuales?.message}
               labelSize="text-sm"
@@ -76,7 +76,7 @@ const ProjectionsObjective = ({
         <Input
           label="Volumen a Facturar"
           type="number"
-          className="w-[200px] max-w-[200px]"
+          className="w-[240px] max-w-[240px] min-w-[240px]"
           value={volumenAFacturar}
           disabled
           labelSize="text-sm"
@@ -84,7 +84,7 @@ const ProjectionsObjective = ({
         <Input
           label="Total de Puntas o Cierres"
           type="number"
-          className="w-[200px] max-w-[200px]"
+          className="w-[240px] max-w-[240px] min-w-[240px]"
           value={totalPuntasCierres}
           labelSize="text-sm"
           disabled
@@ -92,7 +92,7 @@ const ProjectionsObjective = ({
         <Input
           label="Total de Pre Listings"
           type="number"
-          className="w-[200px] max-w-[200px]"
+          className="w-[240px] max-w-[240px] min-w-[240px]"
           value={totalPuntasCierresAnuales}
           labelSize="text-sm"
           disabled
@@ -100,7 +100,7 @@ const ProjectionsObjective = ({
         <Input
           label="Total de Puntas Semanales"
           type="number"
-          className="w-[200px] max-w-[200px]"
+          className="w-[240px] max-w-[240px] min-w-[240px]"
           value={totalPuntasCierresSemanales}
           labelSize="text-sm"
           disabled

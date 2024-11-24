@@ -12,6 +12,7 @@ const Modal: React.FC<ModalProps> = ({
   thirdButtonText,
   onThirdButtonClick,
   className,
+  messageClassName,
 }) => {
   if (!isOpen) return null;
 
@@ -25,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({
       <div
         className={`bg-white p-6 rounded-xl shadow-lg text-center font-bold w-[360px] h-[15%] flex flex-col justify-center items-center ${className}`}
       >
-        <p className="text-lg mb-4">{message}</p>
+        <p className={`text-lg mb-4 ${messageClassName}`}>{message}</p>
         <div className="flex flex-row gap-4 w-full justify-center items-center">
           <button
             onClick={handleAccept}
