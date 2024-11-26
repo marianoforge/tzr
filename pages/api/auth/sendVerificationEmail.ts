@@ -32,7 +32,7 @@ export default async function handler(
     const emailParams = new EmailParams()
       .setFrom(sentFrom)
       .setTo(recipients)
-      .setSubject('Verifica tu correo electrónico')
+      .setSubject('RealtorTrackPro - Verifica tu correo electrónico')
       .setHtml(
         `<p>Por favor, verifica tu correo electrónico haciendo clic en el siguiente enlace:</p>
          <a href="${process.env.NEXT_PUBLIC_BASE_URL}/verify?token=${verificationToken}">Verificar correo</a>`

@@ -85,7 +85,7 @@ const ProjectionsActivity = () => {
         <thead className="text-center">
           <tr>
             <th className="w-2/12 px-4 py-2">Semana</th>
-            <th className="w-2/12 px-4 py-2">Actividad Verde</th>
+            <th className="w-2/12 px-4 py-2">Prospección</th>
             <th className="w-2/12 px-4 py-2">Contactos o Referidos</th>
             <th className="w-1/12 px-4 py-2">Pre Buying</th>
             <th className="w-1/12 px-4 py-2">Pre Listing</th>

@@ -1,5 +1,7 @@
 import React from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { Tooltip } from 'react-tooltip';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
@@ -12,6 +14,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isPasswordVisible?: boolean;
   width?: string;
   labelSize?: string;
+  showTooltip?: boolean;
+  tooltipContent?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -26,6 +30,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       onTogglePassword,
       isPasswordVisible,
       labelSize = 'text-base',
+      showTooltip = false,
+      tooltipContent = '',
       ...props
     },
     ref
@@ -33,9 +39,21 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`${marginBottom} ${marginTop}`}>
         {label && (
-          <label className={`font-semibold text-mediumBlue ${labelSize}`}>
-            {label}
-          </label>
+          <div className="flex items-center">
+            <label className={`font-semibold text-mediumBlue ${labelSize}`}>
+              {label}
+            </label>
+            {showTooltip && (
+              <>
+                <InformationCircleIcon
+                  className="inline-block ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                  data-tooltip-id={`tooltip-${label}`}
+                  data-tooltip-content={tooltipContent}
+                />
+                <Tooltip id={`tooltip-${label}`} place="top" />
+              </>
+            )}
+          </div>
         )}
         <div className="relative mt-2">
           <input

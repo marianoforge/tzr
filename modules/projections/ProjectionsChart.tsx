@@ -13,7 +13,6 @@ const fetchWeeks = async (userId: string) => {
 };
 
 const ProjectionsFunnelChart = ({ userId }: { userId: string }) => {
-  // Fetch data from API
   const {
     data: weeks = [],
     isLoading,
@@ -25,7 +24,7 @@ const ProjectionsFunnelChart = ({ userId }: { userId: string }) => {
   // Calculate totals for the funnel
   const funnelData = [
     {
-      name: 'Actividad Verde & Contactos Referidos',
+      name: 'Prospección & Contactos Referidos',
       value: weeks.reduce(
         (sum: number, week: WeekData) =>
           sum +
@@ -108,14 +107,14 @@ const ProjectionsFunnelChart = ({ userId }: { userId: string }) => {
   if (error) return <p>Error al cargar datos del funnel.</p>;
 
   return (
-    <div className="bg-white p-4 gap-4 mt-20 rounded-xl shadow-md flex flex-col justify-center items-center w-full">
-      <h2 className="text-xl font-bold">Proyección por etapas</h2>
+    <div className="bg-white p-4 gap-4 rounded-xl shadow-md flex flex-col justify-center items-center w-full">
+      <h2 className="text-xl font-bold">Funnel de Proyección</h2>
       <FunnelChart width={width} height={height}>
         <Tooltip />
         <Funnel dataKey="value" data={funnelData} isAnimationActive>
           <LabelList
-            position="centerTop"
-            fill="#FFF"
+            position="center"
+            fill="#1f2937"
             stroke="none"
             dataKey="name"
             className="font-semibold text-xs"

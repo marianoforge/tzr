@@ -102,7 +102,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
   };
 
   return (
-    <div className="bg-white p-4 mt-20 rounded-xl shadow-md flex flex-col items-center w-full">
+    <div className="bg-white p-4  rounded-xl shadow-md flex flex-col items-center w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
         Proyeccion de Efectividad
       </h2>
@@ -124,6 +124,8 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                     labelSize="text-sm"
                     {...field}
                     error={errors.ticketPromedio?.message}
+                    showTooltip={true}
+                    tooltipContent="Cálculo del ticket promedio de las operaciones cerradas en el año."
                   />
                 )}
               />
@@ -138,6 +140,8 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                     labelSize="text-sm"
                     {...field}
                     error={errors.promedioHonorariosNetos?.message}
+                    showTooltip={true}
+                    tooltipContent="Cálculo del porcentaje promedio de los honorarios netos de las operaciones cerradas en el año."
                   />
                 )}
               />
@@ -152,6 +156,8 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                     labelSize="text-sm"
                     {...field}
                     error={errors.efectividad?.message}
+                    showTooltip={true}
+                    tooltipContent="Ingresa tu porcentaje de efectividad de las operaciones cerradas en el año."
                   />
                 )}
               />
@@ -162,6 +168,8 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                 labelSize="text-sm"
                 disabled
                 value={semanasDelAno}
+                showTooltip={true}
+                tooltipContent="Si bien el año tiene 48 semanas, se calculan 52 ya que en Diciembre se empieza a trabajar posibles cierres del año siguiente"
               />
             </div>
           </div>

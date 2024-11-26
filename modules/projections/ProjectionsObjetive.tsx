@@ -70,6 +70,8 @@ const ProjectionsObjective = ({
               {...field}
               error={errors.objetivoHonorariosAnuales?.message}
               labelSize="text-sm"
+              showTooltip={true}
+              tooltipContent="Ingresa tu objetivo de honorarios anuales."
             />
           )}
         />
@@ -80,6 +82,8 @@ const ProjectionsObjective = ({
           value={volumenAFacturar}
           disabled
           labelSize="text-sm"
+          showTooltip={true}
+          tooltipContent="Cálculo del volumen a facturar en base a tu objetivo de honorarios anuales."
         />
         <Input
           label="Total de Puntas o Cierres"
@@ -88,6 +92,8 @@ const ProjectionsObjective = ({
           value={totalPuntasCierres}
           labelSize="text-sm"
           disabled
+          showTooltip={true}
+          tooltipContent="Cálculo del total de puntas o cierres en base al volumen a facturar."
         />
         <Input
           label="Total de Pre Listings"
@@ -96,6 +102,8 @@ const ProjectionsObjective = ({
           value={totalPuntasCierresAnuales}
           labelSize="text-sm"
           disabled
+          showTooltip={true}
+          tooltipContent="Cálculo del total de pre listings en base al total de puntas o cierres anuales."
         />
         <Input
           label="Total de Puntas Semanales"
@@ -104,6 +112,8 @@ const ProjectionsObjective = ({
           value={totalPuntasCierresSemanales}
           labelSize="text-sm"
           disabled
+          showTooltip={true}
+          tooltipContent="Cálculo del total de puntas semanales en base al total de pre listings anuales."
         />
       </div>
     </div>
