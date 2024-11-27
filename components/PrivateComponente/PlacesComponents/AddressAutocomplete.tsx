@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { usePlacesAutocomplete } from '@/common/hooks/useAutocompleteSuggestions';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
+import { useDebounce } from '@/common/hooks/useDebounce';
 interface AddressComponent {
   types: string[];
   long_name: string;
@@ -33,11 +34,13 @@ export default function AddressAutocompleteManual({
   const [error, setError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const debouncedValue = useDebounce(value, 300);
+
   const {
     data: suggestions,
     isError,
     error: queryError,
-  } = usePlacesAutocomplete(value);
+  } = usePlacesAutocomplete(debouncedValue);
 
   useEffect(() => {
     setValue(initialAddress);
