@@ -11,6 +11,7 @@ import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { calculateTotals } from '@/common/utils/calculations';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
 const schema = yup.object().shape({
   ticketPromedio: yup
@@ -46,13 +47,17 @@ const schema = yup.object().shape({
 const ProjectionsData = ({ userId }: { userId: string }) => {
   const {
     data: operations = [],
-    // isLoading,
-    // error: operationsError,
+    isLoading,
+    error,
   } = useQuery({
     queryKey: ['operations', userId],
     queryFn: () => fetchUserOperations(userId),
     enabled: !!userId,
   });
+
+  if (error) {
+    console.error('Error fetching operations:', error);
+  }
 
   const totals = calculateTotals(currentYearOperations(operations));
 
@@ -100,7 +105,13 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
   ) => {
     setFormData(data);
   };
-
+  if (isLoading) {
+    return (
+      <div className="w-full">
+        <SkeletonLoader height={60} count={10} />
+      </div>
+    );
+  }
   return (
     <div className="bg-white p-4  rounded-xl shadow-md flex flex-col items-center w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">

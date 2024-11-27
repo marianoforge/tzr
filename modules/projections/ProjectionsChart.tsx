@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import { WeekData } from './ProjectionsModal';
 
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+
 const fetchWeeks = async (userId: string) => {
   const response = await fetch(`/api/getWeeks?userId=${userId}`);
   if (!response.ok) throw new Error('Failed to fetch weeks');
@@ -103,7 +105,13 @@ const ProjectionsFunnelChart = ({ userId }: { userId: string }) => {
 
   const { width, height } = chartDimensions;
 
-  if (isLoading) return <p>Cargando datos del funnel...</p>;
+  if (isLoading) {
+    return (
+      <div className="w-full">
+        <SkeletonLoader height={60} count={10} />
+      </div>
+    );
+  }
   if (error) return <p>Error al cargar datos del funnel.</p>;
 
   return (

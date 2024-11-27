@@ -15,11 +15,6 @@ import {
   calculateTotalTips,
   calculateTotalReservationValue,
 } from '@/common/utils/calculationsAgents';
-import Loader from '@/components/PrivateComponente/Loader';
-
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
 // Configuración del slider
@@ -119,7 +114,6 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
   );
 
   // Ensure hooks are called unconditionally before the return
-  if (isLoading) return <Loader />;
   if (error instanceof Error) return <div>Error: {error.message}</div>;
 
   // Filter members and paginate them

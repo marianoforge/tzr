@@ -5,6 +5,7 @@ import { PencilIcon } from '@heroicons/react/24/outline';
 import ProjectionsModal, { WeekData } from './ProjectionsModal';
 
 import { useAuthStore } from '@/stores/authStore';
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
 const generateDefaultWeeks = () => {
   return Array.from({ length: 52 }, (_, index) => ({
@@ -76,7 +77,13 @@ const ProjectionsActivity = () => {
     }
   };
 
-  if (isLoading) return <p>Cargando...</p>;
+  if (isLoading) {
+    return (
+      <div className="w-full mt-10">
+        <SkeletonLoader height={60} count={10} />
+      </div>
+    );
+  }
   if (error) return <p>Error cargando los datos.</p>;
 
   return (
