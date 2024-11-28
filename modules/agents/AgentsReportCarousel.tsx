@@ -17,10 +17,16 @@ import {
 } from '@/common/utils/calculationsAgents';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { calculateTotals } from '@/common/utils/calculations';
+import { currentYearOperations } from '@/common/utils/currentYearOps';
+import { fetchUserOperations } from '@/common/utils/operationsApi';
+
 // Configuración del slider
 const settings = {
   dots: true,
-  infinite: true,
+  infinite: false,
   speed: 500,
   slidesToShow: 1,
   slidesToScroll: 1,
@@ -70,6 +76,12 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
   const { data, error, isLoading } = useQuery({
     queryKey: ['teamMembersWithOperations'],
     queryFn: fetchTeamMembersWithOperations,
+  });
+
+  const { data: operations = [] } = useQuery({
+    queryKey: ['operations', userId],
+    queryFn: () => fetchUserOperations(userId || ''),
+    enabled: !!userId,
   });
 
   const deleteMemberMutation = useMutation({
@@ -127,26 +139,14 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
       );
     }) || [];
 
-  const paginatedMembers = filteredMembers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const honorariosBrokerTotales = () => {
-    return paginatedMembers.reduce((acc, usuario) => {
-      return (
-        acc +
-        usuario.operations.reduce(
-          (sum: number, op: { honorarios_broker: number }) =>
-            sum + op.honorarios_broker,
-          0
-        )
-      );
-    }, 0);
-  };
   if (isLoading) {
     return <SkeletonLoader height={60} count={14} />;
   }
+
+  const totals = calculateTotals(currentYearOperations(operations));
+
+  const totalHonorariosBroker = Number(totals.honorarios_broker_cerradas);
+
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md pb-10">
       <div className="flex justify-center mb-4 flex-col items-center">
@@ -190,7 +190,7 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
                           {formatNumber(
                             (calculateAdjustedBrokerFees(usuario.operations) *
                               100) /
-                              honorariosBrokerTotales()
+                              Number(totalHonorariosBroker ?? 1)
                           )}
                           %
                         </li>
