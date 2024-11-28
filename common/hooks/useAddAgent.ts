@@ -31,11 +31,15 @@ const useAddAgent = (onSuccessCallback: () => void) => {
         throw new Error('El UID del usuario es requerido');
       }
 
+      if (!csrfToken) {
+        throw new Error('CSRF token is not available');
+      }
+
       const response = await fetch('/api/users/teamMembers', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'CSRF-Token': csrfToken || '',
+          'x-csrf-token': csrfToken,
         },
         body: JSON.stringify({
           uid: userID,
