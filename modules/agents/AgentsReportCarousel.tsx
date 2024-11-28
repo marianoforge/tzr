@@ -6,6 +6,9 @@ import { PencilIcon, TrashIcon, ServerIcon } from '@heroicons/react/24/outline';
 import EditAgentsModal from './EditAgentsModal';
 import { TeamMember } from './AgentsReport';
 
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
@@ -16,11 +19,8 @@ import {
   calculateTotalReservationValue,
 } from '@/common/utils/calculationsAgents';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import { calculateTotals } from '@/common/utils/calculations';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
+import { calculateTotals } from '@/common/utils/calculations';
 import { fetchUserOperations } from '@/common/utils/operationsApi';
 
 // Configuración del slider
@@ -70,18 +70,16 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  const { data, error, isLoading } = useQuery({
-    queryKey: ['teamMembersWithOperations'],
-    queryFn: fetchTeamMembersWithOperations,
-  });
 
   const { data: operations = [] } = useQuery({
     queryKey: ['operations', userId],
     queryFn: () => fetchUserOperations(userId || ''),
     enabled: !!userId,
+  });
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['teamMembersWithOperations'],
+    queryFn: fetchTeamMembersWithOperations,
   });
 
   const deleteMemberMutation = useMutation({
@@ -139,14 +137,13 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
       );
     }) || [];
 
-  if (isLoading) {
-    return <SkeletonLoader height={60} count={14} />;
-  }
-
   const totals = calculateTotals(currentYearOperations(operations));
 
   const totalHonorariosBroker = Number(totals.honorarios_broker_cerradas);
 
+  if (isLoading) {
+    return <SkeletonLoader height={60} count={14} />;
+  }
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md pb-10">
       <div className="flex justify-center mb-4 flex-col items-center">

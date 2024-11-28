@@ -12,10 +12,8 @@ import {
   updateOperation,
   deleteOperation,
 } from '@/lib/api/operationsApi';
-
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
 import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
@@ -131,7 +129,7 @@ const OperationsCarousel: React.FC = () => {
           {searchedOperations.map((operacion: Operation) => (
             <div key={operacion.id} className="px-0 py-4">
               <div className="bg-lightBlue text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
-                <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
+                <div className="space-y-2 sm:space-y-4 flex flex-col justify-around w-1/2">
                   <p>
                     <strong>Fecha de Operación:</strong>{' '}
                     {new Date(operacion.fecha_operacion).toLocaleDateString()}
@@ -148,14 +146,12 @@ const OperationsCarousel: React.FC = () => {
                     {formatNumber(operacion.valor_reserva)}
                   </p>
                   <p>
-                    <strong>Puntas:</strong>{' '}
+                    <strong>Puntas Obtenidas:</strong>{' '}
                     {formatNumber(
                       Number(operacion.punta_vendedora) +
                         Number(operacion.punta_compradora)
                     )}
                   </p>
-                </div>
-                <div className="space-y-2 sm:space-y-4 flex flex-col justify-around">
                   <p>
                     <strong>Porcentaje Punta Compradora:</strong>{' '}
                     {formatNumber(
@@ -168,6 +164,8 @@ const OperationsCarousel: React.FC = () => {
                     {formatNumber(Number(operacion.porcentaje_punta_vendedora))}
                     %
                   </p>
+                </div>
+                <div className="space-y-2 sm:space-y-4 flex flex-col justify-around w-1/2">
                   <p>
                     <strong>Porcentaje Puntas</strong>{' '}
                     {formatNumber(
@@ -183,6 +181,23 @@ const OperationsCarousel: React.FC = () => {
                   <p>
                     <strong>Honorarios Totales Netos:</strong> $
                     {formatNumber(operacion.honorarios_asesor)}
+                  </p>
+                  <p>
+                    <strong>Datos Compartidos:</strong>{' '}
+                    {operacion.compartido === '' ? 'N/A' : operacion.compartido}
+                  </p>
+                  <p>
+                    <strong>Porcentaje de Compartido:</strong>{' '}
+                    {formatNumber(Number(operacion.porcentaje_compartido) ?? 0)}
+                    %
+                  </p>
+                  <p>
+                    <strong>Datos Referidos:</strong>{' '}
+                    {operacion.referido === '' ? 'N/A' : operacion.referido}
+                  </p>
+                  <p>
+                    <strong>Porcentaje Referido:</strong>{' '}
+                    {formatNumber(Number(operacion.porcentaje_referido) ?? 0)}%
                   </p>
                   <div className="flex justify-around">
                     <button
