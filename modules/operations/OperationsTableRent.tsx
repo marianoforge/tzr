@@ -22,7 +22,7 @@ import { sortOperationValue } from '@/common/utils/sortUtils';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import {
   monthsFilter,
-  operationVentasTypeFilter,
+  operationVentasTypeFilterRent,
   statusOptions,
   yearsFilter,
 } from '@/lib/data';
@@ -268,7 +268,7 @@ const OperationsTableTent: React.FC = () => {
           statusOptions={statusOptions}
           yearsFilter={yearsFilter}
           monthsFilter={monthsFilter}
-          operationVentasTypeFilter={operationVentasTypeFilter}
+          operationVentasTypeFilter={operationVentasTypeFilterRent}
         />
         <table className="w-full text-left border-collapse">
           <OperationsTableHeader

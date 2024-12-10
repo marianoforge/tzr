@@ -92,6 +92,13 @@ export const operationVentasTypeFilter = [
   },
 ];
 
+export const operationVentasTypeFilterRent = [
+  { value: 'all', label: 'Tipo de la Op.' },
+  { value: OperationType.ALQUILER_TRADICIONAL, label: 'Alquiler Tradicional' },
+  { value: OperationType.ALQUILER_TEMPORAL, label: 'Alquiler Temporal' },
+  { value: OperationType.ALQUILER_COMERCIAL, label: 'Alquiler Comercial' },
+];
+
 export const monthsFilter = [
   { value: 'all', label: 'Todos los Meses' },
   { value: '1', label: 'Enero' },

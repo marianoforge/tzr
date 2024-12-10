@@ -59,10 +59,9 @@ const MonthlyBarChartGross: React.FC = () => {
         (operation: Operation) => operation.estado === OperationStatus.CERRADA
       );
     },
-    enabled: !!userID, // Solo ejecuta la query si hay un userID
+    enabled: !!userID,
   });
 
-  // Efecto para formatear los datos obtenidos
   useEffect(() => {
     if (operations.length > 0) {
       const closedOperations = operations.filter(
