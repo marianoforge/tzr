@@ -33,7 +33,6 @@ export default async function handler(
 
       const membersWithOperations = await Promise.all(
         teamMembers.map(async (member) => {
-          // Query for operations where the member is the primary user
           const primaryQuery = query(
             collection(db, 'operations'),
             where('user_uid', '==', member.id)
