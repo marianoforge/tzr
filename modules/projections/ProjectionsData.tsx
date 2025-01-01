@@ -192,7 +192,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
           semanasDelAno={semanasDelAno}
         />
       </div>
-      <div className="flex justify-center items-center mt-4">
+      <div className="flex items-center mt-4 justify-center">
         <Button
           type="button"
           onClick={handleSubmit(onSubmit)}
@@ -201,6 +201,9 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
           Calcular Proyección
         </Button>
       </div>
+      <p className="text-sm text-gray-500 mt-4">
+        By Métricas Pablo Viti - 2025
+      </p>
     </div>
   );
 };

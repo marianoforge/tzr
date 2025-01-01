@@ -5,6 +5,7 @@ import { Operation } from '@/common/types';
 //TABLE//
 
 export const calculateOperationData = (closedOperations: Operation[]) => {
+  const currentYear = new Date().getFullYear();
   return closedOperations.reduce(
     (
       acc: Record<
@@ -13,7 +14,7 @@ export const calculateOperationData = (closedOperations: Operation[]) => {
       >,
       op: Operation
     ) => {
-      if (new Date(op.fecha_operacion).getFullYear() !== 2024) {
+      if (new Date(op.fecha_operacion).getFullYear() !== currentYear) {
         return acc;
       }
 
@@ -65,17 +66,21 @@ export const calculatePercentage = (part: number, total: number) =>
 
 //CHART DATA//
 const operacionCerrada2024 = (closedOperations: Operation[]) => {
+  const currentYear = new Date().getFullYear();
   return closedOperations
     .filter(
-      (op: Operation) => new Date(op.fecha_operacion).getFullYear() === 2024
+      (op: Operation) =>
+        new Date(op.fecha_operacion).getFullYear() === currentYear
     )
     .filter((op: Operation) => op.estado === OperationStatus.CERRADA);
 };
 
 const operacionCaida2024 = (operations: Operation[]) => {
+  const currentYear = new Date().getFullYear();
   return operations
     .filter(
-      (op: Operation) => new Date(op.fecha_operacion).getFullYear() === 2024
+      (op: Operation) =>
+        new Date(op.fecha_operacion).getFullYear() === currentYear
     )
     .filter((op: Operation) => op.estado === OperationStatus.CAIDA);
 };
@@ -129,9 +134,10 @@ export const tiposOperacionesCaidasPieChartData = (operations: Operation[]) => {
 export const calculateClosedOperations2024SummaryByType = (
   closedOperations: Operation[]
 ) => {
+  const currentYear = new Date().getFullYear();
   const filteredOperations = closedOperations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === 2024 &&
+      new Date(op.fecha_operacion).getFullYear() === currentYear &&
       op.estado === OperationStatus.CERRADA
   );
 
@@ -171,9 +177,10 @@ export const calculateClosedOperations2024SummaryByType = (
 export const calculateClosedOperations2024SummaryByGroup = (
   closedOperations: Operation[]
 ) => {
+  const currentYear = new Date().getFullYear();
   const filteredOperations = closedOperations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === 2024 &&
+      new Date(op.fecha_operacion).getFullYear() === currentYear &&
       op.estado === OperationStatus.CERRADA
   );
 

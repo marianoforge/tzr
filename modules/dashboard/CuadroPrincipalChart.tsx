@@ -7,6 +7,7 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
+import { CircleStackIcon } from '@heroicons/react/24/outline';
 
 import { COLORS } from '@/lib/constants';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
@@ -35,15 +36,24 @@ const CuadroPrincipalChart = () => {
     );
   }
 
+  const currentYear = new Date().getFullYear();
+  const currentYearOperations = operations.filter(
+    (operation: Operation) =>
+      new Date(operation.fecha_operacion).getFullYear() === currentYear
+  );
+
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px] overflow-y-auto">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
         Tipo de Operaciones
       </h2>
-      {pieChartData.length === 0 ? (
-        <p className="text-center text-[20px] xl:text-[20px] 2xl:text-[22px] font-semibold">
-          No existen operaciones
-        </p>
+      {currentYearOperations.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-[240px]">
+          <p className="flex flex-col text-center text-[20px] xl:text-[16px] 2xl:text-[16px] font-semibold items-center justify-center">
+            <CircleStackIcon className="h-10 w-10 mr-2" />
+            No existen operaciones
+          </p>
+        </div>
       ) : (
         <div className="h-[300px] w-full align-middle">
           <ResponsiveContainer width="100%" height="100%">

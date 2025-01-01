@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { CircleStackIcon } from '@heroicons/react/24/outline';
 
 import { useOperationsData } from '@/common/hooks/useOperationsData';
 import { formatNumber } from '@/common/utils/formatNumber';
@@ -8,6 +9,7 @@ import {
 } from '@/common/utils/calculationsPrincipal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { OperationType } from '@/common/enums';
+import { Operation } from '@/common/types';
 
 const CuadroPrincipal = () => {
   const { operations, isLoading, operationsError, totalCantidad2024 } =
@@ -61,6 +63,12 @@ const CuadroPrincipal = () => {
       : `$${formatNumber((calcs.totalMontoOperaciones ?? 0) / (calcs.cantidadOperaciones || 1))}`;
   };
 
+  const currentYear = new Date().getFullYear();
+  const currentYearOperations = operations.filter(
+    (operation: Operation) =>
+      new Date(operation.fecha_operacion).getFullYear() === currentYear
+  );
+
   if (isLoading) {
     return <SkeletonLoader height={550} count={1} />;
   }
@@ -69,14 +77,20 @@ const CuadroPrincipal = () => {
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-md w-full hidden md:block h-[785px] overflow-y-auto">
       <div>
         <h2 className="text-2xl lg:text-[24px] font-bold mb-10 text-center">
-          Cuadro Tipos de Operaciones - 2024
+          Cuadro Tipos de Operaciones - {currentYear}
         </h2>
-        {operations.length === 0 ? (
-          <p className="text-center text-gray-600">No existen operaciones</p>
+        {currentYearOperations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[240px]">
+            <p className="flex flex-col text-center text-[20px] xl:text-[16px] 2xl:text-[16px] font-semibold items-center justify-center">
+              <CircleStackIcon className="h-10 w-10 mr-2" />
+              No existen operaciones
+            </p>
+          </div>
         ) : (
           <div className="overflow-x-auto text-center">
             <table className="w-full text-left border-collapse">

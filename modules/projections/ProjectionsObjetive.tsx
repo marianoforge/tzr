@@ -96,24 +96,24 @@ const ProjectionsObjective = ({
           tooltipContent="Cálculo del total de puntas o cierres en base al volumen a facturar."
         />
         <Input
-          label="Total de Pre Listings"
+          label="Total de PL / PB"
           type="number"
           className="w-[240px] max-w-[240px] min-w-[240px]"
           value={totalPuntasCierresAnuales}
           labelSize="text-sm"
           disabled
           showTooltip={true}
-          tooltipContent="Cálculo del total de pre listings en base al total de puntas o cierres anuales."
+          tooltipContent="Cálculo del total de pre listings / pre buying a realizar anualmente."
         />
         <Input
-          label="Total de Puntas Semanales"
+          label="Total de PL / PB Semanales"
           type="number"
           className="w-[240px] max-w-[240px] min-w-[240px]"
           value={totalPuntasCierresSemanales}
           labelSize="text-sm"
           disabled
           showTooltip={true}
-          tooltipContent="Cálculo del total de puntas semanales en base al total de pre listings anuales."
+          tooltipContent="Cálculo del total de PL / PB a realizar semanalmente"
         />
       </div>
     </div>

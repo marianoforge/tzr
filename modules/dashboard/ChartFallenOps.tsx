@@ -6,6 +6,7 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
+import { CircleStackIcon } from '@heroicons/react/24/outline';
 
 import { COLORS } from '@/lib/constants';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
@@ -35,9 +36,12 @@ const ChartFallenOps = () => {
         Operaciones Caídas
       </h2>
       {pieChartData.every((op) => op.value <= 0) ? (
-        <p className="text-center text-[20px] xl:text-[20px] 2xl:text-[22px] mt-32 font-semibold">
-          No existen operaciones caídas
-        </p>
+        <div className="flex flex-col items-center justify-center h-[240px]">
+          <p className="flex flex-col text-center text-[20px] xl:text-[16px] 2xl:text-[16px] font-semibold items-center justify-center">
+            <CircleStackIcon className="h-10 w-10 mr-2" />
+            No existen operaciones
+          </p>
+        </div>
       ) : (
         <div className="h-[300px] w-full align-middle">
           <ResponsiveContainer width="100%" height="100%">
