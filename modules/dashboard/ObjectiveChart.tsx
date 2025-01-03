@@ -89,9 +89,11 @@ interface ObjectiveChartProps {
 class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
   render() {
     const { userData, operations } = this.props;
-
+    const currentYear = new Date().getFullYear();
     // Calcular los totales usando las operaciones filtradas
-    const totals = calculateTotals(currentYearOperations(operations));
+    const totals = calculateTotals(
+      currentYearOperations(operations, currentYear)
+    );
 
     const percentage =
       ((totals.honorarios_broker_cerradas ?? 0) /

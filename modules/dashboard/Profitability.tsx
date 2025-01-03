@@ -37,7 +37,10 @@ const Profitability = () => {
     enabled: !!userID,
   });
 
-  const totals = calculateTotals(currentYearOperations(operations));
+  const currentYear = new Date().getFullYear();
+  const totals = calculateTotals(
+    currentYearOperations(operations, currentYear)
+  );
 
   const totalHonorariosNetosAsesor = totals.honorarios_asesor_cerradas;
   const totalHonorariosBroker = totals.honorarios_broker_cerradas;
