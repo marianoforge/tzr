@@ -22,6 +22,8 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { calculateTotals } from '@/common/utils/calculations';
 import { fetchUserOperations } from '@/common/utils/operationsApi';
+import Select from '@/components/PrivateComponente/CommonComponents/Select';
+import { yearsFilter } from '@/lib/data';
 
 // Configuración del slider
 const settings = {
@@ -70,6 +72,7 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedYear, setSelectedYear] = useState<string>('2025');
 
   const { data: operations = [] } = useQuery({
     queryKey: ['operations', userId],
@@ -137,7 +140,9 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
       );
     }) || [];
 
-  const totals = calculateTotals(currentYearOperations(operations));
+  const totals = calculateTotals(
+    currentYearOperations(operations, Number(selectedYear))
+  );
 
   const totalHonorariosBroker = Number(totals.honorarios_broker_cerradas);
 
@@ -155,6 +160,16 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-[320px] p-2 my-4 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
         />
+        <div className="flex md:w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] lg:justify-around justify-center items-center w-full space-x-4">
+          <Select
+            options={yearsFilter}
+            value={selectedYear}
+            onChange={(value: string | number) =>
+              setSelectedYear(value.toString())
+            }
+            className="w-[320px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 border text-mediumBlue border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
+          />
+        </div>
       </div>
       {searchQuery && filteredMembers.length > 0 ? (
         <Slider {...settings}>
@@ -173,7 +188,10 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
                     <strong>Total Facturación Bruta:</strong>{' '}
                     {usuario.operations.length > 0 ? (
                       `$${formatNumber(
-                        calculateAdjustedBrokerFees(usuario.operations)
+                        calculateAdjustedBrokerFees(
+                          usuario.operations,
+                          Number(selectedYear)
+                        )
                       )}`
                     ) : (
                       <span>No operations</span>
@@ -185,7 +203,10 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
                       <ul>
                         <li>
                           {formatNumber(
-                            (calculateAdjustedBrokerFees(usuario.operations) *
+                            (calculateAdjustedBrokerFees(
+                              usuario.operations,
+                              Number(selectedYear)
+                            ) *
                               100) /
                               Number(totalHonorariosBroker ?? 1)
                           )}
@@ -199,27 +220,42 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
                   <p>
                     <strong>Cantidad de Operaciones:</strong>{' '}
                     {usuario.operations.length > 0 ? (
-                      calculateTotalOperations(usuario.operations)
+                      calculateTotalOperations(
+                        usuario.operations,
+                        Number(selectedYear)
+                      )
                     ) : (
                       <span>No operations</span>
                     )}
                   </p>
                   <p>
                     <strong>Puntas Compradoras:</strong>{' '}
-                    {calculateTotalBuyerTips(usuario.operations)}
+                    {calculateTotalBuyerTips(
+                      usuario.operations,
+                      Number(selectedYear)
+                    )}
                   </p>
                   <p>
                     <strong>Puntas Vendedoras:</strong>{' '}
-                    {calculateTotalSellerTips(usuario.operations)}
+                    {calculateTotalSellerTips(
+                      usuario.operations,
+                      Number(selectedYear)
+                    )}
                   </p>
                   <p>
                     <strong>Puntas Totales:</strong>{' '}
-                    {calculateTotalTips(usuario.operations)}
+                    {calculateTotalTips(
+                      usuario.operations,
+                      Number(selectedYear)
+                    )}
                   </p>
                   <p>
                     <strong>Monto Total Operaciones:</strong>{' '}
                     {formatNumber(
-                      calculateTotalReservationValue(usuario.operations)
+                      calculateTotalReservationValue(
+                        usuario.operations,
+                        Number(selectedYear)
+                      )
                     )}
                   </p>
                   {usuario.id !== userId && (

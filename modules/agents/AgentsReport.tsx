@@ -306,21 +306,36 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                     )}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalOperations(member.operations)}
+                    {calculateTotalOperations(
+                      member.operations,
+                      Number(selectedYear)
+                    )}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalBuyerTips(member.operations)}
+                    {calculateTotalBuyerTips(
+                      member.operations,
+                      Number(selectedYear)
+                    )}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalSellerTips(member.operations)}
+                    {calculateTotalSellerTips(
+                      member.operations,
+                      Number(selectedYear)
+                    )}
                   </td>
                   <td className="py-3 px-4">
-                    {calculateTotalTips(member.operations)}
+                    {calculateTotalTips(
+                      member.operations,
+                      Number(selectedYear)
+                    )}
                   </td>
                   <td className="py-3 px-4">
                     {currencySymbol}
                     {formatNumber(
-                      calculateTotalReservationValue(member.operations)
+                      calculateTotalReservationValue(
+                        member.operations,
+                        Number(selectedYear)
+                      )
                     )}
                   </td>
                   <td className="py-3 px-4">

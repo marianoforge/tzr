@@ -23,12 +23,15 @@ export const calculateAdjustedBrokerFees = (
     }, 0);
 
 // Function to calculate total operations
-export const calculateTotalOperations = (operations: Operation[]) =>
+export const calculateTotalOperations = (
+  operations: Operation[],
+  year: number
+) =>
   operations
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion).getFullYear() === 2024
+        new Date(op.fecha_operacion).getFullYear() === year
     )
     .reduce((total, op) => {
       const isHalfOperation =
@@ -40,32 +43,38 @@ export const calculateTotalOperations = (operations: Operation[]) =>
     }, 0);
 
 // Function to calculate total buyer tips
-export const calculateTotalBuyerTips = (operations: Operation[]) =>
+export const calculateTotalBuyerTips = (
+  operations: Operation[],
+  year: number
+) =>
   operations
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion).getFullYear() === 2024
+        new Date(op.fecha_operacion).getFullYear() === year
     )
     .reduce((acc, op) => acc + (op.punta_compradora ? 1 : 0), 0);
 
 // Function to calculate total seller tips
-export const calculateTotalSellerTips = (operations: Operation[]) =>
+export const calculateTotalSellerTips = (
+  operations: Operation[],
+  year: number
+) =>
   operations
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion).getFullYear() === 2024
+        new Date(op.fecha_operacion).getFullYear() === year
     )
     .reduce((acc, op) => acc + (op.punta_vendedora ? 1 : 0), 0);
 
 // Function to calculate total tips
-export const calculateTotalTips = (operations: Operation[]) =>
+export const calculateTotalTips = (operations: Operation[], year: number) =>
   operations
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion).getFullYear() === 2024
+        new Date(op.fecha_operacion).getFullYear() === year
     )
     .reduce(
       (acc, op) =>
@@ -74,11 +83,14 @@ export const calculateTotalTips = (operations: Operation[]) =>
     );
 
 // Function to calculate total reservation value
-export const calculateTotalReservationValue = (operations: Operation[]) =>
+export const calculateTotalReservationValue = (
+  operations: Operation[],
+  year: number
+) =>
   operations
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion).getFullYear() === 2024
+        new Date(op.fecha_operacion).getFullYear() === year
     )
     .reduce((acc, op) => acc + Number(op.valor_reserva), 0);
