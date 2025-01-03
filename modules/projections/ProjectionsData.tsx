@@ -59,7 +59,10 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
     console.error('Error fetching operations:', error);
   }
 
-  const totals = calculateTotals(currentYearOperations(operations));
+  const currentYear = new Date().getFullYear();
+  const totals = calculateTotals(
+    currentYearOperations(operations, currentYear)
+  );
 
   const ticketPromedio = (
     totals.valor_reserva / totals.cantidad_operaciones
@@ -79,7 +82,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
     defaultValues: {
       ticketPromedio: 0,
       promedioHonorariosNetos: 0,
-      efectividad: 0,
+      efectividad: 15,
     },
   });
 
@@ -115,7 +118,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
   return (
     <div className="bg-white p-4  rounded-xl shadow-md flex flex-col items-center w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
-        Proyeccion de Efectividad
+        Proyección de Efectividad
       </h2>
       <div className="flex flex-row">
         <form className="flex flex-col items-center">

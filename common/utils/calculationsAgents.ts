@@ -3,12 +3,15 @@ import { OperationStatus } from '../enums';
 import { Operation } from '@/common/types';
 
 // Function to calculate adjusted broker fees
-export const calculateAdjustedBrokerFees = (operations: Operation[]) =>
+export const calculateAdjustedBrokerFees = (
+  operations: Operation[],
+  year: number
+) =>
   operations
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion).getFullYear() === 2024
+        new Date(op.fecha_operacion).getFullYear() === year
     )
     .reduce((acc: number, op: Operation) => {
       const isHalfOperation =

@@ -1,4 +1,4 @@
-import { OperationStatus, YearFilter } from '../enums';
+import { OperationStatus } from '../enums';
 import { Operation } from '../types';
 
 export function filteredOperations(
@@ -18,11 +18,7 @@ export function filteredOperations(
       (statusFilter === OperationStatus.CERRADA &&
         operation.estado === OperationStatus.CERRADA);
 
-    const yearMatch =
-      (yearFilter === YearFilter.DOS_MIL_VEINTITRES &&
-        operationYear === 2023) ||
-      (yearFilter === YearFilter.DOS_MIL_VEINTICUATRO &&
-        operationYear === 2024);
+    const yearMatch = yearFilter === operationYear;
 
     const monthMatch =
       monthFilter === 'all' || operationMonth === parseInt(monthFilter, 10);

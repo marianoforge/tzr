@@ -2,12 +2,10 @@ import { OperationStatus } from '../enums';
 
 import { Operation } from '@/common/types';
 
-const currentYear = new Date().getFullYear();
-
-export const currentYearOperations = (operations: Operation[]) =>
+export const currentYearOperations = (operations: Operation[], year: number) =>
   operations.filter((operation: Operation) => {
     const operationYear = new Date(operation.fecha_operacion).getFullYear();
-    return operationYear === currentYear;
+    return operationYear === year;
   });
 
 const getOperationsByMonth = (

@@ -23,6 +23,8 @@ import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { useAuthStore } from '@/stores/authStore';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import Select from '@/components/PrivateComponente/CommonComponents/Select';
+import { yearsFilter } from '@/lib/data';
 
 export type TeamMember = {
   id: string;
@@ -81,6 +83,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [selectedYear, setSelectedYear] = useState<string>('2025');
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['teamMembersWithOperations'],
@@ -146,22 +149,28 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
     setCurrentPage(newPage);
   };
 
-  // Filter, sort, and paginate members
   const filteredMembers =
     data
       ?.filter((member) => {
         const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
         const searchWords = searchQuery.toLowerCase().split(' ');
+        const operationsInSelectedYear = member.operations.filter(
+          (operation) =>
+            new Date(operation.fecha_operacion).getFullYear().toString() ===
+            selectedYear
+        );
         return (
           member.teamLeadID === userId &&
-          searchWords.every((word) => fullName.includes(word))
+          searchWords.every((word) => fullName.includes(word)) &&
+          operationsInSelectedYear.length > 0
         );
       })
       .sort(
         (a, b) =>
-          calculateAdjustedBrokerFees(b.operations) -
-          calculateAdjustedBrokerFees(a.operations)
+          calculateAdjustedBrokerFees(b.operations, Number(selectedYear)) -
+          calculateAdjustedBrokerFees(a.operations, Number(selectedYear))
       ) || [];
+
   const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
 
   const paginatedMembers = filteredMembers.slice(
@@ -169,7 +178,9 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
     currentPage * itemsPerPage
   );
 
-  const totals = calculateTotals(currentYearOperations(operations));
+  const totals = calculateTotals(
+    currentYearOperations(operations, Number(selectedYear))
+  );
 
   const totalHonorariosBroker = Number(totals.honorarios_broker_cerradas);
 
@@ -181,13 +192,25 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   return (
     <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md">
       <div className="flex items-center justify-between mb-4">
-        <input
-          type="text"
-          placeholder="Buscar Asesor..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-[220px] p-2 border border-gray-300 rounded font-semibold mr-4 placeholder-mediumBlue placeholder-italic"
-        />
+        <div className="flex items-center">
+          <input
+            type="text"
+            placeholder="Buscar Asesor..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-[220px] p-2 border border-gray-300 rounded font-semibold mr-4 placeholder-mediumBlue placeholder-italic"
+          />
+          <div className="flex md:w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] lg:justify-around justify-center items-center w-1/2 space-x-4">
+            <Select
+              options={yearsFilter}
+              value={selectedYear}
+              onChange={(value: string | number) =>
+                setSelectedYear(value.toString())
+              }
+              className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 border text-mediumBlue border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
+            />
+          </div>
+        </div>
         <h2 className="text-2xl font-bold">Informe Asesores</h2>
         <div className="flex items-center">
           <button
@@ -250,7 +273,10 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                         <li>
                           {currencySymbol}
                           {formatNumber(
-                            calculateAdjustedBrokerFees(member.operations)
+                            calculateAdjustedBrokerFees(
+                              member.operations,
+                              Number(selectedYear)
+                            )
                           )}
                         </li>
                       </ul>
@@ -263,9 +289,14 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                       <ul>
                         <li>
                           {formatNumber(
-                            (calculateAdjustedBrokerFees(member.operations) *
+                            (calculateAdjustedBrokerFees(
+                              member.operations,
+                              Number(selectedYear)
+                            ) *
                               100) /
-                              Number(totalHonorariosBroker ?? 1)
+                              (totalHonorariosBroker !== 0
+                                ? totalHonorariosBroker
+                                : 1)
                           )}
                           %
                         </li>
