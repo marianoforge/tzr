@@ -28,8 +28,12 @@ const Bubbles = () => {
     enabled: !!userID,
   });
 
+  const currentYear = new Date().getFullYear();
+
   // Calculamos los totales basados en las operaciones filtradas
-  const totals = calculateTotals(currentYearOperations(operations));
+  const totals = calculateTotals(
+    currentYearOperations(operations, currentYear)
+  );
 
   const bubbleData = [
     {

@@ -206,7 +206,9 @@ export const calculateTotals = (operations: Operation[]) => {
   );
 
   const totalHonorariosAsesorMesVencidoPromedio =
-    totalHonorariosAsesorMesVencido / (currentMonth - 1);
+    currentMonth > 1
+      ? (totalHonorariosAsesorMesVencido ?? 0) / (currentMonth - 1)
+      : 0;
 
   // Total Honorarios Broker Cerradas
   const totalHonorariosBrokerCerradas = sumField(
