@@ -3,9 +3,6 @@ import Slider from 'react-slick';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PencilIcon, TrashIcon, ServerIcon } from '@heroicons/react/24/outline';
 
-import EditAgentsModal from './EditAgentsModal';
-import { TeamMember } from './AgentsReport';
-
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -24,6 +21,9 @@ import { calculateTotals } from '@/common/utils/calculations';
 import { fetchUserOperations } from '@/common/utils/operationsApi';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { yearsFilter } from '@/lib/data';
+
+import { TeamMember } from './AgentsReport';
+import EditAgentsModal from './EditAgentsModal';
 
 // Configuración del slider
 const settings = {

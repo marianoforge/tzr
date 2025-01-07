@@ -7,6 +7,11 @@ export const createExpense = async (expenseData: Expense) => {
   return response.data;
 };
 
+export const createExpenseAgents = async (expenseData: Expense) => {
+  const response = await axios.post('/api/expensesAgents', expenseData);
+  return response.data;
+};
+
 export const fetchUserExpenses = async (userUID: string) => {
   const response = await axios.get(`/api/expenses?user_uid=${userUID}`);
   return response.data;

@@ -77,7 +77,7 @@ export interface Expense {
   expenseType: string;
   description: string;
   dollarRate: number;
-  user_uid: string;
+  user_uid?: string;
   otherType?: string;
 }
 
@@ -89,6 +89,17 @@ export interface ExpenseFormData {
   description?: string;
   dollarRate: number;
   otherType?: string;
+}
+
+export interface ExpenseAgentsFormData {
+  date: string;
+  amount: number;
+  amountInDollars?: number;
+  expenseType: string;
+  description?: string;
+  dollarRate: number;
+  otherType?: string;
+  teamMember: string;
 }
 
 export interface ExpensesState extends BaseState<Expense> {

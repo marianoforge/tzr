@@ -49,6 +49,7 @@ export enum QueryKeys {
   TEAM_MEMBERS = 'teamMembers',
   USERS_WITH_OPERATIONS = 'usersWithOperations',
   EXPENSES = 'expenses',
+  EXPENSES_AGENTS = 'expensesAgents',
   OPERATIONS = 'operations',
   EVENTS = 'events',
   SUBSCRIPTION_DATA = 'subscriptionData',
@@ -91,6 +92,7 @@ export enum PATHS {
   EXPENSES_LIST = '/expensesList',
   AGENTS = '/agents',
   EXPENSES_BROKER = '/expensesBroker',
+  EXPENSES_AGENTS = '/expensesAgents',
   PROJECTIONS = '/projections',
   NOT_AUTHORIZED = '/not-authorized',
 }

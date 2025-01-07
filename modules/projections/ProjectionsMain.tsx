@@ -1,10 +1,10 @@
 import React from 'react';
 
+import { useAuthStore } from '@/stores/authStore';
+
 import ProjectionsData from './ProjectionsData';
 import ProjectionsActivity from './ProjectionsActivity';
 import ProjectionsFunnelChart from './ProjectionsChart';
-
-import { useAuthStore } from '@/stores/authStore';
 
 const ProjectionsMain = () => {
   const { userID } = useAuthStore();

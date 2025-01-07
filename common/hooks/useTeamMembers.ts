@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { QueryKeys } from '../enums';
-
 import { useAuthStore } from '@/stores/authStore';
+
+import { QueryKeys } from '../enums';
 
 export const useTeamMembers = () => {
   const { userID } = useAuthStore();

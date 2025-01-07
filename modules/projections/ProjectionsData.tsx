@@ -4,14 +4,14 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQuery } from '@tanstack/react-query';
 
-import ProjectionsObjetive from './ProjectionsObjetive';
-
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { calculateTotals } from '@/common/utils/calculations';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+
+import ProjectionsObjetive from './ProjectionsObjetive';
 
 const schema = yup.object().shape({
   ticketPromedio: yup
@@ -171,7 +171,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                     {...field}
                     error={errors.efectividad?.message}
                     showTooltip={true}
-                    tooltipContent="Ingresa tu porcentaje de efectividad de las operaciones cerradas en el año."
+                    tooltipContent="Segun las métricas de Pablo Viti el asesor inmobiliario promedio tiene cerca de 15% de efectividad. Los asesores mas experimentados pueden llegar a alcanzar un 35% de efectividad."
                   />
                 )}
               />
@@ -204,9 +204,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
           Calcular Proyección
         </Button>
       </div>
-      <p className="text-sm text-gray-500 mt-4">
-        By Métricas Pablo Viti - 2025
-      </p>
+      <p className="text-gray-500 mt-4">By Métricas Pablo Viti - 2025</p>
     </div>
   );
 };

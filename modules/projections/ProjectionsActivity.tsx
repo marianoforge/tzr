@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PencilIcon } from '@heroicons/react/24/outline';
 
-import ProjectionsModal, { WeekData } from './ProjectionsModal';
-
 import { useAuthStore } from '@/stores/authStore';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+
+import ProjectionsModal, { WeekData } from './ProjectionsModal';
 
 const generateDefaultWeeks = () => {
   return Array.from({ length: 52 }, (_, index) => ({

@@ -5,6 +5,7 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { auth } from '@/lib/firebase';
 import { NavButton } from '@/components/PrivateComponente/NavComponents/NavButton';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
+
 interface NavbarProps {
   setActiveView: (view: string) => void;
 }
@@ -41,12 +42,22 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
       />
       <NavButton href="/eventForm" label="Form de Eventos" fullWidth />
       <NavButton href="/expenses" label="Form de Gastos" fullWidth />
+      <NavButton
+        href="/expensesAsesores"
+        label="Form de Gastos de Asesores"
+        fullWidth
+      />
     </>
   );
 
   const renderAdminNavButtons = () => (
     <>
       {renderNavButtons()}
+      <NavButton
+        href="/expenses-agents"
+        label="Form de Gastos de Asesores"
+        fullWidth
+      />
       <NavButton href="/agents" label="Informe Agentes / Asesores" fullWidth />
     </>
   );

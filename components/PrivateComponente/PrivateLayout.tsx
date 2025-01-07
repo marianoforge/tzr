@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 
+import { PATHS } from '@/common/enums';
+
 import Navbar from './NavBar/Navbar';
 import VerticalNavbar from './NavBar/VerticalNavbar';
 import Footer from './Footer';
-
-import { PATHS } from '@/common/enums';
 
 interface PrivateLayoutProps {
   children: React.ReactNode;
@@ -50,6 +50,12 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
         break;
       case PATHS.PROJECTIONS:
         router.push(PATHS.PROJECTIONS);
+        break;
+      case PATHS.EXPENSES_AGENTS:
+        router.push(PATHS.EXPENSES_AGENTS);
+        break;
+      case PATHS.NOT_AUTHORIZED:
+        router.push(PATHS.NOT_AUTHORIZED);
         break;
     }
   };

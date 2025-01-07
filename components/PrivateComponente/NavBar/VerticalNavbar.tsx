@@ -10,12 +10,12 @@ import {
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
-import { NavLink } from '../NavComponents/NavLink';
-
 import { auth } from '@/lib/firebase';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
 import { UserRole } from '@/common/enums';
+
+import { NavLink } from '../NavComponents/NavLink';
 
 interface VerticalNavbarProps {
   setActiveView: (view: string) => void;
@@ -94,6 +94,11 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
   const renderAdminNavButtons = () => (
     <>
       {renderNavButtons()}
+      <NavLink
+        href="/expenses-agents"
+        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Form de Gastos de Asesores"
+      />
       <div className="text-lg flex flex-col pt-10 pl-4 pb-2">
         <p>Reportes Team</p>
       </div>

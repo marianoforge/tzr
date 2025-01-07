@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { FunnelChart, Funnel, Tooltip, LabelList } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 
-import { WeekData } from './ProjectionsModal';
-
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+
+import { WeekData } from './ProjectionsModal';
 
 const fetchWeeks = async (userId: string) => {
   const response = await fetch(`/api/getWeeks?userId=${userId}`);
@@ -23,7 +23,6 @@ const ProjectionsFunnelChart = ({ userId }: { userId: string }) => {
     queryKey: ['weeks', userId],
     queryFn: () => fetchWeeks(userId),
   });
-  // Calculate totals for the funnel
   const funnelData = [
     {
       name: 'Prospección & Contactos Referidos',
@@ -121,7 +120,7 @@ const ProjectionsFunnelChart = ({ userId }: { userId: string }) => {
         <Tooltip />
         <Funnel dataKey="value" data={funnelData} isAnimationActive>
           <LabelList
-            position="center"
+            position="right"
             fill="#1f2937"
             stroke="none"
             dataKey="name"
