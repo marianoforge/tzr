@@ -18,6 +18,10 @@ export default function App({ Component, pageProps }: AppProps) {
     return () => unsubscribe(); // Limpia el listener al desmontar
   }, [initializeAuthListener]);
 
+  useEffect(() => {
+    console.log('Versión de la App:', process.env.NEXT_PUBLIC_APP_VERSION);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
