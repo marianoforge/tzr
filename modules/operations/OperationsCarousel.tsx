@@ -4,8 +4,6 @@ import { useCallback, useState } from 'react';
 import { PencilIcon, ServerIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
-import OperationsModal from './OperationsModal';
-
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   fetchUserOperations,
@@ -20,6 +18,8 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { OperationStatus, PATHS, QueryKeys } from '@/common/enums';
+
+import OperationsModal from './OperationsModal';
 
 const OperationsCarousel: React.FC = () => {
   const router = useRouter();
