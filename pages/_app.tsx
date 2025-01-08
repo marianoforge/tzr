@@ -12,17 +12,18 @@ export default function App({ Component, pageProps }: AppProps) {
   const initializeAuthListener = useAuthStore(
     (state) => state.initializeAuthListener
   );
-  const version = process.env.NEXT_PUBLIC_APP_VERSION || '0.2.0';
 
   useEffect(() => {
     const unsubscribe = initializeAuthListener();
     return () => unsubscribe(); // Limpia el listener al desmontar
   }, [initializeAuthListener]);
 
+  useEffect(() => {
+    console.log('Versión de la App:', process.env.NEXT_PUBLIC_APP_VERSION);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <link rel="stylesheet" href={`/styles.css?v=${version}`} />
-      <script src={`/main.js?v=${version}`} />
       <Component {...pageProps} />
 
       {/* <Analytics /> */}
