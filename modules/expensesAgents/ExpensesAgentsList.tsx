@@ -1,86 +1,94 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  PencilIcon,
-  TrashIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-} from '@heroicons/react/24/outline';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 
 import { useExpensesStore } from '@/stores/useExpensesStore';
-import {
-  fetchUserExpenses,
-  deleteExpense,
-  updateExpense,
-} from '@/lib/api/expensesApi';
 import { formatNumber } from '@/common/utils/formatNumber';
-import { Expense } from '@/common/types/';
+import { Expense, ExpenseAgents } from '@/common/types/';
 import usePagination from '@/common/hooks/usePagination';
-import useModal from '@/common/hooks/useModal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import { formatDate } from '@/common/utils/formatDate';
 import useUserAuth from '@/common/hooks/useUserAuth';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
-import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
-import { ExpenseType, QueryKeys } from '@/common/enums';
+import { monthsFilter, yearsFilter } from '@/lib/data'; // Importa los filtros necesarios
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
-
-import ExpensesModal from './ExpensesAgentsModal';
+import useFetchUserExpenses from '@/common/hooks/useFetchUserExpenses';
+import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 
 const ExpensesAgentsList = () => {
   const { calculateTotals } = useExpensesStore();
   const userUID = useUserAuth();
-  const queryClient = useQueryClient();
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+
+  const { data: teamMembers } = useTeamMembers();
+  const teamMemberIds = teamMembers
+    ?.map((member: { id: string }) => member.id)
+    .filter(Boolean);
+
+  const {
+    data: usersWithExpenses,
+    isLoading,
+    error: expensesError,
+  } = useFetchUserExpenses(teamMemberIds);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [yearFilter, setYearFilter] = useState(new Date().getFullYear());
   const [monthFilter, setMonthFilter] = useState('all');
-  const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
   const { currencySymbol } = useUserCurrencySymbol(userUID || '');
 
-  const {
-    data: expenses,
-    isLoading,
-    error: expensesError,
-  } = useQuery({
-    queryKey: [QueryKeys.EXPENSES, userUID],
-    queryFn: () => fetchUserExpenses(userUID as string),
-    enabled: !!userUID,
-  });
+  const groupedExpensesByUser = useMemo(() => {
+    if (!usersWithExpenses) return [];
 
-  const filteredExpenses = useMemo(
-    () =>
-      expenses?.filter((expense: Expense) => {
-        const matchesSearch = expense.description
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
+    // 1) Filtrar primero por nombre y apellido
+    const filteredUsers = usersWithExpenses.filter((user: ExpenseAgents) => {
+      const fullName = `${user.firstname} ${user.lastname}`.toLowerCase();
+      return fullName.includes(searchQuery.toLowerCase());
+    });
+
+    // 2) Para cada usuario filtrado, filtrar los gastos por año/mes
+    const finalData = filteredUsers.map((user: ExpenseAgents) => {
+      const userExpenses = user.expenses.filter((expense: Expense) => {
         const matchesYear = expense.date.includes(yearFilter.toString());
         const matchesMonth =
           monthFilter === 'all' ||
           new Date(expense.date).getMonth() + 1 === parseInt(monthFilter);
-        const matchesType =
-          expenseTypeFilter === ExpenseType.ALL ||
-          expense.expenseType === expenseTypeFilter;
 
-        return matchesSearch && matchesYear && matchesMonth && matchesType;
-      }) || [],
-    [expenses, searchQuery, yearFilter, monthFilter, expenseTypeFilter]
-  );
+        return matchesYear && matchesMonth;
+      });
+
+      const totalInPesos = userExpenses.reduce(
+        (acc: number, expense: Expense) => acc + expense.amount,
+        0
+      );
+
+      const totalInDollars = userExpenses.reduce(
+        (acc: number, expense: Expense) => acc + expense.amountInDollars,
+        0
+      );
+
+      return {
+        ...user,
+        expenses: userExpenses,
+        totalInPesos,
+        totalInDollars,
+      };
+    });
+
+    return finalData.filter((user: ExpenseAgents) => user.expenses.length > 0);
+  }, [usersWithExpenses, searchQuery, yearFilter, monthFilter]);
 
   const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null);
 
   const sortedExpenses = useMemo(() => {
-    if (!filteredExpenses) return [];
-    return [...filteredExpenses].sort((a, b) => {
+    if (!groupedExpensesByUser) return [];
+    return [...groupedExpensesByUser].sort((a, b) => {
       if (isDateAscending === null) return 0;
       return isDateAscending
-        ? new Date(a.date).getTime() - new Date(b.date).getTime()
-        : new Date(b.date).getTime() - new Date(a.date).getTime();
+        ? new Date(a.expenses[0].date).getTime() -
+            new Date(b.expenses[0].date).getTime()
+        : new Date(b.expenses[0].date).getTime() -
+            new Date(a.expenses[0].date).getTime();
     });
-  }, [filteredExpenses, isDateAscending]);
+  }, [groupedExpensesByUser, isDateAscending]);
 
   const toggleDateSortOrder = () => {
     setIsDateAscending((prev) => (prev === null ? true : !prev));
@@ -95,72 +103,13 @@ const ExpensesAgentsList = () => {
     disablePagination,
   } = usePagination(sortedExpenses, itemsPerPage);
 
-  const {
-    isOpen: isEditModalOpen,
-    openModal: openEditModal,
-    closeModal: closeEditModal,
-  } = useModal();
-  const {
-    isOpen: isDeleteModalOpen,
-    openModal: openDeleteModal,
-    closeModal: closeDeleteModal,
-  } = useModal();
-
   useEffect(() => {
-    if (expenses) {
+    if (usersWithExpenses) {
       calculateTotals();
     }
-  }, [expenses, calculateTotals]);
+  }, [usersWithExpenses, calculateTotals]);
 
-  const mutationDelete = useMutation({
-    mutationFn: (id: string) => deleteExpense(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.EXPENSES, userUID],
-      });
-      calculateTotals();
-    },
-  });
-
-  const mutationUpdate = useMutation({
-    mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.EXPENSES, userUID],
-      });
-      calculateTotals();
-    },
-  });
-
-  const handleDeleteClick = useCallback(
-    (id: string) => {
-      mutationDelete.mutate(id);
-    },
-    [mutationDelete]
-  );
-
-  const handleEditClick = (expense: Expense) => {
-    setSelectedExpense(expense);
-    openEditModal();
-  };
-
-  const handleExpenseUpdate = (updatedExpense: Expense) => {
-    mutationUpdate.mutate(updatedExpense);
-  };
-
-  const pageTitle = 'Lista de Gastos';
-
-  const handleDeleteButtonClick = (expense: Expense) => {
-    setSelectedExpense(expense);
-    openDeleteModal();
-  };
-
-  const confirmDelete = () => {
-    if (selectedExpense?.id) {
-      handleDeleteClick(selectedExpense.id);
-      closeDeleteModal();
-    }
-  };
+  const pageTitle = 'Lista de Gastos por asesor';
 
   if (isLoading) {
     return (
@@ -177,42 +126,29 @@ const ExpensesAgentsList = () => {
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
       <div className="overflow-x-auto flex flex-col justify-around">
-        <div className="flex md:flex-col lg:flex-row justify-center items-center mt-2  text-mediumBlue w-full">
-          <div className="flex gap-4 md:w-full lg:w-1/2 lg:justify-around justify-center items-center w-1/2">
-            <input
-              type="text"
-              placeholder="Buscar por descripción"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
-            />
-            <Select
-              options={yearsFilter}
-              value={yearFilter}
-              onChange={(value: string | number) =>
-                setYearFilter(Number(value))
-              }
-              className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-            />
-          </div>
-          <div className="flex gap-4 md:w-full lg:w-1/2 lg:justify-around  justify-center items-center w-1/2">
-            <Select
-              options={monthsFilter}
-              value={monthFilter}
-              onChange={(value: string | number) =>
-                setMonthFilter(value.toString())
-              }
-              className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-            />
-            <Select
-              options={expenseTypes}
-              value={expenseTypeFilter}
-              onChange={(value: string | number) =>
-                setExpenseTypeFilter(value.toString())
-              }
-              className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-            />
-          </div>
+        <div className="flex md:flex-col lg:flex-row justify-around items-center mt-2  text-mediumBlue w-full">
+          <input
+            type="text"
+            placeholder="Buscar por asesor "
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
+          />
+          <Select
+            options={yearsFilter}
+            value={yearFilter}
+            onChange={(value: string | number) => setYearFilter(Number(value))}
+            className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+          />
+
+          <Select
+            options={monthsFilter}
+            value={monthFilter}
+            onChange={(value: string | number) =>
+              setMonthFilter(value.toString())
+            }
+            className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
+          />
         </div>
 
         {currentExpenses.length === 0 ? (
@@ -244,71 +180,64 @@ const ExpensesAgentsList = () => {
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
-                    Monto en ARS
+                    Nombre y Apellido
                   </th>
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
-                    Monto en Dólares
+                    Monto Total en ARS
                   </th>
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
-                    Tipo
+                    Monto Total en USD
                   </th>
-                  <th
+                  {/* <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
-                    Descripción
-                  </th>
-                  <th
-                    className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-                  >
-                    Acciones
-                  </th>
+                    Ver Detalle de Gastos
+                  </th> */}
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
-                {currentExpenses.map((expense) => (
+                {currentExpenses.map((user) => (
                   <tr
-                    key={expense.id}
+                    key={user.id}
                     className="border-b transition duration-150 ease-in-out text-center"
                   >
-                    <td className="py-3 px-4">{formatDate(expense.date)}</td>
                     <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(expense.amount)}`}
+                      {user.expenses.length > 0
+                        ? formatDate(user.expenses[0].date)
+                        : 'N/A'}
                     </td>
                     <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(expense.amountInDollars)}`}
+                      {`${user.firstname} ${user.lastname}`}
                     </td>
-                    <td className="py-3 px-4">{expense.expenseType}</td>
-                    <td className="py-3 px-4">{expense.description}</td>
-
                     <td className="py-3 px-4">
-                      <button
-                        onClick={() => handleEditClick(expense)}
-                        className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
-                      >
-                        <PencilIcon className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteButtonClick(expense)}
-                        className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold ml-4"
-                      >
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
+                      {`${currencySymbol}${formatNumber(user.totalInPesos)}`}
                     </td>
+                    <td className="py-3 px-4">
+                      {`${currencySymbol}${formatNumber(user.totalInDollars)}`}
+                    </td>
+                    {/* <td className="py-3 px-4">
+                      <Link href={`/expenses/${user.id}`}>
+                        Abrir Listado de Gastos
+                      </Link>
+                    </td> */}
                   </tr>
                 ))}
                 <tr className="font-bold hidden md:table-row bg-lightBlue/10">
                   <td className="py-3 px-4 text-center" colSpan={1}>
                     Total
                   </td>
+                  <td></td>
                   <td className="py-3 px-4 text-center">
                     {currencySymbol}
                     {formatNumber(
-                      filteredExpenses.reduce(
-                        (acc: number, expense: Expense) => acc + expense.amount,
+                      groupedExpensesByUser.reduce(
+                        (acc: number, user: ExpenseAgents) =>
+                          acc + user.totalInPesos,
                         0
                       )
                     )}
@@ -316,9 +245,9 @@ const ExpensesAgentsList = () => {
                   <td className="py-3 px-4 text-center">
                     {currencySymbol}
                     {formatNumber(
-                      filteredExpenses.reduce(
-                        (acc: number, expense: Expense) =>
-                          acc + expense.amountInDollars,
+                      groupedExpensesByUser.reduce(
+                        (acc: number, user: ExpenseAgents) =>
+                          acc + user.totalInDollars,
                         0
                       )
                     )}
@@ -349,25 +278,6 @@ const ExpensesAgentsList = () => {
           </button>
         </div>
       </div>
-
-      {isEditModalOpen && selectedExpense && (
-        <ExpensesModal
-          isOpen={isEditModalOpen}
-          onClose={closeEditModal}
-          expense={selectedExpense}
-          onExpenseUpdate={handleExpenseUpdate}
-        />
-      )}
-      <ModalDelete
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        message="¿Estás seguro de querer eliminar este gasto?"
-        onSecondButtonClick={() => {
-          confirmDelete();
-        }}
-        secondButtonText="Borrar Operación"
-        className="w-[450px]"
-      />
     </div>
   );
 };

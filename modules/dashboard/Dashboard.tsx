@@ -1,3 +1,7 @@
+import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
+import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
+import EventsList from '@/modules/events/EventsList';
+
 import Bubbles from './Bubbles';
 import CuadroPrincipal from './CuadroPrincipal';
 import CuadroPrincipalChart from './CuadroPrincipalChart';
@@ -8,10 +12,6 @@ import Profitability from './Profitability';
 import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 import ChartFallenOps from './ChartFallenOps';
 import Projections from './Projections';
-
-import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
-import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
-import EventsList from '@/modules/events/EventsList';
 
 const DashBoard = () => {
   return (

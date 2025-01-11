@@ -7,8 +7,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import ExpensesModal from './ExpensesModal';
-
 import { useExpensesStore } from '@/stores/useExpensesStore';
 import {
   fetchUserExpenses,
@@ -28,6 +26,8 @@ import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
 import { ExpenseType, QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+
+import ExpensesModal from './ExpensesModal';
 
 const ExpensesList = () => {
   const { calculateTotals } = useExpensesStore();

@@ -95,7 +95,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
     <>
       {renderNavButtons()}
       <NavLink
-        href="/expenses-agents"
+        href="/expenses-agents-form"
         icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Form de Gastos de Asesores"
       />
@@ -108,6 +108,13 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
           <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
         }
         label="Informe Asesores"
+      />
+      <NavLink
+        href="/expenses-agents"
+        icon={
+          <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
+        }
+        label="Gastos por Asesor"
       />
     </>
   );

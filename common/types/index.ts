@@ -91,6 +91,15 @@ export interface ExpenseFormData {
   otherType?: string;
 }
 
+export interface ExpenseAgents {
+  id: string;
+  firstname: string;
+  lastname: string;
+  expenses: Expense[];
+  totalInPesos: number;
+  totalInDollars: number;
+}
+
 export interface ExpenseAgentsFormData {
   date: string;
   amount: number;

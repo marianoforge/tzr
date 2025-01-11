@@ -1,125 +1,92 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Slider from 'react-slick';
-import { PencilIcon, ServerIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useRouter } from 'next/router';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { onAuthStateChanged } from 'firebase/auth';
+import { ServerIcon } from '@heroicons/react/24/solid';
 
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
-import { Expense } from '@/common/types/';
+import { Expense, ExpenseAgents } from '@/common/types/';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { auth } from '@/lib/firebase';
-import { useExpensesStore } from '@/stores/useExpensesStore';
-import {
-  fetchUserExpenses,
-  deleteExpense,
-  updateExpense,
-} from '@/lib/api/expensesApi';
-import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
-import { QueryKeys } from '@/common/enums';
 
-import ExpensesModal from './ExpensesAgentsModal';
+import { useTeamMembers } from '@/common/hooks/useTeamMembers';
+import useFetchUserExpenses from '@/common/hooks/useFetchUserExpenses';
+import { formatDate } from '@/common/utils/formatDate';
 
 const ExpensesAgentsListCards: React.FC = () => {
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: false,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
+    slidesToScroll: 2,
   };
 
-  const { calculateTotals } = useExpensesStore();
-  const [userUID, setUserUID] = useState<string | null>(null);
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const { data: teamMembers } = useTeamMembers();
+  const teamMemberIds = teamMembers
+    ?.map((member: { id: string }) => member.id)
+    .filter(Boolean);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserUID(user.uid);
-      } else {
-        setUserUID(null);
-        router.push('/login');
+  const { data: usersWithExpenses = [], isLoading } =
+    useFetchUserExpenses(teamMemberIds);
+
+  const groupedExpensesByUser = useMemo(() => {
+    if (!usersWithExpenses) return [];
+
+    // Crear un Map para garantizar unicidad por ID
+    const userMap = new Map<string, ExpenseAgents>();
+
+    usersWithExpenses.forEach((user: ExpenseAgents) => {
+      // Filtrar los gastos del usuario
+      const filteredExpenses = user.expenses.filter((expense: Expense) => {
+        const matchesSearch = `${user.firstname} ${user.lastname}`
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()); // Busca por nombre completo
+
+        return matchesSearch;
+      });
+
+      // Si tiene al menos un gasto, agrégalo al Map
+      if (filteredExpenses.length > 0) {
+        if (userMap.has(user.id)) {
+          // Si el usuario ya existe, combinar los gastos
+          const existingUser = userMap.get(user.id)!;
+          userMap.set(user.id, {
+            ...existingUser,
+            expenses: [...existingUser.expenses, ...filteredExpenses], // Combinar gastos
+            totalInPesos:
+              existingUser.totalInPesos +
+              filteredExpenses.reduce((acc, e) => acc + e.amount, 0),
+            totalInDollars:
+              existingUser.totalInDollars +
+              filteredExpenses.reduce((acc, e) => acc + e.amountInDollars, 0),
+          });
+        } else {
+          // Si es un usuario nuevo, agregarlo
+          userMap.set(user.id, {
+            ...user,
+            expenses: filteredExpenses,
+            totalInPesos: filteredExpenses.reduce(
+              (acc, expense) => acc + expense.amount,
+              0
+            ),
+            totalInDollars: filteredExpenses.reduce(
+              (acc, expense) => acc + expense.amountInDollars,
+              0
+            ),
+          });
+        }
       }
     });
-    return () => unsubscribe();
-  }, [router]);
 
-  const { data: expenses = [], isLoading } = useQuery({
-    queryKey: [QueryKeys.EXPENSES, userUID],
-    queryFn: () => fetchUserExpenses(userUID as string),
-    enabled: !!userUID,
-  });
-
-  useEffect(() => {
-    if (expenses.length > 0) {
-      calculateTotals();
-    }
-  }, [expenses, calculateTotals]);
-
-  const mutationDelete = useMutation({
-    mutationFn: (id: string) => deleteExpense(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.EXPENSES, userUID],
-      });
-      calculateTotals();
-    },
-  });
-
-  const mutationUpdate = useMutation({
-    mutationFn: (updatedExpense: Expense) => updateExpense(updatedExpense),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QueryKeys.EXPENSES, userUID],
-      });
-      calculateTotals();
-    },
-  });
-
-  const handleDeleteClick = useCallback(
-    (id: string) => {
-      mutationDelete.mutate(id);
-    },
-    [mutationDelete]
-  );
-
-  const handleDeleteButtonClick = useCallback((expense: Expense) => {
-    setSelectedExpense(expense);
-    setIsDeleteModalOpen(true);
-  }, []);
-
-  const handleEditClick = (expense: Expense) => {
-    setSelectedExpense(expense);
-    setIsEditModalOpen(true);
-  };
-
-  const handleExpenseUpdate = (updatedExpense: Expense) => {
-    mutationUpdate.mutate(updatedExpense);
-  };
+    // Convertir el Map en un array
+    return Array.from(userMap.values());
+  }, [usersWithExpenses, searchQuery]);
 
   // Mostrar todas las expenses sin filtrar
-  const filteredExpenses = expenses || [];
-
-  const searchedExpenses = searchQuery
-    ? filteredExpenses.filter(
-        (expense: Expense) =>
-          expense.description
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          expense.expenseType.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  const filteredExpenses = groupedExpensesByUser || [];
 
   const pageTitle = 'Lista de Gastos';
 
@@ -131,49 +98,38 @@ const ExpensesAgentsListCards: React.FC = () => {
       <div className="flex justify-center  flex-col items-center">
         <input
           type="text"
-          placeholder="Buscar gasto por descripción o tipo..."
+          placeholder="Buscar gasto por nombre y apellido..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-[320px] p-2 my-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
         />
       </div>
-      {searchedExpenses.length > 0 ? (
+      {filteredExpenses.length > 0 ? (
         <Slider {...settings}>
-          {searchedExpenses.map((expense: Expense) => (
-            <div key={expense.id} className="p-4 expense-card">
-              <div className="bg-mediumBlue text-white p-4 mb-52 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
+          {filteredExpenses.map((user: ExpenseAgents) => (
+            <div key={user.id} className="p-4 expense-card">
+              <div className="bg-mediumBlue text-white p-4 mb-52 rounded-xl shadow-md flex flex-col justify-around space-y-4 h-[240px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
                 <p>
                   <strong>Fecha:</strong>{' '}
-                  {new Date(expense.date).toLocaleDateString()}
+                  {user.expenses.length > 0
+                    ? formatDate(user.expenses[0].date)
+                    : 'N/A'}
                 </p>
                 <p>
-                  <strong>Monto en ARS:</strong> ${formatNumber(expense.amount)}
+                  <strong>Nombre y Apellido:</strong>{' '}
+                  {`${user.firstname} ${user.lastname}`}
                 </p>
                 <p>
-                  <strong>Monto en Dólares:</strong> $
-                  {formatNumber(expense.amountInDollars)}
+                  <strong>Monto Total en ARS:</strong> $
+                  {formatNumber(user.totalInPesos)}
                 </p>
                 <p>
-                  <strong>Tipo:</strong> {expense.expenseType}
+                  <strong>Monto Total en Dólares:</strong> $
+                  {formatNumber(user.totalInDollars)}
                 </p>
-                <p className="text-sm">
-                  <strong>Descripción:</strong>
-                  {expense.description}
-                </p>
-                <div className="flex justify-around">
-                  <button
-                    onClick={() => handleEditClick(expense)}
-                    className="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out text-sm font-semibold"
-                  >
-                    <PencilIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteButtonClick(expense)}
-                    className="text-red-500 hover:text-red-700 transition duration-150 ease-in-out text-sm font-semibold"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
-                </div>
+                {/* <Link href={`/expenses-agents/${user.id}`}>
+                  <strong>Ver Detalle de Gastos</strong>
+                </Link> */}
               </div>
             </div>
           ))}
@@ -184,27 +140,6 @@ const ExpensesAgentsListCards: React.FC = () => {
           <p className="text-center font-semibold">No hay gastos</p>
         </div>
       )}
-      {isEditModalOpen && selectedExpense && (
-        <ExpensesModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          expense={selectedExpense}
-          onExpenseUpdate={handleExpenseUpdate}
-        />
-      )}
-      <ModalDelete
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        message="¿Estás seguro de querer eliminar esta operación?"
-        onSecondButtonClick={() => {
-          if (selectedExpense?.id) {
-            handleDeleteClick(selectedExpense.id);
-            setIsDeleteModalOpen(false);
-          }
-        }}
-        secondButtonText="Borrar Operación"
-        className="w-[450px]"
-      />
     </div>
   );
 };

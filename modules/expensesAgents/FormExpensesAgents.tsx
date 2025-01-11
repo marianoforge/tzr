@@ -207,7 +207,7 @@ const FormExpensesAgents: React.FC = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         message={modalMessage}
-        onAccept={() => router.push('/expensesAgents')}
+        onAccept={() => router.push('/expenses-agents-form')}
       />
     </div>
   );

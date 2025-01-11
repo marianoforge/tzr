@@ -1,6 +1,6 @@
-import { OperationStatus } from '../enums';
-
 import { Operation } from '@/common/types';
+
+import { OperationStatus } from '../enums';
 
 // Function to calculate adjusted broker fees
 export const calculateAdjustedBrokerFees = (

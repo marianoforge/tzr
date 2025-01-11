@@ -54,11 +54,12 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
     <>
       {renderNavButtons()}
       <NavButton
-        href="/expenses-agents"
+        href="/expenses-agents-form"
         label="Form de Gastos de Asesores"
         fullWidth
       />
       <NavButton href="/agents" label="Informe Agentes / Asesores" fullWidth />
+      <NavButton href="/expenses-agents" label="Gastos de Asesores" fullWidth />
     </>
   );
 
