@@ -10,7 +10,7 @@ import { formatDate } from '@/common/utils/formatDate';
 import useUserAuth from '@/common/hooks/useUserAuth';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
-import { monthsFilter, yearsFilter } from '@/lib/data'; // Importa los filtros necesarios
+import { monthsFilter, yearsFilter } from '@/lib/data';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import useFetchUserExpenses from '@/common/hooks/useFetchUserExpenses';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
