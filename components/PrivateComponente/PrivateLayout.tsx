@@ -51,8 +51,11 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
       case PATHS.PROJECTIONS:
         router.push(PATHS.PROJECTIONS);
         break;
-      case PATHS.EXPENSES_AGENTS:
-        router.push(PATHS.EXPENSES_AGENTS);
+      case PATHS.EXPENSES_AGENTS_LIST:
+        router.push(PATHS.EXPENSES_AGENTS_LIST);
+        break;
+      case PATHS.EXPENSES_AGENTS_FORM:
+        router.push(PATHS.EXPENSES_AGENTS_FORM);
         break;
       case PATHS.NOT_AUTHORIZED:
         router.push(PATHS.NOT_AUTHORIZED);
