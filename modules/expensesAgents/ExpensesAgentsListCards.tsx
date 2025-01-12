@@ -81,11 +81,9 @@ const ExpensesAgentsListCards: React.FC = () => {
       }
     });
 
-    // Convertir el Map en un array
     return Array.from(userMap.values());
   }, [usersWithExpenses, searchQuery]);
 
-  // Mostrar todas las expenses sin filtrar
   const filteredExpenses = groupedExpensesByUser || [];
 
   const pageTitle = 'Lista de Gastos';
@@ -137,7 +135,9 @@ const ExpensesAgentsListCards: React.FC = () => {
       ) : (
         <div className="flex flex-col items-center justify-center gap-4">
           <ServerIcon className="h-12 w-12" strokeWidth={1} />
-          <p className="text-center font-semibold">No hay gastos</p>
+          <p className="text-center font-semibold">
+            No hay gastos asosiados a asesores
+          </p>
         </div>
       )}
     </div>

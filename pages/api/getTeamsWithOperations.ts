@@ -27,23 +27,23 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    // Step 1: Fetch all Team Members
-    const teamMembersSnapshot = await db.collection('teams').get();
-    const teamMembers: TeamMember[] = [];
+    // Step 1: Fetch all Team Members and Operations in parallel
+    const [teamMembersSnapshot, operationsSnapshot] = await Promise.all([
+      db.collection('teams').get(),
+      db.collection('operations').get(),
+    ]);
 
+    const teamMembers: TeamMember[] = [];
     teamMembersSnapshot.forEach((doc) => {
       teamMembers.push({ id: doc.id, ...doc.data() } as TeamMember);
     });
 
-    // Step 2: Fetch all Operations
-    const operationsSnapshot = await db.collection('operations').get();
     const operations: Operation[] = [];
-
     operationsSnapshot.forEach((doc) => {
       operations.push({ id: doc.id, ...doc.data() } as Operation);
     });
 
-    // Step 3: Combine data
+    // Step 2: Combine data
     const result: TeamMemberWithOperations[] = teamMembers.map((member) => {
       const memberOperations = operations.filter(
         (op) => op.user_uid === member.id || op.user_uid_adicional === member.id
@@ -52,7 +52,7 @@ export default async function handler(
       return { ...member, operations: memberOperations };
     });
 
-    // Step 4: Respond with the combined data
+    // Step 3: Respond with the combined data
     res.status(200).json(result);
   } catch (error) {
     console.error('Error fetching data:', error);
