@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ServerIcon } from '@heroicons/react/24/solid';
 
 import { useExpensesStore } from '@/stores/useExpensesStore';
 import { formatNumber } from '@/common/utils/formatNumber';
@@ -203,9 +204,12 @@ const ExpensesAgentsList = () => {
         </div>
 
         {currentExpenses.length === 0 ? (
-          <p className="text-center text-gray-600">
-            No existen gastos asociados a asesores
-          </p>
+          <div className="flex flex-col items-center justify-center">
+            <ServerIcon className="h-12 w-12" strokeWidth={1} />
+            <p className="text-center text-gray-600">
+              No existen gastos asociados a asesores
+            </p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">

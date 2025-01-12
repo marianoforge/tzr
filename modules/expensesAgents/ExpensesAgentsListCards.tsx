@@ -135,7 +135,9 @@ const ExpensesAgentsListCards: React.FC = () => {
       ) : (
         <div className="flex flex-col items-center justify-center gap-4">
           <ServerIcon className="h-12 w-12" strokeWidth={1} />
-          <p className="text-center font-semibold">No hay gastos</p>
+          <p className="text-center font-semibold">
+            No hay gastos asosiados a asesores
+          </p>
         </div>
       )}
     </div>
