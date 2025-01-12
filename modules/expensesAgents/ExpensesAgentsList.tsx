@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useExpensesStore } from '@/stores/useExpensesStore';
 import { formatNumber } from '@/common/utils/formatNumber';
@@ -14,6 +15,9 @@ import { monthsFilter, yearsFilter } from '@/lib/data';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import useFetchUserExpenses from '@/common/hooks/useFetchUserExpenses';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
+import { QueryKeys } from '@/common/enums';
+
+import UserExpensesModal from './UserExpensesModal';
 
 const ExpensesAgentsList = () => {
   const { calculateTotals } = useExpensesStore();
@@ -111,6 +115,53 @@ const ExpensesAgentsList = () => {
 
   const pageTitle = 'Lista de Gastos por asesor';
 
+  const [selectedUserExpenses, setSelectedUserExpenses] = useState<
+    Expense[] | null
+  >(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+
+  const openModalWithExpenses = (agentId: string, expenses: Expense[]) => {
+    setSelectedAgentId(agentId);
+    setSelectedUserExpenses(expenses);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedUserExpenses(null);
+  };
+
+  const queryClient = useQueryClient();
+
+  const mutationDeleteExpense = useMutation({
+    mutationFn: async ({
+      agentId,
+      expenseId,
+    }: {
+      agentId: string;
+      expenseId: string;
+    }) => {
+      const response = await fetch(
+        `/api/teamMembers/${agentId}/expenses?expenseId=${expenseId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+      if (!response.ok) {
+        throw new Error('Error al eliminar el gasto');
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.EXPENSES] }); // Invalida las queries relacionadas
+      calculateTotals(); // Recalcula totales
+    },
+  });
+
+  const handleDeleteExpense = (agentId: string, expenseId: string) => {
+    mutationDeleteExpense.mutate({ agentId, expenseId });
+  };
+
   if (isLoading) {
     return (
       <div className="mt-[70px]">
@@ -152,7 +203,9 @@ const ExpensesAgentsList = () => {
         </div>
 
         {currentExpenses.length === 0 ? (
-          <p className="text-center text-gray-600">No existen gastos</p>
+          <p className="text-center text-gray-600">
+            No existen gastos asociados a asesores
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -220,11 +273,16 @@ const ExpensesAgentsList = () => {
                     <td className="py-3 px-4">
                       {`${currencySymbol}${formatNumber(user.totalInDollars)}`}
                     </td>
-                    {/* <td className="py-3 px-4">
-                      <Link href={`/expenses/${user.id}`}>
-                        Abrir Listado de Gastos
-                      </Link>
-                    </td> */}
+                    <td className="py-3 px-4">
+                      <button
+                        onClick={() =>
+                          openModalWithExpenses(user.id, user.expenses)
+                        }
+                        className="text-mediumBlue underline"
+                      >
+                        Ver Lista de Gastos
+                      </button>
+                    </td>
                   </tr>
                 ))}
                 <tr className="font-bold hidden md:table-row bg-lightBlue/10">
@@ -278,6 +336,17 @@ const ExpensesAgentsList = () => {
           </button>
         </div>
       </div>
+      <UserExpensesModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        expenses={selectedUserExpenses || []}
+        currencySymbol={currencySymbol}
+        onDeleteExpense={(expenseId) =>
+          handleDeleteExpense(selectedAgentId!, expenseId)
+        }
+        agentId={selectedAgentId!}
+        message="Detalle de Gastos"
+      />
     </div>
   );
 };

@@ -81,11 +81,9 @@ const ExpensesAgentsListCards: React.FC = () => {
       }
     });
 
-    // Convertir el Map en un array
     return Array.from(userMap.values());
   }, [usersWithExpenses, searchQuery]);
 
-  // Mostrar todas las expenses sin filtrar
   const filteredExpenses = groupedExpensesByUser || [];
 
   const pageTitle = 'Lista de Gastos';

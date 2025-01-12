@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "update:env": "vercel env remove NEXT_PUBLIC_APP_VERSION production && vercel env add NEXT_PUBLIC_APP_VERSION production"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.8",
