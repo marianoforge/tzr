@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
-import LicenseCard from './LicensesCard';
-import ContactForm from './ContactForm';
-
 import {
   PRICE_ID_ENTERPRISE,
   PRICE_ID_GROWTH,
   PRICE_ID_STARTER,
 } from '@/lib/data';
+
+import LicenseCard from './LicensesCard';
+import ContactForm from './ContactForm';
 
 interface LicensesSectionProps {
   onClose?: () => void;
