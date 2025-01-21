@@ -7,6 +7,8 @@ import {
   ClipboardDocumentCheckIcon,
   CurrencyDollarIcon,
   ChartBarIcon,
+  UserPlusIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
@@ -96,7 +98,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
       {renderNavButtons()}
       <NavLink
         href="/expenses-agents-form"
-        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        icon={<UserPlusIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Form de Gastos de Asesores"
       />
       <div className="text-lg flex flex-col pt-10 pl-4 pb-2">
@@ -111,9 +113,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
       />
       <NavLink
         href="/expenses-agents"
-        icon={
-          <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
-        }
+        icon={<UserIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Gastos por Asesor"
       />
     </>

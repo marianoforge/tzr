@@ -12,10 +12,14 @@ import { formatValue } from '@/common/utils/formatValue';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { Operation, UserData } from '@/common/types';
+import { OperationStatus } from '@/common/enums';
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
-
+  const { userData } = useUserDataStore();
   const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const {
@@ -35,10 +39,30 @@ const Bubbles = () => {
     currentYearOperations(operations, currentYear)
   );
 
+  // Filtrar operaciones del año 2025
+  const operations2025 = operations.filter(
+    (op: Operation) =>
+      new Date(op.fecha_operacion).getFullYear() === currentYear &&
+      op.estado === OperationStatus.CERRADA
+  );
+
+  // Calcular tarifas netas para cada operación del 2025
+  operations2025.forEach((op: Operation) => {
+    const netFees = calculateNetFees(op, userData as UserData);
+    return netFees;
+  });
+
+  // Haz un reduce de las operaciones del 2025 y suma las tarifas netas
+  const totalNetFees = operations2025.reduce(
+    (total: number, op: Operation) =>
+      total + calculateNetFees(op, userData as UserData),
+    0
+  );
+
   const bubbleData = [
     {
       title: 'Honorarios Netos',
-      figure: `${currencySymbol}${formatNumber(totals.honorarios_asesor_cerradas ?? 0)}`,
+      figure: `${currencySymbol}${formatNumber(totalNetFees)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip:
@@ -146,7 +170,11 @@ const Bubbles = () => {
             </p>
 
             {/* Tooltip for the icon */}
-            <Tooltip id={`tooltip-${index}`} place="top" />
+            <Tooltip
+              id={`tooltip-${index}`}
+              place="top"
+              style={{ zIndex: 50 }}
+            />
           </div>
         ))}
       </div>

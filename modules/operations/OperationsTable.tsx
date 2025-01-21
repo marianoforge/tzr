@@ -2,12 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { onAuthStateChanged } from 'firebase/auth';
 
-import OperationsFullScreenTable from './OperationsFullScreenTable';
-import OperationsModal from './OperationsModal';
-import OperationsTableHeader from './OperationsTableHeader';
-import OperationsTableBody from './OperationsTableBody';
-import OperationsTableFilters from './OperationsTableFilter';
-
 import { auth } from '@/lib/firebase';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
@@ -26,6 +20,12 @@ import {
 import { OperationStatus } from '@/common/enums';
 import { useOperations } from '@/common/hooks/useOperactions';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+
+import OperationsTableFilters from './OperationsTableFilter';
+import OperationsTableBody from './OperationsTableBody';
+import OperationsTableHeader from './OperationsTableHeader';
+import OperationsModal from './OperationsModal';
+import OperationsFullScreenTable from './OperationsFullScreenTable';
 
 const OperationsTable: React.FC = () => {
   const [userUID, setUserUID] = useState<string | null>(null);
@@ -329,6 +329,8 @@ const OperationsTable: React.FC = () => {
             isOpen={isViewModalOpen}
             onClose={() => setIsViewModalOpen(false)}
             operation={viewOperation}
+            userData={userData as UserData}
+            currencySymbol={currencySymbol}
           />
         )}
 

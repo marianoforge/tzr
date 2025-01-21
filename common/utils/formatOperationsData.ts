@@ -1,6 +1,6 @@
-import { OperationData } from '../enums';
-
 import { months } from '@/lib/data';
+
+import { OperationData } from '../enums';
 
 export const formatOperationsData = (
   operations: {

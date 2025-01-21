@@ -1,6 +1,6 @@
-import { OperationStatus } from '../enums';
-
 import { Operation } from '@/common/types';
+
+import { OperationStatus } from '../enums';
 
 export const currentYearOperations = (operations: Operation[], year: number) =>
   operations.filter((operation: Operation) => {

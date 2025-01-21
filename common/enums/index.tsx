@@ -68,6 +68,7 @@ export enum OperationData {
   PORCENTAJE_HONORARIOS_BROKER = 'porcentaje_honorarios_broker',
   HONORARIOS_ASESOR = 'honorarios_asesor',
   HONORARIOS_BROKER = 'honorarios_broker',
+  HONORARIOS_TEAM_LEADER = 'honorarios_team_leader',
   PORCENTAJE_PUNTA_COMPRADORA = 'porcentaje_punta_compradora',
   PORCENTAJE_PUNTA_VENDEDORA = 'porcentaje_punta_vendedora',
 }
