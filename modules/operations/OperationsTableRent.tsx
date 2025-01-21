@@ -1,12 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import OperationsFullScreenTable from './OperationsFullScreenTable';
-import OperationsModal from './OperationsModal';
-import OperationsTableHeader from './OperationsTableHeader';
-import OperationsTableBody from './OperationsTableBody';
-import OperationsTableFilters from './OperationsTableFilter';
-
 import {
   fetchUserOperations,
   deleteOperation,
@@ -28,6 +22,12 @@ import {
 } from '@/lib/data';
 import { ALQUILER, OperationStatus, QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+
+import OperationsTableFilters from './OperationsTableFilter';
+import OperationsTableBody from './OperationsTableBody';
+import OperationsTableHeader from './OperationsTableHeader';
+import OperationsModal from './OperationsModal';
+import OperationsFullScreenTable from './OperationsFullScreenTable';
 
 const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -325,6 +325,8 @@ const OperationsTableTent: React.FC = () => {
             isOpen={isViewModalOpen}
             onClose={() => setIsViewModalOpen(false)}
             operation={viewOperation}
+            userData={userData as UserData}
+            currencySymbol={currencySymbol}
           />
         )}
       </div>
