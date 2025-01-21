@@ -1,13 +1,16 @@
 import React from 'react';
 
-import { Operation } from '@/common/types/';
+import { Operation, UserData } from '@/common/types/';
 import { formatNumber } from '@/common/utils/formatNumber';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
 interface FullScreenModalProps {
   isOpen: boolean;
   onClose: () => void;
   operation: Operation;
+  userData: UserData;
+  currencySymbol: string;
 }
 
 // Utility function to handle displaying 'N/A'
@@ -19,6 +22,8 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
   isOpen,
   onClose,
   operation,
+  userData,
+  currencySymbol,
 }) => {
   if (!isOpen) return null;
 
@@ -82,8 +87,8 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {formatNumber(operation.honorarios_broker)}
           </p>
           <p>
-            <span className="font-semibold">Honorarios Netos:</span> $
-            {formatNumber(operation.honorarios_asesor)}
+            <span className="font-semibold">Honorarios Netos:</span>
+            {`${currencySymbol}${formatNumber(calculateNetFees(operation, userData))}`}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Honorarios Asesor:</span>{' '}

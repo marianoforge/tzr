@@ -1,3 +1,5 @@
+import { Operation, UserData } from '@/common/types';
+
 import {
   ALQUILER,
   OperationData,
@@ -7,8 +9,6 @@ import {
 } from '../enums';
 
 import { calculateGrossByMonth } from './calculationsGrossByMonth';
-
-import { Operation, UserData } from '@/common/types';
 
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
@@ -23,16 +23,19 @@ export const totalHonorariosTeamLead = (
     return 0;
   }
 
+  //Los adicionales solo aparecen con los Team LEad
+  //Si hay Adicional y el TeamLead Participa
   if (operation.user_uid_adicional && userData.uid === operation.user_uid) {
     return Number(
-      operation.honorarios_broker * 0.5 +
-        (operation.honorarios_broker *
-          0.5 *
-          (100 - (operation.porcentaje_honorarios_asesor_adicional ?? 0))) /
-          100
+      (operation.honorarios_broker *
+        (operation.porcentaje_honorarios_asesor ?? 0) +
+        operation.honorarios_broker *
+          (operation.porcentaje_honorarios_asesor_adicional ?? 0)) /
+        100
     );
   }
 
+  //Si hay Adicional y el TeamLead no participa y sos team lead broker te llevas el 50% del broker y el 50% del adicional
   if (operation.user_uid_adicional && userData.uid !== operation.user_uid) {
     return Number(
       (operation.honorarios_broker *
@@ -45,7 +48,7 @@ export const totalHonorariosTeamLead = (
           100
     );
   }
-
+  // Si sos team lead con un asesor te llevas el resto del asesor sino te llevas el 100%
   if (
     userRole === UserRole.TEAM_LEADER_BROKER &&
     userData.uid !== operation.user_uid
