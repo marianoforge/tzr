@@ -7,14 +7,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { schema } from '@/common/schemas/loginFormSchema';
+import { LoginData } from '@/common/types';
+import { auth, db } from '@/lib/firebase';
+
 import Button from '../PrivateComponente/FormComponents/Button';
 import Input from '../PrivateComponente/FormComponents/Input';
 
 import LicensesModal from './LicensesModal';
-
-import { schema } from '@/common/schemas/loginFormSchema';
-import { LoginData } from '@/common/types';
-import { auth, db } from '@/lib/firebase';
 
 const LoginForm = () => {
   const {

@@ -22,8 +22,7 @@ export const totalHonorariosTeamLead = (
     console.error('UserData is undefined');
     return 0;
   }
-
-  //Los adicionales solo aparecen con los Team LEad
+  //Los adicionales solo aparecen con los Team Lead
   //Si hay Adicional y el TeamLead Participa
   if (operation.user_uid_adicional && userData.uid === operation.user_uid) {
     return Number(
@@ -59,7 +58,7 @@ export const totalHonorariosTeamLead = (
       100
     );
   } else if (userData.uid === operation.user_uid) {
-    return operation.honorarios_broker;
+    return operation.honorarios_asesor;
   }
   return operation.honorarios_asesor;
 };
