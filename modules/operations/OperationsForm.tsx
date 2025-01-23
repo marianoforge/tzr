@@ -373,13 +373,33 @@ const OperationsForm = () => {
               })}
               error={errors.porcentaje_compartido?.message}
             />
-            <p className="text-sm text-mutedBlue mb-5">
-              <span className="font-bold">Importante:</span> Si sos Broker de
-              una oficina o Team leader y comercializas propiedades, cuando
-              cierras una operación con un asesor bajo tu liderazgo, o sea,
-              compartida, primero te pones como asesor participante al 50% y
-              agregas un asesor más con el porcentaje de ganancia de el. Ej: 55%
-            </p>
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
+              <p className="text-sm text-mutedBlue mb-5">
+                <span className="font-bold">Importante:</span> Si sos Broker de
+                una oficina o Team leader y comercializas propiedades, en el
+                siguiente input debes poner el porcentaje que se lleva la
+                franquicia o el broker respectivamente para poder calcular el
+                neto de tu operación de manera correcta.
+              </p>
+            )}
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
+              <>
+                <Input
+                  label="Porcentaje destinado a franquicia o broker"
+                  type="text"
+                  placeholder="Por ejemplo: 11%"
+                  {...register('isFranchiseOrBroker', {
+                    setValueAs: (value) => parseFloat(value) || 0,
+                  })}
+                  error={errors.isFranchiseOrBroker?.message}
+                />
+                {errors.isFranchiseOrBroker && (
+                  <p className="text-red-500">
+                    {errors.isFranchiseOrBroker.message}
+                  </p>
+                )}
+              </>
+            )}
             {userRole === UserRole.TEAM_LEADER_BROKER && (
               <>
                 <Select

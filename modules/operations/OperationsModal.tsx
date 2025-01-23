@@ -271,7 +271,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           />
 
           <Input
-            label="Porcentaje Honorarios Broker"
+            label="Porcentaje Honorarios Totales"
             type="text"
             step="any"
             {...register('porcentaje_honorarios_broker', {
@@ -348,6 +348,18 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             })}
             placeholder="Por ejemplo: 25%"
             error={errors.porcentaje_compartido?.message}
+          />
+
+          <Input
+            label="Porcentaje destinado a franquicia o broker
+"
+            type="text"
+            value={
+              operation?.isFranchiseOrBroker === null ||
+              operation?.isFranchiseOrBroker === undefined
+                ? '0'
+                : `${operation?.isFranchiseOrBroker?.toFixed(2)}%`
+            }
           />
 
           {userRole === 'team_leader_broker' && (

@@ -1,20 +1,30 @@
 import { Operation } from '@/common/types';
 
+function removeAccents(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 export const filterOperationsBySearch = (
   operations: Operation[],
   searchQuery: string
 ): Operation[] => {
   if (!searchQuery) return operations;
 
-  const lowercasedQuery = searchQuery.toLowerCase();
+  const normalizedQuery = removeAccents(searchQuery.toLowerCase());
 
   return operations.filter(
     (operation) =>
-      operation.direccion_reserva.toLowerCase().includes(lowercasedQuery) ||
+      removeAccents(operation.direccion_reserva.toLowerCase()).includes(
+        normalizedQuery
+      ) ||
       (operation.realizador_venta &&
-        operation.realizador_venta.toLowerCase().includes(lowercasedQuery)) ||
+        removeAccents(operation.realizador_venta.toLowerCase()).includes(
+          normalizedQuery
+        )) ||
       (operation.numero_casa &&
-        operation.numero_casa.toLowerCase().includes(lowercasedQuery))
+        removeAccents(operation.numero_casa.toLowerCase()).includes(
+          normalizedQuery
+        ))
   );
 };
 
@@ -25,11 +35,11 @@ export const filterAgentsBySearch = <T>(
 ): T[] => {
   if (!searchQuery) return items;
 
-  const lowercasedQuery = searchQuery.toLowerCase();
+  const normalizedQuery = removeAccents(searchQuery.toLowerCase());
 
   return items.filter((item) =>
     keys.some((key) =>
-      String(item[key]).toLowerCase().includes(lowercasedQuery)
+      removeAccents(String(item[key]).toLowerCase()).includes(normalizedQuery)
     )
   );
 };

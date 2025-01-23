@@ -83,4 +83,5 @@ export const schema = yup.object().shape({
   estado: yup.string().required('El estado es requerido'),
   observaciones: yup.string().nullable(),
   pais: yup.string(),
+  isFranchiseOrBroker: yup.number().nullable(),
 });

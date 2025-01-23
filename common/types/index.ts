@@ -41,6 +41,7 @@ export interface Operation {
   user_uid_adicional?: string | null;
   teamId: string;
   observaciones?: string | null;
+  isFranchiseOrBroker?: number | null;
 }
 
 export interface EventFormData {
