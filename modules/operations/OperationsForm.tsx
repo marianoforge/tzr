@@ -400,6 +400,14 @@ const OperationsForm = () => {
                 )}
               </>
             )}
+
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
+              <p className="text-sm text-mutedBlue mb-5">
+                <span className="font-bold">Importante:</span> Si sos Broker o
+                Team Leader y sos participante en la operación, no hace falta
+                que te agregues como Asesor en las opciones siguientes.
+              </p>
+            )}
             {userRole === UserRole.TEAM_LEADER_BROKER && (
               <>
                 <Select
@@ -420,7 +428,6 @@ const OperationsForm = () => {
                       })),
                   ]}
                   className="w-full p-2 mb-8 border border-gray-300 rounded"
-                  required={userRole === UserRole.TEAM_LEADER_BROKER}
                 />
                 {errors.realizador_venta && (
                   <p className="text-red-500">
@@ -433,12 +440,11 @@ const OperationsForm = () => {
             <Input
               label="Porcentaje honorarios asesor*"
               type="text"
-              placeholder="Por ejemplo: 40%"
+              placeholder="Por ejemplo: 45%"
               {...register('porcentaje_honorarios_asesor', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_honorarios_asesor?.message}
-              required
             />
 
             {/* Additional advisor input block */}
