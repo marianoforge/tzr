@@ -70,6 +70,7 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     user_uid,
     user_uid_adicional,
     teamId,
+    isFranchiseOrBroker,
     ...rest
   } = req.body;
 
@@ -88,6 +89,7 @@ const createOperation = async (req: NextApiRequest, res: NextApiResponse) => {
     user_uid,
     user_uid_adicional: user_uid_adicional || null,
     teamId,
+    isFranchiseOrBroker,
     ...rest,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

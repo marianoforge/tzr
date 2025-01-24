@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Operation, UserData } from '@/common/types';
 
 import {
@@ -22,44 +23,108 @@ export const totalHonorariosTeamLead = (
     console.error('UserData is undefined');
     return 0;
   }
-  //Los adicionales solo aparecen con los Team Lead
-  //Si hay Adicional y el TeamLead Participa
-  if (operation.user_uid_adicional && userData.uid === operation.user_uid) {
-    return Number(
-      (operation.honorarios_broker *
-        (operation.porcentaje_honorarios_asesor ?? 0) +
-        operation.honorarios_broker *
-          (operation.porcentaje_honorarios_asesor_adicional ?? 0)) /
+  //Caso 1 - Venta Broker
+
+  //Caso 1A
+  if (
+    userRole === UserRole.TEAM_LEADER_BROKER &&
+    !operation.user_uid &&
+    !operation.isFranchiseOrBroker
+  ) {
+    console.log('Executing Caso 1A');
+    return operation.honorarios_broker;
+  }
+  //Caso 1B
+  if (
+    userRole === UserRole.TEAM_LEADER_BROKER &&
+    !operation.user_uid &&
+    operation.isFranchiseOrBroker
+  ) {
+    console.log('Executing Caso 1B');
+    return (
+      operation.honorarios_broker -
+      (operation.honorarios_broker * operation.isFranchiseOrBroker) / 100
+    );
+  }
+
+  //Caso 2 - Venta Broker mas 1 y dos agentes
+  //Caso 2A
+  if (
+    userRole === UserRole.TEAM_LEADER_BROKER &&
+    operation.user_uid &&
+    !operation.user_uid_adicional &&
+    !operation.isFranchiseOrBroker
+  ) {
+    console.log('Executing Caso 2A');
+    return (
+      operation.honorarios_broker -
+      (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
         100
     );
   }
 
-  //Si hay Adicional y el TeamLead no participa y sos team lead broker te llevas el 50% del broker y el 50% del adicional
-  if (operation.user_uid_adicional && userData.uid !== operation.user_uid) {
-    return Number(
-      (operation.honorarios_broker *
-        0.5 *
-        (100 - operation.porcentaje_honorarios_asesor)) /
-        100 +
-        (operation.honorarios_broker *
-          0.5 *
-          (100 - (operation.porcentaje_honorarios_asesor_adicional ?? 0))) /
-          100
-    );
-  }
-  // Si sos team lead con un asesor te llevas el resto del asesor sino te llevas el 100%
+  //Caso 2B
   if (
     userRole === UserRole.TEAM_LEADER_BROKER &&
-    userData.uid !== operation.user_uid
+    operation.user_uid &&
+    !operation.user_uid_adicional &&
+    operation.isFranchiseOrBroker
   ) {
+    console.log('Executing Caso 2B');
     return (
-      ((100 - operation.porcentaje_honorarios_asesor) *
-        operation.honorarios_broker) /
-      100
+      //10000
+      operation.honorarios_broker -
+      //1000
+      (operation.honorarios_broker * operation.isFranchiseOrBroker) / 100 -
+      //4500
+      (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
+        100
     );
-  } else if (userData.uid === operation.user_uid) {
-    return operation.honorarios_asesor;
   }
+  //Caso 2C
+  if (
+    userRole === UserRole.TEAM_LEADER_BROKER &&
+    operation.user_uid &&
+    operation.user_uid_adicional &&
+    !operation.isFranchiseOrBroker
+  ) {
+    console.log('Executing Caso 2C');
+    return (
+      operation.honorarios_broker -
+      (operation.honorarios_broker *
+        0.5 *
+        (operation.porcentaje_honorarios_asesor_adicional || 0)) /
+        100 -
+      (operation.honorarios_broker *
+        0.5 *
+        (operation.porcentaje_honorarios_asesor || 0)) /
+        100
+    );
+  }
+
+  //Caso 2D
+  if (
+    userRole === UserRole.TEAM_LEADER_BROKER &&
+    operation.user_uid &&
+    operation.user_uid_adicional &&
+    operation.isFranchiseOrBroker
+  ) {
+    console.log('Executing Caso 2D');
+    return (
+      operation.honorarios_broker -
+      (operation.honorarios_broker * operation.isFranchiseOrBroker) / 100 -
+      (operation.honorarios_broker *
+        0.5 *
+        (operation.porcentaje_honorarios_asesor_adicional || 0)) /
+        100 -
+      (operation.honorarios_broker *
+        0.5 *
+        (operation.porcentaje_honorarios_asesor || 0)) /
+        100
+    );
+  }
+
+  console.log('Executing default case');
   return operation.honorarios_asesor;
 };
 
@@ -307,18 +372,6 @@ export const calculateTotals = (operations: Operation[]) => {
   const totalPromedioPorcentajePuntasValidas =
     (promedioPuntaCompradoraPorcentaje + promedioPuntaVendedoraPorcentaje) / 2;
 
-  // Total Honorarios Broker Ajustados para operaciones dobles
-  const totalHonorariosBrokerAdjusted = operations.reduce(
-    (acc: number, op: Operation) => {
-      const isHalfOperation =
-        op.user_uid &&
-        op.user_uid_adicional &&
-        op.user_uid !== op.user_uid_adicional;
-      return acc + op.honorarios_broker * (isHalfOperation ? 0.5 : 1);
-    },
-    0
-  );
-
   // Obtener el mes actual (1-12)
 
   // Promedio Mensual Honorarios Asesor
@@ -379,7 +432,6 @@ export const calculateTotals = (operations: Operation[]) => {
     promedio_punta_vendedora_porcentaje: promedioPuntaVendedoraPorcentaje,
     total_valor_ventas_desarrollos: totalValorReservaFiltered,
     valor_reserva_cerradas: totalValorReservaCerradas,
-    total_honorarios_broker_adjusted: totalHonorariosBrokerAdjusted,
     promedio_mensual_honorarios_asesor: promedioMensualHonorariosAsesor,
     total_promedio_porcentaje_puntas_validas:
       totalPromedioPorcentajePuntasValidas,
