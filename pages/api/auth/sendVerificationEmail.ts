@@ -43,10 +43,13 @@ export default async function handler(
     res
       .status(200)
       .json({ message: 'Correo de verificación enviado exitosamente' });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error sending email:', error);
-    res
-      .status(500)
-      .json({ message: 'Error al enviar el correo de verificación' });
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({
+      message: 'Error al enviar el correo de verificación',
+      error: error?.response?.data || errorMessage,
+    });
   }
 }
