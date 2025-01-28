@@ -59,6 +59,7 @@ export enum QueryKeys {
 export enum UserRole {
   TEAM_LEADER_BROKER = 'team_leader_broker',
   AGENTE_ASESOR = 'agente_asesor',
+  DEFAULT = '',
 }
 
 export enum OperationData {

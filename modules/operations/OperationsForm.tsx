@@ -48,6 +48,7 @@ const OperationsForm = () => {
       punta_vendedora: false,
       fecha_operacion: '',
       direccion_reserva: '',
+      reparticion_honorarios_asesor: 0,
       localidad_reserva: null,
       provincia_reserva: null,
     },
@@ -207,6 +208,7 @@ const OperationsForm = () => {
       porcentaje_punta_compradora: data.porcentaje_punta_compradora || 0,
       porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
       porcentaje_honorarios_broker: porcentajeHonorariosBroker,
+      reparticion_honorarios_asesor: data.reparticion_honorarios_asesor || 0,
     };
 
     mutation.mutate(dataToSubmit as unknown as Operation);
@@ -325,11 +327,6 @@ const OperationsForm = () => {
               {...register('numero_sobre_refuerzo')}
               error={errors.numero_sobre_refuerzo?.message}
             />
-          </div>
-
-          <div className="w-full md:w-[40%] px-2">
-            {/* Right column */}
-
             <Input
               label="Monto sobre refuerzo"
               type="number"
@@ -337,6 +334,10 @@ const OperationsForm = () => {
               {...register('monto_sobre_refuerzo')}
               error={errors.monto_sobre_refuerzo?.message}
             />
+          </div>
+
+          <div className="w-full md:w-[40%] px-2">
+            {/* Right column */}
 
             <Input
               label="Referido"
@@ -407,6 +408,24 @@ const OperationsForm = () => {
                 Team Leader y sos participante en la operación, no hace falta
                 que te agregues como Asesor en las opciones siguientes.
               </p>
+            )}
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
+              <>
+                <Input
+                  label="Repartición de honorarios inmobiliarios a un asesor o corredor inmobiliario según acuerdo previo."
+                  type="number"
+                  placeholder="Por ejemplo: 2%"
+                  {...register('reparticion_honorarios_asesor', {
+                    setValueAs: (value) => parseFloat(value) || 0,
+                  })}
+                  error={errors.reparticion_honorarios_asesor?.message}
+                />
+                {errors.reparticion_honorarios_asesor && (
+                  <p className="text-red-500">
+                    {errors.reparticion_honorarios_asesor.message}
+                  </p>
+                )}
+              </>
             )}
             {userRole === UserRole.TEAM_LEADER_BROKER && (
               <>

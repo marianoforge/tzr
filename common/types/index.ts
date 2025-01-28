@@ -8,6 +8,7 @@ interface BaseState<T> {
 }
 
 export interface Operation {
+  reparticion_honorarios_asesor: number;
   punta_compradora: boolean;
   punta_vendedora: boolean;
   id: string;
