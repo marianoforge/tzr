@@ -23,105 +23,72 @@ export const totalHonorariosTeamLead = (
     console.error('UserData is undefined');
     return 0;
   }
-  //Caso 1 - Venta Broker
 
-  //Caso 1A
-  if (
-    userRole === UserRole.TEAM_LEADER_BROKER &&
-    !operation.user_uid &&
-    !operation.isFranchiseOrBroker
-  ) {
-    console.log('Executing Caso 1A');
-    return operation.honorarios_broker;
-  }
-  //Caso 1B
-  if (
-    userRole === UserRole.TEAM_LEADER_BROKER &&
-    !operation.user_uid &&
-    operation.isFranchiseOrBroker
-  ) {
-    console.log('Executing Caso 1B');
-    return (
-      operation.honorarios_broker -
-      (operation.honorarios_broker * operation.isFranchiseOrBroker) / 100
-    );
-  }
+  const isTeamLeaderBroker = userRole === UserRole.TEAM_LEADER_BROKER;
+  console.log('isTeamLeaderBroker', isTeamLeaderBroker);
+  const hasUserUid = !!operation.user_uid;
+  const hasAdditionalUserUid = !!operation.user_uid_adicional;
+  const franchiseDiscount =
+    (operation.honorarios_broker * (operation.isFranchiseOrBroker || 0)) / 100;
 
-  //Caso 2 - Venta Broker mas 1 y dos agentes
-  //Caso 2A
-  if (
-    userRole === UserRole.TEAM_LEADER_BROKER &&
-    operation.user_uid &&
-    !operation.user_uid_adicional &&
-    !operation.isFranchiseOrBroker
-  ) {
-    console.log('Executing Caso 2A');
-    return (
-      operation.honorarios_broker -
-      (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
-        100
-    );
-  }
+  console.log('franchiseDiscount', franchiseDiscount);
 
-  //Caso 2B
-  if (
-    userRole === UserRole.TEAM_LEADER_BROKER &&
-    operation.user_uid &&
-    !operation.user_uid_adicional &&
-    operation.isFranchiseOrBroker
-  ) {
-    console.log('Executing Caso 2B');
-    return (
-      //10000
-      operation.honorarios_broker -
-      //1000
-      (operation.honorarios_broker * operation.isFranchiseOrBroker) / 100 -
-      //4500
-      (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
-        100
-    );
-  }
-  //Caso 2C
-  if (
-    userRole === UserRole.TEAM_LEADER_BROKER &&
-    operation.user_uid &&
-    operation.user_uid_adicional &&
-    !operation.isFranchiseOrBroker
-  ) {
-    console.log('Executing Caso 2C');
-    return (
-      operation.honorarios_broker -
-      (operation.honorarios_broker *
-        0.5 *
-        (operation.porcentaje_honorarios_asesor_adicional || 0)) /
-        100 -
-      (operation.honorarios_broker *
-        0.5 *
-        (operation.porcentaje_honorarios_asesor || 0)) /
-        100
-    );
-  }
+  const reparticionHonorariosAsesor =
+    (operation.honorarios_broker *
+      (operation.reparticion_honorarios_asesor || 0)) /
+    100;
 
-  //Caso 2D
-  if (
-    userRole === UserRole.TEAM_LEADER_BROKER &&
-    operation.user_uid &&
-    operation.user_uid_adicional &&
-    operation.isFranchiseOrBroker
-  ) {
-    console.log('Executing Caso 2D');
-    return (
-      operation.honorarios_broker -
-      (operation.honorarios_broker * operation.isFranchiseOrBroker) / 100 -
-      (operation.honorarios_broker *
-        0.5 *
-        (operation.porcentaje_honorarios_asesor_adicional || 0)) /
-        100 -
-      (operation.honorarios_broker *
-        0.5 *
-        (operation.porcentaje_honorarios_asesor || 0)) /
-        100
-    );
+  console.log('reparticionHonorariosAsesor', reparticionHonorariosAsesor);
+
+  const asesorDiscount =
+    (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
+    100;
+  console.log('asesorDiscount', asesorDiscount);
+
+  const additionalAsesorDiscount =
+    (operation.honorarios_broker *
+      0.5 *
+      (operation.porcentaje_honorarios_asesor_adicional || 0)) /
+    100;
+  const baseHonorarios = operation.honorarios_broker;
+
+  if (isTeamLeaderBroker) {
+    if (!hasUserUid) {
+      if (!operation.isFranchiseOrBroker && !reparticionHonorariosAsesor) {
+        console.log('Executing Caso 1A');
+        return baseHonorarios;
+      } else if (reparticionHonorariosAsesor) {
+        console.log('Executing Caso 1B');
+        return baseHonorarios - reparticionHonorariosAsesor;
+      } else {
+        console.log('Executing Caso 1C');
+        return baseHonorarios - franchiseDiscount;
+      }
+    } else if (!hasAdditionalUserUid) {
+      if (!operation.isFranchiseOrBroker && !reparticionHonorariosAsesor) {
+        console.log('Executing Caso 2A');
+        return baseHonorarios - asesorDiscount;
+      } else if (reparticionHonorariosAsesor) {
+        console.log('Executing Caso 2B');
+        return baseHonorarios - reparticionHonorariosAsesor - asesorDiscount;
+      } else {
+        console.log('Executing Caso 2C');
+        return baseHonorarios - franchiseDiscount - asesorDiscount;
+      }
+    } else {
+      if (!operation.isFranchiseOrBroker && !reparticionHonorariosAsesor) {
+        console.log('Executing Caso 2C');
+        return baseHonorarios - additionalAsesorDiscount - asesorDiscount;
+      } else if (reparticionHonorariosAsesor) {
+        console.log('Executing Caso 2D');
+        return (
+          baseHonorarios -
+          franchiseDiscount -
+          additionalAsesorDiscount -
+          asesorDiscount
+        );
+      }
+    }
   }
 
   console.log('Executing default case');

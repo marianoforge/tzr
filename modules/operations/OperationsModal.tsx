@@ -171,6 +171,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       direccion_reserva: addressData.address,
       localidad_reserva: addressData.city,
       provincia_reserva: addressData.province,
+      reparticion_honorarios_asesor:
+        data.reparticion_honorarios_asesor ?? undefined,
     };
 
     // Ensure realizador_venta is not null before submitting
@@ -182,10 +184,12 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         : '',
       porcentaje_honorarios_asesor_adicional: showAdditionalAdvisor
         ? payload.porcentaje_honorarios_asesor_adicional
-        : null,
+        : undefined,
       user_uid_adicional: showAdditionalAdvisor
         ? selectedUser_idAdicional
         : null,
+      reparticion_honorarios_asesor:
+        payload.reparticion_honorarios_asesor ?? undefined,
       localidad_reserva: payload.localidad_reserva || undefined,
       provincia_reserva: payload.provincia_reserva || undefined,
       pais: payload.pais || undefined,
@@ -359,6 +363,18 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               })}
               placeholder="Por ejemplo: 10%"
               error={errors.isFranchiseOrBroker?.message}
+            />
+          )}
+
+          {userRole === 'team_leader_broker' && (
+            <Input
+              label="Porcentaje destinado a reparticion de honorarios asesor"
+              type="text"
+              {...register('reparticion_honorarios_asesor', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              placeholder="Por ejemplo: 10%"
+              error={errors.reparticion_honorarios_asesor?.message}
             />
           )}
 
