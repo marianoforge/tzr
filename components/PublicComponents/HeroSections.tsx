@@ -48,7 +48,7 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-      <LicensesSection />
+      <LicensesSection id="licenses-section" />
     </section>
   );
 };
