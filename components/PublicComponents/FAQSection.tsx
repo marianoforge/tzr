@@ -1,4 +1,4 @@
-const FAQSection = () => {
+const FAQSection = ({ id }: { id: string }) => {
   const faqs = [
     {
       question:
@@ -9,7 +9,7 @@ const FAQSection = () => {
     {
       question: '¿Hay una aplicación móvil disponible para RealtorTrackPro?',
       answer:
-        'Sí, ofrecemos una aplicación móvil que pone todas las herramientas poderosas de RealtorTrackPro en la palma de tu mano. Ahora, ¿qué sería de un asesor inmobiliario sin poder consultar métricas y hacer pronósticos mientras toma café en una casa en venta? Nuestra app no escuchará tus conversaciones ni accederá a tu cámara sin tu autorización… pero siempre agradecemos que te mantengas “ubicado”.',
+        'Sí, ofrecemos una aplicación móvil que pone todas las herramientas poderosas de RealtorTrackPro en la palma de tu mano. Ahora, ¿qué sería de un asesor inmobiliario sin poder consultar métricas y hacer pronósticos mientras toma café en una casa en venta? Nuestra app no escuchará tus conversaciones ni accederá a tu cámara sin tu autorización… pero siempre agradecemos que te mantengas "ubicado".',
     },
     {
       question:
@@ -35,7 +35,7 @@ const FAQSection = () => {
       question: '¿Cómo es el proceso de registro?',
       answer: [
         '',
-        '<strong>Ve a www.realtortrackpro.com y selecciona “Registrarse</strong>',
+        '<strong>Ve a www.realtortrackpro.com y selecciona "Registrarse</strong>',
         '<strong>Escoge la licencia que prefieras</strong>',
         '<strong>Ingresa tus datos básicos (prometemos no preguntar tu película favorita).</strong>',
         '<strong>¡Listo! Disfruta de una prueba gratuita de 7 días. Si decides continuar, se te cobrará automáticamente al octavo día.</strong>',
@@ -58,7 +58,10 @@ const FAQSection = () => {
     },
   ];
   return (
-    <section className="relative  flex-col items-center justify-center w-full hidden xl:flex">
+    <section
+      id={id}
+      className="relative flex-col items-center justify-center w-full hidden xl:flex"
+    >
       <div className="flex flex-col justify-around items-center mb-[40px] mt-40">
         <h3 className="text-sm text-gray-400 font-bold">
           PREGUNTAS FRECUENTES

@@ -12,10 +12,11 @@ import LicenseCard from './LicensesCard';
 import ContactForm from './ContactForm';
 
 interface LicensesSectionProps {
+  id?: string;
   onClose?: () => void;
 }
 
-const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
+const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
   const router = useRouter();
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
 
@@ -42,7 +43,10 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="absolute text-[#2d3748] flex flex-col xl:flex-row justify-around items-center gap-20 pb-10 mt-20 top-full transform -translate-y-[48px] xl:-translate-y-1/4">
+    <div
+      id={id}
+      className="absolute text-[#2d3748] flex flex-col xl:flex-row justify-around items-center gap-20 pb-10 mt-20 top-full transform -translate-y-[48px] xl:-translate-y-1/4"
+    >
       <LicenseCard
         title="ASESOR"
         description="Lo que necesitás para empezar."

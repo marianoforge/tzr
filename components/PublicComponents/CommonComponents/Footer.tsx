@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import Image from 'next/image';
+
 const Footer = () => {
   return (
     <footer className="p-4 pt-0 relative h-auto w-full rounded-xl">
@@ -23,7 +24,7 @@ const Footer = () => {
         <hr className="w-full border-t border-dotted border-opacity-50 border-white mt-10" />
         <hr className="w-full border-t border-dotted border-opacity-50 border-white my-1" />
         <div className="flex flex-col md:flex-row justify-center md:justify-start w-full h-auto items-center md:items-start text-center md:text-left">
-          <div className="flex flex-row justify-center md:justify-start h-32 items-center md:items-start w-full md:w-2/5 ml-2">
+          <div className="flex flex-row justify-center md:justify-start h-32 items-center mt-4 w-full md:w-2/6 ml-2">
             <Image
               src="/trackproLogoWhite.png"
               alt="logo"
@@ -31,29 +32,76 @@ const Footer = () => {
               height={100}
             />
           </div>
-          <div className="flex flex-col md:flex-row justify-center md:justify-start h-auto items-center md:items-start w-full md:w-3/5 gap-10 md:gap-20">
+          <div className="flex flex-col md:flex-row justify-center md:justify-start h-auto items-center md:items-start w-full md:w-4/7 gap-10 md:gap-20">
             <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
               <h5 className="mt-1 mb-6 text-slate-300">Companía</h5>
-              <p className="hover:underline mb-3">Términos y condiciones</p>
-              <p className="hover:underline">Política de privacidad</p>
+              <a
+                href="/RealtorTrackproTerminosYPolíticas.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline mb-3"
+              >
+                Términos y condiciones
+              </a>
+              <a
+                href="/RealtorTrackproPoliticaDePrivacidad.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                Política de privacidad
+              </a>
             </div>
             <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
               <h5 className="mt-1 mb-6 text-slate-300">Contacto</h5>
-              <p className="hover:underline mb-3">info@realtortrackpro.com</p>
-              <p className="hover:underline">+56 9 1234 5678</p>
+              <a
+                href="mailto:info@realtortrackpro.com"
+                className="hover:underline mb-3"
+              >
+                info@realtortrackpro.com
+              </a>
+              <a href="tel:+34637017737" className="hover:underline mb-2">
+                España: +34 637 01 7737
+              </a>
+              <a href="tel:+14077511733" className="hover:underline mb-4">
+                USA: +1 (407) 751-1733
+              </a>
+            </div>
+            <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
+              <h5 className="mt-1 mb-6 text-slate-300">Dirección</h5>
+              <a
+                href="https://www.google.com/maps?q=Carrer+De+L%27argenter+Suarez+4+-+Apto+1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline mb-3"
+              >
+                España: Carrer De L&apos;argenter Suarez 4 - Apto 1
+              </a>
+              <a
+                href="https://www.google.com/maps?q=8330+SW+12th+Street,+Pembroke+Pines,+FL+33025"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                USA: 8330 SW 12th Street, Pembroke Pines, FL 33025
+              </a>
             </div>
             <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
               <h5 className="mt-1 mb-6 text-slate-300">Producto</h5>
-              <p className="hover:underline mb-3">FAQs</p>
-              <p className="hover:underline">Pricing</p>
+              <p className="hover:underline mb-3">
+                <Link href="#faq-section">FAQs</Link>
+              </p>
+              <p className="hover:underline">
+                <Link href="#licenses-section">Pricing</Link>
+              </p>
             </div>
           </div>
         </div>
         <hr className="w-full border-t border-dotted border-opacity-50 border-white" />
         <hr className="w-full border-t border-dotted border-opacity-50 border-white my-1" />
 
-        <div className="flex flex-col md:flex-row justify-center md:justify-start w-full h-16 items-center ml-4 text-center md:text-left">
-          <p>© 2024 Realtor Track Pro - Aquila Ventures</p>
+        <div className="flex flex-col md:flex-row justify-center  w-full h-16 items-center ml-4 text-center md:text-left">
+          <p>© 2024 Realtor Track Pro - Avemiller LLC.</p>
         </div>
         <hr className="w-full border-t border-dotted border-opacity-50 border-white" />
         <hr className="w-full border-t border-dotted border-opacity-50 border-white my-1" />
