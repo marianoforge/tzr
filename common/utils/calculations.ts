@@ -25,25 +25,19 @@ export const totalHonorariosTeamLead = (
   }
 
   const isTeamLeaderBroker = userRole === UserRole.TEAM_LEADER_BROKER;
-  console.log('isTeamLeaderBroker', isTeamLeaderBroker);
   const hasUserUid = !!operation.user_uid;
   const hasAdditionalUserUid = !!operation.user_uid_adicional;
   const franchiseDiscount =
     (operation.honorarios_broker * (operation.isFranchiseOrBroker || 0)) / 100;
-
-  console.log('franchiseDiscount', franchiseDiscount);
 
   const reparticionHonorariosAsesor =
     (operation.honorarios_broker *
       (operation.reparticion_honorarios_asesor || 0)) /
     100;
 
-  console.log('reparticionHonorariosAsesor', reparticionHonorariosAsesor);
-
   const asesorDiscount =
     (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
     100;
-  console.log('asesorDiscount', asesorDiscount);
 
   const additionalAsesorDiscount =
     (operation.honorarios_broker *
@@ -55,32 +49,24 @@ export const totalHonorariosTeamLead = (
   if (isTeamLeaderBroker) {
     if (!hasUserUid) {
       if (!operation.isFranchiseOrBroker && !reparticionHonorariosAsesor) {
-        console.log('Executing Caso 1A');
         return baseHonorarios;
       } else if (reparticionHonorariosAsesor) {
-        console.log('Executing Caso 1B');
         return baseHonorarios - reparticionHonorariosAsesor;
       } else {
-        console.log('Executing Caso 1C');
         return baseHonorarios - franchiseDiscount;
       }
     } else if (!hasAdditionalUserUid) {
       if (!operation.isFranchiseOrBroker && !reparticionHonorariosAsesor) {
-        console.log('Executing Caso 2A');
         return baseHonorarios - asesorDiscount;
       } else if (reparticionHonorariosAsesor) {
-        console.log('Executing Caso 2B');
         return baseHonorarios - reparticionHonorariosAsesor - asesorDiscount;
       } else {
-        console.log('Executing Caso 2C');
         return baseHonorarios - franchiseDiscount - asesorDiscount;
       }
     } else {
       if (!operation.isFranchiseOrBroker && !reparticionHonorariosAsesor) {
-        console.log('Executing Caso 2C');
         return baseHonorarios - additionalAsesorDiscount - asesorDiscount;
       } else if (reparticionHonorariosAsesor) {
-        console.log('Executing Caso 2D');
         return (
           baseHonorarios -
           franchiseDiscount -
@@ -91,7 +77,6 @@ export const totalHonorariosTeamLead = (
     }
   }
 
-  console.log('Executing default case');
   return operation.honorarios_asesor;
 };
 
