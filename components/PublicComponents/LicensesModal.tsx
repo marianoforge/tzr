@@ -5,6 +5,8 @@ import {
   PRICE_ID_STARTER,
   PRICE_ID_GROWTH,
   PRICE_ID_ENTERPRISE,
+  PRICE_ID_STARTER_ANNUAL,
+  PRICE_ID_GROWTH_ANNUAL,
 } from '@/lib/data';
 
 import LicenseCard from './LicensesCard';
@@ -18,6 +20,8 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleLicenseSelect = (priceId: string) => {
+    // Log the priceId
+
     // Almacena el priceId en el almacenamiento local
     localStorage.setItem('selectedPriceId', priceId);
 
@@ -42,9 +46,10 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
             title="ASESOR"
             description="Lo que necesitás para empezar."
             price="$9.99"
-            annualPrice="$99.99"
+            annualPrice="$99.90"
             buttonText="Empieza Gratis"
             priceId={PRICE_ID_STARTER}
+            annualPriceId={PRICE_ID_STARTER_ANNUAL}
             features={[
               'Acceso completo a funcionalidades esenciales de RealtorTrackPro.',
               'Dashboard de seguimiento de honorarios, operaciones y gastos.',
@@ -60,9 +65,10 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
             title="TEAM LEADER"
             description="Todo lo que necesitas para liderar tu equipo."
             price="$12.99"
-            annualPrice="$129.99"
+            annualPrice="$129.90"
             buttonText="Empieza Gratis"
             priceId={PRICE_ID_GROWTH}
+            annualPriceId={PRICE_ID_GROWTH_ANNUAL}
             features={[
               'Incluye todas las características de la Licencia Asesor.',
               'Modulo adicional para analisis de rentabilidad e ingresos del equipo de asesores.',

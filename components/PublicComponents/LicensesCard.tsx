@@ -8,6 +8,7 @@ interface LicenseCardProps {
   annualPrice?: string;
   buttonText: string;
   priceId?: string;
+  annualPriceId?: string;
   features: string[];
   onSelect: (priceId: string) => void;
 }
@@ -19,6 +20,7 @@ const LicenseCard: React.FC<LicenseCardProps> = ({
   annualPrice,
   buttonText,
   priceId,
+  annualPriceId,
   features,
   onSelect,
 }) => {
@@ -51,7 +53,9 @@ const LicenseCard: React.FC<LicenseCardProps> = ({
           </div>
         </div>
         <button
-          onClick={() => onSelect(priceId ?? '')}
+          onClick={() =>
+            onSelect(isAnnual ? (annualPriceId ?? '') : (priceId ?? ''))
+          }
           className="bg-mediumBlue text-white py-2 px-4 my-4 rounded-full"
         >
           {buttonText}
