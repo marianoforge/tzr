@@ -178,6 +178,7 @@ export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   message: string;
+  title?: string;
   onAccept?: () => void;
   secondButtonText?: string;
   onSecondButtonClick?: () => void;

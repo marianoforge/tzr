@@ -6,16 +6,19 @@ import {
   PRICE_ID_ENTERPRISE,
   PRICE_ID_GROWTH,
   PRICE_ID_STARTER,
+  PRICE_ID_STARTER_ANNUAL,
+  PRICE_ID_GROWTH_ANNUAL,
 } from '@/lib/data';
 
 import LicenseCard from './LicensesCard';
 import ContactForm from './ContactForm';
 
 interface LicensesSectionProps {
+  id?: string;
   onClose?: () => void;
 }
 
-const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
+const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
   const router = useRouter();
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
 
@@ -42,14 +45,18 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="absolute text-[#2d3748] flex flex-col xl:flex-row justify-around items-center gap-20 pb-10 mt-20 top-full transform -translate-y-[48px] xl:-translate-y-1/4">
+    <div
+      id={id}
+      className="absolute text-[#2d3748] flex flex-col xl:flex-row justify-around items-center gap-20 pb-10 mt-20 top-full transform -translate-y-[48px] xl:-translate-y-1/4"
+    >
       <LicenseCard
         title="ASESOR"
         description="Lo que necesitás para empezar."
         price="$9.99"
-        annualPrice="$99.99"
+        annualPrice="$99.90"
         buttonText="Empieza Gratis"
         priceId={PRICE_ID_STARTER}
+        annualPriceId={PRICE_ID_STARTER_ANNUAL}
         features={[
           'Acceso completo a funcionalidades esenciales de RealtorTrackPro.',
           'Dashboard de seguimiento de honorarios, operaciones y gastos.',
@@ -65,9 +72,10 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ onClose }) => {
         title="TEAM LEADER"
         description="Todo lo que necesitas para liderar tu equipo."
         price="$12.99"
-        annualPrice="$129.99"
+        annualPrice="$129.90"
         buttonText="Empieza Gratis"
         priceId={PRICE_ID_GROWTH}
+        annualPriceId={PRICE_ID_GROWTH_ANNUAL}
         features={[
           'Incluye todas las características de la Licencia Asesor.',
           'Modulo adicional para analisis de rentabilidad e ingresos del equipo de asesores.',

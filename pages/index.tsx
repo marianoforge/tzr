@@ -9,7 +9,7 @@ const Home = () => {
     <>
       <MainLayout>
         <PersonSection />
-        <FAQSection />
+        <FAQSection id="faq-section" />
         <CardsSection />
         <Footer />
       </MainLayout>
