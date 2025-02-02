@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 export default async function handler(
@@ -12,12 +12,24 @@ export default async function handler(
 
   const { userId, stripeCustomerId, stripeSubscriptionId, role } = req.body;
 
+  // Validar que los datos existen
   if (!userId || !stripeCustomerId || !stripeSubscriptionId) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
+  console.log('userId:', userId);
+  console.log('stripeCustomerId:', stripeCustomerId);
+  console.log('stripeSubscriptionId:', stripeSubscriptionId);
+  console.log('role:', role);
+
   try {
     const userRef = doc(db, 'usuarios', userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     await updateDoc(userRef, {
       stripeCustomerId,
       stripeSubscriptionId,
@@ -25,8 +37,10 @@ export default async function handler(
     });
 
     res.status(200).json({ message: 'User updated successfully' });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Error updating user', error });
+  } catch (error: any) {
+    console.error('Error updating user:', error.message);
+    res
+      .status(500)
+      .json({ message: 'Error updating user', error: error.message });
   }
 }
