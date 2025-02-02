@@ -22,8 +22,8 @@ const HeroSection = () => {
               agencias inmobiliarias que buscan maximizar sus ingresos y
               optimizar sus inversiones.
             </span>
-            <span className="hidden lg:block">RealtorTrackPro</span>
-            <span className="hidden lg:block">
+            <span className="hidden lg:hidden">RealtorTrackPro</span>
+            <span className="hidden lg:hidden">
               fue diseñado específicamente para asesores y agencias
             </span>
             <span className="hidden lg:hidden">
