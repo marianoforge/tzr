@@ -14,11 +14,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { COLORS, MAX_BAR_SIZE } from '@/lib/constants';
-import { formatOperationsData } from '@/common/utils/formatOperationsData';
-import { Operation } from '@/common/types/';
+import { Operation, UserData } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
-import { OperationData, OperationStatus } from '@/common/enums';
+import { OperationStatus } from '@/common/enums';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
+import { useUserDataStore } from '@/stores/userDataStore';
+import { months } from '@/common/utils/currentYearOps';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -46,6 +48,7 @@ const MonthlyBarChart: React.FC = () => {
   const [data, setData] = useState<
     { month: string; currentYear: number; previousYear: number }[]
   >([]);
+  const { userData } = useUserDataStore();
 
   // Utilizamos useQuery para obtener las operaciones del usuario
   const {
@@ -66,23 +69,53 @@ const MonthlyBarChart: React.FC = () => {
   // Efecto para formatear los datos obtenidos
   useEffect(() => {
     if (operations.length > 0) {
-      const closedOperations = operations.filter(
-        (operation: Operation) => operation.estado === OperationStatus.CERRADA
-      );
-      const formattedData = formatOperationsData(
-        closedOperations,
-        OperationData.HONORARIOS_ASESOR
+      const operations2024 = operations.filter(
+        (operation: Operation) =>
+          new Date(operation.fecha_operacion).getFullYear() === 2024 &&
+          operation.estado === OperationStatus.CERRADA
       );
 
-      // Verificar que los datos estén correctamente formateados
-      const validData = formattedData.map((item) => ({
-        ...item,
-        currentYear: isNaN(item.currentYear) ? 0 : item.currentYear,
-        previousYear: isNaN(item.previousYear) ? 0 : item.previousYear,
+      const operations2025 = operations.filter(
+        (operation: Operation) =>
+          new Date(operation.fecha_operacion).getFullYear() === 2025 &&
+          operation.estado === OperationStatus.CERRADA
+      );
+
+      // Inicializamos el array con los meses y valores en 0
+      const data2024_2025 = months.map((month) => ({
+        month,
+        currentYear: 0,
+        previousYear: 0,
       }));
-      setData(validData);
+
+      operations2024.forEach((operation: Operation) => {
+        const operationDate = new Date(operation.fecha_operacion);
+        const monthIndex = operationDate.getMonth();
+        const netFees = calculateNetFees(operation, userData as UserData);
+
+        // Sumamos las tarifas netas del año 2024
+        data2024_2025[monthIndex].previousYear += netFees;
+      });
+
+      operations2025.forEach((operation: Operation) => {
+        const operationDate = new Date(operation.fecha_operacion);
+        const monthIndex = operationDate.getMonth();
+        const netFees = calculateNetFees(operation, userData as UserData);
+
+        // Sumamos las tarifas netas del año 2025
+        data2024_2025[monthIndex].currentYear += netFees;
+      });
+
+      // Formateamos los valores finales a 2 decimales también
+      const validData2024_2025 = data2024_2025.map((item) => ({
+        ...item,
+        currentYear: parseFloat(item.currentYear.toFixed(2)),
+        previousYear: parseFloat(item.previousYear.toFixed(2)),
+      }));
+
+      setData(validData2024_2025);
     }
-  }, [operations]);
+  }, [operations, userData]);
 
   if (data.length === 0) {
     return (

@@ -113,6 +113,15 @@ const ProjectionsFunnelChart = ({ userId }: { userId: string }) => {
   }
   if (error) return <p>Error al cargar datos del funnel.</p>;
 
+  if (funnelData.length === 0) {
+    return (
+      <p className="text-center text-sm text-gray-500">
+        No hay datos disponibles para mostrar en el funnel. Debes compoletar el
+        cuadro que se encuentra debajo.
+      </p>
+    );
+  }
+
   return (
     <div className="bg-white p-4 gap-4 rounded-xl shadow-md flex flex-col justify-center items-center w-full">
       <h2 className="text-xl font-bold">Funnel de Proyección</h2>
