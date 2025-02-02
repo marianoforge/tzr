@@ -30,6 +30,8 @@ const CuadroPrincipal = () => {
         OperationType.ALQUILER_TEMPORAL,
         OperationType.ALQUILER_TRADICIONAL,
         OperationType.ALQUILER_COMERCIAL,
+        OperationType.DESARROLLO,
+        OperationType.DESARROLLO_INMOBILIARIO,
       ].includes(calcs.group as OperationType)
   );
 
@@ -101,7 +103,7 @@ const CuadroPrincipal = () => {
                     'Cantidad de Operaciones',
                     'Porcentaje Sobre el Total',
                     '% Ganancias Brutas',
-                    'Promedio Monto Ventas & Desarrollos',
+                    'Promedio Monto Ventas',
                   ].map((header) => (
                     <th key={header} className="py-3 px-4 font-semibold">
                       {header}

@@ -232,7 +232,7 @@ const OperationsForm = () => {
           Agregar Reserva / Operación
         </h2>
         <div className="flex flex-wrap -mx-2 gap-x-24 justify-center">
-          <div className="w-50% md:w-[40%] px-2">
+          <div className="w-full md:w-[40%] px-2">
             {/* Left column */}
             <Input
               label="Fecha de la Operación*"
