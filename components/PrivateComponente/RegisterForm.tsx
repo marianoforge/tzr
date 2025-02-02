@@ -143,7 +143,7 @@ const RegisterForm = () => {
       }
 
       setModalMessage(
-        'Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada.'
+        'Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada y la de correo no deseado.'
       );
       setIsModalOpen(true);
 
@@ -324,6 +324,7 @@ const RegisterForm = () => {
         message={modalMessage}
         onAccept={() => router.push('/login')}
         messageClassName="text-base"
+        className="w-[50%]"
       />
 
       <LicensesModal
