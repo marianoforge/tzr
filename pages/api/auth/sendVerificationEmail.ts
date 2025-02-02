@@ -29,14 +29,22 @@ export default async function handler(
       apiKey: process.env.MAILERSEND_API_KEY as string,
     });
 
+    // Personalización manual sin importar Personalization
+    const personalization = [
+      {
+        email: email, // Destinatario al que se le aplican las variables
+        data: {
+          verification_link: `${process.env.NEXT_PUBLIC_BASE_URL}/verify?token=${verificationToken}`,
+        },
+      },
+    ];
+
     const emailParams = new EmailParams()
       .setFrom(sentFrom)
       .setTo(recipients)
       .setSubject('RealtorTrackPro - Verifica tu correo electrónico')
-      .setHtml(
-        `<p>Por favor, verifica tu correo electrónico haciendo clic en el siguiente enlace:</p>
-         <a href="${process.env.NEXT_PUBLIC_BASE_URL}/verify?token=${verificationToken}">Verificar correo</a>`
-      );
+      .setTemplateId(process.env.MAILERSEND_TEMPLATE_ID as string) // Usa el ID de la plantilla creada
+      .setPersonalization(personalization); // Pasamos la personalización manualmente
 
     await mailerSend.email.send(emailParams);
 
