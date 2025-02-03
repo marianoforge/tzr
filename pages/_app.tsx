@@ -6,6 +6,7 @@ import type { AppProps } from 'next/app';
 import { useState, useEffect } from 'react';
 
 import { useAuthStore } from '@/stores/authStore';
+import Script from 'next/script';
 
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
@@ -15,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const unsubscribe = initializeAuthListener();
-    return () => unsubscribe(); // Limpia el listener al desmontar
+    return () => unsubscribe();
   }, [initializeAuthListener]);
 
   useEffect(() => {
@@ -23,10 +24,25 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
+    <>
+      {/* Google Analytics */}
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-K7RKJ8JX0C"
+      />
+      <Script id="google-analytics">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-K7RKJ8JX0C');
+        `}
+      </Script>
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
 
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </>
   );
 }
