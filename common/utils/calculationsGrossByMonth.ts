@@ -32,7 +32,9 @@ export const calculateGrossByMonth = (
         if (!acc[month]) {
           acc[month] = 0;
         }
-        acc[month] += Number(op.honorarios_broker) || 0;
+        acc[month] +=
+          Number((op.valor_reserva * op.porcentaje_honorarios_broker) / 100) ||
+          0;
       }
       return acc;
     },

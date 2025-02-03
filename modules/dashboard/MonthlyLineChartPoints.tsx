@@ -135,7 +135,7 @@ const MonthlyLineChartPoints = () => {
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
-
+  // console.log(chartData);
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold text-center">
