@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { VideoCameraIcon } from '@heroicons/react/24/outline';
 
 import { useUserDataStore } from '@/stores/userDataStore';
 import { auth } from '@/lib/firebase';
@@ -79,6 +80,16 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
   return (
     <nav className="fixed top-0 left-0 right-0 w-full bg-darkBlue z-50 text-center xl:h-10">
       <div className="flex items-center justify-between w-full mt-4">
+        <div className="hidden xl:flex items-center justify-center w-full -mt-2 ml-[300px] ">
+          <a
+            href="https://www.youtube.com/playlist?list=PLDkJwMV1ib37YHUQTgG-0e1b7uNV6lk0C"
+            target="_blank"
+            className="bg-gradient-to-r from-[#FFB7B2]  via-lightBlue bg-clip-text  to-[#ffffff] text-transparent font-semibold hover:underline mr-4"
+          >
+            NO TE OLVIDES DE VER LOS TUTORIALES{' '}
+          </a>
+          <VideoCameraIcon className="h-5 w-5 text-white" />
+        </div>
         {/* Hamburger menu icon */}
         <div className="xl:hidden pl-12 space-x-3 flex w-1/6">
           <button

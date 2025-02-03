@@ -9,6 +9,7 @@ import {
   ChartBarIcon,
   UserPlusIcon,
   UserIcon,
+  VideoCameraIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
@@ -44,6 +45,12 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
         href="/dashboard"
         icon={<HomeIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Dashboard"
+      />
+      <NavLink
+        href="https://www.youtube.com/playlist?list=PLDkJwMV1ib37YHUQTgG-0e1b7uNV6lk0C"
+        target="_blank"
+        icon={<VideoCameraIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Tutoriales"
       />
       <div className="text-lg flex flex-col pt-4 pl-4 pb-2">
         <p>Informes</p>
