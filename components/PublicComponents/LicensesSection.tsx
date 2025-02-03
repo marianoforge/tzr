@@ -54,7 +54,7 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
         description="Lo que necesitás para empezar."
         price="$9.99"
         annualPrice="$99.90"
-        buttonText="Empieza Gratis"
+        buttonText="Empieza Ahora"
         priceId={PRICE_ID_STARTER}
         annualPriceId={PRICE_ID_STARTER_ANNUAL}
         features={[
@@ -73,7 +73,7 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
         description="Todo lo que necesitas para liderar tu equipo."
         price="$12.99"
         annualPrice="$129.90"
-        buttonText="Empieza Gratis"
+        buttonText="Empieza Ahora"
         priceId={PRICE_ID_GROWTH}
         annualPriceId={PRICE_ID_GROWTH_ANNUAL}
         features={[

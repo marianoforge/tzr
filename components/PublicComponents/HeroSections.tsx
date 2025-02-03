@@ -34,7 +34,7 @@ const HeroSection = () => {
           <div className="flex sm:flex-row flex-col justify-center items-center w-full sm:gap-4 lg:mt-6">
             <Link href="/register">
               <button className="w-[182px] px-4 mt-10 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white">
-                Empieza Gratis
+                Empieza Ahora
               </button>
             </Link>
             <Link
