@@ -32,6 +32,7 @@ interface OperationsTableBodyProps {
   handleViewClick: (operation: Operation) => void;
   filteredTotals: OperationTotal;
   currencySymbol: string;
+  totalNetFees: number;
 }
 
 const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
@@ -43,6 +44,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
   handleViewClick,
   filteredTotals,
   currencySymbol,
+  totalNetFees,
 }) => {
   return (
     <tbody>
@@ -236,7 +238,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
         </td>
         <td className="py-3 px-2 text-center">
           {currentOperations.length > 0 ? (
-            <>{formatNumber(Number(filteredTotals?.honorarios_asesor))}</>
+            <>{`${currencySymbol}${formatNumber(totalNetFees)}`}</>
           ) : (
             'Cálculo no disponible'
           )}
