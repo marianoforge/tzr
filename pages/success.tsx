@@ -5,7 +5,12 @@ import Link from 'next/link';
 
 import { SessionType } from '@/common/types/';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
-import { PRICE_ID_STARTER } from '@/lib/data';
+import {
+  PRICE_ID_STARTER,
+  PRICE_ID_STARTER_ANNUAL,
+  PRICE_ID_GROWTH,
+  PRICE_ID_GROWTH_ANNUAL,
+} from '@/lib/data';
 
 export default function Success() {
   const router = useRouter();
@@ -25,9 +30,13 @@ export default function Success() {
         const selectedPriceId = localStorage.getItem('selectedPriceId');
 
         const role =
-          selectedPriceId === PRICE_ID_STARTER
+          selectedPriceId === PRICE_ID_STARTER ||
+          selectedPriceId === PRICE_ID_STARTER_ANNUAL
             ? 'agente_asesor'
-            : 'team_leader_broker';
+            : selectedPriceId === PRICE_ID_GROWTH ||
+                selectedPriceId === PRICE_ID_GROWTH_ANNUAL
+              ? 'team_leader_broker'
+              : undefined;
 
         const userIdRes = await fetch(
           `/api/users/getUserIdByEmail?email=${email}`
