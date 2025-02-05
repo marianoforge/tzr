@@ -1,4 +1,3 @@
-// CardsSection.tsx
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
@@ -69,7 +68,7 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
       />
 
       <LicenseCard
-        title="TEAM LEADER"
+        title="TEAM LEADER - BROKER - DUEÑO"
         description="Todo lo que necesitas para liderar tu equipo."
         price="$12.99"
         annualPrice="$129.90"
@@ -78,8 +77,8 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
         annualPriceId={PRICE_ID_GROWTH_ANNUAL}
         features={[
           'Incluye todas las características de la Licencia Asesor.',
-          'Modulo adicional para analisis de rentabilidad e ingresos del equipo de asesores.',
-          'Cuadros dinamicos e interactivos para el seguimiento de operaciones de miembros del equipo.',
+          'Módulo adicional para análisis de rentabilidad e ingresos del equipo de asesores.',
+          'Cuadros dinámicos e interactivos para el seguimiento de operaciones de miembros del equipo.',
           'Perfecta para líderes de equipo y gerentes de agencias inmobiliarias.',
         ]}
         onSelect={handleLicenseSelect}
