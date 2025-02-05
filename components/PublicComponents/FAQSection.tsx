@@ -67,7 +67,7 @@ const FAQSection = ({ id }: { id: string }) => {
           PREGUNTAS FRECUENTES
         </h3>
         <h1 className="text-[52px] -mt-4 font-semibold">
-          Te sacamos las dudas
+          Resolvemos tus dudas
         </h1>
       </div>
       <div className="flex flex-col gap-8 justify-center items-center">
