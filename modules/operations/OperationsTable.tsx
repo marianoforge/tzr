@@ -6,6 +6,7 @@ import { auth } from '@/lib/firebase';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/common/utils/calculations';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperationsBySearch';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -97,7 +98,7 @@ const OperationsTable: React.FC = () => {
     return dateSortedOps;
   };
 
-  const { currentOperations, filteredTotals } = useMemo(() => {
+  const { currentOperations, filteredTotals, totalNetFees } = useMemo(() => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
@@ -120,13 +121,22 @@ const OperationsTable: React.FC = () => {
     const nonFallenOps = filterOperations(searchedOps);
     const sortedOps = sortOperations(nonFallenOps);
 
+    // Calculate total net fees for all filtered operations
+    const totalNetFees = sortedOps.reduce((acc, operacion) => {
+      return acc + calculateNetFees(operacion, userData);
+    }, 0);
+
     const totals = calculateTotals(sortedOps);
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
 
-    return { currentOperations: currentOps, filteredTotals: totals };
+    return {
+      currentOperations: currentOps,
+      filteredTotals: totals,
+      totalNetFees,
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     transformedOperations,
@@ -290,6 +300,7 @@ const OperationsTable: React.FC = () => {
             handleViewClick={handleViewClick}
             filteredTotals={filteredTotals}
             currencySymbol={currencySymbol}
+            totalNetFees={totalNetFees}
           />
         </table>
         <div className="flex justify-center mt-4 mb-4">
