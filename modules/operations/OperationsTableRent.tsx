@@ -22,6 +22,7 @@ import {
 } from '@/lib/data';
 import { ALQUILER, OperationStatus, QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
 import OperationsTableFilters from './OperationsTableFilter';
 import OperationsTableBody from './OperationsTableBody';
@@ -91,7 +92,7 @@ const OperationsTableTent: React.FC = () => {
     },
   });
 
-  const { currentOperations, filteredTotals } = useMemo(() => {
+  const { currentOperations, filteredTotals, totalNetFees } = useMemo(() => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
@@ -130,13 +131,21 @@ const OperationsTableTent: React.FC = () => {
             )
           : dateSortedOps;
 
+    const totalNetFees = sortedOps.reduce((acc, operacion) => {
+      return acc + calculateNetFees(operacion, userData);
+    }, 0);
+
     const totals = calculateTotals(sortedOps);
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
 
-    return { currentOperations: currentOps, filteredTotals: totals };
+    return {
+      currentOperations: currentOps,
+      filteredTotals: totals,
+      totalNetFees,
+    };
   }, [
     transformedOperations,
     statusFilter,
@@ -286,6 +295,7 @@ const OperationsTableTent: React.FC = () => {
             handleViewClick={handleViewClick}
             filteredTotals={filteredTotals}
             currencySymbol={currencySymbol}
+            totalNetFees={totalNetFees}
           />
         </table>
         <div className="flex justify-center mt-4 mb-4">
