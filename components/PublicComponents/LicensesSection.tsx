@@ -60,8 +60,8 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
           'Acceso completo a funcionalidades esenciales de RealtorTrackPro.',
           'Dashboard de seguimiento de honorarios, operaciones y gastos.',
           'Análisis de rentabilitad.',
-          'Cuadros de Operaciones dinamicos e interactivos.',
-          'Programacion de eventos y calendario de actividades.',
+          'Cuadros de Operaciones dinámicos e interactivos.',
+          'Programación de eventos y calendario de actividades.',
           'Ideal para la gestión de ingresos, análisis de inversiones y gastos.',
         ]}
         onSelect={handleLicenseSelect}
