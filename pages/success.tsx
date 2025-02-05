@@ -36,7 +36,7 @@ export default function Success() {
             : selectedPriceId === PRICE_ID_GROWTH ||
                 selectedPriceId === PRICE_ID_GROWTH_ANNUAL
               ? 'team_leader_broker'
-              : undefined;
+              : 'agente_asesor';
 
         const userIdRes = await fetch(
           `/api/users/getUserIdByEmail?email=${email}`
