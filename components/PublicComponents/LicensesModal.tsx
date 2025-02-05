@@ -53,9 +53,9 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
             features={[
               'Acceso completo a funcionalidades esenciales de RealtorTrackPro.',
               'Dashboard de seguimiento de honorarios, operaciones y gastos.',
-              'Análisis de rentabilitad.',
-              'Cuadros de Operaciones dinamicos e interactivos.',
-              'Programacion de eventos y calendario de actividades.',
+              'Análisis de rentabilidad.',
+              'Cuadros de Operaciones dinámicos e interactivos.',
+              'Programación de eventos y calendario de actividades.',
               'Ideal para la gestión de ingresos, análisis de inversiones y gastos.',
             ]}
             onSelect={handleLicenseSelect}
@@ -71,8 +71,8 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
             annualPriceId={PRICE_ID_GROWTH_ANNUAL}
             features={[
               'Incluye todas las características de la Licencia Asesor.',
-              'Modulo adicional para analisis de rentabilidad e ingresos del equipo de asesores.',
-              'Cuadros dinamicos e interactivos para el seguimiento de operaciones de miembros del equipo.',
+              'Módulo adicional para análisis de rentabilidad e ingresos del equipo de asesores.',
+              'Cuadros dinámicos e interactivos para el seguimiento de operaciones de miembros del equipo.',
               'Perfecta para líderes de equipo y gerentes de agencias inmobiliarias.',
             ]}
             onSelect={handleLicenseSelect}

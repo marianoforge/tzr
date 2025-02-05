@@ -17,7 +17,7 @@ const PersonSection = () => {
           <div className="flex flex-col mb-80 sm:mb-20 md:mb-0 md:flex-row justify-center lg:justify-start lg:flex-col lg:mr-8">
             <div className="flex flex-col mb-6 md:pl-10 lg:pl-0 lg:mb-20 md:mb-40 lg:mt-20 lg:leading-[3rem] lg:w-full items-center w-full md:w-1/2 ">
               <p className=" w-[300px] sm:w-full text-[20px] lg:text-[32px] xl:text-[36px] text-white">
-                &quot;No saber como manejar tus finanzas es el camino directo a
+                &quot;No saber cómo manejar tus finanzas es el camino directo a
                 la ruina&quot;
               </p>
             </div>
