@@ -46,6 +46,12 @@ const Bubbles = () => {
       op.estado === OperationStatus.CERRADA
   );
 
+  const operations2025EnCurso = operations.filter(
+    (op: Operation) =>
+      new Date(op.fecha_operacion).getFullYear() === currentYear &&
+      op.estado === OperationStatus.EN_CURSO
+  );
+
   // Calcular tarifas netas para cada operación del 2025
   operations2025.forEach((op: Operation) => {
     const netFees = calculateNetFees(op, userData as UserData);
@@ -54,6 +60,12 @@ const Bubbles = () => {
 
   // Haz un reduce de las operaciones del 2025 y suma las tarifas netas
   const totalNetFees = operations2025.reduce(
+    (total: number, op: Operation) =>
+      total + calculateNetFees(op, userData as UserData),
+    0
+  );
+
+  const totalNetFeesEnCurso = operations2025EnCurso.reduce(
     (total: number, op: Operation) =>
       total + calculateNetFees(op, userData as UserData),
     0
@@ -121,7 +133,7 @@ const Bubbles = () => {
     },
     {
       title: 'Honorarios Netos en Curso',
-      figure: `${currencySymbol}${formatNumber(totals.honorarios_asesor_abiertas ?? 0)}`,
+      figure: `${currencySymbol}${formatNumber(totalNetFeesEnCurso)}`,
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Netos sobre las operaciones en curso.',
