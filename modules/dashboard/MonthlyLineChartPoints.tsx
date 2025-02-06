@@ -48,7 +48,7 @@ const CustomTooltip: React.FC<{
         <p className="intro">{`${new Date().getFullYear()}: ${formatNumber(payload[0]?.value)}%`}</p>
         <p className="intro">{`${new Date().getFullYear() - 1}: ${formatNumber(payload[1]?.value)}%`}</p>
         <p className="intro">{`Diferencia Interanual: ${formatNumber(
-          (payload[1]?.value || 0) - (payload[0]?.value || 0)
+          (payload[0]?.value || 0) - (payload[1]?.value || 0)
         )}%`}</p>
       </div>
     );
