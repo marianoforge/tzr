@@ -32,6 +32,8 @@ export const schema = yup.object().shape({
     .min(0, 'No puede ser negativo'),
   punta_compradora: yup.boolean().required(),
   punta_vendedora: yup.boolean().required(),
+  exclusiva: yup.boolean().required(),
+  no_exclusiva: yup.boolean().required(),
   numero_sobre_reserva: yup.string().nullable(),
   numero_sobre_refuerzo: yup.string().nullable(),
   monto_sobre_reserva: yup

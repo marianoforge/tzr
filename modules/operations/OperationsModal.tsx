@@ -243,6 +243,27 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             error={errors.tipo_operacion?.message}
           />
 
+          <label className="font-semibold text-mediumBlue">
+            Exclusividad de la Operación*
+          </label>
+          <div className="flex gap-10 mt-2 mb-6">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" {...register('exclusiva')} />
+              <label>Exclusiva</label>
+            </div>
+            {errors.exclusiva && (
+              <p className="text-red-500">{errors.exclusiva.message}</p>
+            )}
+
+            <div className="flex items-center gap-2">
+              <input type="checkbox" {...register('no_exclusiva')} />
+              <label>No Exclusiva</label>
+            </div>
+            {errors.no_exclusiva && (
+              <p className="text-red-500">{errors.no_exclusiva.message}</p>
+            )}
+          </div>
+
           <Input
             label="Valor de Reserva"
             type="number"

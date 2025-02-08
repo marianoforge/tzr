@@ -17,6 +17,11 @@ export const OBJECTIVE_CHART_COLORS = [
   { name: 'D', value: 25, color: '#34A853' },
 ];
 
+export const EXCLUSIVENESS_CHART_COLORS = [
+  { name: 'Exclusiva', value: 25, color: '#7ED994' },
+  { name: 'No Exclusiva', value: 25, color: '#FFB7B2' },
+];
+
 export const OPERATIONS_LIST_COLORS = {
   headerBg: 'bg-[#5DADE2]/10',
   headerText: 'text-[#2E86C1]',

@@ -12,7 +12,7 @@ import Profitability from './Profitability';
 import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 import ChartFallenOps from './ChartFallenOps';
 import Projections from './Projections';
-
+import Exclusiveness from './Exclusiveness';
 const DashBoard = () => {
   return (
     <>
@@ -30,11 +30,15 @@ const DashBoard = () => {
           <Bubbles />
         </div>
         <div className="md:col-span-1 mt-8 lg:mt-0 lg:col-span-1 2xl:col-span-3 space-y-8">
-          <ObjectiveChart />
+          <div className="flex flex-row gap-4">
+            <ObjectiveChart />
+          </div>
+
           <Profitability />
         </div>
-        <div className="md:col-span-1 mt-10 lg:mt-6 lg:col-span-2 2xl:col-span-3 2xl:mt-0">
+        <div className="md:col-span-1 mt-10 lg:mt-6 lg:col-span-2 gap-8 xl:gap-8 2xl:col-span-3 2xl:mt-0 flex flex-col justify-between">
           <EventsList />
+          <Exclusiveness />
         </div>
       </div>
       <div className="space-y-6">

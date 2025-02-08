@@ -51,6 +51,8 @@ const OperationsForm = () => {
       reparticion_honorarios_asesor: 0,
       localidad_reserva: null,
       provincia_reserva: null,
+      exclusiva: false,
+      no_exclusiva: false,
     },
   });
 
@@ -204,6 +206,8 @@ const OperationsForm = () => {
       teamId: userUID,
       punta_compradora: data.punta_compradora ? 1 : 0,
       punta_vendedora: data.punta_vendedora ? 1 : 0,
+      exclusiva: data.exclusiva ? true : false,
+      no_exclusiva: data.no_exclusiva ? true : false,
       estado: 'En Curso',
       porcentaje_punta_compradora: data.porcentaje_punta_compradora || 0,
       porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
@@ -266,6 +270,27 @@ const OperationsForm = () => {
             {errors.tipo_operacion && (
               <p className="text-red-500">{errors.tipo_operacion.message}</p>
             )}
+
+            <label className="font-semibold text-mediumBlue">
+              Exclusividad de la Operación*
+            </label>
+            <div className="flex gap-10 mt-2 mb-6">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" {...register('exclusiva')} />
+                <label>Exclusiva</label>
+              </div>
+              {errors.exclusiva && (
+                <p className="text-red-500">{errors.exclusiva.message}</p>
+              )}
+
+              <div className="flex items-center gap-2">
+                <input type="checkbox" {...register('no_exclusiva')} />
+                <label>No Exclusiva</label>
+              </div>
+              {errors.no_exclusiva && (
+                <p className="text-red-500">{errors.no_exclusiva.message}</p>
+              )}
+            </div>
 
             <Input
               label="Valor de reserva / operación*"
