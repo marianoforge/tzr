@@ -102,10 +102,10 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
 
     return (
       <div
-        className="relative bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center"
+        className="relative bg-white rounded-lg p-2 text-center shadow-md flex flex-col items-center w-full"
         style={{ height: '225px' }}
       >
-        <p className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[22px] font-semibold pt-2 pb-2">
+        <p className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[18px] font-semibold pt-2 pb-2">
           Objetivo Anual de Ventas
         </p>
         <div
@@ -117,7 +117,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
         </div>
         <Tooltip id="objective-tooltip" place="top" />
         {!userData?.objetivoAnual ? (
-          <div className="flex justify-center items-center h-[225px]">
+          <div className="flex justify-center items-center">
             <button
               className="bg-mediumBlue text-white p-2 rounded-md font-semibold mt-2"
               onClick={() => {
@@ -129,7 +129,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
           </div>
         ) : (
           <>
-            <div className="flex justify-center">
+            <div className="flex justify-center items-center h-[225px]">
               <PieChart width={240} height={110}>
                 <Pie
                   dataKey="value"

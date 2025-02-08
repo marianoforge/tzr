@@ -43,6 +43,8 @@ export interface Operation {
   teamId: string;
   observaciones?: string | null;
   isFranchiseOrBroker?: number | null;
+  exclusiva?: boolean;
+  no_exclusiva?: boolean;
 }
 
 export interface EventFormData {
