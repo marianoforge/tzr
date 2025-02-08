@@ -77,11 +77,11 @@ const ChartExclusiveness = () => {
       <h2 className="text-[20px] lg:text-[24px] xl:text-[20px] 2xl:text-[18px] text-center font-semibold xl:mb-2">
         Porcentaje de Exclusividad
       </h2>
-      {pieChartData.every((op) => op.value <= 0) ? (
+      {pieChartData.every((op) => op.value <= 0 || !op.value) ? (
         <div className="flex flex-col items-center justify-center h-[240px]">
+          <CircleStackIcon className="h-10 w-10 mr-2 mb-2" />
           <p className="flex flex-col text-center text-[20px] xl:text-[16px] 2xl:text-[16px] font-semibold items-center justify-center">
-            <CircleStackIcon className="h-10 w-10 mr-2" />
-            No existen operaciones
+            No existen operaciones con exclusividad asignada
           </p>
         </div>
       ) : (
