@@ -9,7 +9,7 @@ export const useEventList = () => {
 
   // Filtrar los primeros 3 eventos
   const displayedEvents = useMemo(
-    () => calendarEvents.slice(0, 3),
+    () => calendarEvents.slice(0, 1),
     [calendarEvents]
   );
 

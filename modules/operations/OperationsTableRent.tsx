@@ -321,7 +321,15 @@ const OperationsTableTent: React.FC = () => {
           <OperationsModal
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
-            operation={selectedOperation}
+            operation={
+              selectedOperation
+                ? {
+                    ...selectedOperation,
+                    exclusiva: selectedOperation.exclusiva ?? false,
+                    no_exclusiva: selectedOperation.no_exclusiva ?? false,
+                  }
+                : null
+            }
             onUpdate={() =>
               queryClient.invalidateQueries({
                 queryKey: ['operations', userID],

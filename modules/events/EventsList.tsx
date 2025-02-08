@@ -16,7 +16,7 @@ const EventsList: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center">
+    <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center max-h-[180px] h-[180px]">
       {displayedEvents.length === 0 ? (
         <p className="text-[20px] xl:text-[20px] 2xl:text-[22px] text-center font-semibold">
           No hay eventos programados.

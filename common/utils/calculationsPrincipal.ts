@@ -1,6 +1,6 @@
-import { OperationType, OperationStatus } from '../enums';
-
 import { Operation } from '@/common/types';
+
+import { OperationType, OperationStatus } from '../enums';
 
 //TABLE//
 
@@ -129,6 +129,33 @@ export const tiposOperacionesCaidasPieChartData = (operations: Operation[]) => {
     pieChartDataFallen(operations, OperationType.FONDO_DE_COMERCIO),
     pieChartDataFallen(operations, OperationType.DESARROLLO_INMOBILIARIO),
   ];
+};
+
+export const conteoExplusividad = (operations: Operation[]) => {
+  const operacionesExclusivas = operations.filter(
+    (op: Operation) => op.exclusiva === true && op.no_exclusiva === false
+  );
+  const operacionesNoExclusivas = operations.filter(
+    (op: Operation) => op.exclusiva === false && op.no_exclusiva === true
+  );
+  const totalOperaciones =
+    operacionesExclusivas.length + operacionesNoExclusivas.length;
+  const porcentajeExclusividad =
+    (operacionesExclusivas.length / totalOperaciones) * 100;
+  const porcentajeNoExclusividad =
+    (operacionesNoExclusivas.length / totalOperaciones) * 100;
+
+  const cantidadExclusivas = operacionesExclusivas.length;
+  const cantidadNoExclusivas = operacionesNoExclusivas.length;
+  return {
+    operacionesExclusivas,
+    operacionesNoExclusivas,
+    totalOperaciones,
+    porcentajeExclusividad,
+    porcentajeNoExclusividad,
+    cantidadExclusivas,
+    cantidadNoExclusivas,
+  };
 };
 
 export const calculateClosedOperations2024SummaryByType = (

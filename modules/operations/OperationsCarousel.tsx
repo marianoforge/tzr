@@ -85,7 +85,9 @@ const OperationsCarousel: React.FC = () => {
 
   const handleEditClick = (operation: Operation) => {
     setIsEditModalOpen(true);
-    setSelectedOperation(operation);
+    setSelectedOperation({
+      ...operation,
+    });
   };
 
   const searchedOperations = searchQuery
@@ -256,8 +258,16 @@ const OperationsCarousel: React.FC = () => {
         <OperationsModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
-          operation={selectedOperation}
-          onUpdate={() => fetchUserOperations(userID!)} // This ensures the operations are refetched after update
+          operation={
+            selectedOperation
+              ? {
+                  ...selectedOperation,
+                  exclusiva: selectedOperation.exclusiva ?? false,
+                  no_exclusiva: selectedOperation.no_exclusiva ?? false,
+                }
+              : null
+          }
+          onUpdate={() => fetchUserOperations(userID!)}
           currentUser={userData!}
         />
       )}
