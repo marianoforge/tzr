@@ -53,6 +53,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     defaultValues: {
       ...operation,
       realizador_venta: operation?.realizador_venta || '',
+      exclusiva: operation?.exclusiva || false,
+      no_exclusiva: operation?.no_exclusiva || false,
     },
   });
 
