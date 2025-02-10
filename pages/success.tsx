@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -73,7 +73,7 @@ export default function Success() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const selectedPriceId =
-        localStorage.getItem('selectedPriceId') ?? PRICE_ID_STARTER;
+        localStorage.getItem('selectedPriceId') ?? 'defaultPriceId';
       console.log('Using selectedPriceId:', selectedPriceId);
       // Aquí puedes usar selectedPriceId como necesites
     }
