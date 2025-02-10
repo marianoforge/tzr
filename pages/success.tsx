@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -69,6 +69,15 @@ export default function Success() {
 
     fetchUserIdByEmail();
   }, [router.query.session_id]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const selectedPriceId =
+        localStorage.getItem('selectedPriceId') ?? PRICE_ID_STARTER;
+      console.log('Using selectedPriceId:', selectedPriceId);
+      // Aquí puedes usar selectedPriceId como necesites
+    }
+  }, []);
 
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
