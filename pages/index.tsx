@@ -4,8 +4,13 @@ import Footer from '@/components/PublicComponents/CommonComponents/Footer';
 import FAQSection from '@/components/PublicComponents/FAQSection';
 import PersonSection from '@/components/PublicComponents/PersonSection';
 import { PRICE_ID_STARTER } from '@/lib/data';
+import { useEffect } from 'react';
 const Home = () => {
-  localStorage.setItem('selectedPriceId', PRICE_ID_STARTER);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedPriceId', PRICE_ID_STARTER);
+    }
+  }, []);
   return (
     <>
       <MainLayout>
