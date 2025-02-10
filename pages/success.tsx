@@ -14,20 +14,25 @@ import {
 
 export default function Success() {
   const router = useRouter();
-  const [setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserIdByEmail = async () => {
-      const sessionId = router.query.session_id;
+      const sessionId = Array.isArray(router.query.session_id)
+        ? router.query.session_id[0]
+        : router.query.session_id;
+
       if (!sessionId) return;
 
       try {
         const res = await fetch(`/api/checkout/${sessionId}`);
+        if (!res.ok)
+          throw new Error(`Error en la API de checkout: ${res.status}`);
         const session: SessionType = await res.json();
         const email = session.customer_details.email;
         const customerId = session.customer;
         const subscriptionId = session.subscription;
-        const selectedPriceId = localStorage.getItem('selectedPriceId');
+        const selectedPriceId =
+          localStorage.getItem('selectedPriceId') || PRICE_ID_STARTER;
 
         const role =
           selectedPriceId === PRICE_ID_STARTER ||
@@ -63,7 +68,7 @@ export default function Success() {
     };
 
     fetchUserIdByEmail();
-  }, [router.query.session_id, setUserId]);
+  }, [router.query.session_id]);
 
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
