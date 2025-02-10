@@ -124,7 +124,7 @@ export default async function handler(
         captchaToken,
         noUpdates,
         createdAt: Timestamp.now(),
-        expiresAt: Timestamp.fromDate(new Date(Date.now() + 15 * 60 * 1000)), // Caducidad en 15 minutos
+        expiresAt: Timestamp.fromDate(new Date(Date.now() + 720 * 60 * 1000)), // Caducidad en 15 minutos
       });
 
       // Devuelve el token al cliente

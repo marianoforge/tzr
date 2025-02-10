@@ -110,7 +110,7 @@ export default async function handler(
     console.error(error);
     res.status(500).json({
       message:
-        'Error al verificar el correo electrónico. Mail ya registrado. Envíe un email a info@realtortrackpro.com para obtener soporte',
+        'Error al verificar el correo electrónico. Envíe un email a info@realtortrackpro.com para obtener soporte. Muchas gracias.',
     });
   }
 }

@@ -3,8 +3,9 @@ import MainLayout from '@/components/PublicComponents/CommonComponents/MainLayou
 import Footer from '@/components/PublicComponents/CommonComponents/Footer';
 import FAQSection from '@/components/PublicComponents/FAQSection';
 import PersonSection from '@/components/PublicComponents/PersonSection';
-
+import { PRICE_ID_STARTER } from '@/lib/data';
 const Home = () => {
+  localStorage.setItem('selectedPriceId', PRICE_ID_STARTER);
   return (
     <>
       <MainLayout>
