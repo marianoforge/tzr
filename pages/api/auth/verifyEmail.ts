@@ -108,6 +108,9 @@ export default async function handler(
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error verifying email' });
+    res.status(500).json({
+      message:
+        'Error al verificar el correo electrónico. Mail ya registrado. Envíe un email a info@realtortrackpro.com para obtener soporte',
+    });
   }
 }
