@@ -28,6 +28,7 @@ const RegisterForm = () => {
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [captchaError, setCaptchaError] = useState('');
+  const [noUpdates, setNoUpdates] = useState(false);
 
   const { currencies } = useCurrenciesForAmericas();
   const [selectedCurrency, setSelectedCurrency] = useState('');
@@ -120,11 +121,13 @@ const RegisterForm = () => {
           currency: selectedCurrency,
           currencySymbol: selectedSymbol,
           captchaToken,
+          noUpdates,
         }),
       });
 
       if (!registerResponse.ok) {
-        throw new Error('Error al registrar el usuario.');
+        const errorData = await registerResponse.json();
+        throw new Error(errorData.message || 'Error al registrar el usuario.');
       }
 
       const emailResponse = await fetch('/api/auth/sendVerificationEmail', {
@@ -150,7 +153,11 @@ const RegisterForm = () => {
       return;
     } catch (error) {
       console.error('Error al enviar la solicitud:', error);
-      setFormError('Ocurrió un error al enviar la solicitud.');
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Ocurrió un error al enviar la solicitud.';
+      setFormError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -299,6 +306,22 @@ const RegisterForm = () => {
           />
         </div>
         {captchaError && <p className="text-red-500">{captchaError}</p>}
+
+        {/* New checkbox for updates */}
+        <div className="flex items-center mt-4">
+          <input
+            type="checkbox"
+            id="noUpdates"
+            checked={noUpdates}
+            onChange={(e) => setNoUpdates(e.target.checked)}
+            className="mr-2"
+          />
+          <label htmlFor="noUpdates" className="text-mediumBlue">
+            No quiero recibir actualizaciones o información sobre
+            realtorTrackpro
+          </label>
+        </div>
+
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">
           <Button

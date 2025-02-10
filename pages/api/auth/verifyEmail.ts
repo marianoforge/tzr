@@ -43,6 +43,15 @@ export default async function handler(
     }
 
     const verificationDoc = querySnapshot.docs[0];
+    const { expiresAt } = verificationDoc.data();
+
+    if (expiresAt.toMillis() < Date.now()) {
+      await deleteDoc(verificationDoc.ref); // Elimina el documento caducado
+      return res.status(400).json({
+        message: 'El Token ha expirado por favor regístrate de nuevo.',
+      });
+    }
+
     const {
       email,
       password,
