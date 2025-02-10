@@ -25,11 +25,14 @@ const LicensesSection: React.FC<LicensesSectionProps> = ({ id, onClose }) => {
     if (priceId === PRICE_ID_ENTERPRISE) {
       setIsContactFormOpen(true);
     } else {
-      localStorage.setItem('selectedPriceId', priceId);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('selectedPriceId', priceId);
+      }
 
       if (router.pathname !== '/register') {
         router.push('/register');
       }
+
       if (onClose) {
         onClose();
       }

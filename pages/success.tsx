@@ -70,6 +70,15 @@ export default function Success() {
     fetchUserIdByEmail();
   }, [router.query.session_id]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const selectedPriceId =
+        localStorage.getItem('selectedPriceId') ?? 'defaultPriceId';
+      console.log('Using selectedPriceId:', selectedPriceId);
+      // Aquí puedes usar selectedPriceId como necesites
+    }
+  }, []);
+
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
       <div className="flex items-center justify-center lg:justify-start">

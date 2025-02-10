@@ -20,16 +20,14 @@ const LicensesModal: React.FC<LicensesModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const handleLicenseSelect = (priceId: string) => {
-    // Log the priceId
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedPriceId', priceId);
+    }
 
-    // Almacena el priceId en el almacenamiento local
-    localStorage.setItem('selectedPriceId', priceId);
-
-    // Check if the current path is not '/register' before redirecting
     if (router.pathname !== '/register') {
       router.push('/register');
     }
-    // Close the modal
+
     if (onClose) {
       onClose();
     }
