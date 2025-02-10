@@ -13,8 +13,7 @@ import { auth, db } from '@/lib/firebase';
 
 import Button from '../PrivateComponente/FormComponents/Button';
 import Input from '../PrivateComponente/FormComponents/Input';
-
-import LicensesModal from './LicensesModal';
+import ModalOK from '../PrivateComponente/CommonComponents/Modal';
 
 const LoginForm = () => {
   const {
@@ -26,7 +25,7 @@ const LoginForm = () => {
   });
 
   const router = useRouter();
-  const [openLicensesModal, setOpenLicensesModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +50,7 @@ const LoginForm = () => {
       } else {
         const userData = userDoc.data();
         if (!userData.stripeSubscriptionId) {
-          setOpenLicensesModal(true);
+          setOpenModal(true);
         } else {
           router.push('/dashboard');
         }
@@ -137,9 +136,12 @@ const LoginForm = () => {
         </form>
       </div>
 
-      <LicensesModal
-        isOpen={openLicensesModal}
-        onClose={() => setOpenLicensesModal(false)}
+      <ModalOK
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        message="No tienes una suscripción por favor envia un mail a info@realtortrackpro.com para que te envíen un link de pago"
+        onAccept={() => setOpenModal(false)}
+        className="w-[500px] h-[300px]"
       />
     </>
   );

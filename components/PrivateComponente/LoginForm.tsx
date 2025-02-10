@@ -6,13 +6,13 @@ import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import Button from '../PrivateComponente/FormComponents/Button';
-import Input from '../PrivateComponente/FormComponents/Input';
-import LicensesModal from '../PublicComponents/LicensesModal';
-
 import { auth, signInWithEmailAndPassword, db } from '@/lib/firebase';
 import { schema } from '@/common/schemas/loginFormSchema';
 import { LoginData } from '@/common/types/';
+import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
+
+import Button from '../PrivateComponente/FormComponents/Button';
+import Input from '../PrivateComponente/FormComponents/Input';
 
 const LoginForm = () => {
   const {
@@ -24,7 +24,7 @@ const LoginForm = () => {
   });
 
   const router = useRouter();
-  const [openLicensesModal, setOpenLicensesModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Estado para controlar la visibilidad de la contraseña
@@ -51,7 +51,7 @@ const LoginForm = () => {
       } else {
         const userData = userDoc.data();
         if (!userData.stripeSubscriptionId) {
-          setOpenLicensesModal(true);
+          setOpenModal(true);
         } else {
           router.push('/dashboard');
         }
@@ -138,9 +138,12 @@ const LoginForm = () => {
         </form>
       </div>
 
-      <LicensesModal
-        isOpen={openLicensesModal}
-        onClose={() => setOpenLicensesModal(false)}
+      <ModalOK
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        message="No tienes una suscripción paga por favor contacta a info@realtortrackpro.com para que te envíen un link de pago"
+        onAccept={() => setOpenModal(false)}
+        className="w-[500px] h-[300px]"
       />
     </>
   );

@@ -23,4 +23,5 @@ export const createSchema = (googleUser: boolean) =>
     }),
     currency: yup.string(),
     currencySymbol: yup.string(),
+    noUpdates: yup.boolean(),
   });
