@@ -230,6 +230,7 @@ export interface RegisterRequestBody {
   currency: string;
   currencySymbol: string;
   captchaToken: string;
+  noUpdates: boolean;
 }
 
 export interface LoginRequestBody {

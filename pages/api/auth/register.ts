@@ -1,12 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { doc, setDoc, Timestamp } from 'firebase/firestore'; // Importa Timestamp
 import axios from 'axios';
+import admin from 'firebase-admin';
 
 import { db } from '@/lib/firebase';
 import { setCsrfCookie, validateCsrfToken } from '@/lib/csrf';
 import { RegisterRequestBody } from '@/common/types/';
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
+
+// Initialize Firebase Admin SDK if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+  });
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -44,6 +52,7 @@ export default async function handler(
       currency,
       currencySymbol,
       captchaToken,
+      noUpdates,
     }: RegisterRequestBody = req.body;
 
     if (
@@ -63,6 +72,19 @@ export default async function handler(
     }
 
     try {
+      // Check if the email is already registered in Firebase Authentication
+      const userRecord = await admin
+        .auth()
+        .getUserByEmail(email)
+        .catch(() => null);
+
+      if (userRecord) {
+        return res.status(400).json({
+          message:
+            'El correo electrónico ya está registrado, por favor utiliza otro o sino envia un email a info@realtortrackpro.com para obtener soporte',
+        });
+      }
+
       const captchaResponse = await axios.post(
         `https://www.google.com/recaptcha/api/siteverify`,
         null,
@@ -100,7 +122,9 @@ export default async function handler(
         currency,
         currencySymbol,
         captchaToken,
+        noUpdates,
         createdAt: Timestamp.now(),
+        expiresAt: Timestamp.fromDate(new Date(Date.now() + 15 * 60 * 1000)), // Caducidad en 15 minutos
       });
 
       // Devuelve el token al cliente

@@ -1,6 +1,7 @@
 import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
 import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
 import EventsList from '@/modules/events/EventsList';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 import Bubbles from './Bubbles';
 import CuadroPrincipal from './CuadroPrincipal';
@@ -13,7 +14,12 @@ import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 import ChartFallenOps from './ChartFallenOps';
 import Projections from './Projections';
 import Exclusiveness from './Exclusiveness';
+
 const DashBoard = () => {
+  const { userData } = useUserDataStore();
+
+  localStorage.setItem('userUID', userData?.uid || '');
+
   return (
     <>
       <div className="flex flex-row justify-between items-center">
