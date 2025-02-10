@@ -1,3 +1,4 @@
+'use client';
 import CardsSection from '@/components/PublicComponents/CardsSection';
 import MainLayout from '@/components/PublicComponents/CommonComponents/MainLayout';
 import Footer from '@/components/PublicComponents/CommonComponents/Footer';
