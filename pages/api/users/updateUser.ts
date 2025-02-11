@@ -17,11 +17,6 @@ export default async function handler(
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
-  console.log('userId:', userId);
-  console.log('stripeCustomerId:', stripeCustomerId);
-  console.log('stripeSubscriptionId:', stripeSubscriptionId);
-  console.log('role:', role);
-
   try {
     const userRef = doc(db, 'usuarios', userId);
     const userSnap = await getDoc(userRef);

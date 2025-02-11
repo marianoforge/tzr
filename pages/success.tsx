@@ -31,22 +31,31 @@ export default function Success() {
         const email = session.customer_details.email;
         const customerId = session.customer;
         const subscriptionId = session.subscription;
-        const selectedPriceId =
-          localStorage.getItem('selectedPriceId') || PRICE_ID_STARTER;
+        const selectedPriceId = localStorage.getItem('selectedPriceId');
+        console.log('Selected Price ID from localStorage:', selectedPriceId);
 
-        const role =
-          selectedPriceId === PRICE_ID_STARTER ||
-          selectedPriceId === PRICE_ID_STARTER_ANNUAL
-            ? 'agente_asesor'
-            : selectedPriceId === PRICE_ID_GROWTH ||
-                selectedPriceId === PRICE_ID_GROWTH_ANNUAL
-              ? 'team_leader_broker'
-              : 'agente_asesor';
+        console.log('Evaluando role con selectedPriceId:', selectedPriceId);
+
+        let role = 'agente_asesor';
+
+        if (
+          selectedPriceId === PRICE_ID_GROWTH ||
+          selectedPriceId === PRICE_ID_GROWTH_ANNUAL
+        ) {
+          role = 'team_leader_broker';
+        }
 
         const userIdRes = await fetch(
           `/api/users/getUserIdByEmail?email=${email}`
         );
         const { userId } = await userIdRes.json();
+
+        console.log('Enviando datos a /api/users/updateUser:', {
+          userId,
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: subscriptionId,
+          role,
+        });
 
         await fetch(`/api/users/updateUser`, {
           method: 'POST',
@@ -69,15 +78,6 @@ export default function Success() {
 
     fetchUserIdByEmail();
   }, [router.query.session_id]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const selectedPriceId =
-        localStorage.getItem('selectedPriceId') ?? 'defaultPriceId';
-      console.log('Using selectedPriceId:', selectedPriceId);
-      // Aquí puedes usar selectedPriceId como necesites
-    }
-  }, []);
 
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
