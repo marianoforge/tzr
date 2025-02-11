@@ -25,16 +25,23 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 let db: Firestore;
-try {
-  db = initializeFirestore(app, {
-    localCache: persistentLocalCache(),
-  });
-} catch (error: unknown) {
-  if ((error as { code?: string }).code === 'failed-precondition') {
-    db = getFirestore(app);
-  } else {
-    throw error;
+
+// 🔹 Solo inicializar IndexedDB en el cliente
+if (typeof window !== 'undefined') {
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache(),
+    });
+  } catch (error: unknown) {
+    if ((error as { code?: string }).code === 'failed-precondition') {
+      db = getFirestore(app);
+    } else {
+      throw error;
+    }
   }
+} else {
+  // En el servidor, usa Firestore sin persistencia
+  db = getFirestore(app);
 }
 
 const auth = getAuth(app);
