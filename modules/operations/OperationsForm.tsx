@@ -243,7 +243,7 @@ const OperationsForm = () => {
           <div className="w-full md:w-[40%] px-2">
             {/* Left column */}
             <Input
-              label="Fecha de la Reserva*"
+              label="Fecha de la Cierre"
               type="date"
               defaultValue={formattedDate}
               {...register('fecha_operacion')}
@@ -252,11 +252,11 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Fecha de Cierre"
+              label="Fecha de Reserva*"
               type="date"
               defaultValue={formattedDate}
-              {...register('fecha_cierre')}
-              error={errors.fecha_cierre?.message}
+              {...register('fecha_reserva')}
+              error={errors.fecha_reserva?.message}
             />
 
             <AddressAutocompleteManual
