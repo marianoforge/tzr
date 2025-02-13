@@ -60,13 +60,15 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
   }
 
   const currentYear = new Date().getFullYear();
+
   const totals = calculateTotals(
     currentYearOperations(operations, currentYear)
   );
 
   const ticketPromedio = (
-    totals.valor_reserva / totals.cantidad_operaciones
+    (totals.valor_reserva_cerradas ?? 0) / (totals.cantidad_operaciones ?? 1)
   ).toFixed(2);
+
   const promedioHonorariosNetos = (
     ((totals.honorarios_asesor_cerradas ?? 0) / (totals.valor_reserva ?? 1)) *
     100

@@ -35,8 +35,14 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
         </h2>
         <div className="grid grid-cols-2 gap-6">
           <p>
-            <span className="font-semibold">Fecha:</span>{' '}
+            <span className="font-semibold">Fecha de Reserva:</span>{' '}
             {new Date(operation.fecha_operacion).toLocaleDateString()}
+          </p>
+          <p>
+            <span className="font-semibold">Fecha de Cierre:</span>{' '}
+            {operation.fecha_cierre
+              ? new Date(operation.fecha_cierre).toLocaleDateString()
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Operación:</span>{' '}
@@ -145,6 +151,12 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           <p>
             <span className="font-semibold">Estado de la Operacion: </span>{' '}
             {displayValue(operation.estado)}
+          </p>
+          <p>
+            <span className="font-semibold">Exclusividad: </span>{' '}
+            {displayValue(
+              !operation.exclusiva ? 'N/A' : operation.exclusiva ? 'Si' : 'No'
+            )}
           </p>
           <p>
             <span className="font-semibold">Observaciones: </span>{' '}
