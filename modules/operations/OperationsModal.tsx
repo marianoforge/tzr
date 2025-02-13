@@ -214,14 +214,14 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
-            label="Fecha de Reserva"
+            label="Fecha de Cierre"
             type="date"
             {...register('fecha_operacion')}
             error={errors.fecha_operacion?.message}
             required
           />
           <Input
-            label="Fecha de Cierre"
+            label="Fecha de Reserva"
             type="date"
             {...register('fecha_reserva')}
             error={errors.fecha_reserva?.message}
