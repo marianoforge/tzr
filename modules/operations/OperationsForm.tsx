@@ -53,6 +53,10 @@ const OperationsForm = () => {
       provincia_reserva: null,
       exclusiva: false,
       no_exclusiva: false,
+      realizador_venta: null,
+      realizador_venta_adicional: null,
+      porcentaje_honorarios_asesor: null,
+      porcentaje_honorarios_asesor_adicional: null,
     },
   });
 
@@ -239,12 +243,20 @@ const OperationsForm = () => {
           <div className="w-full md:w-[40%] px-2">
             {/* Left column */}
             <Input
-              label="Fecha de la Operación*"
+              label="Fecha de la Reserva*"
               type="date"
               defaultValue={formattedDate}
               {...register('fecha_operacion')}
               error={errors.fecha_operacion?.message}
               required
+            />
+
+            <Input
+              label="Fecha de Cierre"
+              type="date"
+              defaultValue={formattedDate}
+              {...register('fecha_cierre')}
+              error={errors.fecha_cierre?.message}
             />
 
             <AddressAutocompleteManual

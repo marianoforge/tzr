@@ -112,7 +112,8 @@ const Bubbles = () => {
       ),
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
-      tooltip: 'Promedio del valor de las operaciones efectuadas.',
+      tooltip:
+        'Promedio del valor de las operaciones efectuadas excluyendo alquileres.',
     },
     {
       title: 'Cantidad de Operaciones Cerradas',
