@@ -134,12 +134,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     const selectedUser = usersMapped.find(
       (user) => user.name === data.realizador_venta
     );
-    const selectedUser_id = selectedUser ? selectedUser.uid : null;
-
-    if (userData?.role === UserRole.TEAM_LEADER_BROKER && !selectedUser_id) {
-      console.error('Selected user ID is missing');
-      return;
-    }
+    const selectedUser_id = selectedUser?.uid || null; // Permitir null
 
     const realizador_venta =
       userData?.role === UserRole.AGENTE_ASESOR && !selectedUser_id
@@ -156,7 +151,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
     const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
-      data.porcentaje_honorarios_asesor,
+      data.porcentaje_honorarios_asesor || 0,
       data.porcentaje_honorarios_broker || 0,
       data.porcentaje_compartido || 0,
       data.porcentaje_referido || 0
@@ -180,16 +175,18 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     // Ensure realizador_venta is not null before submitting
     const sanitizedPayload = {
       ...payload,
-      realizador_venta: realizador_venta || 'No se selecciono vendedor',
+      realizador_venta: realizador_venta ?? '',
       realizador_venta_adicional: showAdditionalAdvisor
         ? payload.realizador_venta_adicional
-        : '',
+        : undefined,
       porcentaje_honorarios_asesor_adicional: showAdditionalAdvisor
         ? payload.porcentaje_honorarios_asesor_adicional
         : undefined,
       user_uid_adicional: showAdditionalAdvisor
         ? selectedUser_idAdicional
         : null,
+      porcentaje_honorarios_asesor:
+        payload.porcentaje_honorarios_asesor ?? undefined,
       reparticion_honorarios_asesor:
         payload.reparticion_honorarios_asesor ?? undefined,
       localidad_reserva: payload.localidad_reserva || undefined,
@@ -217,11 +214,17 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
-            label="Fecha de Operación"
+            label="Fecha de Reserva"
             type="date"
             {...register('fecha_operacion')}
             error={errors.fecha_operacion?.message}
             required
+          />
+          <Input
+            label="Fecha de Cierre"
+            type="date"
+            {...register('fecha_cierre')}
+            error={errors.fecha_cierre?.message}
           />
           <AddressAutocompleteManual
             onAddressSelect={(address) => {
@@ -377,7 +380,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             error={errors.porcentaje_compartido?.message}
           />
 
-          {userRole === 'team_leader_broker' && (
+          {userRole === UserRole.TEAM_LEADER_BROKER && (
             <Input
               label="Porcentaje destinado a franquicia o broker"
               type="text"
@@ -389,7 +392,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             />
           )}
 
-          {userRole === 'team_leader_broker' && (
+          {userRole === UserRole.TEAM_LEADER_BROKER && (
             <Input
               label="Porcentaje destinado a reparticion de honorarios asesor"
               type="text"
@@ -401,7 +404,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             />
           )}
 
-          {userRole === 'team_leader_broker' && (
+          {userRole === UserRole.TEAM_LEADER_BROKER && (
             <>
               <Select
                 label="Asesor que realizó la venta"
@@ -421,7 +424,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
                 ]}
                 className="w-full p-2 mb-8 border border-gray-300 rounded"
                 defaultValue={operation?.realizador_venta || ''}
-                required
               />
               {errors.realizador_venta && (
                 <p className="text-red-500">
@@ -439,7 +441,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               setValueAs: (value) => parseFloat(value) || 0,
             })}
             error={errors.porcentaje_honorarios_asesor?.message}
-            required
           />
 
           {/* Additional advisor input block */}

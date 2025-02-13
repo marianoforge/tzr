@@ -2,6 +2,7 @@ import * as yup from 'yup';
 
 export const schema = yup.object().shape({
   fecha_operacion: yup.string().required('La fecha de operación es requerida'),
+  fecha_cierre: yup.string().nullable(),
   direccion_reserva: yup
     .string()
     .required('La dirección de reserva es requerida'),
@@ -70,12 +71,16 @@ export const schema = yup.object().shape({
         ? 0
         : value
     ),
-  realizador_venta: yup.string().nullable(),
+  realizador_venta: yup
+    .string()
+    .nullable()
+    .notRequired()
+    .transform((value) => (value === '' ? null : value)),
   porcentaje_honorarios_asesor: yup
     .number()
     .typeError('Debe ser un número')
     .min(0, 'No puede ser negativo')
-    .required('Porcentaje de honorarios asesor es requerido'),
+    .nullable(),
   realizador_venta_adicional: yup.string().nullable(),
   porcentaje_honorarios_asesor_adicional: yup
     .number()
