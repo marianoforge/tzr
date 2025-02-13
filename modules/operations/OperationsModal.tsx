@@ -223,8 +223,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           <Input
             label="Fecha de Cierre"
             type="date"
-            {...register('fecha_cierre')}
-            error={errors.fecha_cierre?.message}
+            {...register('fecha_reserva')}
+            error={errors.fecha_reserva?.message}
           />
           <AddressAutocompleteManual
             onAddressSelect={(address) => {

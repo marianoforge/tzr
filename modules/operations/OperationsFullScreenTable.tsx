@@ -40,8 +40,8 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Fecha de Cierre:</span>{' '}
-            {operation.fecha_cierre
-              ? new Date(operation.fecha_cierre).toLocaleDateString()
+            {operation.fecha_reserva
+              ? new Date(operation.fecha_reserva).toLocaleDateString()
               : 'N/A'}
           </p>
           <p>

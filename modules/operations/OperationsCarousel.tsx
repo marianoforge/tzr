@@ -133,7 +133,7 @@ const OperationsCarousel: React.FC = () => {
               <div className="bg-lightBlue text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
                 <div className="space-y-2 sm:space-y-4 flex flex-col justify-around w-1/2">
                   <p>
-                    <strong>Fecha de Operación:</strong>{' '}
+                    <strong>Fecha de Reserva:</strong>{' '}
                     {new Date(operacion.fecha_operacion).toLocaleDateString()}
                   </p>
                   <p>

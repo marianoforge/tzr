@@ -45,7 +45,7 @@ export interface Operation {
   isFranchiseOrBroker?: number | null;
   exclusiva?: boolean;
   no_exclusiva?: boolean;
-  fecha_cierre?: string | null;
+  fecha_reserva?: string | null;
 }
 
 export interface EventFormData {

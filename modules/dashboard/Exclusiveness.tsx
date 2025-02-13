@@ -53,8 +53,11 @@ const ChartExclusiveness = () => {
   } = conteoExplusividad(operations);
 
   const pieChartData = [
-    { name: 'Exclusiva', value: porcentajeExclusividad },
-    { name: 'No Exclusiva', value: porcentajeNoExclusividad },
+    { name: 'Exclusiva', value: parseFloat(porcentajeExclusividad.toFixed(2)) },
+    {
+      name: 'No Exclusiva',
+      value: parseFloat(porcentajeNoExclusividad.toFixed(2)),
+    },
   ];
 
   const outerRadius = useResponsiveOuterRadius();

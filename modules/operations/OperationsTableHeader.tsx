@@ -25,10 +25,10 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
     <thead>
       <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex items-center justify-center`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex items-center justify-center w-[120px]`}
           onClick={toggleDateSortOrder}
         >
-          Fecha de Operación
+          Fecha de Cierre
           <span className="ml-1 text-xs text-mediumBlue items-center justify-center">
             {isDateAscending ? (
               <ArrowUpIcon
@@ -44,7 +44,7 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
           </span>
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/5`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
         >
           Operación
         </th>
@@ -54,7 +54,7 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
           Tipo de Operación
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/5`}
           onClick={toggleValueSortOrder}
         >
           Valor Operación
