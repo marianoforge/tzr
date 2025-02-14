@@ -194,6 +194,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       pais: payload.pais || undefined,
       numero_casa: payload.numero_casa || undefined,
       direccion_reserva: payload.direccion_reserva || undefined,
+      fecha_operacion: payload.fecha_operacion || undefined,
     };
 
     mutation.mutate({ id: operation.id, data: sanitizedPayload });
