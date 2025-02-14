@@ -243,7 +243,7 @@ const OperationsForm = () => {
           <div className="w-full md:w-[40%] px-2">
             {/* Left column */}
             <Input
-              label="Fecha de la Cierre"
+              label="Fecha de Cierre"
               type="date"
               defaultValue={formattedDate}
               {...register('fecha_operacion')}
