@@ -194,6 +194,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       pais: payload.pais || undefined,
       numero_casa: payload.numero_casa || undefined,
       direccion_reserva: payload.direccion_reserva || undefined,
+      fecha_operacion: payload.fecha_operacion || undefined,
     };
 
     mutation.mutate({ id: operation.id, data: sanitizedPayload });
@@ -218,13 +219,13 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             type="date"
             {...register('fecha_operacion')}
             error={errors.fecha_operacion?.message}
-            required
           />
           <Input
-            label="Fecha de Reserva"
+            label="Fecha de Reserva*"
             type="date"
             {...register('fecha_reserva')}
             error={errors.fecha_reserva?.message}
+            required
           />
           <AddressAutocompleteManual
             onAddressSelect={(address) => {

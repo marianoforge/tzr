@@ -248,7 +248,6 @@ const OperationsForm = () => {
               defaultValue={formattedDate}
               {...register('fecha_operacion')}
               error={errors.fecha_operacion?.message}
-              required
             />
 
             <Input
@@ -257,6 +256,7 @@ const OperationsForm = () => {
               defaultValue={formattedDate}
               {...register('fecha_reserva')}
               error={errors.fecha_reserva?.message}
+              required
             />
 
             <AddressAutocompleteManual

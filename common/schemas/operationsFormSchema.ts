@@ -1,8 +1,8 @@
 import * as yup from 'yup';
 
 export const schema = yup.object().shape({
-  fecha_operacion: yup.string().required('La fecha de operación es requerida'),
-  fecha_reserva: yup.string().nullable(),
+  fecha_operacion: yup.string().nullable(),
+  fecha_reserva: yup.string().required('La fecha de reserva es requerida'),
   direccion_reserva: yup
     .string()
     .required('La dirección de reserva es requerida'),
