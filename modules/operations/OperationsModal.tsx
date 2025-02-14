@@ -221,7 +221,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             error={errors.fecha_operacion?.message}
           />
           <Input
-            label="Fecha de Reserva*"
+            label="Fecha de Reserva"
             type="date"
             {...register('fecha_reserva')}
             error={errors.fecha_reserva?.message}
