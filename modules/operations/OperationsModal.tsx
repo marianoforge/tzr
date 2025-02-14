@@ -218,13 +218,13 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             type="date"
             {...register('fecha_operacion')}
             error={errors.fecha_operacion?.message}
-            required
           />
           <Input
-            label="Fecha de Reserva"
+            label="Fecha de Reserva*"
             type="date"
             {...register('fecha_reserva')}
             error={errors.fecha_reserva?.message}
+            required
           />
           <AddressAutocompleteManual
             onAddressSelect={(address) => {
