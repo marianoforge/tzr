@@ -14,7 +14,7 @@ interface FullScreenModalProps {
 }
 
 // Utility function to handle displaying 'N/A'
-const displayValue = (value: string | number | null | undefined) => {
+export const displayValue = (value: string | number | null | undefined) => {
   return !value || value === 0 ? 'N/A' : value;
 };
 
@@ -35,11 +35,11 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
         </h2>
         <div className="grid grid-cols-2 gap-6">
           <p>
-            <span className="font-semibold">Fecha de Reserva:</span>{' '}
+            <span className="font-semibold">Fecha de Cierre:</span>{' '}
             {new Date(operation.fecha_operacion).toLocaleDateString()}
           </p>
           <p>
-            <span className="font-semibold">Fecha de Cierre:</span>{' '}
+            <span className="font-semibold">Fecha de Reserva:</span>{' '}
             {operation.fecha_reserva
               ? new Date(operation.fecha_reserva).toLocaleDateString()
               : 'N/A'}
