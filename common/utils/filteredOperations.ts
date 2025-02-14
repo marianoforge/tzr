@@ -8,7 +8,14 @@ export function filteredOperations(
   monthFilter: string
 ) {
   return operations?.filter((operation: Operation) => {
-    const operationDate = new Date(operation.fecha_operacion);
+    const operationDate = operation.fecha_operacion
+      ? new Date(operation.fecha_operacion)
+      : operation.fecha_reserva
+        ? new Date(operation.fecha_reserva)
+        : null;
+
+    if (!operationDate) return false;
+
     const operationYear = operationDate.getFullYear();
     const operationMonth = operationDate.getMonth() + 1; // getMonth() returns 0-based month
     const statusMatch =
