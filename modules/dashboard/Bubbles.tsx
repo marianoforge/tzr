@@ -42,14 +42,14 @@ const Bubbles = () => {
   // Filtrar operaciones del año 2025
   const operations2025 = operations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === currentYear &&
-      op.estado === OperationStatus.CERRADA
+      new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        currentYear && op.estado === OperationStatus.CERRADA
   );
 
   const operations2025EnCurso = operations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === currentYear &&
-      op.estado === OperationStatus.EN_CURSO
+      new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        currentYear && op.estado === OperationStatus.EN_CURSO
   );
 
   // Calcular tarifas netas para cada operación del 2025
@@ -130,7 +130,7 @@ const Bubbles = () => {
       ),
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
-      tooltip: 'Promedio de Honorarios netos totales por mes.',
+      tooltip: 'Promedio de Honorarios netos totales por mes (vencido).',
     },
     {
       title: 'Honorarios Netos en Curso',

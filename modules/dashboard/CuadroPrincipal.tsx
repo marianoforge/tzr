@@ -68,7 +68,9 @@ const CuadroPrincipal = () => {
   const currentYear = new Date().getFullYear();
   const currentYearOperations = operations.filter(
     (operation: Operation) =>
-      new Date(operation.fecha_operacion).getFullYear() === currentYear
+      new Date(
+        operation.fecha_operacion || operation.fecha_reserva || ''
+      ).getFullYear() === currentYear
   );
 
   if (isLoading) {

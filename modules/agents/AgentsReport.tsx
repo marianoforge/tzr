@@ -3,9 +3,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 
-import AddUserModal from './AddUserModal';
-import EditAgentsModal from './EditAgentsModal';
-
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
@@ -25,6 +22,9 @@ import { useAuthStore } from '@/stores/authStore';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { yearsFilter } from '@/lib/data';
+
+import EditAgentsModal from './EditAgentsModal';
+import AddUserModal from './AddUserModal';
 
 export type TeamMember = {
   id: string;
@@ -156,8 +156,9 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
         const searchWords = searchQuery.toLowerCase().split(' ');
         const operationsInSelectedYear = member.operations.filter(
           (operation) =>
-            new Date(operation.fecha_operacion).getFullYear().toString() ===
-            selectedYear
+            new Date(operation.fecha_operacion || operation.fecha_reserva || '')
+              .getFullYear()
+              .toString() === selectedYear
         );
         return (
           member.teamLeadID === userId &&
