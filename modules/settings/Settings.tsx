@@ -85,6 +85,7 @@ const Settings = () => {
       setIsCanceling(true);
       const response = await axios.post('/api/stripe/cancel_subscription', {
         subscription_id: subscriptionId,
+        user_id: userID,
       });
 
       if (response.status === 200) {
@@ -319,22 +320,6 @@ const Settings = () => {
                 {subscriptionData?.status === 'trialing'
                   ? 'Periodo de Prueba'
                   : 'Activo'}
-              </li>
-              <li>
-                Inicio del Periodo de Prueba:{' '}
-                {subscriptionData?.trial_start
-                  ? new Date(
-                      subscriptionData.trial_start * 1000
-                    ).toLocaleDateString()
-                  : 'N/A'}
-              </li>
-              <li>
-                Fin del Periodo de Prueba:{' '}
-                {subscriptionData?.trial_end
-                  ? new Date(
-                      subscriptionData.trial_end * 1000
-                    ).toLocaleDateString()
-                  : 'N/A'}
               </li>
             </ul>
           </div>

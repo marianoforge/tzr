@@ -1,7 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
+import admin from 'firebase-admin';
 
+// Inicializa Firebase si no está inicializado
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    }),
+  });
+}
+
+const db = admin.firestore();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-09-30.acacia',
 });
@@ -14,18 +27,23 @@ export default async function handler(
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  const { subscription_id } = req.body;
+  const { subscription_id, user_id } = req.body;
 
-  if (!subscription_id || typeof subscription_id !== 'string') {
-    return res.status(400).json({ error: 'Falta el ID de la suscripción' });
+  if (!subscription_id || typeof subscription_id !== 'string' || !user_id) {
+    return res.status(400).json({ error: 'Faltan parámetros' });
   }
 
   try {
-    // Cancelar la suscripción usando Stripe
+    // Cancelar la suscripción en Stripe
     const canceledSubscription =
       await stripe.subscriptions.cancel(subscription_id);
 
-    // Send email notification
+    // Actualizar Firestore (opcional, el webhook también lo hace)
+    await db.collection('usuarios').doc(user_id).update({
+      stripeSubscriptionId: null,
+    });
+
+    // Enviar notificación por email
     const mailerSend = new MailerSend({
       apiKey: process.env.MAILERSEND_API_KEY as string,
     });
@@ -54,12 +72,7 @@ export default async function handler(
       subscription: canceledSubscription,
     });
   } catch (error) {
-    if (error instanceof Stripe.errors.StripeError) {
-      console.error('Error al cancelar la suscripción:', error.message);
-      res.status(400).json({ error: 'Error al cancelar la suscripción' });
-    } else {
-      console.error('Error inesperado:', error);
-      res.status(500).json({ error: 'Error interno del servidor' });
-    }
+    console.error('Error al cancelar la suscripción:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 }
