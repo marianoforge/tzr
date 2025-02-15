@@ -71,13 +71,17 @@ const MonthlyBarChart: React.FC = () => {
     if (operations.length > 0) {
       const operations2024 = operations.filter(
         (operation: Operation) =>
-          new Date(operation.fecha_operacion).getFullYear() === 2024 &&
+          new Date(
+            operation.fecha_operacion || operation.fecha_reserva || ''
+          ).getFullYear() === 2024 &&
           operation.estado === OperationStatus.CERRADA
       );
 
       const operations2025 = operations.filter(
         (operation: Operation) =>
-          new Date(operation.fecha_operacion).getFullYear() === 2025 &&
+          new Date(
+            operation.fecha_operacion || operation.fecha_reserva || ''
+          ).getFullYear() === 2025 &&
           operation.estado === OperationStatus.CERRADA
       );
 
@@ -89,7 +93,9 @@ const MonthlyBarChart: React.FC = () => {
       }));
 
       operations2024.forEach((operation: Operation) => {
-        const operationDate = new Date(operation.fecha_operacion);
+        const operationDate = new Date(
+          operation.fecha_operacion || operation.fecha_reserva || ''
+        );
         const monthIndex = operationDate.getMonth();
         const netFees = calculateNetFees(operation, userData as UserData);
 
@@ -98,7 +104,9 @@ const MonthlyBarChart: React.FC = () => {
       });
 
       operations2025.forEach((operation: Operation) => {
-        const operationDate = new Date(operation.fecha_operacion);
+        const operationDate = new Date(
+          operation.fecha_operacion || operation.fecha_reserva || ''
+        );
         const monthIndex = operationDate.getMonth();
         const netFees = calculateNetFees(operation, userData as UserData);
 

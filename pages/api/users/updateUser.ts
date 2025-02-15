@@ -12,7 +12,6 @@ export default async function handler(
 
   const { userId, stripeCustomerId, stripeSubscriptionId, role } = req.body;
 
-  // Validar que los datos existen
   if (!userId || !stripeCustomerId || !stripeSubscriptionId) {
     return res.status(400).json({ message: 'Missing required fields' });
   }

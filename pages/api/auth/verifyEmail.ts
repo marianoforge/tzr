@@ -62,6 +62,7 @@ export default async function handler(
       priceId,
       currency,
       currencySymbol,
+      noUpdates,
     } = verificationDoc.data();
 
     // Completar el registro del usuario
@@ -82,6 +83,7 @@ export default async function handler(
       uid: user.uid,
       currency,
       currencySymbol,
+      noUpdates,
       createdAt: Timestamp.now(),
     });
 

@@ -14,7 +14,10 @@ export const calculateOperationData = (closedOperations: Operation[]) => {
       >,
       op: Operation
     ) => {
-      if (new Date(op.fecha_operacion).getFullYear() !== currentYear) {
+      if (
+        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() !==
+        currentYear
+      ) {
         return acc;
       }
 
@@ -70,7 +73,8 @@ const operacionCerrada2024 = (closedOperations: Operation[]) => {
   return closedOperations
     .filter(
       (op: Operation) =>
-        new Date(op.fecha_operacion).getFullYear() === currentYear
+        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        currentYear
     )
     .filter((op: Operation) => op.estado === OperationStatus.CERRADA);
 };
@@ -80,7 +84,8 @@ const operacionCaida2024 = (operations: Operation[]) => {
   return operations
     .filter(
       (op: Operation) =>
-        new Date(op.fecha_operacion).getFullYear() === currentYear
+        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        currentYear
     )
     .filter((op: Operation) => op.estado === OperationStatus.CAIDA);
 };
@@ -164,8 +169,8 @@ export const calculateClosedOperations2024SummaryByType = (
   const currentYear = new Date().getFullYear();
   const filteredOperations = closedOperations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === currentYear &&
-      op.estado === OperationStatus.CERRADA
+      new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        currentYear && op.estado === OperationStatus.CERRADA
   );
 
   const summaryByType = filteredOperations.reduce(
@@ -207,8 +212,8 @@ export const calculateClosedOperations2024SummaryByGroup = (
   const currentYear = new Date().getFullYear();
   const filteredOperations = closedOperations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === currentYear &&
-      op.estado === OperationStatus.CERRADA
+      new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        currentYear && op.estado === OperationStatus.CERRADA
   );
 
   const totalMontoHonorariosBroker = filteredOperations.reduce(

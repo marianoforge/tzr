@@ -169,7 +169,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
         </tr>
       ))}
       <tr className={`font-bold hidden md:table-row bg-lightBlue/10 h-[75px]`}>
-        <td className="py-3 px-2 pl-10" colSpan={3}>
+        <td className="py-3 px-2 pl-10" colSpan={4}>
           Total
         </td>
         <td className="py-3 px-2 text-center">
