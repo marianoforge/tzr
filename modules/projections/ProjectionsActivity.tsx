@@ -88,6 +88,9 @@ const ProjectionsActivity = () => {
 
   return (
     <div className="bg-white p-4 mt-10 rounded-xl shadow-md">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+        WAR: Week Activity Report
+      </h2>
       <table className="min-w-full w-full hidden md:block">
         <thead className="text-center">
           <tr>
