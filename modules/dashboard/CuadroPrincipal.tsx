@@ -105,7 +105,6 @@ const CuadroPrincipal = () => {
                     'Cantidad de Operaciones',
                     'Porcentaje Sobre el Total',
                     '% Ganancias Brutas',
-                    'Promedio Monto Ventas',
                   ].map((header) => (
                     <th key={header} className="py-3 px-4 font-semibold">
                       {header}
@@ -141,9 +140,6 @@ const CuadroPrincipal = () => {
                       )}
                       %
                     </td>
-                    <td className="py-3 px-4 text-base">
-                      {formatOperationAmount(calcs)}
-                    </td>
                   </tr>
                 ))}
                 <tr className="font-bold bg-lightBlue/10 h-24 text-center">
@@ -151,9 +147,6 @@ const CuadroPrincipal = () => {
                   <td className="py-3 px-4 text-base">{totalCantidad2024}</td>
                   <td className="py-3 px-4 text-base"></td>
                   <td className="py-3 px-4 text-base"></td>
-                  <td className="py-3 px-4 text-base">
-                    ${formatNumber(averageMontoOperaciones)}
-                  </td>
                 </tr>
               </tbody>
             </table>
