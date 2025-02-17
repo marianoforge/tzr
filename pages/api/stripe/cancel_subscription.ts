@@ -27,13 +27,22 @@ export default async function handler(
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  const { subscription_id, user_id } = req.body;
-
-  if (!subscription_id || typeof subscription_id !== 'string' || !user_id) {
-    return res.status(400).json({ error: 'Faltan parámetros' });
-  }
-
   try {
+    // 🔹 Validar el token de Firebase para autenticación
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Unauthorized: No token provided' });
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+    await admin.auth().verifyIdToken(token);
+
+    const { subscription_id, user_id } = req.body;
+
+    if (!subscription_id || typeof subscription_id !== 'string' || !user_id) {
+      return res.status(400).json({ error: 'Faltan parámetros' });
+    }
+
     // Cancelar la suscripción en Stripe
     const canceledSubscription =
       await stripe.subscriptions.cancel(subscription_id);

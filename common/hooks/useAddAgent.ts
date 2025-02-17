@@ -4,6 +4,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import { TeamMemberRequestBody } from '@/common/types/';
 
+import { getToken } from '../utils/getToken';
+
 const useAddAgent = (onSuccessCallback: () => void) => {
   const { userID } = useAuthStore();
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
@@ -12,9 +14,18 @@ const useAddAgent = (onSuccessCallback: () => void) => {
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
+        const token = await getToken(); // 🔹 Obtener token de Firebase Auth
+
         const response = await fetch('/api/users/teamMembers', {
           method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         });
+
+        if (!response.ok) throw new Error('Failed to fetch CSRF token');
+
         const data = await response.json();
         setCsrfToken(data.csrfToken);
       } catch (error) {
@@ -27,19 +38,17 @@ const useAddAgent = (onSuccessCallback: () => void) => {
 
   const mutation = useMutation<unknown, Error, TeamMemberRequestBody>({
     mutationFn: async (data: TeamMemberRequestBody) => {
-      if (!userID) {
-        throw new Error('El UID del usuario es requerido');
-      }
+      if (!userID) throw new Error('El UID del usuario es requerido');
+      if (!csrfToken) throw new Error('CSRF token is not available');
 
-      if (!csrfToken) {
-        throw new Error('CSRF token is not available');
-      }
+      const token = await getToken(); // 🔹 Obtener token de Firebase Auth
 
       const response = await fetch('/api/users/teamMembers', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-csrf-token': csrfToken,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           uid: userID,

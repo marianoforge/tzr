@@ -11,9 +11,11 @@ import {
   PRICE_ID_GROWTH,
   PRICE_ID_GROWTH_ANNUAL,
 } from '@/lib/data';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function Success() {
   const router = useRouter();
+  const { getAuthToken } = useAuthStore();
 
   useEffect(() => {
     const fetchUserIdByEmail = async () => {
@@ -24,7 +26,12 @@ export default function Success() {
       if (!sessionId) return;
 
       try {
-        const res = await fetch(`/api/checkout/${sessionId}`);
+        const token = await getAuthToken();
+        if (!token) throw new Error('User not authenticated');
+
+        const res = await fetch(`/api/checkout/${sessionId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!res.ok)
           throw new Error(`Error en la API de checkout: ${res.status}`);
         const session: SessionType = await res.json();
@@ -46,7 +53,10 @@ export default function Success() {
         }
 
         const userIdRes = await fetch(
-          `/api/users/getUserIdByEmail?email=${email}`
+          `/api/users/getUserIdByEmail?email=${email}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         const { userId } = await userIdRes.json();
 
@@ -61,6 +71,7 @@ export default function Success() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             userId,

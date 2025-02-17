@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
+import { useAuthStore } from '@/stores/authStore';
 
 export interface WeekData {
   actividadVerde?: string | undefined;
@@ -47,10 +48,14 @@ const ProjectionsModal: React.FC<ProjectionsModalProps> = ({
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (data: WeekData) => {
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
       const response = await fetch('/api/updateWeek', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           weekNumber: rowIndex + 1,

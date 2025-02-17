@@ -42,7 +42,12 @@ type AgentsReportProps = {
 };
 
 const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
-  const response = await fetch('/api/getTeamsWithOperations');
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
+  const response = await fetch('/api/getTeamsWithOperations', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch data');
   }
@@ -50,8 +55,12 @@ const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
 };
 
 const deleteMember = async (memberId: string) => {
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
   const response = await fetch(`/api/teamMembers/${memberId}`, {
     method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
     throw new Error('Failed to delete member');
@@ -59,10 +68,14 @@ const deleteMember = async (memberId: string) => {
 };
 
 const updateMember = async (updatedMember: TeamMember) => {
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
   const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(updatedMember),
   });

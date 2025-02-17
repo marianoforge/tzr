@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,13 +11,23 @@ export default async function handler(
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { userId, stripeCustomerId, stripeSubscriptionId, role } = req.body;
-
-  if (!userId || !stripeCustomerId || !stripeSubscriptionId) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
   try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized: No token provided' });
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+    await adminAuth.verifyIdToken(token);
+
+    const { userId, stripeCustomerId, stripeSubscriptionId, role } = req.body;
+
+    if (!userId || !stripeCustomerId || !stripeSubscriptionId) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
     const userRef = doc(db, 'usuarios', userId);
     const userSnap = await getDoc(userRef);
 

@@ -3,6 +3,8 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { useAuthStore } from '@/stores/authStore';
+
 import Input from '../PrivateComponente/FormComponents/Input';
 import Button from '../PrivateComponente/FormComponents/Button';
 import TextArea from '../PrivateComponente/FormComponents/TextArea';
@@ -49,9 +51,15 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose }) => {
     setStatus('Enviando...');
 
     try {
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
       const response = await fetch('/api/sendEmail', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(data),
       });
 

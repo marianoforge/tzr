@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { usePlacesAutocomplete } from '@/common/hooks/useAutocompleteSuggestions';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import { useDebounce } from '@/common/hooks/useDebounce';
+import { useAuthStore } from '@/stores/authStore';
+
 interface AddressComponent {
   types: string[];
   long_name: string;
@@ -61,7 +63,12 @@ export default function AddressAutocompleteManual({
     setIsDropdownOpen(false);
 
     try {
-      const response = await fetch(`/api/places/details?placeId=${placeId}`);
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await fetch(`/api/places/details?placeId=${placeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await response.json();
       if (data.status === 'OK') {
         const addressComponents = data.result.address_components;

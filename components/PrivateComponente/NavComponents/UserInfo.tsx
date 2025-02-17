@@ -8,11 +8,18 @@ export const UserInfo = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { userID } = useAuthStore();
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/users/${userID}`);
+        const token = await useAuthStore.getState().getAuthToken();
+        if (!token) throw new Error('User not authenticated');
+
+        const response = await fetch(`/api/users/${userID}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

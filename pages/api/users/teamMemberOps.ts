@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase'; // Asegúrate de que este importa correctamente tu instancia de Firestore
+import { adminAuth } from '@/lib/firebaseAdmin'; // 🔹 Importar Firebase Admin para autenticación
 import { setCsrfCookie } from '@/lib/csrf'; // Asegúrate de tener configurado el CSRF correctamente
 
 export default async function handler(
@@ -10,8 +11,19 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     try {
+      // 🔹 Validar el token de Firebase para autenticación
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res
+          .status(401)
+          .json({ message: 'Unauthorized: No token provided' });
+      }
+
+      const token = authHeader.split('Bearer ')[1];
+      await adminAuth.verifyIdToken(token);
+
       // Set CSRF token cookie
-      const token = setCsrfCookie(res);
+      const csrfToken = setCsrfCookie(res);
 
       // Obtener el teamLeadID desde el query de la request
       const { teamLeadID } = req.query;
@@ -57,7 +69,7 @@ export default async function handler(
       );
 
       // Devolver los miembros del equipo junto con sus operaciones
-      return res.status(200).json({ csrfToken: token, membersWithOperations });
+      return res.status(200).json({ csrfToken, membersWithOperations });
     } catch (error) {
       console.error('Error fetching team members and operations:', error);
       return res

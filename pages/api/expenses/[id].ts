@@ -4,28 +4,44 @@ import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
 import { ExpenseFormData } from '@/common/types/';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id } = req.query;
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized: No token provided' });
+    }
 
-  if (!id || typeof id !== 'string') {
-    return res
-      .status(400)
-      .json({ message: 'Expense ID is required and must be a string' });
-  }
+    const token = authHeader.split('Bearer ')[1];
+    await adminAuth.verifyIdToken(token);
 
-  switch (req.method) {
-    case 'GET':
-      return getExpenseById(id, res);
-    case 'PUT':
-      return updateExpense(id, req.body, res);
-    case 'DELETE':
-      return deleteExpense(id, res);
-    default:
-      return res.status(405).json({ message: 'Method not allowed' });
+    const { id } = req.query;
+
+    if (!id || typeof id !== 'string') {
+      return res
+        .status(400)
+        .json({ message: 'Expense ID is required and must be a string' });
+    }
+
+    switch (req.method) {
+      case 'GET':
+        return getExpenseById(id, res);
+      case 'PUT':
+        return updateExpense(id, req.body, res);
+      case 'DELETE':
+        return deleteExpense(id, res);
+      default:
+        return res.status(405).json({ message: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

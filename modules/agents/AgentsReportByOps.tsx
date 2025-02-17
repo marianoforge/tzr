@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { TeamMember } from './AgentsReport';
-
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { Operation } from '@/common/types/';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
@@ -12,12 +10,20 @@ import { OperationStatus } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import { useAuthStore } from '@/stores/authStore';
 
+import { TeamMember } from './AgentsReport';
+
 const AgentsReportByOps = ({ userId }: { userId: string }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { userID } = useAuthStore();
   const { currencySymbol } = useUserCurrencySymbol(userID || '');
+
   const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
-    const response = await fetch('/api/getTeamsWithOperations');
+    const token = await useAuthStore.getState().getAuthToken();
+    if (!token) throw new Error('User not authenticated');
+
+    const response = await fetch('/api/getTeamsWithOperations', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch data');
     }

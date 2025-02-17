@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { QueryKeys, UserRole } from '../enums';
-
 import { Operation, UserData } from '@/common/types/';
+import { useAuthStore } from '@/stores/authStore';
+
+import { QueryKeys, UserRole } from '../enums';
 
 interface UserWithOperations {
   uid: string;
@@ -16,10 +17,14 @@ interface UserWithOperations {
 export const fetchUsersWithOperations = async (
   user: UserData
 ): Promise<UserWithOperations[]> => {
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
   const response = await fetch('/api/users/usersWithOps', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
   });
 

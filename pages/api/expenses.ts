@@ -10,25 +10,41 @@ import {
 } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const user_uid =
-    req.method === 'GET' ? req.query.user_uid : req.body.user_uid;
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized: No token provided' });
+    }
 
-  if (!user_uid || typeof user_uid !== 'string') {
-    return res.status(400).json({ message: 'User UID is required' });
-  }
+    const token = authHeader.split('Bearer ')[1];
+    await adminAuth.verifyIdToken(token);
 
-  switch (req.method) {
-    case 'GET':
-      return getUserExpenses(user_uid, res);
-    case 'POST':
-      return createExpense(req, res);
-    default:
-      return res.status(405).json({ message: 'Method not allowed' });
+    const user_uid =
+      req.method === 'GET' ? req.query.user_uid : req.body.user_uid;
+
+    if (!user_uid || typeof user_uid !== 'string') {
+      return res.status(400).json({ message: 'User UID is required' });
+    }
+
+    switch (req.method) {
+      case 'GET':
+        return getUserExpenses(user_uid, res);
+      case 'POST':
+        return createExpense(req, res);
+      default:
+        return res.status(405).json({ message: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

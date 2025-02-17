@@ -2,6 +2,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import axios from 'axios';
 
 import { auth } from '@/lib/firebase';
+import { useAuthStore } from '@/stores/authStore';
 
 // Login con email y contraseña
 export const loginWithEmailAndPassword = async (
@@ -22,6 +23,15 @@ export const loginWithEmailAndPassword = async (
 };
 
 export const resetPassword = async (email: string) => {
-  const response = await axios.post('/api/auth/reset-password', { email });
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
+  const response = await axios.post(
+    '/api/auth/reset-password',
+    { email },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return response.data;
 };
