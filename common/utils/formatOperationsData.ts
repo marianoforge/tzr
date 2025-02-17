@@ -5,6 +5,7 @@ import { OperationData } from '../enums';
 export const formatOperationsData = (
   operations: {
     fecha_operacion: string | number | Date;
+    fecha_reserva: string | number | Date;
     honorarios_asesor?: number;
     honorarios_broker?: number;
   }[],
@@ -20,10 +21,13 @@ export const formatOperationsData = (
   operations.forEach(
     (operation: {
       fecha_operacion: string | number | Date;
+      fecha_reserva: string | number | Date;
       honorarios_asesor?: number;
       honorarios_broker?: number;
     }) => {
-      const operationDate = new Date(operation.fecha_operacion);
+      const operationDate = new Date(
+        operation.fecha_operacion || operation.fecha_reserva || ''
+      );
       const monthIndex = operationDate.getMonth();
       const currentYear = new Date().getFullYear();
 

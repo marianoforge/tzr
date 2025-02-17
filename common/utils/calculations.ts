@@ -245,7 +245,9 @@ export const calculateTotals = (operations: Operation[]) => {
 
   const totalHonorariosAsesorMesVencido = sumField(
     operations.filter((op) => {
-      const operationDate = new Date(op.fecha_operacion); // Assuming 'fecha' is the date field in Operation
+      const operationDate = new Date(
+        op.fecha_operacion || op.fecha_reserva || ''
+      );
       const operationYear = operationDate.getFullYear();
       const operationMonth = operationDate.getMonth() + 1;
       return (

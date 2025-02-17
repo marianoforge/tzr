@@ -55,6 +55,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       realizador_venta: operation?.realizador_venta || '',
       exclusiva: operation?.exclusiva || false,
       no_exclusiva: operation?.no_exclusiva || false,
+      fecha_operacion: operation?.fecha_operacion || null,
     },
   });
 
@@ -157,6 +158,16 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       data.porcentaje_referido || 0
     );
 
+    const fechaOperacion = data.fecha_operacion?.trim()
+      ? data.fecha_operacion
+      : '';
+    const fechaReserva = data.fecha_reserva?.trim() ? data.fecha_reserva : '';
+
+    if (!fechaReserva) {
+      console.error('La fecha de reserva es obligatoria');
+      return;
+    }
+
     const payload = {
       ...data,
       honorarios_broker: honorariosBroker,
@@ -170,6 +181,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       provincia_reserva: addressData.province,
       reparticion_honorarios_asesor:
         data.reparticion_honorarios_asesor ?? undefined,
+      fecha_operacion: fechaOperacion,
+      fecha_reserva: fechaReserva,
     };
 
     // Ensure realizador_venta is not null before submitting
@@ -194,8 +207,9 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       pais: payload.pais || undefined,
       numero_casa: payload.numero_casa || undefined,
       direccion_reserva: payload.direccion_reserva || undefined,
+      fecha_operacion:
+        payload.fecha_operacion !== undefined ? payload.fecha_operacion : '',
     };
-
     mutation.mutate({ id: operation.id, data: sanitizedPayload });
   };
 
@@ -214,17 +228,19 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
-            label="Fecha de Reserva"
+            label="Fecha de Cierre"
             type="date"
-            {...register('fecha_operacion')}
+            {...register('fecha_operacion', {
+              setValueAs: (value) => value || null,
+            })}
             error={errors.fecha_operacion?.message}
-            required
           />
           <Input
-            label="Fecha de Cierre"
+            label="Fecha de Reserva"
             type="date"
             {...register('fecha_reserva')}
             error={errors.fecha_reserva?.message}
+            required
           />
           <AddressAutocompleteManual
             onAddressSelect={(address) => {

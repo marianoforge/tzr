@@ -40,7 +40,12 @@ const Settings = () => {
   const { data: userDataQuery, isLoading: isLoadingQuery } = useQuery({
     queryKey: ['userData', userID],
     queryFn: async () => {
-      const response = await axios.get(`/api/users/${userID}`);
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await axios.get(`/api/users/${userID}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return response.data;
     },
     enabled: !!userID,
@@ -83,16 +88,32 @@ const Settings = () => {
 
     try {
       setIsCanceling(true);
-      const response = await axios.post('/api/stripe/cancel_subscription', {
-        subscription_id: subscriptionId,
-      });
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await axios.post(
+        '/api/stripe/cancel_subscription',
+        {
+          subscription_id: subscriptionId,
+          user_id: userID,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (response.status === 200) {
         setCancelMessage('Suscripción cancelada exitosamente.');
 
-        await axios.put(`/api/users/${userID}`, {
-          stripeSubscriptionId: null,
-        });
+        await axios.put(
+          `/api/users/${userID}`,
+          {
+            stripeSubscriptionId: null,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         queryClient.invalidateQueries({ queryKey: ['userData', userID] });
       } else {
         setCancelMessage('No se pudo cancelar la suscripción.');
@@ -109,13 +130,22 @@ const Settings = () => {
     e.preventDefault();
     setErrorMessage(null);
     try {
-      const response = await axios.put(`/api/users/${userID}`, {
-        firstName: firstName,
-        lastName: lastName,
-        agenciaBroker: cleanString(agenciaBroker),
-        numeroTelefono: cleanString(numeroTelefono),
-        objetivoAnual,
-      });
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await axios.put(
+        `/api/users/${userID}`,
+        {
+          firstName: firstName,
+          lastName: lastName,
+          agenciaBroker: cleanString(agenciaBroker),
+          numeroTelefono: cleanString(numeroTelefono),
+          objetivoAnual,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         setOpenModalUpdate(true);
         setSuccess('Datos actualizados correctamente');
@@ -319,22 +349,6 @@ const Settings = () => {
                 {subscriptionData?.status === 'trialing'
                   ? 'Periodo de Prueba'
                   : 'Activo'}
-              </li>
-              <li>
-                Inicio del Periodo de Prueba:{' '}
-                {subscriptionData?.trial_start
-                  ? new Date(
-                      subscriptionData.trial_start * 1000
-                    ).toLocaleDateString()
-                  : 'N/A'}
-              </li>
-              <li>
-                Fin del Periodo de Prueba:{' '}
-                {subscriptionData?.trial_end
-                  ? new Date(
-                      subscriptionData.trial_end * 1000
-                    ).toLocaleDateString()
-                  : 'N/A'}
               </li>
             </ul>
           </div>

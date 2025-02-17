@@ -3,9 +3,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 
-import AddUserModal from './AddUserModal';
-import EditAgentsModal from './EditAgentsModal';
-
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
@@ -26,6 +23,9 @@ import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { yearsFilter } from '@/lib/data';
 
+import EditAgentsModal from './EditAgentsModal';
+import AddUserModal from './AddUserModal';
+
 export type TeamMember = {
   id: string;
   email: string;
@@ -42,7 +42,12 @@ type AgentsReportProps = {
 };
 
 const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
-  const response = await fetch('/api/getTeamsWithOperations');
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
+  const response = await fetch('/api/getTeamsWithOperations', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!response.ok) {
     throw new Error('Failed to fetch data');
   }
@@ -50,8 +55,12 @@ const fetchTeamMembersWithOperations = async (): Promise<TeamMember[]> => {
 };
 
 const deleteMember = async (memberId: string) => {
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
   const response = await fetch(`/api/teamMembers/${memberId}`, {
     method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
     throw new Error('Failed to delete member');
@@ -59,10 +68,14 @@ const deleteMember = async (memberId: string) => {
 };
 
 const updateMember = async (updatedMember: TeamMember) => {
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
   const response = await fetch(`/api/teamMembers/${updatedMember.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(updatedMember),
   });
@@ -156,8 +169,9 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
         const searchWords = searchQuery.toLowerCase().split(' ');
         const operationsInSelectedYear = member.operations.filter(
           (operation) =>
-            new Date(operation.fecha_operacion).getFullYear().toString() ===
-            selectedYear
+            new Date(operation.fecha_operacion || operation.fecha_reserva || '')
+              .getFullYear()
+              .toString() === selectedYear
         );
         return (
           member.teamLeadID === userId &&

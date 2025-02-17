@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
+import { useAuthStore } from '@/stores/authStore';
 
 export interface WeekData {
   actividadVerde?: string | undefined;
@@ -47,10 +48,14 @@ const ProjectionsModal: React.FC<ProjectionsModalProps> = ({
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (data: WeekData) => {
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
       const response = await fetch('/api/updateWeek', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           weekNumber: rowIndex + 1,
@@ -98,7 +103,9 @@ const ProjectionsModal: React.FC<ProjectionsModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-xl shadow-lg font-bold w-[50%] h-auto flex flex-col justify-center">
-        <h2 className="text-2xl font-bold mb-4 text-center">Editar Gasto</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Editar Proyección Semanal
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
             name="actividadVerde"

@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { OperationStatus } from '../enums';
-
 import { useAuthStore } from '@/stores/authStore';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { Operation } from '@/common/types/';
 import { calculateOperationData } from '@/common/utils/calculationsPrincipal';
+
+import { OperationStatus } from '../enums';
 
 export const useOperationsData = () => {
   const { userID } = useAuthStore();
@@ -32,7 +32,10 @@ export const useOperationsData = () => {
 
   const totalCantidad2024 = closedOperations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === new Date().getFullYear()
+      new Date(op.fecha_operacion || '').getFullYear() ===
+        new Date().getFullYear() ||
+      new Date(op.fecha_reserva || '').getFullYear() ===
+        new Date().getFullYear()
   ).length;
 
   return {

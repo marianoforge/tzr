@@ -21,7 +21,12 @@ const generateDefaultWeeks = () => {
 };
 
 const fetchWeeks = async (userId: string) => {
-  const response = await fetch(`/api/getWeeks?userId=${userId}`);
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
+  const response = await fetch(`/api/getWeeks?userId=${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!response.ok) throw new Error('Failed to fetch weeks');
   return response.json();
 };
@@ -88,6 +93,9 @@ const ProjectionsActivity = () => {
 
   return (
     <div className="bg-white p-4 mt-10 rounded-xl shadow-md">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
+        WAR: Week Activity Report
+      </h2>
       <table className="min-w-full w-full hidden md:block">
         <thead className="text-center">
           <tr>

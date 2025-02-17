@@ -20,6 +20,7 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { OperationStatus, PATHS, QueryKeys } from '@/common/enums';
 
 import OperationsModal from './OperationsModal';
+import { displayValue } from './OperationsFullScreenTable';
 
 const OperationsCarousel: React.FC = () => {
   const router = useRouter();
@@ -130,14 +131,32 @@ const OperationsCarousel: React.FC = () => {
         <Slider {...settings}>
           {searchedOperations.map((operacion: Operation) => (
             <div key={operacion.id} className="px-0 py-4">
-              <div className="bg-lightBlue text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-[400px] max-h-[400px] md:h-[300px] md:max-h-[300px]">
-                <div className="space-y-2 sm:space-y-4 flex flex-col justify-around w-1/2">
+              <div className="bg-lightBlue text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-auto md:h-[300px] md:max-h-[300px]">
+                <div className="space-y-6 sm:space-y-4 flex flex-col justify-around w-1/2">
                   <p>
                     <strong>Fecha de Reserva:</strong>{' '}
+                    {operacion.fecha_reserva
+                      ? new Date(operacion.fecha_reserva).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Fecha de Cierre:</strong>{' '}
                     {new Date(operacion.fecha_operacion).toLocaleDateString()}
                   </p>
                   <p>
                     <strong>Operación:</strong> {operacion.direccion_reserva}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Localidad: </span>
+                    {displayValue(operacion.localidad_reserva)}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Provincia: </span>
+                    {displayValue(operacion.provincia_reserva)}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Pais: </span>
+                    {displayValue(operacion.pais)}
                   </p>
                   <p>
                     <strong>Tipo de Operación:</strong>{' '}
@@ -148,28 +167,28 @@ const OperationsCarousel: React.FC = () => {
                     {formatNumber(operacion.valor_reserva)}
                   </p>
                   <p>
-                    <strong>Puntas Obtenidas:</strong>{' '}
+                    <strong>Puntas:</strong>{' '}
                     {formatNumber(
                       Number(operacion.punta_vendedora) +
                         Number(operacion.punta_compradora)
                     )}
                   </p>
                   <p>
-                    <strong>Porcentaje Punta Compradora:</strong>{' '}
+                    <strong>% Punta Compradora:</strong>{' '}
                     {formatNumber(
                       Number(operacion.porcentaje_punta_compradora)
                     )}
                     %
                   </p>
                   <p>
-                    <strong>Porcentaje Punta Vendedora:</strong>{' '}
+                    <strong>% Punta Vendedora:</strong>{' '}
                     {formatNumber(Number(operacion.porcentaje_punta_vendedora))}
                     %
                   </p>
                 </div>
                 <div className="space-y-2 sm:space-y-4 flex flex-col justify-around w-1/2">
                   <p>
-                    <strong>Porcentaje Puntas</strong>{' '}
+                    <strong>% Puntas</strong>{' '}
                     {formatNumber(
                       Number(operacion.porcentaje_punta_compradora) +
                         Number(operacion.porcentaje_punta_vendedora)
@@ -177,28 +196,28 @@ const OperationsCarousel: React.FC = () => {
                     %
                   </p>
                   <p>
-                    <strong>Honorarios Totales Brutos:</strong> $
+                    <strong>Honorarios Brutos:</strong> $
                     {formatNumber(operacion.honorarios_broker)}
                   </p>
                   <p>
-                    <strong>Honorarios Totales Netos:</strong> $
+                    <strong>Honorarios Netos:</strong> $
                     {formatNumber(operacion.honorarios_asesor)}
                   </p>
                   <p>
-                    <strong>Datos Compartidos:</strong>{' '}
+                    <strong>Compartido:</strong>{' '}
                     {operacion.compartido === '' ? 'N/A' : operacion.compartido}
                   </p>
                   <p>
-                    <strong>Porcentaje de Compartido:</strong>{' '}
+                    <strong>% Compartido:</strong>{' '}
                     {formatNumber(Number(operacion.porcentaje_compartido) ?? 0)}
                     %
                   </p>
                   <p>
-                    <strong>Datos Referidos:</strong>{' '}
+                    <strong>Referido:</strong>{' '}
                     {operacion.referido === '' ? 'N/A' : operacion.referido}
                   </p>
                   <p>
-                    <strong>Porcentaje Referido:</strong>{' '}
+                    <strong>% Referido:</strong>{' '}
                     {formatNumber(Number(operacion.porcentaje_referido) ?? 0)}%
                   </p>
                   <div className="flex justify-around">
@@ -264,6 +283,7 @@ const OperationsCarousel: React.FC = () => {
                   ...selectedOperation,
                   exclusiva: selectedOperation.exclusiva ?? false,
                   no_exclusiva: selectedOperation.no_exclusiva ?? false,
+                  fecha_reserva: selectedOperation.fecha_reserva || '',
                 }
               : null
           }

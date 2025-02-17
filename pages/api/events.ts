@@ -9,25 +9,47 @@ import {
 } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const user_uid =
-    req.method === 'GET' ? req.query.user_uid : req.body.user_uid;
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized: No token provided' });
+    }
 
-  if (!user_uid || typeof user_uid !== 'string') {
-    return res.status(400).json({ message: 'User UID is required' });
-  }
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await adminAuth.verifyIdToken(token);
+    const userUID = decodedToken.uid;
 
-  switch (req.method) {
-    case 'GET':
-      return getUserEvents(user_uid, res);
-    case 'POST':
-      return createEvent(req, res);
-    default:
-      return res.status(405).json({ message: 'Method not allowed' });
+    const userUIDFromRequest =
+      req.method === 'GET' ? req.query.user_uid : req.body.user_uid;
+
+    if (!userUIDFromRequest || typeof userUIDFromRequest !== 'string') {
+      return res.status(400).json({ message: 'User UID is required' });
+    }
+
+    // Ensure the user making the request is the authenticated user
+    if (userUID !== userUIDFromRequest) {
+      return res.status(403).json({ message: 'Forbidden: User UID mismatch' });
+    }
+
+    switch (req.method) {
+      case 'GET':
+        return getUserEvents(userUIDFromRequest, res);
+      case 'POST':
+        return createEvent(req, res);
+      default:
+        return res.status(405).json({ message: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 
@@ -69,7 +91,7 @@ const createEvent = async (req: NextApiRequest, res: NextApiResponse) => {
       endTime,
       description,
       address,
-      user_uid, // user_uid debería ser incluido aquí
+      user_uid,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

@@ -45,7 +45,7 @@ export interface Operation {
   isFranchiseOrBroker?: number | null;
   exclusiva?: boolean;
   no_exclusiva?: boolean;
-  fecha_reserva?: string | null;
+  fecha_reserva?: string;
 }
 
 export interface EventFormData {
@@ -169,6 +169,7 @@ export interface UserState {
   setUserID: (id: string | null) => void;
   setUserRole: (role: string | null) => void;
   initializeAuthListener: () => () => void;
+  getAuthToken: () => Promise<string | null>;
 }
 
 export interface EventModalProps {

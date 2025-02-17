@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
 import { auth, db } from '@/lib/firebase';
@@ -22,5 +22,14 @@ export const useAuthStore = create<UserState>((set) => ({
       }
     });
     return unsubscribe;
+  },
+
+  getAuthToken: async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      return await user.getIdToken();
+    }
+    return null; // Si el usuario no está autenticado, retornamos null
   },
 }));

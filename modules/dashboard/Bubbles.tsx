@@ -42,14 +42,8 @@ const Bubbles = () => {
   // Filtrar operaciones del año 2025
   const operations2025 = operations.filter(
     (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === currentYear &&
-      op.estado === OperationStatus.CERRADA
-  );
-
-  const operations2025EnCurso = operations.filter(
-    (op: Operation) =>
-      new Date(op.fecha_operacion).getFullYear() === currentYear &&
-      op.estado === OperationStatus.EN_CURSO
+      new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        currentYear && op.estado === OperationStatus.CERRADA
   );
 
   // Calcular tarifas netas para cada operación del 2025
@@ -65,11 +59,17 @@ const Bubbles = () => {
     0
   );
 
-  const totalNetFeesEnCurso = operations2025EnCurso.reduce(
+  const operationsEnCurso = operations.filter(
+    (op: Operation) => op.estado === OperationStatus.EN_CURSO
+  );
+
+  const totalNetFeesEnCurso = operationsEnCurso.reduce(
     (total: number, op: Operation) =>
       total + calculateNetFees(op, userData as UserData),
     0
   );
+
+  const totalHonorarioBrokerEnCurso = calculateTotals(operationsEnCurso);
 
   const bubbleData = [
     {
@@ -130,7 +130,7 @@ const Bubbles = () => {
       ),
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
-      tooltip: 'Promedio de Honorarios netos totales por mes.',
+      tooltip: 'Promedio de Honorarios netos totales por mes (vencido).',
     },
     {
       title: 'Honorarios Netos en Curso',
@@ -141,7 +141,9 @@ const Bubbles = () => {
     },
     {
       title: 'Honorarios Brutos en Curso',
-      figure: `${currencySymbol}${formatNumber(totals.honorarios_broker_abiertas ?? 0)}`,
+      figure: `${currencySymbol}${formatNumber(
+        totalHonorarioBrokerEnCurso.honorarios_broker_abiertas ?? 0
+      )}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Brutos sobre las operaciones en curso.',

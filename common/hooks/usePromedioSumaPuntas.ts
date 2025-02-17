@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { ALQUILER, OperationStatus } from '../enums';
-
 import { Operation } from '@/common/types';
+
+import { ALQUILER, OperationStatus } from '../enums';
 
 interface MonthlyData {
   year: number;
@@ -31,7 +31,7 @@ const usePromedioSumaPuntas = (operations: Operation[]): MonthlyData[] => {
     } = {};
 
     operationsFiltered.forEach((op) => {
-      const date = new Date(op.fecha_operacion);
+      const date = new Date(op.fecha_operacion || op.fecha_reserva || '');
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
       const key = `${year}-${month}`;

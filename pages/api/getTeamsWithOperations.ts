@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { db } from '@/lib/firebaseAdmin';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 type TeamMember = {
   id: string;
@@ -27,6 +28,17 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    // 🔹 Validar el token de Firebase para autenticación
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized: No token provided' });
+    }
+
+    const token = authHeader.split('Bearer ')[1];
+    await adminAuth.verifyIdToken(token);
+
     // Step 1: Fetch all Team Members and Operations in parallel
     const [teamMembersSnapshot, operationsSnapshot] = await Promise.all([
       db.collection('teams').get(),
