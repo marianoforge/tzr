@@ -25,10 +25,20 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
     <thead>
       <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
         <th
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+        >
+          Captación
+        </th>
+        <th
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+        >
+          Reserva
+        </th>
+        <th
           className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex items-center justify-center w-[120px]`}
           onClick={toggleDateSortOrder}
         >
-          Fecha de Cierre
+          Cierre
           <span className="ml-1 text-xs text-mediumBlue items-center justify-center">
             {isDateAscending ? (
               <ArrowUpIcon
@@ -43,20 +53,16 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
             )}
           </span>
         </th>
+
         <th
           className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
         >
-          Fecha de Reserva
+          Dirección
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+          className={`py-3 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[100px] cursor-pointer flex items-center justify-center`}
         >
           Operación
-        </th>
-        <th
-          className={`py-3 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[160px] cursor-pointer flex items-center justify-center`}
-        >
-          Tipo de Operación
         </th>
         <th
           className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/5`}
@@ -88,7 +94,7 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
           Punta Compradora
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold `}
         >
           % Puntas
         </th>
@@ -108,7 +114,7 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
           Honorarios Netos
         </th>
         <th
-          className={`flex items-center gap-1 py-8 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+          className={`flex items-center gap-1 py-8 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[110px]`}
         >
           Estado
           <InformationCircleIcon

@@ -8,7 +8,7 @@ export const calculateGrossByMonth = (
   const validOperationsTotalValorPorMes = validOperations.reduce(
     (acc: Record<number, number>, op: Operation) => {
       const operationDate = new Date(
-        op.fecha_operacion || op.fecha_reserva || ''
+        op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
       );
       const operationYear = operationDate.getFullYear();
       const month = operationDate.getMonth() + 1; // Get month (1-12)
@@ -27,7 +27,7 @@ export const calculateGrossByMonth = (
   const validOperationsTotalHonorariosBrokerPorMes = validOperations.reduce(
     (acc: Record<number, number>, op: Operation) => {
       const operationDate = new Date(
-        op.fecha_operacion || op.fecha_reserva || ''
+        op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
       );
       const operationYear = operationDate.getFullYear();
       const month = operationDate.getMonth() + 1;

@@ -5,7 +5,10 @@ import { OperationStatus } from '../enums';
 export const currentYearOperations = (operations: Operation[], year: number) =>
   operations.filter((operation: Operation) => {
     const operationYear = new Date(
-      operation.fecha_operacion || operation.fecha_reserva || ''
+      operation.fecha_operacion ||
+        operation.fecha_reserva ||
+        operation.fecha_captacion ||
+        ''
     ).getFullYear();
     return operationYear === year;
   });
@@ -33,14 +36,20 @@ const getOperationsByMonth = (
   const monthlyTotals: { [key: number]: number } = operations
     .filter((operation) => {
       const operationYear = new Date(
-        operation.fecha_operacion || operation.fecha_reserva || ''
+        operation.fecha_operacion ||
+          operation.fecha_reserva ||
+          operation.fecha_captacion ||
+          ''
       ).getFullYear();
       return operationYear === targetYear && operation.estado === status;
     })
     .reduce(
       (acc: { [key: number]: number }, operation) => {
         const monthIndex = new Date(
-          operation.fecha_operacion || operation.fecha_reserva || ''
+          operation.fecha_operacion ||
+            operation.fecha_reserva ||
+            operation.fecha_captacion ||
+            ''
         ).getMonth();
         acc[monthIndex] = (acc[monthIndex] || 0) + operation.honorarios_broker;
         return acc;

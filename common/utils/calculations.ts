@@ -129,6 +129,30 @@ const filterOperationsByType = (operations: Operation[], type: string) =>
 const filterOperationsExcludingType = (operations: Operation[], type: string) =>
   operations.filter((op) => !op.tipo_operacion.includes(type));
 
+// Helper function to calculate the difference in days between two dates
+const calculateDaysBetween = (startDate: Date, endDate: Date): number => {
+  const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+  return Math.round((endDate.getTime() - startDate.getTime()) / oneDay);
+};
+
+// Function to calculate the average days to sell an operation
+const averageDaysToSell = (operations: Operation[]) => {
+  const closedOperations = operations.filter(
+    (op) =>
+      op.estado === OperationStatus.CERRADA &&
+      op.fecha_captacion &&
+      op.fecha_operacion
+  );
+
+  const totalDays = closedOperations.reduce((sum, op) => {
+    const captacionDate = new Date(op.fecha_captacion);
+    const cierreDate = new Date(op.fecha_operacion);
+    return sum + calculateDaysBetween(captacionDate, cierreDate);
+  }, 0);
+
+  return closedOperations.length > 0 ? totalDays / closedOperations.length : 0;
+};
+
 // Calculo de honorarios basado en el valor de reserva y porcentajes
 export const calculateHonorarios = (
   valor_reserva: number,
@@ -246,7 +270,7 @@ export const calculateTotals = (operations: Operation[]) => {
   const totalHonorariosAsesorMesVencido = sumField(
     operations.filter((op) => {
       const operationDate = new Date(
-        op.fecha_operacion || op.fecha_reserva || ''
+        op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
       );
       const operationYear = operationDate.getFullYear();
       const operationMonth = operationDate.getMonth() + 1;
@@ -398,6 +422,8 @@ export const calculateTotals = (operations: Operation[]) => {
     new Date().getFullYear() - 1
   );
 
+  const promedioDiasVenta = averageDaysToSell(operations);
+
   return {
     valor_reserva: totalValorReserva,
     valor_reserva_en_curso: totalValorReservaEnCurso,
@@ -430,5 +456,6 @@ export const calculateTotals = (operations: Operation[]) => {
     porcentaje_honorarios_broker_por_mes_2023:
       porcentajeHonorariosBrokerPorMes2023,
     total_honorarios_team_lead: totalHonorariosTeamLead,
+    promedio_dias_venta: promedioDiasVenta,
   };
 };

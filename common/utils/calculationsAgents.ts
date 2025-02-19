@@ -11,8 +11,9 @@ export const calculateAdjustedBrokerFees = (
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
+        new Date(
+          op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
+        ).getFullYear() === year
     )
     .reduce((acc: number, op: Operation) => {
       const isHalfOperation =
@@ -32,8 +33,9 @@ export const calculateTotalOperations = (
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
+        new Date(
+          op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
+        ).getFullYear() === year
     )
     .reduce((total, op) => {
       const isHalfOperation =
@@ -53,8 +55,9 @@ export const calculateTotalBuyerTips = (
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
+        new Date(
+          op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
+        ).getFullYear() === year
     )
     .reduce((acc, op) => acc + (op.punta_compradora ? 1 : 0), 0);
 
@@ -67,8 +70,9 @@ export const calculateTotalSellerTips = (
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
+        new Date(
+          op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
+        ).getFullYear() === year
     )
     .reduce((acc, op) => acc + (op.punta_vendedora ? 1 : 0), 0);
 
@@ -78,8 +82,9 @@ export const calculateTotalTips = (operations: Operation[], year: number) =>
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
+        new Date(
+          op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
+        ).getFullYear() === year
     )
     .reduce(
       (acc, op) =>
@@ -96,7 +101,8 @@ export const calculateTotalReservationValue = (
     .filter(
       (op) =>
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
+        new Date(
+          op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
+        ).getFullYear() === year
     )
     .reduce((acc, op) => acc + Number(op.valor_reserva), 0);

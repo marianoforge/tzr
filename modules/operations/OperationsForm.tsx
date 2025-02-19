@@ -242,12 +242,22 @@ const OperationsForm = () => {
         <div className="flex flex-wrap -mx-2 gap-x-24 justify-center">
           <div className="w-full md:w-[40%] px-2">
             {/* Left column */}
+
             <Input
-              label="Fecha de Cierre"
+              label="Fecha de Captación"
               type="date"
               defaultValue={formattedDate}
-              {...register('fecha_operacion')}
-              error={errors.fecha_operacion?.message}
+              {...register('fecha_captacion')}
+              error={errors.fecha_captacion?.message}
+              required
+            />
+
+            <Input
+              label="Fecha de Publicación"
+              type="date"
+              defaultValue={formattedDate}
+              {...register('fecha_publicacion')}
+              error={errors.fecha_publicacion?.message}
             />
 
             <Input
@@ -256,7 +266,14 @@ const OperationsForm = () => {
               defaultValue={formattedDate}
               {...register('fecha_reserva')}
               error={errors.fecha_reserva?.message}
-              required
+            />
+
+            <Input
+              label="Fecha de Cierre"
+              type="date"
+              defaultValue={formattedDate}
+              {...register('fecha_operacion')}
+              error={errors.fecha_operacion?.message}
             />
 
             <AddressAutocompleteManual
@@ -357,6 +374,10 @@ const OperationsForm = () => {
               {...register('monto_sobre_reserva')}
               error={errors.monto_sobre_reserva?.message}
             />
+          </div>
+
+          <div className="w-full md:w-[40%] px-2">
+            {/* Right column */}
             <Input
               label="Número sobre de refuerzo"
               type="text"
@@ -371,11 +392,6 @@ const OperationsForm = () => {
               {...register('monto_sobre_refuerzo')}
               error={errors.monto_sobre_refuerzo?.message}
             />
-          </div>
-
-          <div className="w-full md:w-[40%] px-2">
-            {/* Right column */}
-
             <Input
               label="Referido"
               type="text"
