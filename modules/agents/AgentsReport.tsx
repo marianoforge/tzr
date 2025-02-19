@@ -156,12 +156,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
         const searchWords = searchQuery.toLowerCase().split(' ');
         const operationsInSelectedYear = member.operations.filter(
           (operation) =>
-            new Date(
-              operation.fecha_operacion ||
-                operation.fecha_reserva ||
-                operation.fecha_captacion ||
-                ''
-            )
+            new Date(operation.fecha_operacion || operation.fecha_reserva || '')
               .getFullYear()
               .toString() === selectedYear
         );

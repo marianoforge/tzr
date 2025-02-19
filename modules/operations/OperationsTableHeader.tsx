@@ -25,12 +25,12 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
     <thead>
       <tr className="bg-lightBlue/10 hidden md:table-row text-center text-sm">
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[120px]`}
         >
           Captación
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[120px]`}
         >
           Reserva
         </th>
@@ -55,17 +55,17 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
         </th>
 
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/6`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[120px]`}
         >
           Dirección
         </th>
         <th
-          className={`py-3 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[100px] cursor-pointer flex items-center justify-center`}
+          className={`py-3 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[188px] cursor-pointer flex items-center justify-center `}
         >
           Operación
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-1/5`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[180px]`}
           onClick={toggleValueSortOrder}
         >
           Valor Operación

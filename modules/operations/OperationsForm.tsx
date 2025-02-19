@@ -249,7 +249,6 @@ const OperationsForm = () => {
               defaultValue={formattedDate}
               {...register('fecha_captacion')}
               error={errors.fecha_captacion?.message}
-              required
             />
 
             <Input
@@ -266,6 +265,7 @@ const OperationsForm = () => {
               defaultValue={formattedDate}
               {...register('fecha_reserva')}
               error={errors.fecha_reserva?.message}
+              required
             />
 
             <Input
