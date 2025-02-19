@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import { useAuthStore } from '@/stores/authStore';
 import { UserInfoProps } from '@/common/types/';
@@ -11,28 +12,37 @@ export const UserInfo = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        setIsLoading(true);
-        const token = await useAuthStore.getState().getAuthToken();
-        if (!token) throw new Error('User not authenticated');
+      setIsLoading(true);
 
-        const response = await fetch(`/api/users/${userID}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const auth = getAuth();
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          setError('Usuario no autenticado');
+          setIsLoading(false);
+          return;
+        }
 
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
+        try {
+          const token = await user.getIdToken(); // Esperar el token antes de la llamada a la API
+
+          const response = await fetch(`/api/users/${user.uid}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+          setUserData(data);
+        } catch (error) {
+          setError(
+            error instanceof Error ? error.message : 'Error desconocido'
+          );
+        } finally {
+          setIsLoading(false);
         }
-        const data = await response.json();
-        setUserData(data);
-        setIsLoading(false);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError('An unknown error occurred');
-        }
-      }
+      });
     };
 
     fetchUserData();

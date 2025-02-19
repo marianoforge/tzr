@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   collection,
   query,
@@ -14,7 +14,7 @@ import Stripe from 'stripe';
 
 import { auth, db } from '@/lib/firebase';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2024-09-30.acacia',
 });
 
@@ -23,33 +23,43 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== 'GET') {
+    console.warn('⚠️ Método no permitido:', req.method);
     return res.status(405).json({ message: 'Only GET requests are allowed' });
   }
 
-  const { token } = req.query;
-
-  if (!token || typeof token !== 'string') {
-    return res.status(400).json({ message: 'Token is required' });
-  }
-
   try {
-    // Realizar una consulta para encontrar el documento con el verificationToken
+    console.log('🔹 Nueva petición a /api/verify-email');
+
+    // 🔹 Validar el token en la URL
+    const { token } = req.query;
+    if (!token || typeof token !== 'string') {
+      console.warn('⚠️ Token de verificación inválido o no proporcionado.');
+      return res.status(400).json({ message: 'Token is required' });
+    }
+
+    console.log('🔹 Verificando token:', token);
+
+    // 🔹 Buscar el token en Firestore
     const verificationsRef = collection(db, 'verifications');
     const q = query(verificationsRef, where('verificationToken', '==', token));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
+      console.warn('⚠️ Token inválido o expirado.');
       return res.status(400).json({ message: 'Invalid or expired token' });
     }
 
     const verificationDoc = querySnapshot.docs[0];
-    const { expiresAt } = verificationDoc.data();
+    const verificationData = verificationDoc.data();
+    const { expiresAt } = verificationData;
 
+    // 🔹 Verificar si el token ha expirado
     if (expiresAt.toMillis() < Date.now()) {
-      await deleteDoc(verificationDoc.ref); // Elimina el documento caducado
-      return res.status(400).json({
-        message: 'El Token ha expirado por favor regístrate de nuevo.',
-      });
+      console.warn('⚠️ Token expirado. Eliminando del sistema.');
+      await deleteDoc(verificationDoc.ref);
+      return res
+        .status(400)
+        .json({ message: 'El Token ha expirado, regístrese de nuevo.' });
     }
 
     const {
@@ -63,9 +73,11 @@ export default async function handler(
       currency,
       currencySymbol,
       noUpdates,
-    } = verificationDoc.data();
+    } = verificationData;
 
-    // Completar el registro del usuario
+    console.log(`🔹 Registrando usuario: ${email}`);
+
+    // 🔹 Crear usuario en Firebase Authentication
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -73,6 +85,7 @@ export default async function handler(
     );
     const user = userCredential.user;
 
+    // 🔹 Guardar usuario en Firestore
     await setDoc(doc(db, 'usuarios', user.uid), {
       email: user.email,
       agenciaBroker,
@@ -87,7 +100,12 @@ export default async function handler(
       createdAt: Timestamp.now(),
     });
 
-    // Crear la sesión de pago en Stripe
+    console.log(`✅ Usuario registrado en Firestore: ${user.uid}`);
+
+    // 🔹 Crear la sesión de pago en Stripe
+    console.log(
+      `🔹 Creando sesión de Stripe para ${email} con precio ${priceId}`
+    );
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -96,23 +114,30 @@ export default async function handler(
           quantity: 1,
         },
       ],
+      subscription_data: {
+        trial_period_days: 7,
+      },
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/login?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
     });
 
-    // Eliminar el registro de verificación ya que el token ha sido usado
-    await deleteDoc(verificationDoc.ref);
+    console.log('✅ Sesión de pago creada con éxito.');
 
-    res.status(200).json({
+    // 🔹 Eliminar el registro de verificación ya que el token ha sido usado
+    await deleteDoc(verificationDoc.ref);
+    console.log('✅ Token de verificación eliminado de Firestore.');
+
+    return res.status(200).json({
       message: 'Email verified and user registered successfully',
       sessionId: session.id,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
+  } catch (error: any) {
+    console.error('❌ Error en la verificación de email:', error);
+    return res.status(500).json({
       message:
         'Error al verificar el correo electrónico. Envíe un email a info@realtortrackpro.com para obtener soporte. Muchas gracias.',
+      error: error.message,
     });
   }
 }

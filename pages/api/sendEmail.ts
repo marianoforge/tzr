@@ -1,23 +1,30 @@
 import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { adminAuth } from '@/lib/firebaseAdmin';
+import { adminAuth } from '@/lib/firebaseAdmin'; // 🔹 Usa Firebase Admin SDK para autenticación
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
+    console.log('🔹 Nueva petición a /api/send-email', req.method);
+
+    // Verificar el token de autenticación
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.warn('⚠️ No se proporcionó token en la cabecera.');
       return res
         .status(401)
         .json({ message: 'Unauthorized: No token provided' });
     }
 
     const token = authHeader.split('Bearer ')[1];
-    await adminAuth.verifyIdToken(token);
+    const decodedToken = await adminAuth.verifyIdToken(token);
+
+    console.log('✅ Token verificado para UID:', decodedToken.uid);
 
     if (req.method !== 'POST') {
+      console.warn('⚠️ Método no permitido:', req.method);
       return res
         .status(405)
         .json({ message: 'Only POST requests are allowed' });
@@ -33,6 +40,7 @@ export default async function handler(
       inquiry,
     } = req.body;
 
+    // Validar que los datos requeridos están presentes
     if (
       !firstName ||
       !lastName ||
@@ -42,9 +50,21 @@ export default async function handler(
       !country ||
       !inquiry
     ) {
+      console.error('❌ Datos incompletos recibidos:', req.body);
       return res.status(400).json({ message: 'All fields are required' });
     }
 
+    console.log('🔹 Enviando correo con los siguientes datos:', {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      companyName,
+      country,
+      inquiry,
+    });
+
+    // Configurar los datos del remitente y destinatario
     const sentFrom = new Sender(
       process.env.MAILERSEND_FROM_EMAIL as string,
       process.env.MAILERSEND_FROM_NAME as string
@@ -79,13 +99,14 @@ export default async function handler(
 
       await mailerSend.email.send(emailParams);
 
-      res.status(200).json({ message: 'Correo enviado exitosamente' });
+      console.log('✅ Correo enviado exitosamente.');
+      return res.status(200).json({ message: 'Correo enviado exitosamente' });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al enviar el correo' });
+      console.error('❌ Error al enviar correo:', error);
+      return res.status(500).json({ message: 'Error al enviar el correo' });
     }
   } catch (error) {
-    console.error('Authentication error:', error);
+    console.error('❌ Error en la API /api/send-email:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 }

@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 import { db } from '@/lib/firebase';
-import { adminAuth } from '@/lib/firebaseAdmin';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,16 +13,6 @@ export default async function handler(
   }
 
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res
-        .status(401)
-        .json({ message: 'Unauthorized: No token provided' });
-    }
-
-    const token = authHeader.split('Bearer ')[1];
-    await adminAuth.verifyIdToken(token);
-
     const userRef = collection(db, 'usuarios');
     const q = query(userRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);

@@ -1,8 +1,5 @@
-// pages/api/getTeamsWithOperations.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-import { db } from '@/lib/firebaseAdmin';
-import { adminAuth } from '@/lib/firebaseAdmin';
+import { db, adminAuth } from '@/lib/firebaseAdmin'; // 🔹 Usa Firestore Admin SDK
 
 type TeamMember = {
   id: string;
@@ -15,8 +12,9 @@ type TeamMember = {
 type Operation = {
   id: string;
   user_uid: string;
-  user_uid_Adicional: string;
-  [key: string]: string | Operation[]; // Extendable properties
+  user_uid_adicional?: string | null; // ✅ Permite que sea string o null
+} & {
+  [key: string]: string | Operation[] | undefined; // ✅ Permite valores undefined sin error
 };
 
 type TeamMemberWithOperations = TeamMember & {
@@ -28,34 +26,43 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    console.log('🔹 Nueva petición a /api/getTeamsWithOperations', req.method);
+
     // 🔹 Validar el token de Firebase para autenticación
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.warn('⚠️ No se proporcionó token en la cabecera.');
       return res
         .status(401)
         .json({ message: 'Unauthorized: No token provided' });
     }
 
     const token = authHeader.split('Bearer ')[1];
-    await adminAuth.verifyIdToken(token);
+    const decodedToken = await adminAuth.verifyIdToken(token);
 
-    // Step 1: Fetch all Team Members and Operations in parallel
+    console.log('✅ Token verificado para UID:', decodedToken.uid);
+
+    // 🔹 Paso 1: Obtener miembros del equipo y operaciones en paralelo
     const [teamMembersSnapshot, operationsSnapshot] = await Promise.all([
       db.collection('teams').get(),
       db.collection('operations').get(),
     ]);
 
-    const teamMembers: TeamMember[] = [];
-    teamMembersSnapshot.forEach((doc) => {
-      teamMembers.push({ id: doc.id, ...doc.data() } as TeamMember);
-    });
+    console.log('✅ Datos de equipos y operaciones obtenidos.');
 
-    const operations: Operation[] = [];
-    operationsSnapshot.forEach((doc) => {
-      operations.push({ id: doc.id, ...doc.data() } as Operation);
-    });
+    const teamMembers: TeamMember[] = teamMembersSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as TeamMember[];
 
-    // Step 2: Combine data
+    const operations: Operation[] = operationsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      user_uid: doc.data().user_uid,
+      user_uid_adicional: doc.data().user_uid_adicional ?? null, // ✅ Asegura que no sea undefined
+      ...doc.data(),
+    })) as Operation[];
+
+    // 🔹 Paso 2: Combinar datos
     const result: TeamMemberWithOperations[] = teamMembers.map((member) => {
       const memberOperations = operations.filter(
         (op) => op.user_uid === member.id || op.user_uid_adicional === member.id
@@ -64,10 +71,14 @@ export default async function handler(
       return { ...member, operations: memberOperations };
     });
 
-    // Step 3: Respond with the combined data
-    res.status(200).json(result);
+    console.log(
+      `✅ Datos combinados: ${result.length} equipos con operaciones.`
+    );
+
+    // 🔹 Paso 3: Responder con los datos combinados
+    return res.status(200).json(result);
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Failed to fetch data' });
+    console.error('❌ Error en la API /api/getTeamsWithOperations:', error);
+    return res.status(500).json({ error: 'Failed to fetch data' });
   }
 }
