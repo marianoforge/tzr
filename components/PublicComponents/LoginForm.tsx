@@ -7,13 +7,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { useAuthStore } from '@/stores/authStore';
 import { schema } from '@/common/schemas/loginFormSchema';
 import { LoginData } from '@/common/types';
 import { auth, db } from '@/lib/firebase';
+import { PRICE_ID_GROWTH, PRICE_ID_GROWTH_ANNUAL } from '@/lib/data';
 
 import Button from '../PrivateComponente/FormComponents/Button';
 import Input from '../PrivateComponente/FormComponents/Input';
-import ModalOK from '../PrivateComponente/CommonComponents/Modal';
 
 const LoginForm = () => {
   const {
@@ -25,10 +26,11 @@ const LoginForm = () => {
   });
 
   const router = useRouter();
-  const [openModal, setOpenModal] = useState(false);
 
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const { getAuthToken } = useAuthStore();
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
@@ -48,12 +50,52 @@ const LoginForm = () => {
           query: { email: user.email, googleUser: 'false', uid: user.uid },
         });
       } else {
-        const userData = userDoc.data();
-        if (!userData.stripeSubscriptionId) {
-          setOpenModal(true);
-        } else {
-          router.push('/dashboard');
+        const token = await getAuthToken();
+        if (!token) throw new Error('User not authenticated');
+
+        const sessionId = Array.isArray(router.query.session_id)
+          ? router.query.session_id[0]
+          : router.query.session_id;
+
+        const existingCustomerId = userDoc.data()?.stripeCustomerId;
+        const existingSubscriptionId = userDoc.data()?.stripeSubscriptionId;
+
+        if (sessionId && (!existingCustomerId || !existingSubscriptionId)) {
+          const res = await fetch(`/api/checkout/${sessionId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok)
+            throw new Error(`Error en la API de checkout: ${res.status}`);
+          const session = await res.json();
+          const stripeCustomerId = session.customer;
+          const stripeSubscriptionId = session.subscription;
+
+          const selectedPriceId = localStorage.getItem('selectedPriceId');
+          let role = 'agente_asesor';
+
+          if (
+            selectedPriceId === PRICE_ID_GROWTH ||
+            selectedPriceId === PRICE_ID_GROWTH_ANNUAL
+          ) {
+            role = 'team_leader_broker';
+          }
+
+          await fetch(`/api/users/updateUser`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              userId: user.uid,
+              stripeCustomerId,
+              stripeSubscriptionId,
+              role,
+            }),
+          });
         }
+
+        router.push('/dashboard');
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -135,14 +177,6 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
-
-      <ModalOK
-        isOpen={openModal}
-        onClose={() => setOpenModal(false)}
-        message="No tienes una suscripción por favor envia un mail a info@realtortrackpro.com para que te envíen un link de pago"
-        onAccept={() => setOpenModal(false)}
-        className="w-[500px] h-[300px]"
-      />
     </>
   );
 };

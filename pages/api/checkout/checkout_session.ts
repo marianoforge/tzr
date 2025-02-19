@@ -34,6 +34,9 @@ export default async function handler(
             quantity: 1,
           },
         ],
+        subscription_data: {
+          trial_period_days: 7,
+        },
         mode: 'subscription',
         success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
