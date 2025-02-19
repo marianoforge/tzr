@@ -31,7 +31,9 @@ const usePromedioSumaPuntas = (operations: Operation[]): MonthlyData[] => {
     } = {};
 
     operationsFiltered.forEach((op) => {
-      const date = new Date(op.fecha_operacion || op.fecha_reserva || '');
+      const date = new Date(
+        op.fecha_operacion || op.fecha_reserva || op.fecha_captacion || ''
+      );
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
       const key = `${year}-${month}`;

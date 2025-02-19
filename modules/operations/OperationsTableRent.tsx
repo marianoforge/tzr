@@ -327,7 +327,6 @@ const OperationsTableTent: React.FC = () => {
                     ...selectedOperation,
                     exclusiva: selectedOperation.exclusiva ?? false,
                     no_exclusiva: selectedOperation.no_exclusiva ?? false,
-                    fecha_reserva: selectedOperation.fecha_reserva || '',
                   }
                 : null
             }

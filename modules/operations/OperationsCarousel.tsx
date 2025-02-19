@@ -134,6 +134,20 @@ const OperationsCarousel: React.FC = () => {
               <div className="bg-lightBlue text-white p-4 rounded-xl shadow-md flex justify-center space-x-4 h-auto md:h-[300px] md:max-h-[300px]">
                 <div className="space-y-6 sm:space-y-4 flex flex-col justify-around w-1/2">
                   <p>
+                    <strong>Fecha de Captación:</strong>{' '}
+                    {operacion.fecha_captacion
+                      ? new Date(operacion.fecha_captacion).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
+                  <p>
+                    <strong>Fecha de Publicación:</strong>{' '}
+                    {operacion.fecha_publicacion
+                      ? new Date(
+                          operacion.fecha_publicacion
+                        ).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
+                  <p>
                     <strong>Fecha de Reserva:</strong>{' '}
                     {operacion.fecha_reserva
                       ? new Date(operacion.fecha_reserva).toLocaleDateString()
@@ -283,7 +297,6 @@ const OperationsCarousel: React.FC = () => {
                   ...selectedOperation,
                   exclusiva: selectedOperation.exclusiva ?? false,
                   no_exclusiva: selectedOperation.no_exclusiva ?? false,
-                  fecha_reserva: selectedOperation.fecha_reserva || '',
                 }
               : null
           }

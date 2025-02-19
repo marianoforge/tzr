@@ -12,7 +12,9 @@ export function filteredOperations(
       ? new Date(operation.fecha_operacion)
       : operation.fecha_reserva
         ? new Date(operation.fecha_reserva)
-        : null;
+        : operation.fecha_captacion
+          ? new Date(operation.fecha_captacion)
+          : null;
 
     if (!operationDate) return false;
 

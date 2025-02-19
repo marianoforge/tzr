@@ -8,7 +8,6 @@ import {
   calculatePercentage,
 } from '@/common/utils/calculationsPrincipal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { OperationType } from '@/common/enums';
 import { Operation } from '@/common/types';
 
 const CuadroPrincipal = () => {
@@ -24,24 +23,6 @@ const CuadroPrincipal = () => {
 
   const { totalMontoHonorariosBroker, summaryArray } = chartCalculations;
 
-  const nonRentalOperations = summaryArray.filter(
-    (calcs) =>
-      ![
-        OperationType.ALQUILER_TEMPORAL,
-        OperationType.ALQUILER_TRADICIONAL,
-        OperationType.ALQUILER_COMERCIAL,
-        OperationType.DESARROLLO,
-        OperationType.DESARROLLO_INMOBILIARIO,
-      ].includes(calcs.group as OperationType)
-  );
-
-  const averageMontoOperaciones =
-    nonRentalOperations.reduce(
-      (acc, calcs) =>
-        acc + (calcs.totalMontoOperaciones || 0) / calcs.cantidadOperaciones,
-      0
-    ) / nonRentalOperations.length;
-
   const calculatePercentageValue = (
     totalHonorariosBrutos: number,
     totalMontoHonorariosBroker: number
@@ -51,25 +32,14 @@ const CuadroPrincipal = () => {
     );
   };
 
-  const formatOperationAmount = (calcs: {
-    group: string;
-    totalMontoOperaciones?: number;
-    cantidadOperaciones: number;
-  }) => {
-    return [
-      OperationType.ALQUILER_TEMPORAL,
-      OperationType.ALQUILER_TRADICIONAL,
-      OperationType.ALQUILER_COMERCIAL,
-    ].includes(calcs.group as OperationType)
-      ? ''
-      : `$${formatNumber((calcs.totalMontoOperaciones ?? 0) / (calcs.cantidadOperaciones || 1))}`;
-  };
-
   const currentYear = new Date().getFullYear();
   const currentYearOperations = operations.filter(
     (operation: Operation) =>
       new Date(
-        operation.fecha_operacion || operation.fecha_reserva || ''
+        operation.fecha_operacion ||
+          operation.fecha_reserva ||
+          operation.fecha_captacion ||
+          ''
       ).getFullYear() === currentYear
   );
 
@@ -105,7 +75,6 @@ const CuadroPrincipal = () => {
                     'Cantidad de Operaciones',
                     'Porcentaje Sobre el Total',
                     '% Ganancias Brutas',
-                    'Promedio Monto Ventas',
                   ].map((header) => (
                     <th key={header} className="py-3 px-4 font-semibold">
                       {header}
@@ -141,9 +110,6 @@ const CuadroPrincipal = () => {
                       )}
                       %
                     </td>
-                    <td className="py-3 px-4 text-base">
-                      {formatOperationAmount(calcs)}
-                    </td>
                   </tr>
                 ))}
                 <tr className="font-bold bg-lightBlue/10 h-24 text-center">
@@ -151,9 +117,6 @@ const CuadroPrincipal = () => {
                   <td className="py-3 px-4 text-base">{totalCantidad2024}</td>
                   <td className="py-3 px-4 text-base"></td>
                   <td className="py-3 px-4 text-base"></td>
-                  <td className="py-3 px-4 text-base">
-                    ${formatNumber(averageMontoOperaciones)}
-                  </td>
                 </tr>
               </tbody>
             </table>

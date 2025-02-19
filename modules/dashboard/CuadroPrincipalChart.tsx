@@ -39,7 +39,12 @@ const CuadroPrincipalChart = () => {
   const currentYear = new Date().getFullYear();
   const currentYearOperations = operations.filter(
     (operation: Operation) =>
-      new Date(operation.fecha_operacion).getFullYear() === currentYear
+      new Date(
+        operation.fecha_operacion ||
+          operation.fecha_reserva ||
+          operation.fecha_captacion ||
+          ''
+      ).getFullYear() === currentYear
   );
 
   return (
