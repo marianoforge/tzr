@@ -244,19 +244,11 @@ const OperationsForm = () => {
             {/* Left column */}
 
             <Input
-              label="Fecha de Captación"
+              label="Fecha de Captación / Publicación"
               type="date"
               defaultValue={formattedDate}
               {...register('fecha_captacion')}
               error={errors.fecha_captacion?.message}
-            />
-
-            <Input
-              label="Fecha de Publicación"
-              type="date"
-              defaultValue={formattedDate}
-              {...register('fecha_publicacion')}
-              error={errors.fecha_publicacion?.message}
             />
 
             <Input
