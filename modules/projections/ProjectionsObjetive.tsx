@@ -5,12 +5,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 
-// Define the schema using yup
+// Función para formatear números con separadores de miles
+const formatNumberWithThousands = (value: number) => {
+  return new Intl.NumberFormat('es-ES', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+};
+
+// Define el esquema con Yup
 const schema = yup.object().shape({
   objetivoHonorariosAnuales: yup
     .number()
-    .required('Objetivo Honorarios Anuales is required')
-    .positive('Must be positive'),
+    .required('Objetivo Honorarios Anuales es requerido')
+    .positive('Debe ser un número positivo'),
 });
 
 interface ProjectionsObjetiveProps {
@@ -38,25 +46,34 @@ const ProjectionsObjective = ({
   });
 
   const objetivoHonorariosAnuales = watch('objetivoHonorariosAnuales');
-  const volumenAFacturar = (
-    objetivoHonorariosAnuales /
-    (promedioHonorariosNetos / 100)
-  ).toFixed(2);
-  const totalPuntasCierres = (
-    Number(volumenAFacturar) / ticketPromedio
-  ).toFixed(2);
-  const totalPuntasCierresAnuales = (
-    (Number(totalPuntasCierres) / efectividad) *
-    100
-  ).toFixed(2);
-  const totalPuntasCierresSemanales = (
-    Number(totalPuntasCierresAnuales) / semanasDelAno
-  ).toFixed(2);
+
+  // Evitar cálculos incorrectos si el valor es 0 o inválido
+  const esValido =
+    objetivoHonorariosAnuales > 0 &&
+    promedioHonorariosNetos > 0 &&
+    efectividad > 0 &&
+    ticketPromedio > 0;
+
+  const volumenAFacturar = esValido
+    ? objetivoHonorariosAnuales / (promedioHonorariosNetos / 100)
+    : 0;
+
+  const totalPuntasCierres = esValido
+    ? Number(volumenAFacturar) / ticketPromedio
+    : 0;
+
+  const totalPuntasCierresAnuales = esValido
+    ? (Number(totalPuntasCierres) / efectividad) * 100
+    : 0;
+
+  const totalPuntasCierresSemanales = esValido
+    ? Number(totalPuntasCierresAnuales) / semanasDelAno
+    : 0;
 
   return (
     <div className="flex flex-col w-full items-center">
-      <h2 className=" font-bold mb-4">
-        Información sobre movimientos a efectar
+      <h2 className="font-bold mb-4">
+        Información sobre movimientos a efectuar
       </h2>
       <div className="flex flex-col w-full items-center">
         <Controller
@@ -77,9 +94,9 @@ const ProjectionsObjective = ({
         />
         <Input
           label="Volumen a Facturar"
-          type="number"
+          type="text"
           className="w-[240px] max-w-[240px] min-w-[240px]"
-          value={volumenAFacturar}
+          value={formatNumberWithThousands(volumenAFacturar)} // ✅ Siempre seguro, no hay división por 0
           disabled
           labelSize="text-sm"
           showTooltip={true}
@@ -87,9 +104,9 @@ const ProjectionsObjective = ({
         />
         <Input
           label="Total de Puntas o Cierres"
-          type="number"
+          type="text"
           className="w-[240px] max-w-[240px] min-w-[240px]"
-          value={totalPuntasCierres}
+          value={formatNumberWithThousands(totalPuntasCierres)}
           labelSize="text-sm"
           disabled
           showTooltip={true}
@@ -97,9 +114,9 @@ const ProjectionsObjective = ({
         />
         <Input
           label="Total de PL / PB"
-          type="number"
+          type="text"
           className="w-[240px] max-w-[240px] min-w-[240px]"
-          value={totalPuntasCierresAnuales}
+          value={formatNumberWithThousands(totalPuntasCierresAnuales)}
           labelSize="text-sm"
           disabled
           showTooltip={true}
@@ -107,9 +124,9 @@ const ProjectionsObjective = ({
         />
         <Input
           label="Total de PL / PB Semanales"
-          type="number"
+          type="text"
           className="w-[240px] max-w-[240px] min-w-[240px]"
-          value={totalPuntasCierresSemanales}
+          value={formatNumberWithThousands(totalPuntasCierresSemanales)}
           labelSize="text-sm"
           disabled
           showTooltip={true}

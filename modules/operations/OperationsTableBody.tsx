@@ -55,9 +55,9 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
             index % 2 === 0 ? 'bg-white' : 'bg-mediumBlue/10'
           } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-[75px] max-h-[75px]`}
         >
-          <td className="py-3 px-2 before:content-['Fecha:'] md:before:content-none">
-            {operacion.fecha_operacion
-              ? formatDate(operacion.fecha_operacion)
+          <td className="py-3 px-2 before:content-['Fecha de Captación / Publicación:'] md:before:content-none">
+            {operacion.fecha_captacion
+              ? formatDate(operacion.fecha_captacion)
               : 'N/A'}
           </td>
           <td className="py-3 px-2 before:content-['Fecha de Reserva:'] md:before:content-none">
@@ -65,6 +65,12 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
               ? formatDate(operacion.fecha_reserva)
               : 'N/A'}
           </td>
+          <td className="py-3 px-2 before:content-['Fecha:'] md:before:content-none">
+            {operacion.fecha_operacion
+              ? formatDate(operacion.fecha_operacion)
+              : 'N/A'}
+          </td>
+
           <td className="py-3 px-2 text-sm before:content-['Dirección:'] md:before:content-none">
             {(
               operacion.direccion_reserva +
@@ -169,7 +175,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
         </tr>
       ))}
       <tr className={`font-bold hidden md:table-row bg-lightBlue/10 h-[75px]`}>
-        <td className="py-3 px-2 pl-10" colSpan={4}>
+        <td className="py-3 px-2 pl-10" colSpan={5}>
           Total
         </td>
         <td className="py-3 px-2 text-center">
