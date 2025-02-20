@@ -73,7 +73,7 @@ const ChartExclusiveness = () => {
 
   return (
     <div
-      className="relative bg-white rounded-lg p-4 text-center shadow-md flex flex-col items-center w-full"
+      className="relative bg-white rounded-lg p-4 text-center shadow-md flex flex-col items-center w-full -z-10"
       style={{ height: '250px' }}
     >
       {' '}

@@ -13,7 +13,7 @@ import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 import ChartFallenOps from './ChartFallenOps';
 import Projections from './Projections';
 import Exclusiveness from './Exclusiveness';
-import DaysToSell from './DaysToSell.tsx';
+import DaysToSell from './DaysToSell';
 
 const DashBoard = () => {
   const { userData } = useUserDataStore();
