@@ -40,7 +40,7 @@ const DaysToSell: React.FC = () => {
         Tiempo Medio de Venta{' '}
       </h1>
       <p className="text-[48px] lg:text-[40px] font-bold text-greenAccent h-3/5 items-center justify-center flex">
-        {totals.promedio_dias_venta} días
+        {totals.promedio_dias_venta?.toFixed(2)} días
       </p>
     </div>
   );

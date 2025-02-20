@@ -36,10 +36,7 @@ const CuadroPrincipal = () => {
   const currentYearOperations = operations.filter(
     (operation: Operation) =>
       new Date(
-        operation.fecha_operacion ||
-          operation.fecha_reserva ||
-          operation.fecha_captacion ||
-          ''
+        operation.fecha_operacion || operation.fecha_reserva || ''
       ).getFullYear() === currentYear
   );
 

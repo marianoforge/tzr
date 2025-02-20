@@ -246,7 +246,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             type="date"
             {...register('fecha_captacion')}
             error={errors.fecha_captacion?.message}
-            required
           />
 
           <Input
@@ -260,6 +259,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             type="date"
             {...register('fecha_reserva')}
             error={errors.fecha_reserva?.message}
+            required
           />
           <Input
             label="Fecha de Cierre"
