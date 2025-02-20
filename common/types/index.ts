@@ -14,7 +14,6 @@ export interface Operation {
   id: string;
   fecha_operacion: string;
   fecha_captacion: string;
-  fecha_publicacion: string;
   direccion_reserva: string;
   localidad_reserva: string;
   provincia_reserva: string;

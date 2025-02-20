@@ -4,9 +4,8 @@ export const schema = yup.object().shape({
   fecha_operacion: yup.string().nullable(), // Permite null
   fecha_reserva: yup
     .string()
-    .required('La fecha de captación es requerida')
+    .required('La fecha de reserva es requerida')
     .transform((value) => (value === '' ? null : value)), // Asegura que no sea vacía
-  fecha_publicacion: yup.string().nullable(),
   fecha_captacion: yup.string().nullable(),
   direccion_reserva: yup
     .string()

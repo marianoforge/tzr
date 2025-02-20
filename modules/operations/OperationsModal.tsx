@@ -167,12 +167,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       ? data.fecha_captacion
       : '';
 
-    const fechaPublicacion = data.fecha_publicacion?.trim()
-      ? data.fecha_publicacion
-      : '';
-
-    if (!fechaCaptacion) {
-      console.error('La fecha de captación es obligatoria');
+    if (!fechaReserva) {
+      console.error('La fecha de reserva es obligatoria');
       return;
     }
 
@@ -192,7 +188,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       fecha_operacion: fechaOperacion,
       fecha_reserva: fechaReserva,
       fecha_captacion: fechaCaptacion,
-      fecha_publicacion: fechaPublicacion,
     };
 
     // Ensure realizador_venta is not null before submitting
@@ -220,7 +215,6 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       fecha_operacion:
         payload.fecha_operacion !== undefined ? payload.fecha_operacion : '',
       fecha_captacion: payload.fecha_captacion || undefined,
-      fecha_publicacion: payload.fecha_publicacion || undefined,
       fecha_reserva:
         payload.fecha_reserva !== undefined ? payload.fecha_reserva : '',
     };
@@ -242,18 +236,12 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
-            label="Fecha de Captación"
+            label="Fecha de Captación / Publicación"
             type="date"
             {...register('fecha_captacion')}
             error={errors.fecha_captacion?.message}
           />
 
-          <Input
-            label="Fecha de Publicación"
-            type="date"
-            {...register('fecha_publicacion')}
-            error={errors.fecha_publicacion?.message}
-          />
           <Input
             label="Fecha de Reserva"
             type="date"

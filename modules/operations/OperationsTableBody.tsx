@@ -55,7 +55,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
             index % 2 === 0 ? 'bg-white' : 'bg-mediumBlue/10'
           } hover:bg-lightBlue/10 border-b md:table-row flex flex-col md:flex-row mb-4 transition duration-150 ease-in-out text-center h-[75px] max-h-[75px]`}
         >
-          <td className="py-3 px-2 before:content-['Fecha de Captación:'] md:before:content-none">
+          <td className="py-3 px-2 before:content-['Fecha de Captación / Publicación:'] md:before:content-none">
             {operacion.fecha_captacion
               ? formatDate(operacion.fecha_captacion)
               : 'N/A'}

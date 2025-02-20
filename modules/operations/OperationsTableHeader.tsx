@@ -27,7 +27,7 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
         <th
           className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[120px]`}
         >
-          Captación
+          Captación / Publicación
         </th>
         <th
           className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[120px]`}
