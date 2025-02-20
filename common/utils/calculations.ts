@@ -141,7 +141,11 @@ const averageDaysToSell = (operations: Operation[]) => {
     (op) =>
       op.estado === OperationStatus.CERRADA &&
       op.fecha_captacion &&
-      op.fecha_operacion
+      op.fecha_operacion &&
+      op.tipo_operacion !== OperationType.ALQUILER_TRADICIONAL &&
+      op.tipo_operacion !== OperationType.ALQUILER_TEMPORAL &&
+      op.tipo_operacion !== OperationType.ALQUILER_COMERCIAL &&
+      op.tipo_operacion !== OperationType.DESARROLLO_INMOBILIARIO
   );
 
   const totalDays = closedOperations.reduce((sum, op) => {
