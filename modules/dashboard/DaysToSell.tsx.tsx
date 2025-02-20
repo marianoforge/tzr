@@ -34,13 +34,21 @@ const DaysToSell: React.FC = () => {
     );
   }
 
+  const promedioDiasVenta = totals.promedio_dias_venta?.toFixed(2);
+
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center max-h-[180px] h-[180px]">
       <h1 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[22px] font-semibold flex justify-center items-center h-2/5 pt-6">
-        Tiempo Medio de Venta{' '}
+        Tiempo Promedio de Venta{' '}
       </h1>
       <p className="text-[48px] lg:text-[40px] font-bold text-greenAccent h-3/5 items-center justify-center flex">
-        {totals.promedio_dias_venta?.toFixed(2)} días
+        {promedioDiasVenta !== '0.00' ? (
+          promedioDiasVenta + ' días'
+        ) : (
+          <span className="text-base font-semibold">
+            No existen operaciones cerradas
+          </span>
+        )}
       </p>
     </div>
   );
