@@ -214,7 +214,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       direccion_reserva: payload.direccion_reserva || undefined,
       fecha_operacion:
         payload.fecha_operacion !== undefined ? payload.fecha_operacion : '',
-      fecha_captacion: payload.fecha_captacion || undefined,
+      fecha_captacion:
+        payload.fecha_captacion !== undefined ? payload.fecha_captacion : '',
       fecha_reserva:
         payload.fecha_reserva !== undefined ? payload.fecha_reserva : '',
     };
