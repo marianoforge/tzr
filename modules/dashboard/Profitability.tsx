@@ -94,7 +94,7 @@ const Profitability = () => {
   }
   return (
     <div className="flex flex-col sm:flex-row gap-8">
-      <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center h-[208px] w-full relative">
+      <div className="bg-white rounded-xl p-2 text-center shadow-md flex flex-col items-center h-[208px] w-full relative z-50">
         <p className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[22px] font-semibold flex justify-center items-center h-2/5 pt-6">
           Rentabilidad Propia
         </p>
