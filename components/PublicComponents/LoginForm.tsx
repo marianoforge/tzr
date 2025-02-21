@@ -70,12 +70,17 @@ const LoginForm = () => {
           const stripeCustomerId = session.customer;
           const stripeSubscriptionId = session.subscription;
 
-          const selectedPriceId = localStorage.getItem('selectedPriceId');
+          const userDocRef = doc(db, 'usuarios', user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (!userDoc.exists()) throw new Error('Usuario no encontrado');
+
+          const priceId = userDoc.data().priceId; // 🔹 Obtener el priceId desde Firebase
           let role = 'agente_asesor';
 
           if (
-            selectedPriceId === PRICE_ID_GROWTH ||
-            selectedPriceId === PRICE_ID_GROWTH_ANNUAL
+            priceId === PRICE_ID_GROWTH ||
+            priceId === PRICE_ID_GROWTH_ANNUAL
           ) {
             role = 'team_leader_broker';
           }
