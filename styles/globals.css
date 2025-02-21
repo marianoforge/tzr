@@ -2,26 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
 
 html,
 body,
 :root {
-  font-family: "DM Sans", sans-serif;
+  font-family: 'DM Sans', sans-serif;
   color: #2d3748;
 }
 
 @layer base {
   html {
     background-color: #fafcfe;
-    font-family: "DM Sans", sans-serif;
+    font-family: 'DM Sans', sans-serif;
     color: #2d3748;
   }
 }
 .react-calendar {
   max-width: none !important;
   border: none !important;
-  font-family: "Inter", sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
   min-height: 300px !important;
 }
 
@@ -102,14 +102,18 @@ body,
 }
 .loader:before,
 .loader:after {
-  content: "";
+  content: '';
   grid-area: 1/1;
-  background: var(--_g) left, var(--_g) right;
+  background:
+    var(--_g) left,
+    var(--_g) right;
   background-size: 20% 100%;
   animation: l32 1s infinite;
 }
 .loader:after {
-  background: var(--_g) calc(1 * 100% / 3), var(--_g) calc(2 * 100% / 3);
+  background:
+    var(--_g) calc(1 * 100% / 3),
+    var(--_g) calc(2 * 100% / 3);
   background-size: 20% 100%;
   animation-direction: reverse;
 }
@@ -123,4 +127,8 @@ body,
 h3 {
   font-size: 18px;
   margin: 10px 0;
+}
+
+.react-tooltip {
+  z-index: 100;
 }
