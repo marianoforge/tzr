@@ -12,6 +12,8 @@ import ModalCancel from '@/components/PrivateComponente/CommonComponents/Modal';
 import ModalUpdate from '@/components/PrivateComponente/CommonComponents/Modal';
 import { QueryKeys } from '@/common/enums';
 
+import DownloadOperations from './DownloadOperations';
+
 const Settings = () => {
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
@@ -323,7 +325,6 @@ const Settings = () => {
               </li>
             </ul>
           </div>
-
           <div className="flex flex-col items-center justify-center gap-4">
             <button
               onClick={() => setOpenModalCancel(true)}
@@ -338,6 +339,7 @@ const Settings = () => {
             </button>
             {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
           </div>
+          <DownloadOperations />
         </div>
       </div>
 

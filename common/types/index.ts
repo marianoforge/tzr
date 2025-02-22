@@ -170,6 +170,7 @@ export interface UserState {
   setUserID: (id: string | null) => void;
   setUserRole: (role: string | null) => void;
   initializeAuthListener: () => () => void;
+  getAuthToken: () => Promise<string | null>;
 }
 
 export interface EventModalProps {
