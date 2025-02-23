@@ -4,22 +4,20 @@ import {
   Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import { auth } from '@/lib/firebase';
 
-interface UserActionsProps {
-  setActiveView: (view: string) => void;
-}
+export const UserActions = () => {
+  const router = useRouter();
 
-export const UserActions = ({ setActiveView }: UserActionsProps) => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
 
-      localStorage.clear();
-      setActiveView('login');
+      router.push('/'); // Redirigir a la página de inicio después del sign out
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('❌ Error al cerrar sesión:', error);
     }
   };
 

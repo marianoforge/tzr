@@ -29,10 +29,13 @@ const LoginForm = () => {
 
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { getAuthToken } = useAuthStore();
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
+    setLoading(true);
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -53,9 +56,7 @@ const LoginForm = () => {
         const token = await getAuthToken();
         if (!token) throw new Error('User not authenticated');
 
-        const sessionId = Array.isArray(router.query.session_id)
-          ? router.query.session_id[0]
-          : router.query.session_id;
+        const sessionId = userDoc.data()?.sessionId;
 
         const existingCustomerId = userDoc.data()?.stripeCustomerId;
         const existingSubscriptionId = userDoc.data()?.stripeSubscriptionId;
@@ -75,7 +76,7 @@ const LoginForm = () => {
 
           if (!userDoc.exists()) throw new Error('Usuario no encontrado');
 
-          const priceId = userDoc.data().priceId; // 🔹 Obtener el priceId desde Firebase
+          const priceId = userDoc.data().priceId;
           let role = 'agente_asesor';
 
           if (
@@ -85,19 +86,21 @@ const LoginForm = () => {
             role = 'team_leader_broker';
           }
 
-          await fetch(`/api/users/updateUser`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              userId: user.uid,
-              stripeCustomerId,
-              stripeSubscriptionId,
-              role,
-            }),
-          });
+          if (!existingCustomerId || !existingSubscriptionId) {
+            await fetch(`/api/users/updateUser`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                userId: user.uid,
+                stripeCustomerId,
+                stripeSubscriptionId,
+                role,
+              }),
+            });
+          }
         }
 
         router.push('/dashboard');
@@ -108,6 +111,8 @@ const LoginForm = () => {
       } else {
         setFormError('Error desconocido al iniciar sesión.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -182,6 +187,7 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
+      {loading && <p>Loading...</p>}
     </>
   );
 };

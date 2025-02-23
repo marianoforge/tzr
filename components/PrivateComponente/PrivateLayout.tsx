@@ -1,17 +1,47 @@
 import { useRouter } from 'next/router';
+import { onAuthStateChanged } from 'firebase/auth';
+import { getDoc, doc } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
 
 import { PATHS } from '@/common/enums';
+import { db, auth } from '@/lib/firebase';
 
 import Navbar from './NavBar/Navbar';
 import VerticalNavbar from './NavBar/VerticalNavbar';
 import Footer from './Footer';
-
 interface PrivateLayoutProps {
   children: React.ReactNode;
 }
 
 const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
   const router = useRouter();
+  const [isVerified, setIsVerified] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkSubscription = async () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          router.push('/');
+          return;
+        }
+
+        const userDocRef = doc(db, 'usuarios', user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists() && userDoc.data()?.stripeSubscriptionId) {
+          setIsVerified(true);
+        } else {
+          router.push('/');
+        }
+      });
+    };
+
+    checkSubscription();
+  }, [router]);
+
+  if (isVerified === null) {
+    return <p className="text-center mt-10">Cargando...</p>;
+  }
 
   const setActiveView = (view: string) => {
     switch (view) {
@@ -56,9 +86,6 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
         break;
       case PATHS.EXPENSES_AGENTS_FORM:
         router.push(PATHS.EXPENSES_AGENTS_FORM);
-        break;
-      case PATHS.NOT_AUTHORIZED:
-        router.push(PATHS.NOT_AUTHORIZED);
         break;
     }
   };
