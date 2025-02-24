@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getFirestore } from 'firebase-admin/firestore';
 import { adminAuth } from '@/lib/firebaseAdmin';
 import { Operation } from '@/common/types';
+
+const db = getFirestore(); // ✅ Usa Firebase Admin Firestore
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,10 +57,10 @@ export default async function handler(
 const getOperationById = async (id: string, res: NextApiResponse) => {
   try {
     console.log('🔹 Buscando operación con ID:', id);
-    const docRef = doc(db, 'operations', id);
-    const docSnap = await getDoc(docRef);
+    const docRef = db.collection('operations').doc(id);
+    const docSnap = await docRef.get();
 
-    if (!docSnap.exists()) {
+    if (!docSnap.exists) {
       console.warn('⚠️ Operación no encontrada:', id);
       return res.status(404).json({ message: 'Operation not found' });
     }
@@ -80,9 +81,9 @@ const updateOperation = async (
 ) => {
   try {
     console.log('🔹 Actualizando operación con ID:', id);
-    const docRef = doc(db, 'operations', id);
+    const docRef = db.collection('operations').doc(id);
 
-    await updateDoc(docRef, {
+    await docRef.update({
       ...updatedData,
       updatedAt: new Date().toISOString(),
     });
@@ -99,8 +100,8 @@ const updateOperation = async (
 const deleteOperation = async (id: string, res: NextApiResponse) => {
   try {
     console.log('🔹 Eliminando operación con ID:', id);
-    const docRef = doc(db, 'operations', id);
-    await deleteDoc(docRef);
+    const docRef = db.collection('operations').doc(id);
+    await docRef.delete();
 
     console.log('✅ Operación eliminada con éxito.');
     return res.status(200).json({ message: 'Operation deleted successfully' });

@@ -85,23 +85,6 @@ export default async function handler(
     );
     const user = userCredential.user;
 
-    // 🔹 Guardar usuario en Firestore
-    await setDoc(doc(db, 'usuarios', user.uid), {
-      email: user.email,
-      agenciaBroker,
-      numeroTelefono,
-      firstName,
-      lastName,
-      priceId,
-      uid: user.uid,
-      currency,
-      currencySymbol,
-      noUpdates,
-      createdAt: Timestamp.now(),
-    });
-
-    console.log(`✅ Usuario registrado en Firestore: ${user.uid}`);
-
     // 🔹 Crear la sesión de pago en Stripe
     console.log(
       `🔹 Creando sesión de Stripe para ${email} con precio ${priceId}`
@@ -123,6 +106,24 @@ export default async function handler(
     });
 
     console.log('✅ Sesión de pago creada con éxito.');
+
+    // 🔹 Guardar usuario en Firestore
+    await setDoc(doc(db, 'usuarios', user.uid), {
+      email: user.email,
+      agenciaBroker,
+      numeroTelefono,
+      firstName,
+      lastName,
+      priceId,
+      uid: user.uid,
+      currency,
+      currencySymbol,
+      noUpdates,
+      createdAt: Timestamp.now(),
+      sessionId: session.id,
+    });
+
+    console.log(`✅ Usuario registrado en Firestore: ${user.uid}`);
 
     // 🔹 Eliminar el registro de verificación ya que el token ha sido usado
     await deleteDoc(verificationDoc.ref);

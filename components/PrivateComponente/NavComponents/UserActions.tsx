@@ -15,7 +15,7 @@ export const UserActions = () => {
     try {
       await signOut(auth);
 
-      router.push('/'); // Redirigir a la página de inicio después del sign out
+      router.push('/login'); // Redirigir a la página de inicio después del sign out
     } catch (error) {
       console.error('❌ Error al cerrar sesión:', error);
     }
