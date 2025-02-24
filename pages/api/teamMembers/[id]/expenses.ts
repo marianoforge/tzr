@@ -1,113 +1,169 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  addDoc,
-  deleteDoc,
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, adminAuth } from '@/lib/firebaseAdmin'; // 🔹 Usa Firestore Admin SDK
+import { getDocs, getDoc, addDoc, deleteDoc } from 'firebase/firestore';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { ids, id: agentId, expenseId } = req.query;
-  console.log('agentId', agentId);
-  console.log('expenseId', expenseId);
+  try {
+    console.log('🔹 Nueva petición a /api/teamExpenses', req.method);
 
-  if (req.method === 'GET') {
-    try {
-      const teamMemberIds = Array.isArray(ids)
-        ? ids
-        : ids?.split(',').map((id) => id.trim());
-      const teamMemberPromises = (teamMemberIds || []).map(
-        async (teamMemberId) => {
-          // Obtener los datos del documento principal (nombre, apellido, etc.)
-          const teamMemberDocRef = doc(db, `teams`, teamMemberId);
-          const teamMemberDocSnapshot = await getDoc(teamMemberDocRef);
+    // 🔹 Validar el token de Firebase para autenticación
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.warn('⚠️ No se proporcionó token en la cabecera.');
+      return res
+        .status(401)
+        .json({ message: 'Unauthorized: No token provided' });
+    }
 
-          if (!teamMemberDocSnapshot.exists()) {
-            console.log(
-              `No se encontró el Team Member con ID: ${teamMemberId}`
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await adminAuth.verifyIdToken(token);
+    console.log('✅ Token verificado para UID:', decodedToken.uid);
+
+    const { ids, id: agentId, expenseId } = req.query;
+
+    // 🔹 Obtener miembros del equipo con sus gastos
+    if (req.method === 'GET') {
+      try {
+        console.log('🔹 Obteniendo miembros del equipo y sus gastos...');
+
+        const teamMemberIds = Array.isArray(ids)
+          ? ids
+          : ids?.split(',').map((id) => id.trim());
+
+        if (!teamMemberIds || teamMemberIds.length === 0) {
+          console.warn('⚠️ No se proporcionaron IDs de miembros del equipo.');
+          return res
+            .status(400)
+            .json({ message: 'Team member IDs are required' });
+        }
+
+        // 🔹 Consultar datos de cada miembro y sus gastos en paralelo
+        const teamMemberPromises = teamMemberIds.map(async (teamMemberId) => {
+          const teamMemberDoc = await db
+            .collection('teams')
+            .doc(teamMemberId)
+            .get();
+
+          if (!teamMemberDoc.exists) {
+            console.warn(
+              `⚠️ No se encontró el Team Member con ID: ${teamMemberId}`
             );
             return null;
           }
 
-          const teamMemberData = teamMemberDocSnapshot.data();
-          const { firstName, lastName } = teamMemberData;
-
-          // Obtener los datos de la subcolección `expenses`
-          const expensesCollectionRef = collection(
-            db,
-            `teams/${teamMemberId}/expenses`
-          );
-          const expensesSnapshot = await getDocs(expensesCollectionRef);
-
-          if (!expensesSnapshot.empty) {
-            const expenses = expensesSnapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }));
-
-            // Combinar los datos del miembro del equipo con sus gastos
-            return {
-              id: teamMemberId,
-              firstname: firstName,
-              lastname: lastName,
-              expenses,
-            };
+          const teamMemberData = teamMemberDoc.data();
+          if (!teamMemberData) {
+            console.warn(
+              `⚠️ Datos no disponibles para el Team Member con ID: ${teamMemberId}`
+            );
+            return null;
           }
-          return null;
-        }
-      );
 
-      const usersWithExpenses = (await Promise.all(teamMemberPromises)).filter(
-        Boolean
-      );
+          const { firstName = '', lastName = '' } = teamMemberData; // ✅ Evita el error si las propiedades no existen
 
-      return res.status(200).json({ usersWithExpenses });
-    } catch (error) {
-      console.error('Error fetching team members and expenses:', error);
-      return res.status(500).json({ message: 'Error al obtener los datos' });
+          // Obtener los gastos asociados a este miembro del equipo
+          const expensesSnapshot = await db
+            .collection(`teams/${teamMemberId}/expenses`)
+            .get();
+          const expenses = expensesSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          return { id: teamMemberId, firstName, lastName, expenses };
+        });
+
+        const usersWithExpenses = (
+          await Promise.all(teamMemberPromises)
+        ).filter(Boolean);
+
+        console.log(
+          `✅ Datos obtenidos para ${usersWithExpenses.length} miembros.`
+        );
+        return res.status(200).json({ usersWithExpenses });
+      } catch (error) {
+        console.error(
+          '❌ Error obteniendo miembros del equipo y gastos:',
+          error
+        );
+        return res
+          .status(500)
+          .json({ message: 'Error fetching team members and expenses' });
+      }
     }
-  } else if (req.method === 'POST') {
-    const { id: agentId } = req.query;
-    const expenseData = req.body;
 
-    try {
-      const expensesCollection = collection(db, `teams/${agentId}/expenses`);
-      const newExpenseRef = await addDoc(expensesCollection, {
-        ...expenseData,
-        createdAt: new Date(),
-      });
-
-      return res.status(201).json({
-        message: 'Gasto agregado exitosamente',
-        id: newExpenseRef.id,
-      });
-    } catch (error) {
-      console.error('Error adding expense:', error);
-      return res.status(500).json({ message: 'Error al agregar el gasto' });
-    }
-  } else if (req.method === 'DELETE') {
-    const { id: agentId, expenseId } = req.query;
-
-    try {
-      if (!agentId || !expenseId) {
-        return res.status(400).json({ message: 'Faltan parámetros' });
+    // 🔹 Agregar un gasto a un miembro del equipo
+    if (req.method === 'POST') {
+      if (!agentId || typeof agentId !== 'string') {
+        console.warn('⚠️ ID del agente requerido.');
+        return res.status(400).json({ message: 'Agent ID is required' });
       }
 
-      const expenseDocRef = doc(db, `teams/${agentId}/expenses/${expenseId}`);
-      await deleteDoc(expenseDocRef);
+      const expenseData = req.body;
+      if (!expenseData || Object.keys(expenseData).length === 0) {
+        console.warn('⚠️ No se proporcionaron datos del gasto.');
+        return res.status(400).json({ message: 'Expense data is required' });
+      }
 
-      return res.status(200).json({ message: 'Gasto eliminado exitosamente' });
-    } catch (error) {
-      console.error('Error deleting expense:', error);
-      return res.status(500).json({ message: 'Error al eliminar el gasto' });
+      try {
+        console.log(`🔹 Agregando gasto para el agente ${agentId}...`);
+
+        const newExpenseRef = await db
+          .collection(`teams/${agentId}/expenses`)
+          .add({
+            ...expenseData,
+            createdAt: new Date().toISOString(),
+          });
+
+        console.log('✅ Gasto agregado con éxito.');
+        return res.status(201).json({
+          message: 'Gasto agregado exitosamente',
+          id: newExpenseRef.id,
+        });
+      } catch (error) {
+        console.error('❌ Error agregando gasto:', error);
+        return res.status(500).json({ message: 'Error adding expense' });
+      }
     }
-  } else {
-    return res.status(405).json({ message: 'Método no permitido' });
+
+    // 🔹 Eliminar un gasto de un miembro del equipo
+    if (req.method === 'DELETE') {
+      if (
+        !agentId ||
+        typeof agentId !== 'string' ||
+        !expenseId ||
+        typeof expenseId !== 'string'
+      ) {
+        console.warn('⚠️ Faltan parámetros para eliminar el gasto.');
+        return res
+          .status(400)
+          .json({ message: 'Agent ID and Expense ID are required' });
+      }
+
+      try {
+        console.log(
+          `🔹 Eliminando gasto ${expenseId} del agente ${agentId}...`
+        );
+
+        await db.doc(`teams/${agentId}/expenses/${expenseId}`).delete();
+
+        console.log('✅ Gasto eliminado con éxito.');
+        return res
+          .status(200)
+          .json({ message: 'Gasto eliminado exitosamente' });
+      } catch (error) {
+        console.error('❌ Error eliminando gasto:', error);
+        return res.status(500).json({ message: 'Error deleting expense' });
+      }
+    }
+
+    console.warn('⚠️ Método no permitido:', req.method);
+    return res.status(405).json({ message: 'Method not allowed' });
+  } catch (error) {
+    console.error('❌ Error en la API /api/teamExpenses:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }

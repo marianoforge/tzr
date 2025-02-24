@@ -1,14 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { QueryKeys } from '../enums';
-
 import { TeamMember } from '@/common/types/';
+import { useAuthStore } from '@/stores/authStore';
+
+import { QueryKeys } from '../enums';
 
 const fetchTeamMembers = async (
   teamLeadID: string
 ): Promise<{ membersWithOperations: TeamMember[] }> => {
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
   const response = await fetch(
-    `/api/users/teamMemberOps?teamLeadID=${teamLeadID}`
+    `/api/users/teamMemberOps?teamLeadID=${teamLeadID}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
   );
 
   if (!response.ok) {

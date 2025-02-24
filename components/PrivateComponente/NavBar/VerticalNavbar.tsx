@@ -20,11 +20,7 @@ import { UserRole } from '@/common/enums';
 
 import { NavLink } from '../NavComponents/NavLink';
 
-interface VerticalNavbarProps {
-  setActiveView: (view: string) => void;
-}
-
-const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
+const VerticalNavbar = () => {
   const { userData, isLoading, fetchItems } = useUserDataStore();
 
   useEffect(() => {
@@ -156,7 +152,7 @@ const VerticalNavbar = ({ setActiveView }: VerticalNavbarProps) => {
           {renderNavLinksBasedOnRole()}
         </div>
         <div className="flex-grow flex flex-col space-y-2 p-4 font-semibold">
-          <UserActions setActiveView={setActiveView} />
+          <UserActions />
         </div>
       </div>
     </nav>

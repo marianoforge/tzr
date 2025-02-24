@@ -9,7 +9,12 @@ export const useTeamMembers = () => {
   const { userID } = useAuthStore();
 
   const fetchTeamMembers = async () => {
-    const response = await axios.get('/api/users/teamMembers');
+    const token = await useAuthStore.getState().getAuthToken();
+    if (!token) throw new Error('User not authenticated');
+
+    const response = await axios.get('/api/users/teamMembers', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     const teamMembers = response.data.teamMembers.filter(
       (member: { teamLeadID: string | null }) => member.teamLeadID === userID

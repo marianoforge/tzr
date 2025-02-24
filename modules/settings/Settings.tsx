@@ -42,7 +42,12 @@ const Settings = () => {
   const { data: userDataQuery, isLoading: isLoadingQuery } = useQuery({
     queryKey: ['userData', userID],
     queryFn: async () => {
-      const response = await axios.get(`/api/users/${userID}`);
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await axios.get(`/api/users/${userID}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       return response.data;
     },
     enabled: !!userID,
@@ -57,12 +62,18 @@ const Settings = () => {
   const { data: subscriptionData, isLoading } = useQuery({
     queryKey: [QueryKeys.SUBSCRIPTION_DATA, userID],
     queryFn: async () => {
-      if (!subscriptionId) {
-        throw new Error('No Subscription ID');
-      }
+      if (!subscriptionId) throw new Error('No Subscription ID');
+
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
       const response = await axios.get(
-        `/api/stripe/subscription_info?subscription_id=${subscriptionId}`
+        `/api/stripe/subscription_info?subscription_id=${subscriptionId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }, // 🔹 Aquí agregamos el token correctamente
+        }
       );
+
       return response.data;
     },
     enabled: !!userID && !!subscriptionId,
@@ -85,17 +96,32 @@ const Settings = () => {
 
     try {
       setIsCanceling(true);
-      const response = await axios.post('/api/stripe/cancel_subscription', {
-        subscription_id: subscriptionId,
-        user_id: userID,
-      });
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await axios.post(
+        '/api/stripe/cancel_subscription',
+        {
+          subscription_id: subscriptionId,
+          user_id: userID,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (response.status === 200) {
         setCancelMessage('Suscripción cancelada exitosamente.');
 
-        await axios.put(`/api/users/${userID}`, {
-          stripeSubscriptionId: null,
-        });
+        await axios.put(
+          `/api/users/${userID}`,
+          {
+            stripeSubscriptionId: null,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         queryClient.invalidateQueries({ queryKey: ['userData', userID] });
       } else {
         setCancelMessage('No se pudo cancelar la suscripción.');
@@ -112,13 +138,22 @@ const Settings = () => {
     e.preventDefault();
     setErrorMessage(null);
     try {
-      const response = await axios.put(`/api/users/${userID}`, {
-        firstName: firstName,
-        lastName: lastName,
-        agenciaBroker: cleanString(agenciaBroker),
-        numeroTelefono: cleanString(numeroTelefono),
-        objetivoAnual,
-      });
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await axios.put(
+        `/api/users/${userID}`,
+        {
+          firstName: firstName,
+          lastName: lastName,
+          agenciaBroker: cleanString(agenciaBroker),
+          numeroTelefono: cleanString(numeroTelefono),
+          objetivoAnual,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         setOpenModalUpdate(true);
         setSuccess('Datos actualizados correctamente');
