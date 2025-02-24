@@ -326,55 +326,65 @@ const Settings = () => {
         </form>
       )}
 
-      {/* SUBSCRIPTION */}
-      <div className="bg-white p-4 sm:p-6 md:p-8 mt-10 rounded-xl shadow-md w-full">
-        <h3 className="text-xl sm:text-2xl font-semibold text-center">
-          Suscripción
-        </h3>
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-20 justify-center items-center">
-          <div className="flex flex-col gap-2 justify-center items-center">
-            <ul className="mb-8 mt-4 font-semibold text-md flex flex-col gap-2 text-mediumBlue border-dashed border-2 border-mediumBlue rounded-lg p-4 w-full sm:w-[400px]">
-              <li>
-                Plan Activo:{' '}
-                {subscriptionData?.plan?.active ? (
-                  <span className="text-greenAccent font-semibold">Sí</span>
-                ) : (
-                  <span className="text-red-500">No</span>
-                )}
-              </li>
-              <li>
-                Monto del Plan: ${subscriptionData?.plan?.amount_decimal / 100}{' '}
-                (USD)
-              </li>
-              <li>
-                Intervalo del Plan:{' '}
-                {subscriptionData?.plan?.interval === 'month'
-                  ? 'Mensual'
-                  : 'Anual'}
-              </li>
-              <li>
-                Estado:{' '}
-                {subscriptionData?.status === 'trialing'
-                  ? 'Periodo de Prueba'
-                  : 'Activo'}
-              </li>
-            </ul>
+      <div className="flex justify-around gap-6">
+        <div className="bg-white p-4 sm:p-6 md:p-8 mt-10 rounded-xl shadow-md w-1/2">
+          <h3 className="text-xl sm:text-2xl font-semibold text-center">
+            Descargas
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-20 justify-center items-center">
+            <div className="flex flex-col gap-2 mt-4 justify-center items-center">
+              <DownloadOperations />
+            </div>
           </div>
-          <div className="flex flex-col items-center justify-center gap-4">
-            <button
-              onClick={() => setOpenModalCancel(true)}
-              className={`px-4 py-2 rounded w-full sm:w-[200px] ${
-                subscriptionId
-                  ? 'bg-lightBlue text-white hover:bg-mediumBlue'
-                  : 'bg-mutedBlue text-white cursor-not-allowed'
-              }`}
-              disabled={!subscriptionId || isCanceling}
-            >
-              {isCanceling ? 'Cancelando...' : 'Cancelar suscripción'}
-            </button>
-            {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+        </div>
+        <div className="bg-white p-4 sm:p-6 md:p-8 mt-10 rounded-xl shadow-md w-1/2">
+          <h3 className="text-xl sm:text-2xl font-semibold text-center">
+            Suscripción
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-20 justify-center items-center">
+            <div className="flex flex-col gap-2 justify-center items-center">
+              <ul className="mb-8 mt-4 font-semibold text-md flex flex-col gap-2 text-mediumBlue border-dashed border-2 border-mediumBlue rounded-lg p-4 w-full sm:w-[400px]">
+                <li>
+                  Plan Activo:{' '}
+                  {subscriptionData?.plan?.active ? (
+                    <span className="text-greenAccent font-semibold">Sí</span>
+                  ) : (
+                    <span className="text-red-500">No</span>
+                  )}
+                </li>
+                <li>
+                  Monto del Plan: $
+                  {subscriptionData?.plan?.amount_decimal / 100} (USD)
+                </li>
+                <li>
+                  Intervalo del Plan:{' '}
+                  {subscriptionData?.plan?.interval === 'month'
+                    ? 'Mensual'
+                    : 'Anual'}
+                </li>
+                <li>
+                  Estado:{' '}
+                  {subscriptionData?.status === 'trialing'
+                    ? 'Periodo de Prueba'
+                    : 'Activo'}
+                </li>
+              </ul>
+            </div>
+            <div className="flex flex-col items-center justify-center gap-4">
+              <button
+                onClick={() => setOpenModalCancel(true)}
+                className={`px-4 py-2 rounded w-full sm:w-[200px] ${
+                  subscriptionId
+                    ? 'bg-lightBlue text-white hover:bg-mediumBlue'
+                    : 'bg-mutedBlue text-white cursor-not-allowed'
+                }`}
+                disabled={!subscriptionId || isCanceling}
+              >
+                {isCanceling ? 'Cancelando...' : 'Cancelar suscripción'}
+              </button>
+              {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+            </div>
           </div>
-          <DownloadOperations />
         </div>
       </div>
 
