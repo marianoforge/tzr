@@ -137,20 +137,30 @@ const calculateDaysBetween = (startDate: Date, endDate: Date): number => {
 
 // Function to calculate the average days to sell an operation
 const averageDaysToSell = (operations: Operation[]) => {
-  const closedOperations = operations.filter(
+  const averageOperations = operations.filter(
     (op) =>
-      op.estado === OperationStatus.CERRADA &&
       op.fecha_captacion &&
-      op.fecha_operacion
+      op.fecha_reserva &&
+      op.tipo_operacion !== OperationType.ALQUILER_TRADICIONAL &&
+      op.tipo_operacion !== OperationType.ALQUILER_TEMPORAL &&
+      op.tipo_operacion !== OperationType.ALQUILER_COMERCIAL &&
+      op.tipo_operacion !== OperationType.DESARROLLO_INMOBILIARIO
   );
 
-  const totalDays = closedOperations.reduce((sum, op) => {
-    const captacionDate = new Date(op.fecha_captacion);
-    const cierreDate = new Date(op.fecha_operacion);
-    return sum + calculateDaysBetween(captacionDate, cierreDate);
-  }, 0);
+  const totalDays = averageOperations.reduce((sum, op) => {
+    const captacionDate = op.fecha_captacion
+      ? new Date(op.fecha_captacion)
+      : null;
+    const reservaDate = op.fecha_reserva ? new Date(op.fecha_reserva) : null;
 
-  return closedOperations.length > 0 ? totalDays / closedOperations.length : 0;
+    if (captacionDate && reservaDate) {
+      return sum + calculateDaysBetween(captacionDate, reservaDate);
+    }
+    return sum;
+  }, 0);
+  return averageOperations.length > 0
+    ? totalDays / averageOperations.length
+    : 0;
 };
 
 // Calculo de honorarios basado en el valor de reserva y porcentajes

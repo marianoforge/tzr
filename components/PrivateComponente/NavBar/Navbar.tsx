@@ -7,11 +7,7 @@ import { auth } from '@/lib/firebase';
 import { NavButton } from '@/components/PrivateComponente/NavComponents/NavButton';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
 
-interface NavbarProps {
-  setActiveView: (view: string) => void;
-}
-
-const Navbar = ({ setActiveView }: NavbarProps) => {
+const Navbar = () => {
   const { userData, isLoading, fetchUserData } = useUserDataStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -131,7 +127,7 @@ const Navbar = ({ setActiveView }: NavbarProps) => {
       )}
 
       <div className="xl:hidden">
-        <UserActions setActiveView={setActiveView} />
+        <UserActions />
       </div>
     </nav>
   );

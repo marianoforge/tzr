@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { adminAuth } from '@/lib/firebaseAdmin';
-
 import { db } from '@/lib/firebaseAdmin';
-// Verificar token de Firebase en las solicitudes
+
+// Importa la documentación Swagger (aunque no se use, garantiza que se incluya)
+import '@/pages/api/swaggerDocs/operations';
+
+
 const verifyToken = async (token: string) => {
   try {
     const decodedToken = await adminAuth.verifyIdToken(token);
@@ -17,11 +20,9 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    console.log('🔹 Nueva petición a /api/operations', req.method);
-
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.warn('⚠️ No se proporcionó token en la cabecera.');
+
       return res
         .status(401)
         .json({ message: 'Unauthorized: No token provided' });
@@ -29,7 +30,7 @@ export default async function handler(
 
     const token = authHeader.split('Bearer ')[1];
     const userUID = await verifyToken(token);
-    console.log('✅ Token verificado para UID:', userUID);
+
 
     switch (req.method) {
       case 'GET':
@@ -41,7 +42,7 @@ export default async function handler(
         return res.status(405).json({ message: 'Method not allowed' });
     }
   } catch (error) {
-    console.error('❌ Error en la API:', error);
+
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -61,7 +62,6 @@ const getUserOperations = async (userUID: string, res: NextApiResponse) => {
 
     return res.status(200).json(operations);
   } catch (error) {
-    console.error('Error fetching operations:', error);
     return res.status(500).json({ message: 'Error fetching operations' });
   }
 };
@@ -90,7 +90,7 @@ const createOperation = async (
       .status(201)
       .json({ id: docRef.id, message: 'Operation created successfully' });
   } catch (error) {
-    console.error('Error creating operation:', error);
+
     return res.status(500).json({ message: 'Error creating operation' });
   }
 };

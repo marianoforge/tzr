@@ -48,6 +48,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     formState: { errors },
     setValue,
     reset,
+    watch,
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -88,6 +89,9 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       : []),
   ];
 
+  const [porcentajeHonorariosBroker, setPorcentajeHonorariosBroker] =
+    useState(0);
+
   useEffect(() => {
     if (operation) {
       const formattedOperation = {
@@ -112,6 +116,20 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       }
     }
   }, [operation, reset]);
+
+  useEffect(() => {
+    const porcentaje_punta_compradora =
+      parseFloat(String(watch('porcentaje_punta_compradora'))) || 0;
+    const porcentaje_punta_vendedora =
+      parseFloat(String(watch('porcentaje_punta_vendedora'))) || 0;
+
+    setPorcentajeHonorariosBroker(
+      porcentaje_punta_compradora + porcentaje_punta_vendedora
+    );
+  }, [
+    watch('porcentaje_punta_compradora'),
+    watch('porcentaje_punta_vendedora'),
+  ]);
 
   const mutation = useMutation({
     mutationFn: updateOperation,
@@ -214,7 +232,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       direccion_reserva: payload.direccion_reserva || undefined,
       fecha_operacion:
         payload.fecha_operacion !== undefined ? payload.fecha_operacion : '',
-      fecha_captacion: payload.fecha_captacion || undefined,
+      fecha_captacion:
+        payload.fecha_captacion !== undefined ? payload.fecha_captacion : '',
       fecha_reserva:
         payload.fecha_reserva !== undefined ? payload.fecha_reserva : '',
     };
@@ -335,10 +354,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             label="Porcentaje Honorarios Totales"
             type="text"
             step="any"
-            {...register('porcentaje_honorarios_broker', {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            error={errors.porcentaje_honorarios_broker?.message}
+            value={`${porcentajeHonorariosBroker.toFixed(2)}%`}
+            disabled
           />
 
           <Input

@@ -23,7 +23,7 @@ const Navigation = () => {
 
   return (
     <div className="w-full flex flex-col sm:flex-row justify-between">
-      <nav className="hidden w-full sm:w-[50%] lg:w-full md:flex space-x-2 sm:space-x-4 items-center justify-end">
+      <nav className="flex w-full sm:w-[50%] lg:w-full md:flex space-x-2 sm:space-x-4 items-center justify-end">
         {userID === StoredUserID ? (
           <Link href="/dashboard">
             <button className="px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white">
@@ -37,7 +37,7 @@ const Navigation = () => {
           ].map((item, index) => (
             <Link href={item.link} key={index}>
               <button
-                className="px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white"
+                className="w-[124px] px-2 sm:px-4 py-2 sm:py-2 text-md sm:text-md font-bold rounded-full bg-white text-mediumBlue hover:bg-mediumBlue hover:text-white"
                 onClick={item.onClick}
               >
                 {item.name}

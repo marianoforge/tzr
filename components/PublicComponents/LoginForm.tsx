@@ -15,6 +15,8 @@ import { PRICE_ID_GROWTH, PRICE_ID_GROWTH_ANNUAL } from '@/lib/data';
 
 import Button from '../PrivateComponente/FormComponents/Button';
 import Input from '../PrivateComponente/FormComponents/Input';
+import Modal from '../PrivateComponente/CommonComponents/Modal';
+
 
 const LoginForm = () => {
   const {
@@ -29,10 +31,16 @@ const LoginForm = () => {
 
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { getAuthToken } = useAuthStore();
 
   const { getAuthToken } = useAuthStore();
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
+    setLoading(true);
+    setIsModalOpen(true);
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -42,43 +50,57 @@ const LoginForm = () => {
       const user = userCredential.user;
 
       const userDocRef = doc(db, 'usuarios', user.uid);
-      const userDoc = await getDoc(userDocRef);
 
+      const userDoc = await getDoc(userDocRef);
       if (!userDoc.exists()) {
+        console.warn('⚠️ User document not found, redirecting to register...');
         router.push({
           pathname: '/register',
           query: { email: user.email, googleUser: 'false', uid: user.uid },
         });
-      } else {
-        const token = await getAuthToken();
-        if (!token) throw new Error('User not authenticated');
 
-        const sessionId = Array.isArray(router.query.session_id)
-          ? router.query.session_id[0]
-          : router.query.session_id;
+        return;
+      }
 
-        const existingCustomerId = userDoc.data()?.stripeCustomerId;
-        const existingSubscriptionId = userDoc.data()?.stripeSubscriptionId;
+      const token = await getAuthToken();
 
-        if (sessionId && (!existingCustomerId || !existingSubscriptionId)) {
-          const res = await fetch(`/api/checkout/${sessionId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (!res.ok)
-            throw new Error(`Error en la API de checkout: ${res.status}`);
-          const session = await res.json();
-          const stripeCustomerId = session.customer;
-          const stripeSubscriptionId = session.subscription;
+      if (!token) {
+        throw new Error('User not authenticated');
+      }
 
-          const selectedPriceId = localStorage.getItem('selectedPriceId');
-          let role = 'agente_asesor';
+      const sessionId = userDoc.data()?.sessionId;
 
-          if (
-            selectedPriceId === PRICE_ID_GROWTH ||
-            selectedPriceId === PRICE_ID_GROWTH_ANNUAL
-          ) {
-            role = 'team_leader_broker';
-          }
+      const existingCustomerId = userDoc.data()?.stripeCustomerId;
+      const existingSubscriptionId = userDoc.data()?.stripeSubscriptionId;
+
+      if (sessionId && (!existingCustomerId || !existingSubscriptionId)) {
+        const res = await fetch(`/api/checkout/${sessionId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) {
+          console.error('❌ Error in checkout API:', res.status);
+          throw new Error(`Error en la API de checkout: ${res.status}`);
+        }
+
+        const session = await res.json();
+
+        const stripeCustomerId = session.customer;
+        const stripeSubscriptionId = session.subscription;
+
+        const userDocRef = doc(db, 'usuarios', user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) throw new Error('Usuario no encontrado');
+
+        const priceId = userDoc.data().priceId;
+        let role = 'agente_asesor';
+
+        if (priceId === PRICE_ID_GROWTH || priceId === PRICE_ID_GROWTH_ANNUAL) {
+          role = 'team_leader_broker';
+        }
+
+        if (!existingCustomerId || !existingSubscriptionId) {
 
           await fetch(`/api/users/updateUser`, {
             method: 'POST',
@@ -97,12 +119,18 @@ const LoginForm = () => {
 
         router.push('/dashboard');
       }
+
+      router.push('/dashboard');
     } catch (err) {
+      console.error('❌ Error in login process:', err);
       if (err instanceof Error) {
         setFormError(err.message);
       } else {
         setFormError('Error desconocido al iniciar sesión.');
       }
+    } finally {
+      setLoading(false);
+      setIsModalOpen(false);
     }
   };
 
@@ -177,6 +205,16 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
+
+      {!loading && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title=""
+          message="Entrando a RealtorTrackPro..."
+        />
+      )}
+
     </>
   );
 };
