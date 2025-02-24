@@ -17,7 +17,6 @@ import Button from '../PrivateComponente/FormComponents/Button';
 import Input from '../PrivateComponente/FormComponents/Input';
 import Modal from '../PrivateComponente/CommonComponents/Modal';
 
-
 const LoginForm = () => {
   const {
     register,
@@ -33,8 +32,6 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { getAuthToken } = useAuthStore();
-
   const { getAuthToken } = useAuthStore();
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
@@ -101,7 +98,6 @@ const LoginForm = () => {
         }
 
         if (!existingCustomerId || !existingSubscriptionId) {
-
           await fetch(`/api/users/updateUser`, {
             method: 'POST',
             headers: {
@@ -214,7 +210,6 @@ const LoginForm = () => {
           message="Entrando a RealtorTrackPro..."
         />
       )}
-
     </>
   );
 };
