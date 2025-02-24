@@ -6,6 +6,7 @@ export const schema = yup.object().shape({
     .string()
     .required('La fecha de reserva es requerida')
     .transform((value) => (value === '' ? null : value)), // Asegura que no sea vacía
+  fecha_captacion: yup.string().nullable(),
   direccion_reserva: yup
     .string()
     .required('La dirección de reserva es requerida'),

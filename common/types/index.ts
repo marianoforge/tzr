@@ -13,6 +13,7 @@ export interface Operation {
   punta_vendedora: boolean;
   id: string;
   fecha_operacion: string;
+  fecha_captacion: string;
   direccion_reserva: string;
   localidad_reserva: string;
   provincia_reserva: string;

@@ -244,7 +244,7 @@ const ExpensesList = () => {
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
-                    Monto en ARS
+                    Monto en Moneda Local
                   </th>
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}

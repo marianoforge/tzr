@@ -129,6 +129,40 @@ const filterOperationsByType = (operations: Operation[], type: string) =>
 const filterOperationsExcludingType = (operations: Operation[], type: string) =>
   operations.filter((op) => !op.tipo_operacion.includes(type));
 
+// Helper function to calculate the difference in days between two dates
+const calculateDaysBetween = (startDate: Date, endDate: Date): number => {
+  const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+  return Math.round((endDate.getTime() - startDate.getTime()) / oneDay);
+};
+
+// Function to calculate the average days to sell an operation
+const averageDaysToSell = (operations: Operation[]) => {
+  const averageOperations = operations.filter(
+    (op) =>
+      op.fecha_captacion &&
+      op.fecha_reserva &&
+      op.tipo_operacion !== OperationType.ALQUILER_TRADICIONAL &&
+      op.tipo_operacion !== OperationType.ALQUILER_TEMPORAL &&
+      op.tipo_operacion !== OperationType.ALQUILER_COMERCIAL &&
+      op.tipo_operacion !== OperationType.DESARROLLO_INMOBILIARIO
+  );
+
+  const totalDays = averageOperations.reduce((sum, op) => {
+    const captacionDate = op.fecha_captacion
+      ? new Date(op.fecha_captacion)
+      : null;
+    const reservaDate = op.fecha_reserva ? new Date(op.fecha_reserva) : null;
+
+    if (captacionDate && reservaDate) {
+      return sum + calculateDaysBetween(captacionDate, reservaDate);
+    }
+    return sum;
+  }, 0);
+  return averageOperations.length > 0
+    ? totalDays / averageOperations.length
+    : 0;
+};
+
 // Calculo de honorarios basado en el valor de reserva y porcentajes
 export const calculateHonorarios = (
   valor_reserva: number,
@@ -398,6 +432,8 @@ export const calculateTotals = (operations: Operation[]) => {
     new Date().getFullYear() - 1
   );
 
+  const promedioDiasVenta = averageDaysToSell(operations);
+
   return {
     valor_reserva: totalValorReserva,
     valor_reserva_en_curso: totalValorReservaEnCurso,
@@ -430,5 +466,6 @@ export const calculateTotals = (operations: Operation[]) => {
     porcentaje_honorarios_broker_por_mes_2023:
       porcentajeHonorariosBrokerPorMes2023,
     total_honorarios_team_lead: totalHonorariosTeamLead,
+    promedio_dias_venta: promedioDiasVenta,
   };
 };

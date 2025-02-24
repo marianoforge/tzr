@@ -1,6 +1,5 @@
 import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
 import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
-import EventsList from '@/modules/events/EventsList';
 import { useUserDataStore } from '@/stores/userDataStore';
 
 import Bubbles from './Bubbles';
@@ -14,6 +13,7 @@ import MonthlyLineChartPoints from './MonthlyLineChartPoints';
 import ChartFallenOps from './ChartFallenOps';
 import Projections from './Projections';
 import Exclusiveness from './Exclusiveness';
+import DaysToSell from './DaysToSell';
 
 const DashBoard = () => {
   const { userData } = useUserDataStore();
@@ -43,7 +43,7 @@ const DashBoard = () => {
           <Profitability />
         </div>
         <div className="md:col-span-1 mt-10 lg:mt-6 lg:col-span-2 gap-8 xl:gap-8 2xl:col-span-3 2xl:mt-0 flex flex-col justify-between">
-          <EventsList />
+          <DaysToSell />
           <Exclusiveness />
         </div>
       </div>
@@ -64,15 +64,12 @@ const DashBoard = () => {
             <ChartFallenOps />
           </div>
         </div>
-        {/* Sacar el Mocked */}
         <Projections />
         <div style={{ marginTop: '2.5rem' }}>
           <MonthlyBarChart />
-          {/* <MonthlyMockedBarchart /> */}
         </div>
         <div style={{ marginTop: '2.5rem' }}>
           <MonthlyBarChartGross />
-          {/* <MonthlyMockedBarchart /> */}
         </div>
       </div>
     </>
