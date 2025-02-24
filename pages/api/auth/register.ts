@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { doc, setDoc, Timestamp } from 'firebase/firestore'; // Importa Timestamp
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import axios from 'axios';
 import admin from 'firebase-admin';
 
@@ -21,25 +21,30 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'GET') {
+    console.log('🔹 Nueva petición a /api/register (GET)');
+
+    // Verificar si ya existe un token CSRF en las cookies
     const existingToken = req.cookies['csrfToken'];
     if (!existingToken) {
       const token = setCsrfCookie(res);
-      // eslint-disable-next-line no-console
-      console.log('Generated CSRF token:', token);
+      console.log('✅ CSRF token generado:', token);
       return res.status(200).json({ csrfToken: token });
     } else {
-      // eslint-disable-next-line no-console
-      console.log('CSRF token already exists:', existingToken);
+      console.log('✅ CSRF token existente:', existingToken);
       return res.status(200).json({ csrfToken: existingToken });
     }
   }
 
   if (req.method === 'POST') {
-    const isValidCsrf = validateCsrfToken(req);
-    if (!isValidCsrf) {
+    console.log('🔹 Nueva petición a /api/register (POST)');
+
+    // 🔹 Validar el token CSRF
+    if (!validateCsrfToken(req)) {
+      console.warn('⚠️ Token CSRF inválido.');
       return res.status(403).json({ message: 'Invalid CSRF token' });
     }
 
+    // 🔹 Extraer datos del cuerpo de la solicitud
     const {
       email,
       password,
@@ -55,6 +60,7 @@ export default async function handler(
       noUpdates,
     }: RegisterRequestBody = req.body;
 
+    // 🔹 Validar datos obligatorios
     if (
       !email ||
       !agenciaBroker ||
@@ -66,25 +72,31 @@ export default async function handler(
       !currencySymbol ||
       !captchaToken
     ) {
+      console.warn('⚠️ Faltan campos obligatorios.');
       return res
         .status(400)
         .json({ message: 'Todos los campos son requeridos' });
     }
 
     try {
-      // Check if the email is already registered in Firebase Authentication
+      console.log(`🔹 Verificando si el email ya está registrado: ${email}`);
+
+      // 🔹 Verificar si el usuario ya está registrado en Firebase Auth
       const userRecord = await admin
         .auth()
         .getUserByEmail(email)
         .catch(() => null);
 
       if (userRecord) {
+        console.warn('⚠️ El email ya está registrado.');
         return res.status(400).json({
           message:
-            'El correo electrónico ya está registrado, por favor utiliza otro o sino envia un email a info@realtortrackpro.com para obtener soporte',
+            'El correo electrónico ya está registrado, por favor utiliza otro o envía un email a info@realtortrackpro.com para obtener soporte',
         });
       }
 
+      // 🔹 Validar reCAPTCHA
+      console.log('🔹 Validando reCAPTCHA...');
       const captchaResponse = await axios.post(
         `https://www.google.com/recaptcha/api/siteverify`,
         null,
@@ -103,13 +115,15 @@ export default async function handler(
       } = captchaResponse.data;
 
       if (!success || (score !== undefined && score < 0.5)) {
+        console.warn('⚠️ Falló la validación del captcha:', errorCodes);
         return res.status(400).json({
           message: 'Fallo la validación del captcha',
           errors: errorCodes || [],
         });
       }
 
-      // Almacenar datos preliminares
+      // 🔹 Almacenar los datos preliminares en Firestore
+      console.log('🔹 Guardando usuario temporal en Firestore...');
       await setDoc(doc(db, 'verifications', email), {
         email,
         password,
@@ -124,18 +138,22 @@ export default async function handler(
         captchaToken,
         noUpdates,
         createdAt: Timestamp.now(),
-        expiresAt: Timestamp.fromDate(new Date(Date.now() + 720 * 60 * 1000)), // Caducidad en 15 minutos
+        expiresAt: Timestamp.fromDate(new Date(Date.now() + 720 * 60 * 1000)), // 12 horas
       });
 
-      // Devuelve el token al cliente
+      console.log('✅ Registro preliminar exitoso.');
       return res.status(200).json({ verificationToken });
-    } catch (error) {
-      console.error('Error in registration process:', error);
+    } catch (error: any) {
+      console.error('❌ Error en el registro preliminar:', error);
       return res
         .status(500)
-        .json({ message: 'Error en el registro preliminar' });
+        .json({
+          message: 'Error en el registro preliminar',
+          error: error.message,
+        });
     }
   }
 
+  console.warn('⚠️ Método no permitido:', req.method);
   return res.status(405).json({ message: 'Método no permitido' });
 }

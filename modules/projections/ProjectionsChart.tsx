@@ -5,11 +5,17 @@ import { FunnelChart, Funnel, Tooltip, LabelList } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import { useAuthStore } from '@/stores/authStore';
 
 import { WeekData } from './ProjectionsModal';
 
 const fetchWeeks = async (userId: string) => {
-  const response = await fetch(`/api/getWeeks?userId=${userId}`);
+  const token = await useAuthStore.getState().getAuthToken();
+  if (!token) throw new Error('User not authenticated');
+
+  const response = await fetch(`/api/getWeeks?userId=${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!response.ok) throw new Error('Failed to fetch weeks');
   return response.json();
 };

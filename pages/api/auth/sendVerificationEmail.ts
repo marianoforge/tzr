@@ -1,63 +1,77 @@
 import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method !== 'POST') {
+    console.warn('⚠️ Método no permitido:', req.method);
     return res.status(405).json({ message: 'Only POST requests are allowed' });
   }
 
-  const { email, verificationToken } = req.body;
-
-  if (!email || !verificationToken) {
-    return res
-      .status(400)
-      .json({ message: 'Email and verificationToken are required' });
-  }
-
-  const sentFrom = new Sender(
-    process.env.MAILERSEND_FROM_EMAIL as string,
-    process.env.MAILERSEND_FROM_NAME as string
-  );
-
-  const recipients = [new Recipient(email, 'User')];
-
   try {
-    const mailerSend = new MailerSend({
-      apiKey: process.env.MAILERSEND_API_KEY as string,
-    });
+    console.log('🔹 Nueva petición a /api/sendVerificationEmail');
 
-    // Personalización manual sin importar Personalization
+    // 🔹 Validar que el email y el verificationToken están presentes
+    const { email, verificationToken } = req.body;
+    if (!email || !verificationToken) {
+      console.warn('⚠️ Email o verificationToken no proporcionados.');
+      return res
+        .status(400)
+        .json({ message: 'Email and verificationToken are required' });
+    }
+
+    console.log(`🔹 Enviando email de verificación a: ${email}`);
+
+    // 🔹 Validar que las variables de entorno están configuradas
+    const apiKey = process.env.MAILERSEND_API_KEY;
+    const fromEmail = process.env.MAILERSEND_FROM_EMAIL;
+    const fromName = process.env.MAILERSEND_FROM_NAME;
+    const templateId = process.env.MAILERSEND_TEMPLATE_ID;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+    if (!apiKey || !fromEmail || !fromName || !templateId || !baseUrl) {
+      console.error('❌ Faltan variables de entorno para MailerSend.');
+      return res
+        .status(500)
+        .json({ message: 'MailerSend environment variables are missing' });
+    }
+
+    // 🔹 Configurar MailerSend
+    const mailerSend = new MailerSend({ apiKey });
+    const sentFrom = new Sender(fromEmail, fromName);
+    const recipients = [new Recipient(email, 'User')];
+
+    // 🔹 Personalización del correo
+    const verificationLink = `${baseUrl}/verify?token=${verificationToken}`;
     const personalization = [
       {
-        email: email, // Destinatario al que se le aplican las variables
-        data: {
-          verification_link: `${process.env.NEXT_PUBLIC_BASE_URL}/verify?token=${verificationToken}`,
-        },
+        email,
+        data: { verification_link: verificationLink },
       },
     ];
 
+    // 🔹 Configurar parámetros del correo
     const emailParams = new EmailParams()
       .setFrom(sentFrom)
       .setTo(recipients)
       .setSubject('RealtorTrackPro - Verifica tu correo electrónico')
-      .setTemplateId(process.env.MAILERSEND_TEMPLATE_ID as string) // Usa el ID de la plantilla creada
-      .setPersonalization(personalization); // Pasamos la personalización manualmente
+      .setTemplateId(templateId)
+      .setPersonalization(personalization);
 
+    // 🔹 Enviar email
     await mailerSend.email.send(emailParams);
+    console.log('✅ Correo de verificación enviado con éxito.');
 
-    res
+    return res
       .status(200)
       .json({ message: 'Correo de verificación enviado exitosamente' });
   } catch (error: any) {
-    console.error('Error sending email:', error);
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
-    res.status(500).json({
+    console.error('❌ Error enviando correo de verificación:', error);
+    return res.status(500).json({
       message: 'Error al enviar el correo de verificación',
-      error: error?.response?.data || errorMessage,
+      error: error?.response?.data || error.message,
     });
   }
 }

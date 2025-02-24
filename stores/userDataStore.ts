@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { create } from 'zustand';
+import { getAuth } from 'firebase/auth';
 
 import { UserDataState, UserData } from '@/common/types/';
 
@@ -18,7 +19,6 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
 
   fetchItems: async (user_uid: string) => {
     const { isLoading, userData } = get();
-
     if (isLoading || userData) return;
 
     set({ isLoading: true, error: null });
@@ -28,37 +28,54 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
         throw new Error('No hay usuario autenticado');
       }
 
-      const response = await axios(`/api/users/${user_uid}`);
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) throw new Error('Usuario no autenticado en Firebase');
 
-      if (response.status !== 200) {
-        const errorText = await response.data;
-        console.error('Error response:', errorText);
-        throw new Error(
-          `Error al obtener los datos del usuario: ${response.status} ${response.statusText}`
-        );
-      }
+      const token = await user.getIdToken(); // Obtener el token antes de hacer la solicitud
+
+      const response = await axios.get(`/api/users/${user_uid}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const userData = response.data;
-
       if (!userData || typeof userData !== 'object') {
         throw new Error('Datos de usuario inválidos recibidos del servidor');
       }
 
-      const validatedUserData: UserData = {
-        firstName: userData.firstName || null,
-        lastName: userData.lastName || null,
-        email: userData.email || null,
-        numeroTelefono: userData.numeroTelefono || null,
-        agenciaBroker: userData.agenciaBroker || null,
-        objetivoAnual: userData.objetivoAnual || null,
-        role: userData.role || null,
-        uid: userData.uid || null,
-        trialEndsAt: userData.trialEndsAt || null,
-        stripeCustomerId: userData.stripeCustomerId || null,
-        stripeSubscriptionId: userData.stripeSubscriptionId || null,
-      };
+      set({ userData, isLoading: false });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      set({ error: (error as Error).message, isLoading: false });
+    }
+  },
 
-      set({ userData: validatedUserData, isLoading: false });
+  fetchUserData: async (userID: string) => {
+    const { isLoading, userData } = get();
+    if (isLoading || userData) return;
+
+    set({ isLoading: true, error: null });
+
+    try {
+      if (!userID) {
+        throw new Error('No hay usuario autenticado');
+      }
+
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) throw new Error('Usuario no autenticado en Firebase');
+
+      const token = await user.getIdToken(); // Obtener el token antes de hacer la solicitud
+
+      const response = await axios.get(`/api/users/${userID}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.data || typeof response.data !== 'object') {
+        throw new Error('Datos de usuario inválidos recibidos del servidor');
+      }
+
+      set({ userData: response.data, isLoading: false });
     } catch (error) {
       console.error('Error fetching user data:', error);
       set({ error: (error as Error).message, isLoading: false });
@@ -70,38 +87,4 @@ export const useUserDataStore = create<UserDataState>((set, get) => ({
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
 
   setError: (error: string | null) => set({ error }),
-  fetchUserData: async (userID: string) => {
-    const { isLoading, userData } = get();
-
-    if (isLoading || userData) return;
-
-    set({ isLoading: true, error: null });
-
-    try {
-      if (!userID) {
-        throw new Error('No hay usuario autenticado');
-      }
-
-      const response = await axios(`/api/users/${userID}`);
-
-      if (response.status !== 200) {
-        const errorText = await response.data;
-        console.error('Error response:', errorText);
-        throw new Error(
-          `Error al obtener los datos del usuario: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const userData = response.data;
-
-      if (!userData || typeof userData !== 'object') {
-        throw new Error('Datos de usuario inválidos recibidos del servidor');
-      }
-
-      set({ userData: userData, isLoading: false });
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      set({ error: (error as Error).message, isLoading: false });
-    }
-  },
 }));
