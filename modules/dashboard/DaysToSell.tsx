@@ -37,7 +37,6 @@ const DaysToSell: React.FC = () => {
   }
 
   const promedioDiasVenta = Number(totals.promedio_dias_venta?.toFixed(2));
-
   return (
     <div className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow-md items-center justify-center max-h-[180px] h-[180px] relative">
       <h1 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[22px] font-semibold flex justify-center items-center h-2/5 pt-6 ">
@@ -52,18 +51,16 @@ const DaysToSell: React.FC = () => {
       </div>
       <Tooltip id="daystosell-tooltip" place="top" />
       <p className="text-[48px] lg:text-[40px] font-bold text-greenAccent h-3/5 items-center justify-center flex">
-        {promedioDiasVenta !== undefined ? (
-          promedioDiasVenta < 0 ? (
-            <span className="text-base font-semibold">
-              Revisar las fechas de las operaciones
-            </span>
-          ) : (
-            promedioDiasVenta + ' días'
-          )
-        ) : (
+        {isNaN(promedioDiasVenta) ? (
           <span className="text-base font-semibold">
             No existen operaciones cerradas
           </span>
+        ) : promedioDiasVenta < 0 ? (
+          <span className="text-base font-semibold">
+            Revisar las fechas de las operaciones
+          </span>
+        ) : (
+          promedioDiasVenta + ' días'
         )}
       </p>
     </div>
