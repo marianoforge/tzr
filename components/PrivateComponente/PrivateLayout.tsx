@@ -21,7 +21,7 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
     const checkSubscription = async () => {
       onAuthStateChanged(auth, async (user) => {
         if (!user) {
-          router.push('/');
+          router.push('/login');
           return;
         }
 
