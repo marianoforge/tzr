@@ -5,6 +5,7 @@ import { db } from '@/lib/firebaseAdmin';
 // Importa la documentación Swagger (aunque no se use, garantiza que se incluya)
 import '@/pages/api/swaggerDocs/operations';
 
+
 const verifyToken = async (token: string) => {
   try {
     const decodedToken = await adminAuth.verifyIdToken(token);
@@ -21,6 +22,7 @@ export default async function handler(
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+
       return res
         .status(401)
         .json({ message: 'Unauthorized: No token provided' });
@@ -29,15 +31,18 @@ export default async function handler(
     const token = authHeader.split('Bearer ')[1];
     const userUID = await verifyToken(token);
 
+
     switch (req.method) {
       case 'GET':
         return getUserOperations(userUID, res);
       case 'POST':
         return createOperation(req, res, userUID);
       default:
+        console.warn('⚠️ Método no permitido:', req.method);
         return res.status(405).json({ message: 'Method not allowed' });
     }
   } catch (error) {
+
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
@@ -85,6 +90,7 @@ const createOperation = async (
       .status(201)
       .json({ id: docRef.id, message: 'Operation created successfully' });
   } catch (error) {
+
     return res.status(500).json({ message: 'Error creating operation' });
   }
 };

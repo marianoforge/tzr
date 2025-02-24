@@ -5,6 +5,7 @@ import { Operation } from '@/common/types';
 
 const db = getFirestore(); // ✅ Usa Firebase Admin Firestore
 
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -34,6 +35,7 @@ export default async function handler(
         .json({ message: 'Operation ID is required and must be a string' });
     }
 
+
     switch (req.method) {
       case 'GET':
         return getOperationById(id, res);
@@ -61,6 +63,7 @@ const getOperationById = async (id: string, res: NextApiResponse) => {
     const docSnap = await docRef.get();
 
     if (!docSnap.exists) {
+
       console.warn('⚠️ Operación no encontrada:', id);
       return res.status(404).json({ message: 'Operation not found' });
     }
@@ -84,6 +87,7 @@ const updateOperation = async (
     const docRef = db.collection('operations').doc(id);
 
     await docRef.update({
+
       ...updatedData,
       updatedAt: new Date().toISOString(),
     });
@@ -102,6 +106,7 @@ const deleteOperation = async (id: string, res: NextApiResponse) => {
     console.log('🔹 Eliminando operación con ID:', id);
     const docRef = db.collection('operations').doc(id);
     await docRef.delete();
+
 
     console.log('✅ Operación eliminada con éxito.');
     return res.status(200).json({ message: 'Operation deleted successfully' });
