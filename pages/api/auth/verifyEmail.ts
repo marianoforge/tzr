@@ -77,7 +77,6 @@ export default async function handler(
 
     console.log(`🔹 Registrando usuario: ${email}`);
 
-
     // 🔹 Crear usuario en Firebase Authentication
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -85,7 +84,6 @@ export default async function handler(
       password
     );
     const user = userCredential.user;
-
 
     // 🔹 Crear la sesión de pago en Stripe
     console.log(
@@ -105,10 +103,10 @@ export default async function handler(
       mode: 'subscription',
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/login?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+      locale: 'es',
     });
 
     console.log('✅ Sesión de pago creada con éxito.');
-
 
     // 🔹 Guardar usuario en Firestore
     await setDoc(doc(db, 'usuarios', user.uid), {
@@ -127,7 +125,6 @@ export default async function handler(
     });
 
     console.log(`✅ Usuario registrado en Firestore: ${user.uid}`);
-
 
     // 🔹 Eliminar el registro de verificación ya que el token ha sido usado
     await deleteDoc(verificationDoc.ref);
