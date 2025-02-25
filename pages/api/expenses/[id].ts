@@ -1,8 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getFirestore } from 'firebase-admin/firestore';
+
 import { adminAuth } from '@/lib/firebaseAdmin';
 import { ExpenseFormData } from '@/common/types';
+
+const db = getFirestore(); // ✅ Usa Firebase Admin Firestore
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,10 +59,10 @@ export default async function handler(
 const getExpenseById = async (id: string, res: NextApiResponse) => {
   try {
     console.log('🔹 Buscando gasto con ID:', id);
-    const docRef = doc(db, 'expenses', id);
-    const docSnap = await getDoc(docRef);
+    const docRef = db.collection('expenses').doc(id); // 🔹 Firebase Admin SDK
+    const docSnap = await docRef.get();
 
-    if (!docSnap.exists()) {
+    if (!docSnap.exists) {
       console.warn('⚠️ Gasto no encontrado:', id);
       return res.status(404).json({ message: 'Expense not found' });
     }
@@ -80,9 +83,9 @@ const updateExpense = async (
 ) => {
   try {
     console.log('🔹 Actualizando gasto con ID:', id);
-    const docRef = doc(db, 'expenses', id);
+    const docRef = db.collection('expenses').doc(id); // 🔹 Firebase Admin SDK
 
-    await updateDoc(docRef, {
+    await docRef.update({
       ...updatedData,
       updatedAt: new Date().toISOString(),
     });
@@ -99,8 +102,8 @@ const updateExpense = async (
 const deleteExpense = async (id: string, res: NextApiResponse) => {
   try {
     console.log('🔹 Eliminando gasto con ID:', id);
-    const docRef = doc(db, 'expenses', id);
-    await deleteDoc(docRef);
+    const docRef = db.collection('expenses').doc(id); // 🔹 Firebase Admin SDK
+    await docRef.delete();
 
     console.log('✅ Gasto eliminado con éxito.');
     return res.status(200).json({ message: 'Expense deleted successfully' });

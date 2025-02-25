@@ -44,7 +44,7 @@ const Footer = () => {
                 Términos y condiciones
               </a>
               <a
-                href="/RealtorTrackproPoliticaDePrivacidad.pdf"
+                href="/RealtorTrackproTerminosYPolíticas.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:underline"
