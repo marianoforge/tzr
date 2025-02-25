@@ -308,7 +308,7 @@ const RegisterForm = () => {
         {captchaError && <p className="text-red-500">{captchaError}</p>}
 
         {/* New checkbox for updates */}
-        <div className="flex items-center mt-4">
+        <div className="flex items-center mt-4 ">
           <input
             type="checkbox"
             id="noUpdates"
@@ -316,12 +316,21 @@ const RegisterForm = () => {
             onChange={(e) => setNoUpdates(e.target.checked)}
             className="mr-2"
           />
-          <label htmlFor="noUpdates" className="text-mediumBlue">
+          <label htmlFor="noUpdates" className="text-sm text-gray-500">
             No quiero recibir actualizaciones o información sobre
             realtorTrackpro
           </label>
         </div>
-
+        <p className="text-sm text-gray-500 my-2">
+          Registrándote, aceptas los{' '}
+          <Link
+            href="/RealtorTrackproTerminosYPolíticas.pdf"
+            className="text-mediumBlue"
+          >
+            Términos y Condiciones y la Políticas de Privacidad de Realtor
+            Trackpro
+          </Link>
+        </p>
         {/* Botón de registro */}
         <div className="flex flex-col gap-4 sm:flex-row justify-center items-center sm:justify-around">
           <Button
