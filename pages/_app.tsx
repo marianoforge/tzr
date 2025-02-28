@@ -2,7 +2,7 @@ import '@/styles/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
-// import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/react';
 import { useState, useEffect } from 'react';
 
 import { useAuthStore } from '@/stores/authStore';
@@ -38,6 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
           gtag('config', 'G-K7RKJ8JX0C');
         `}
       </Script>
+      <Analytics />
       <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
 
