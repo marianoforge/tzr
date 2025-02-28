@@ -8,16 +8,16 @@ export function filteredOperations(
   monthFilter: string
 ) {
   return operations?.filter((operation: Operation) => {
-    const operationDate = operation.fecha_operacion
-      ? new Date(operation.fecha_operacion)
-      : operation.fecha_reserva
-        ? new Date(operation.fecha_reserva)
-        : null;
+    // Usamos fecha de operación o, en su defecto, fecha de reserva.
+    const rawDate = operation.fecha_operacion || operation.fecha_reserva;
+    if (!rawDate) return false;
 
-    if (!operationDate) return false;
+    // Agregamos "T00:00:00Z" para asegurar que se interprete la fecha como UTC.
+    const operationDate = new Date(rawDate + 'T00:00:00Z');
 
-    const operationYear = operationDate.getFullYear();
-    const operationMonth = operationDate.getMonth() + 1; // getMonth() returns 0-based month
+    // Obtenemos el año de la operación en UTC.
+    const operationYear = operationDate.getUTCFullYear();
+
     const statusMatch =
       statusFilter === OperationStatus.TODAS ||
       (statusFilter === OperationStatus.EN_CURSO &&
@@ -25,11 +25,19 @@ export function filteredOperations(
       (statusFilter === OperationStatus.CERRADA &&
         operation.estado === OperationStatus.CERRADA);
 
-    const yearMatch = yearFilter === operationYear;
+    let dateMatch = false;
+    if (monthFilter === 'all') {
+      // Si no se filtra por mes, solo comprobamos el año.
+      dateMatch = operationYear === yearFilter;
+    } else {
+      // Convertimos el filtro de mes (1-indexado) a número y calculamos el rango de fechas.
+      const monthNumber = parseInt(monthFilter, 10);
+      const startDate = new Date(Date.UTC(yearFilter, monthNumber - 1, 1));
+      // El día 0 del mes siguiente corresponde al último día del mes seleccionado.
+      const endDate = new Date(Date.UTC(yearFilter, monthNumber, 0));
+      dateMatch = operationDate >= startDate && operationDate <= endDate;
+    }
 
-    const monthMatch =
-      monthFilter === 'all' || operationMonth === parseInt(monthFilter, 10);
-
-    return statusMatch && yearMatch && monthMatch;
+    return statusMatch && dateMatch;
   });
 }
