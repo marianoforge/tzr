@@ -25,7 +25,9 @@ export function filteredOperations(
       (statusFilter === OperationStatus.EN_CURSO &&
         operation.estado === OperationStatus.EN_CURSO) ||
       (statusFilter === OperationStatus.CERRADA &&
-        operation.estado === OperationStatus.CERRADA);
+        operation.estado === OperationStatus.CERRADA) ||
+      (statusFilter === OperationStatus.CAIDA &&
+        operation.estado === OperationStatus.CAIDA);
 
     let dateMatch = false;
 

@@ -112,11 +112,18 @@ const OperationsTableTent: React.FC = () => {
       searchQuery
     );
 
-    const nonFallenOps = searchedOps.filter(
-      (op) => op.estado !== OperationStatus.CAIDA
-    );
+    const allOps = searchedOps.filter((op) => {
+      if (statusFilter === OperationStatus.CAIDA) {
+        return op.estado === OperationStatus.CAIDA;
+      } else {
+        return (
+          op.estado === OperationStatus.EN_CURSO ||
+          op.estado === OperationStatus.CERRADA
+        );
+      }
+    });
 
-    const dateSortedOps = nonFallenOps.sort((a, b) => {
+    const dateSortedOps = allOps.sort((a, b) => {
       return b.fecha_operacion.localeCompare(a.fecha_operacion);
     });
 
