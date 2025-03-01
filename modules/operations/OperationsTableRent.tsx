@@ -96,7 +96,7 @@ const OperationsTableTent: React.FC = () => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
-      Number(yearFilter),
+      yearFilter,
       monthFilter
     );
 
@@ -112,11 +112,18 @@ const OperationsTableTent: React.FC = () => {
       searchQuery
     );
 
-    const nonFallenOps = searchedOps.filter(
-      (op) => op.estado !== OperationStatus.CAIDA
-    );
+    const allOps = searchedOps.filter((op) => {
+      if (statusFilter === OperationStatus.CAIDA) {
+        return op.estado === OperationStatus.CAIDA;
+      } else {
+        return (
+          op.estado === OperationStatus.EN_CURSO ||
+          op.estado === OperationStatus.CERRADA
+        );
+      }
+    });
 
-    const dateSortedOps = nonFallenOps.sort((a, b) => {
+    const dateSortedOps = allOps.sort((a, b) => {
       return b.fecha_operacion.localeCompare(a.fecha_operacion);
     });
 
@@ -164,7 +171,7 @@ const OperationsTableTent: React.FC = () => {
       (filteredOperations(
         transformedOperations,
         statusFilter,
-        Number(yearFilter),
+        yearFilter,
         monthFilter
       )?.length || 0) / itemsPerPage
     );
@@ -268,8 +275,8 @@ const OperationsTableTent: React.FC = () => {
           setSearchQuery={setSearchQuery}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
-          yearFilter={Number(yearFilter)}
-          setYearFilter={(year: number) => setYearFilter(year.toString())}
+          yearFilter={yearFilter}
+          setYearFilter={(year: string) => setYearFilter(year)}
           monthFilter={monthFilter}
           setMonthFilter={setMonthFilter}
           operationTypeFilter={operationTypeFilter}

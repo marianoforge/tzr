@@ -78,7 +78,15 @@ const OperationsTable: React.FC = () => {
   } = useOperations(userUID);
 
   const filterOperations = (operations: Operation[]) => {
-    return operations.filter((op) => op.estado !== OperationStatus.CAIDA);
+    if (statusFilter === OperationStatus.CAIDA) {
+      return operations.filter((op) => op.estado === OperationStatus.CAIDA);
+    } else {
+      return operations.filter(
+        (op) =>
+          op.estado === OperationStatus.EN_CURSO ||
+          op.estado === OperationStatus.CERRADA
+      );
+    }
   };
 
   const sortOperations = (operations: Operation[]) => {
@@ -102,7 +110,7 @@ const OperationsTable: React.FC = () => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
-      Number(yearFilter),
+      yearFilter,
       monthFilter
     );
 
@@ -156,7 +164,7 @@ const OperationsTable: React.FC = () => {
       (filteredOperations(
         transformedOperations,
         statusFilter,
-        Number(yearFilter),
+        yearFilter,
         monthFilter
       )?.length || 0) / itemsPerPage
     );
@@ -273,8 +281,8 @@ const OperationsTable: React.FC = () => {
           setSearchQuery={setSearchQuery}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
-          yearFilter={Number(yearFilter)}
-          setYearFilter={(year: number) => setYearFilter(year.toString())}
+          yearFilter={yearFilter}
+          setYearFilter={(year: string) => setYearFilter(year)}
           monthFilter={monthFilter}
           setMonthFilter={setMonthFilter}
           operationTypeFilter={operationTypeFilter}
