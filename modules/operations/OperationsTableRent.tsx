@@ -96,7 +96,7 @@ const OperationsTableTent: React.FC = () => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
-      Number(yearFilter),
+      yearFilter,
       monthFilter
     );
 
@@ -164,7 +164,7 @@ const OperationsTableTent: React.FC = () => {
       (filteredOperations(
         transformedOperations,
         statusFilter,
-        Number(yearFilter),
+        yearFilter,
         monthFilter
       )?.length || 0) / itemsPerPage
     );
@@ -268,8 +268,8 @@ const OperationsTableTent: React.FC = () => {
           setSearchQuery={setSearchQuery}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
-          yearFilter={Number(yearFilter)}
-          setYearFilter={(year: number) => setYearFilter(year.toString())}
+          yearFilter={yearFilter}
+          setYearFilter={(year: string) => setYearFilter(year)}
           monthFilter={monthFilter}
           setMonthFilter={setMonthFilter}
           operationTypeFilter={operationTypeFilter}

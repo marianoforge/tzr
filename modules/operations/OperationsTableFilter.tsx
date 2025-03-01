@@ -9,8 +9,8 @@ interface OperationsTableFiltersProps {
   setSearchQuery: (query: string) => void;
   statusFilter: string;
   setStatusFilter: (status: string) => void;
-  yearFilter: number;
-  setYearFilter: (year: number) => void;
+  yearFilter: string;
+  setYearFilter: (year: string) => void;
   monthFilter: string;
   setMonthFilter: (month: string) => void;
   operationTypeFilter: string;
@@ -68,7 +68,7 @@ const OperationsTableFilters: React.FC<OperationsTableFiltersProps> = ({
         <Select
           options={yearsFilter}
           value={yearFilter}
-          onChange={(value: string | number) => setYearFilter(Number(value))}
+          onChange={(value: string | number) => setYearFilter(value.toString())}
           className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
         />
       </div>

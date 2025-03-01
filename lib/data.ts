@@ -58,6 +58,7 @@ export const operationTypes = [
 ];
 
 export const yearsFilter = [
+  { value: 'all', label: 'Todos los años' },
   {
     value: new Date().getFullYear().toString(),
     label: new Date().getFullYear().toString(),
