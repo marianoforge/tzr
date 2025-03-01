@@ -73,6 +73,7 @@ export const statusOptions = [
   { value: 'all', label: 'Estado de la Op.' },
   { value: OperationStatus.EN_CURSO, label: 'En Curso / Reservas' },
   { value: OperationStatus.CERRADA, label: 'Operaciones Cerradas' },
+  { value: OperationStatus.CAIDA, label: 'Operaciones Caídas' },
 ];
 
 export const operationVentasTypeFilter = [

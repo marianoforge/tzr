@@ -78,7 +78,15 @@ const OperationsTable: React.FC = () => {
   } = useOperations(userUID);
 
   const filterOperations = (operations: Operation[]) => {
-    return operations.filter((op) => op.estado !== OperationStatus.CAIDA);
+    if (statusFilter === OperationStatus.CAIDA) {
+      return operations.filter((op) => op.estado === OperationStatus.CAIDA);
+    } else {
+      return operations.filter(
+        (op) =>
+          op.estado === OperationStatus.EN_CURSO ||
+          op.estado === OperationStatus.CERRADA
+      );
+    }
   };
 
   const sortOperations = (operations: Operation[]) => {
