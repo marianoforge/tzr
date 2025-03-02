@@ -32,6 +32,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { getAuthToken } = useAuthStore();
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
@@ -66,9 +67,16 @@ const LoginForm = () => {
       }
 
       const sessionId = userDoc.data()?.sessionId;
-
       const existingCustomerId = userDoc.data()?.stripeCustomerId;
       const existingSubscriptionId = userDoc.data()?.stripeSubscriptionId;
+
+      // Verificación de suscripción
+      if (!existingCustomerId || !existingSubscriptionId) {
+        setLoading(false);
+        setIsModalOpen(false);
+        setIsSubscriptionModalOpen(true);
+        return;
+      }
 
       if (sessionId && (!existingCustomerId || !existingSubscriptionId)) {
         const res = await fetch(`/api/checkout/${sessionId}`, {
@@ -128,6 +136,10 @@ const LoginForm = () => {
       setLoading(false);
       setIsModalOpen(false);
     }
+  };
+
+  const handleSubscriptionModalClose = () => {
+    setIsSubscriptionModalOpen(false);
   };
 
   return (
@@ -210,6 +222,14 @@ const LoginForm = () => {
           message="Entrando a RealtorTrackPro..."
         />
       )}
+
+      <Modal
+        isOpen={isSubscriptionModalOpen}
+        onClose={handleSubscriptionModalClose}
+        title="Suscripción Requerida"
+        message="No se ha encontrado una suscripción activa para tu cuenta. Por favor, haz click en el link proporcionado en el email para activar tu suscripción."
+        className="w-[360px] md:w-[700px] xl:w-auto h-auto"
+      />
     </>
   );
 };

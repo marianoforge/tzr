@@ -36,7 +36,7 @@ const americasCountries = [
 
 // Función para obtener monedas de las Américas con símbolos
 export const getCurrenciesForAmericas = () => {
-  return currencyCodes.data
+  const americasCurrencies = currencyCodes.data
     .filter((currency) =>
       currency.countries.some((country) => americasCountries.includes(country))
     )
@@ -45,4 +45,13 @@ export const getCurrenciesForAmericas = () => {
       name: currency.currency,
       symbol: getSymbolFromCurrency(currency.code) || currency.code,
     }));
+
+  // Agregar el Euro manualmente en la 7ma posición
+  americasCurrencies.splice(13, 0, {
+    code: 'EUR',
+    name: 'Euro',
+    symbol: '€',
+  });
+
+  return americasCurrencies;
 };
