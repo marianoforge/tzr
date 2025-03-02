@@ -356,7 +356,7 @@ const RegisterForm = () => {
         message={modalMessage}
         onAccept={() => router.push('/login')}
         messageClassName="text-base"
-        className="w-[50%]"
+        className="w-[360px] md:w-[700px] xl:w-auto h-auto"
       />
 
       <LicensesModal
