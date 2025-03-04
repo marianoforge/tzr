@@ -260,7 +260,8 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
                     <strong>Puntas Totales:</strong>{' '}
                     {calculateTotalTips(
                       usuario.operations,
-                      Number(selectedYear)
+                      Number(selectedYear),
+                      usuario.id
                     )}
                   </p>
                   <p>
