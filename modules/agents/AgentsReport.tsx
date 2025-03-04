@@ -102,6 +102,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
     queryKey: ['teamMembersWithOperations'],
     queryFn: fetchTeamMembersWithOperations,
   });
+
   const { data: operations = [] } = useQuery({
     queryKey: ['operations', userId],
     queryFn: () => fetchUserOperations(userId || ''),
@@ -340,7 +341,8 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                   <td className="py-3 px-4">
                     {calculateTotalTips(
                       member.operations,
-                      Number(selectedYear)
+                      Number(selectedYear),
+                      member.id
                     )}
                   </td>
                   <td className="py-3 px-4">

@@ -64,9 +64,14 @@ export default async function handler(
 
     // 🔹 Paso 2: Combinar datos
     const result: TeamMemberWithOperations[] = teamMembers.map((member) => {
-      const memberOperations = operations.filter(
-        (op) => op.user_uid === member.id || op.user_uid_adicional === member.id
-      );
+      const memberOperations = operations.filter((op) => {
+        // 🚀 Se asegura que ambos asesores reciban la operación
+        const isPrimaryAdvisor = op.user_uid && op.user_uid === member.id;
+        const isAdditionalAdvisor =
+          op.user_uid_adicional && op.user_uid_adicional === member.id;
+
+        return isPrimaryAdvisor || isAdditionalAdvisor;
+      });
 
       return { ...member, operations: memberOperations };
     });
