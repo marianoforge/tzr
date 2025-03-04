@@ -269,7 +269,7 @@ const ExpensesAgentsList = () => {
                         : 'N/A'}
                     </td>
                     <td className="py-3 px-4">
-                      {`${user.firstname} ${user.lastname}`}
+                      {`${user.firstName} ${user.lastName}`}
                     </td>
                     <td className="py-3 px-4">
                       {`${currencySymbol}${formatNumber(user.totalInPesos)}`}
