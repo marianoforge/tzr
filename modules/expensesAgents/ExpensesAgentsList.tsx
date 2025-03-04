@@ -173,7 +173,7 @@ const ExpensesAgentsList = () => {
   if (expensesError) {
     return <p>Error: {expensesError.message || 'An unknown error occurred'}</p>;
   }
-
+  console.log(currentExpenses);
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
@@ -269,7 +269,8 @@ const ExpensesAgentsList = () => {
                         : 'N/A'}
                     </td>
                     <td className="py-3 px-4">
-                      {`${user.firstname} ${user.lastname}`}
+                      {`${user.firstName} ${user.lastName}`}
+                      {console.log(user)}
                     </td>
                     <td className="py-3 px-4">
                       {`${currencySymbol}${formatNumber(user.totalInPesos)}`}
