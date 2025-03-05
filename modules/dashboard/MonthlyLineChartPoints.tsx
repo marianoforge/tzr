@@ -120,9 +120,16 @@ const MonthlyLineChartPoints = () => {
         (sum, data) => sum + data.value2024,
         0
       );
-      const currentMonth = new Date().getMonth() + 1;
-      const completedMonths = currentMonth;
-      const average2024 = total2024 / completedMonths;
+
+      // Contar solo los meses que tienen operaciones (value2024 > 0)
+      const monthsWithOperations = mergedData.filter(
+        (data) => data.value2024 > 0
+      ).length;
+
+      // Calcular el promedio usando solo los meses con operaciones
+      // Si no hay meses con operaciones, el promedio será 0
+      const average2024 =
+        monthsWithOperations > 0 ? total2024 / monthsWithOperations : 0;
       setAverage2024(average2024);
     }
   }, [operations]);
