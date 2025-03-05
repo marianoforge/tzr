@@ -52,12 +52,31 @@ const Bubbles = () => {
     return netFees;
   });
 
+  const operationsByMonth = operations2025.reduce(
+    (acc: Record<number, Operation[]>, op: Operation) => {
+      const operationDate = new Date(
+        op.fecha_operacion || op.fecha_reserva || ''
+      );
+      const month = operationDate.getMonth() + 1;
+      if (!acc[month]) {
+        acc[month] = [];
+      }
+      acc[month].push(op);
+      return acc;
+    },
+    {} as Record<number, Operation[]>
+  );
+
   // Haz un reduce de las operaciones del 2025 y suma las tarifas netas
   const totalNetFees = operations2025.reduce(
     (total: number, op: Operation) =>
       total + calculateNetFees(op, userData as UserData),
     0
   );
+
+  const monthsWithOperations = Object.keys(operationsByMonth).length;
+  const totalNetFeesPromedio =
+    monthsWithOperations > 0 ? totalNetFees / monthsWithOperations : 0;
 
   const operationsEnCurso = operations.filter(
     (op: Operation) => op.estado === OperationStatus.EN_CURSO
@@ -124,10 +143,7 @@ const Bubbles = () => {
     },
     {
       title: 'Promedio Mensual Honorarios Netos',
-      figure: formatValue(
-        totals.total_honorarios_asesor_mes_vencido_promedio ?? 0,
-        'currency'
-      ),
+      figure: `${currencySymbol}${formatNumber(totalNetFeesPromedio)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Promedio de Honorarios netos totales por mes (vencido).',
