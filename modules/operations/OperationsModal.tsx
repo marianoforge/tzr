@@ -52,11 +52,20 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      ...operation,
-      realizador_venta: operation?.realizador_venta || '',
-      exclusiva: operation?.exclusiva || false,
-      no_exclusiva: operation?.no_exclusiva || false,
-      fecha_operacion: operation?.fecha_operacion || null,
+      estado: 'En Curso',
+      punta_compradora: false,
+      punta_vendedora: false,
+      fecha_operacion: '',
+      direccion_reserva: '',
+      reparticion_honorarios_asesor: 0,
+      localidad_reserva: null,
+      provincia_reserva: null,
+      exclusiva: false,
+      no_exclusiva: false,
+      realizador_venta: '',
+      realizador_venta_adicional: '',
+      porcentaje_honorarios_asesor: null,
+      porcentaje_honorarios_asesor_adicional: null,
     },
   });
 
@@ -101,6 +110,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           : '',
         porcentaje_punta_compradora: operation.porcentaje_punta_compradora || 0,
         porcentaje_punta_vendedora: operation.porcentaje_punta_vendedora || 0,
+        realizador_venta: operation.realizador_venta || '',
+        realizador_venta_adicional: operation.realizador_venta_adicional || '',
       };
       reset(formattedOperation);
 
@@ -457,7 +468,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               <Select
                 label="Asesor que realizó la venta"
                 register={register}
-                {...register('realizador_venta')}
+                name="realizador_venta"
                 options={[
                   {
                     value: '',
@@ -497,7 +508,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               <Select
                 label="Asesor adicional"
                 register={register}
-                {...register('realizador_venta_adicional')}
+                name="realizador_venta_adicional"
                 options={[
                   {
                     value: '',
@@ -511,6 +522,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
                     })),
                 ]}
                 className="w-full p-2 mb-8 border border-gray-300 rounded"
+                defaultValue={operation?.realizador_venta_adicional || ''}
               />
               {errors.realizador_venta_adicional && (
                 <p className="text-red-500">
