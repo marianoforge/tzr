@@ -70,43 +70,45 @@ const LoginForm = () => {
       const existingCustomerId = userDoc.data()?.stripeCustomerId;
       const existingSubscriptionId = userDoc.data()?.stripeSubscriptionId;
 
-      // Verificación de suscripción
-      if (!existingCustomerId || !existingSubscriptionId) {
+      // Si no hay sessionId y no hay suscripción, mostrar modal
+      if (!sessionId && (!existingCustomerId || !existingSubscriptionId)) {
         setLoading(false);
         setIsModalOpen(false);
         setIsSubscriptionModalOpen(true);
         return;
       }
 
+      // Si hay sessionId, intentar recuperar y actualizar los datos de stripe
       if (sessionId && (!existingCustomerId || !existingSubscriptionId)) {
-        const res = await fetch(`/api/checkout/${sessionId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        try {
+          const res = await fetch(`/api/checkout/${sessionId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
 
-        if (!res.ok) {
-          console.error('❌ Error in checkout API:', res.status);
-          throw new Error(`Error en la API de checkout: ${res.status}`);
-        }
+          if (!res.ok) {
+            throw new Error(`Error en la API de checkout: ${res.status}`);
+          }
 
-        const session = await res.json();
+          const session = await res.json();
 
-        const stripeCustomerId = session.customer;
-        const stripeSubscriptionId = session.subscription;
+          const stripeCustomerId = session.customer;
+          const stripeSubscriptionId = session.subscription;
 
-        const userDocRef = doc(db, 'usuarios', user.uid);
-        const userDoc = await getDoc(userDocRef);
+          if (!stripeCustomerId || !stripeSubscriptionId) {
+            throw new Error('No se encontraron datos de suscripción válidos');
+          }
 
-        if (!userDoc.exists()) throw new Error('Usuario no encontrado');
+          const priceId = userDoc.data().priceId;
+          let role = 'agente_asesor';
 
-        const priceId = userDoc.data().priceId;
-        let role = 'agente_asesor';
+          if (
+            priceId === PRICE_ID_GROWTH ||
+            priceId === PRICE_ID_GROWTH_ANNUAL
+          ) {
+            role = 'team_leader_broker';
+          }
 
-        if (priceId === PRICE_ID_GROWTH || priceId === PRICE_ID_GROWTH_ANNUAL) {
-          role = 'team_leader_broker';
-        }
-
-        if (!existingCustomerId || !existingSubscriptionId) {
-          await fetch(`/api/users/updateUser`, {
+          const updateResponse = await fetch(`/api/users/updateUser`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -119,9 +121,27 @@ const LoginForm = () => {
               role,
             }),
           });
-        }
 
-        router.push('/dashboard');
+          if (!updateResponse.ok) {
+            const errorData = await updateResponse.json();
+            throw new Error(
+              `Error actualizando usuario: ${updateResponse.status} - ${errorData.message || 'Unknown error'}`
+            );
+          }
+
+          await updateResponse.json();
+        } catch (error) {
+          console.error('❌ Error in subscription process:', error);
+          setFormError(
+            error instanceof Error
+              ? error.message
+              : 'Error en el proceso de suscripción'
+          );
+          setLoading(false);
+          setIsModalOpen(false);
+          setIsSubscriptionModalOpen(true);
+          return;
+        }
       }
 
       router.push('/dashboard');
