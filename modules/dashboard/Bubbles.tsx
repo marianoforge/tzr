@@ -74,9 +74,23 @@ const Bubbles = () => {
     0
   );
 
-  const monthsWithOperations = Object.keys(operationsByMonth).length;
+  // Obtener el mes y año actual
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // JavaScript meses son 0-11
+
+  // Filtrar solo los meses vencidos con operaciones
+  const completedMonthsWithOperations = Object.keys(operationsByMonth)
+    .map(Number)
+    .filter((month) => {
+      // Solo incluir meses que ya han terminado (son anteriores al mes actual)
+      return month < currentMonth && operationsByMonth[month].length > 0;
+    });
+
+  // Calcular el promedio basado en meses vencidos con operaciones
   const totalNetFeesPromedio =
-    monthsWithOperations > 0 ? totalNetFees / monthsWithOperations : 0;
+    completedMonthsWithOperations.length > 0
+      ? totalNetFees / completedMonthsWithOperations.length
+      : 0;
 
   const operationsEnCurso = operations.filter(
     (op: Operation) => op.estado === OperationStatus.EN_CURSO
