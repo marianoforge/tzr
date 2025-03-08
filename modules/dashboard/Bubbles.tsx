@@ -160,7 +160,8 @@ const Bubbles = () => {
       figure: `${currencySymbol}${formatNumber(totalNetFeesPromedio)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
-      tooltip: 'Promedio de Honorarios netos totales por mes (vencido).',
+      tooltip:
+        'Promedio de Honorarios netos totales por mes (vencido), que tenga operaciones.',
     },
     {
       title: 'Honorarios Netos en Curso',
