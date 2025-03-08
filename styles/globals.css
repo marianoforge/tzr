@@ -131,4 +131,36 @@ h3 {
 
 .react-tooltip {
   z-index: 100;
+  isolation: isolate;
+}
+
+.react-chatbot-kit-chat-message-container {
+  background-color: #fafcfe;
+  z-index: 9999;
+  height: 468px !important;
+}
+
+.react-chatbot-kit-chat-header {
+  background-color: #fff !important;
+}
+
+.react-chatbot-kit-chat-inner-container {
+  width: 310px !important;
+}
+
+.react-chatbot-kit-chat-input-container {
+  width: 295px !important;
+}
+
+.react-chatbot-kit-chat-container {
+  width: 310px !important;
+}
+
+.react-chatbot-kit-chat-header {
+  display: none !important;
+}
+
+.react-chatbot-kit-chat-message-container {
+  width: 310px !important;
+  background-color: #fff !important;
 }

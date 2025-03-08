@@ -8,6 +8,8 @@ interface ButtonProps {
   disabled?: boolean;
   label?: string;
   isActive?: boolean;
+  id?: string;
+  dataTestId?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -16,12 +18,16 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   children,
   label,
+  id,
+  dataTestId,
 }) => {
   return (
     <button
       type={type}
       className={`bg-blue-500 text-white p-2 rounded hover:bg-blue-600 !cursor-pointer ${className} `}
       onClick={onClick}
+      id={id}
+      data-testid={dataTestId}
     >
       {label}
       {children}

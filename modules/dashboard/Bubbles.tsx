@@ -195,7 +195,7 @@ const Bubbles = () => {
           >
             {/* Heroicons Info icon with tooltip */}
             <InformationCircleIcon
-              className="absolute top-1 right-1 text-white stroke-2 h-6 w-6 lg:h-4 lg:w-4 cursor-pointer z-10"
+              className="absolute top-1 right-1 text-white stroke-2 h-6 w-6 lg:h-4 lg:w-4 cursor-pointer z-10 isolate"
               data-tooltip-id={`tooltip-${index}`}
               data-tooltip-content={data.tooltip}
             />
@@ -213,7 +213,7 @@ const Bubbles = () => {
             <Tooltip
               id={`tooltip-${index}`}
               place="top"
-              style={{ zIndex: 50 }}
+              style={{ zIndex: 50, isolation: 'isolate' }}
             />
           </div>
         ))}
