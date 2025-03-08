@@ -74,19 +74,14 @@ const Bubbles = () => {
     0
   );
 
-  // Obtener el mes y año actual
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1; // JavaScript meses son 0-11
+  // Obtener el mes actual
+  const currentMonth = new Date().getMonth() + 1;
 
-  // Filtrar solo los meses vencidos con operaciones
+  // Filtrar solo los meses vencidos (excluyendo el mes actual)
   const completedMonthsWithOperations = Object.keys(operationsByMonth)
     .map(Number)
-    .filter((month) => {
-      // Solo incluir meses que ya han terminado (son anteriores al mes actual)
-      return month < currentMonth && operationsByMonth[month].length > 0;
-    });
+    .filter((month) => month < currentMonth);
 
-  // Calcular el promedio basado en meses vencidos con operaciones
   const totalNetFeesPromedio =
     completedMonthsWithOperations.length > 0
       ? totalNetFees / completedMonthsWithOperations.length
@@ -160,8 +155,7 @@ const Bubbles = () => {
       figure: `${currencySymbol}${formatNumber(totalNetFeesPromedio)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
-      tooltip:
-        'Promedio de Honorarios netos totales por mes (vencido), que tenga operaciones.',
+      tooltip: 'Promedio de Honorarios netos totales por mes (vencido).',
     },
     {
       title: 'Honorarios Netos en Curso',
