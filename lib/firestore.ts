@@ -96,7 +96,10 @@ export const saveResponse = async (question: string, answer: string) => {
 /**
  * ❓ Guarda preguntas sin respuesta en Firestore para revisión futura.
  */
-export const saveUnansweredQuestion = async (question: string) => {
+export const saveUnansweredQuestion = async (
+  question: string,
+  openAiReply?: string
+) => {
   try {
     const unansweredCollection = collection(db, 'unanswered_questions');
 
@@ -111,6 +114,7 @@ export const saveUnansweredQuestion = async (question: string) => {
 
     await addDoc(unansweredCollection, {
       question,
+      openAiReply,
       timestamp: new Date(),
     });
 
