@@ -98,12 +98,12 @@ export const saveResponse = async (question: string, answer: string) => {
  */
 export const saveUnansweredQuestion = async (
   question: string,
-  openAiReply?: string
+  answer: string | null = null
 ) => {
   try {
     const unansweredCollection = collection(db, 'unanswered_questions');
 
-    // Verificar si ya existe esta pregunta en la colección
+    // Verificar si la pregunta ya está registrada en unanswered_questions
     const q = query(unansweredCollection, where('question', '==', question));
     const snapshot = await getDocs(q);
 
@@ -114,7 +114,7 @@ export const saveUnansweredQuestion = async (
 
     await addDoc(unansweredCollection, {
       question,
-      openAiReply,
+      suggestedAnswer: answer ?? 'No hay respuesta aún.', // 🔹 Evita undefined en Firestore
       timestamp: new Date(),
     });
 

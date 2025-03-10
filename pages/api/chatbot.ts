@@ -55,60 +55,57 @@ export default async function handler(
   );
 
   // 🔹 3️⃣ Si Firestore no tiene la respuesta, consultar OpenAI con baja creatividad
-  try {
-    const openAiResponse = await fetch(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4',
-          temperature: 0.1, // 🔹 Menos creatividad, más precisión
-          messages: [
-            {
-              role: 'system',
-              content:
-                "Eres un asistente experto en RealtorTrackPro. Responde solo si tienes información certera. Si no estás seguro, responde 'No tengo suficiente información para responder con certeza.'",
-            },
-            { role: 'user', content: rawMessage },
-          ],
-          max_tokens: 500,
-        }),
-      }
-    );
+  console.log('🔹 Consultando OpenAI...');
+  const openAiResponse = await fetch(
+    'https://api.openai.com/v1/chat/completions',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        temperature: 0.1, // 🔹 Menos creatividad, más precisión
+        messages: [
+          {
+            role: 'system',
+            content:
+              "Eres un asistente experto en RealtorTrackPro. Responde solo si tienes información certera. Si no estás seguro, responde 'No tengo suficiente información para responder con certeza.'",
+          },
+          { role: 'user', content: rawMessage },
+        ],
+        max_tokens: 500,
+      }),
+    }
+  );
 
-    const data = await openAiResponse.json();
-    const openAiReply = data.choices[0]?.message?.content?.trim();
+  // 🔹 Verificamos si OpenAI respondió correctamente
+  const data = await openAiResponse.json();
+
+  if (
+    !data ||
+    !data.choices ||
+    !data.choices[0] ||
+    !data.choices[0].message ||
+    !data.choices[0].message.content
+  ) {
+    console.error('❌ OpenAI no devolvió una respuesta válida:', data);
+  } else {
+    const openAiReply = data.choices[0].message.content.trim();
 
     if (
-      openAiReply &&
       openAiReply !==
-        'No tengo suficiente información para responder con certeza.'
+      'No tengo suficiente información para responder con certeza.'
     ) {
       console.log('🤖 OpenAI respondió:', openAiReply);
 
-      // 🔹 4️⃣ Guardar la pregunta y respuesta de OpenAI en unanswered_questions para revisión
+      // 🔹 Guardar la pregunta y respuesta de OpenAI en unanswered_questions para revisión
       await saveUnansweredQuestion(rawMessage, openAiReply);
 
       return res.status(200).json({
-        reply: `No tengo una respuesta para eso. 😔 pero puedes escribirnos en WhatsApp al número +34 637 017 737 para confirmar.`,
+        reply: `No tengo una respuesta para eso. 😔 Pero puedes escribirnos en WhatsApp al número +34 637 017 737 para confirmar.`,
       });
     }
-  } catch (error) {
-    console.error('❌ Error al conectar con OpenAI:', error);
   }
-
-  console.log(
-    '❌ OpenAI tampoco encontró respuesta clara. Guardando en preguntas sin respuesta...'
-  );
-
-  // 🔹 5️⃣ Si OpenAI tampoco tiene una respuesta clara, guardar solo la pregunta en unanswered_questions
-  await saveUnansweredQuestion(rawMessage);
-
-  // 🔹 6️⃣ Responder con mensaje y link de WhatsApp
-  const notFoundResponse = `No tengo una respuesta para eso. 😔 Pero puedes escribirnos en WhatsApp al número +34 637 017 737 para ayudarte mejor.`;
-  return res.status(200).json({ reply: notFoundResponse });
 }
