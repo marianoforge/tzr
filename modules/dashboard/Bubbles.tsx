@@ -74,9 +74,18 @@ const Bubbles = () => {
     0
   );
 
-  const monthsWithOperations = Object.keys(operationsByMonth).length;
+  // Obtener el mes actual
+  const currentMonth = new Date().getMonth() + 1;
+
+  // Filtrar solo los meses vencidos (excluyendo el mes actual)
+  const completedMonthsWithOperations = Object.keys(operationsByMonth)
+    .map(Number)
+    .filter((month) => month < currentMonth);
+
   const totalNetFeesPromedio =
-    monthsWithOperations > 0 ? totalNetFees / monthsWithOperations : 0;
+    completedMonthsWithOperations.length > 0
+      ? totalNetFees / completedMonthsWithOperations.length
+      : 0;
 
   const operationsEnCurso = operations.filter(
     (op: Operation) => op.estado === OperationStatus.EN_CURSO
@@ -186,7 +195,7 @@ const Bubbles = () => {
           >
             {/* Heroicons Info icon with tooltip */}
             <InformationCircleIcon
-              className="absolute top-1 right-1 text-white stroke-2 h-6 w-6 lg:h-4 lg:w-4 cursor-pointer z-10"
+              className="absolute top-1 right-1 text-white stroke-2 h-6 w-6 lg:h-4 lg:w-4 cursor-pointer z-10 isolate"
               data-tooltip-id={`tooltip-${index}`}
               data-tooltip-content={data.tooltip}
             />
@@ -204,7 +213,7 @@ const Bubbles = () => {
             <Tooltip
               id={`tooltip-${index}`}
               place="top"
-              style={{ zIndex: 50 }}
+              style={{ zIndex: 50, isolation: 'isolate' }}
             />
           </div>
         ))}

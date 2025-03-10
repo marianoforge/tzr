@@ -2,6 +2,8 @@ import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo'
 import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
 import { useUserDataStore } from '@/stores/userDataStore';
 
+import ChatHelper from '../chatbot/Chatbot';
+
 import Bubbles from './Bubbles';
 import CuadroPrincipal from './CuadroPrincipal';
 import CuadroPrincipalChart from './CuadroPrincipalChart';
@@ -29,6 +31,7 @@ const DashBoard = () => {
         <div className="hidden xl:flex flex-row justify-end items-center gap-2 w-1/2 mr-2">
           <UserAvatar />
           <UserInfo />
+          <ChatHelper />
         </div>
       </div>
       <div className="grid grid-cols-1 mt-28 sm:mt-20 xl:mt-2 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-10 lg:gap-6 mb-6">
