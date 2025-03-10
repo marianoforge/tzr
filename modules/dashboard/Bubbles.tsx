@@ -67,13 +67,6 @@ const Bubbles = () => {
     {} as Record<number, Operation[]>
   );
 
-  // Haz un reduce de las operaciones del 2025 y suma las tarifas netas
-  const totalNetFees = operations2025.reduce(
-    (total: number, op: Operation) =>
-      total + calculateNetFees(op, userData as UserData),
-    0
-  );
-
   // Obtener el mes actual
   const currentMonth = new Date().getMonth() + 1;
 
@@ -82,9 +75,31 @@ const Bubbles = () => {
     .map(Number)
     .filter((month) => month < currentMonth);
 
-  const totalNetFeesPromedio =
+  // Calcular el total de tarifas netas solo para los meses vencidos
+  const totalNetFeesMesVencido = completedMonthsWithOperations.reduce(
+    (total, month) => {
+      return (
+        total +
+        operationsByMonth[month].reduce(
+          (monthTotal: number, op: Operation) =>
+            monthTotal + calculateNetFees(op, userData as UserData),
+          0
+        )
+      );
+    },
+    0
+  );
+
+  // Haz un reduce de las operaciones del 2025 y suma las tarifas netas
+  const totalNetFees = operations2025.reduce(
+    (total: number, op: Operation) =>
+      total + calculateNetFees(op, userData as UserData),
+    0
+  );
+
+  const totalNetFeesPromedioMesVencido =
     completedMonthsWithOperations.length > 0
-      ? totalNetFees / completedMonthsWithOperations.length
+      ? totalNetFeesMesVencido / completedMonthsWithOperations.length
       : 0;
 
   const operationsEnCurso = operations.filter(
@@ -152,7 +167,7 @@ const Bubbles = () => {
     },
     {
       title: 'Promedio Mensual Honorarios Netos',
-      figure: `${currencySymbol}${formatNumber(totalNetFeesPromedio)}`,
+      figure: `${currencySymbol}${formatNumber(totalNetFeesPromedioMesVencido)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Promedio de Honorarios netos totales por mes (vencido).',
@@ -195,7 +210,7 @@ const Bubbles = () => {
           >
             {/* Heroicons Info icon with tooltip */}
             <InformationCircleIcon
-              className="absolute top-1 right-1 text-white stroke-2 h-6 w-6 lg:h-4 lg:w-4 cursor-pointer z-10"
+              className="absolute top-1 right-1 text-white stroke-2 h-6 w-6 lg:h-4 lg:w-4 cursor-pointer z-10 isolate"
               data-tooltip-id={`tooltip-${index}`}
               data-tooltip-content={data.tooltip}
             />
@@ -213,7 +228,7 @@ const Bubbles = () => {
             <Tooltip
               id={`tooltip-${index}`}
               place="top"
-              style={{ zIndex: 50 }}
+              style={{ zIndex: 50, isolation: 'isolate' }}
             />
           </div>
         ))}

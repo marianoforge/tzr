@@ -217,6 +217,8 @@ const LoginForm = () => {
             <Button
               type="submit"
               className="bg-mediumBlue hover:bg-mediumBlue/90 text-white py-2 px-4 rounded-md w-[200px] text-sm"
+              id="loginButton"
+              data-testid="login-button"
             >
               Iniciar Sesión con Email
             </Button>
