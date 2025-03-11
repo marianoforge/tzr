@@ -156,5 +156,5 @@ export const PRICE_ID_STARTER = 'price_1Qn5iDLhJiHtNGWdsVzCqlFu';
 // export const PRICE_ID_STARTER = 'price_1Qn6Q8LhJiHtNGWduNjGOhSh';
 export const PRICE_ID_STARTER_ANNUAL = 'price_1Qn5iDLhJiHtNGWd3msRL7uN';
 export const PRICE_ID_GROWTH = 'price_1Qn5lOLhJiHtNGWdBb9xAuEG';
-export const PRICE_ID_GROWTH_ANNUAL = 'price_1Qn5lOLhJiHtNGWdU1JlwL28';
+export const PRICE_ID_GROWTH_ANNUAL = 'price_1R1WyqLhJiHtNGWdD45qBTqH';
 export const PRICE_ID_ENTERPRISE = '';
