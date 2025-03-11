@@ -51,6 +51,7 @@
     "react-calendar": "^5.0.0",
     "react-chatbot-kit": "^2.2.2",
     "react-dom": "^18",
+    "react-floating-whatsapp": "^5.0.8",
     "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "^7.53.0",
     "react-loading-skeleton": "^3.5.0",
