@@ -140,8 +140,9 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   }, [
     watch('porcentaje_punta_compradora'),
     watch('porcentaje_punta_vendedora'),
+    setPorcentajeHonorariosBroker,
+    watch,
   ]);
-
   const mutation = useMutation({
     mutationFn: updateOperation,
     onSuccess: () => {
@@ -179,10 +180,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       ? selectedUserAdicional.uid
       : null;
 
-    const { honorariosBroker, honorariosAsesor } = calculateHonorarios(
+    // Calcular los honorarios del broker basados en el valor de reserva y el porcentaje actualizado
+    const honorarios_broker = data.valor_reserva
+      ? data.valor_reserva * (porcentajeHonorariosBroker / 100)
+      : 0;
+
+    const { honorariosAsesor } = calculateHonorarios(
       data.valor_reserva,
       data.porcentaje_honorarios_asesor || 0,
-      data.porcentaje_honorarios_broker || 0,
+      porcentajeHonorariosBroker || 0,
       data.porcentaje_compartido || 0,
       data.porcentaje_referido || 0
     );
@@ -203,52 +209,26 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
     const payload = {
       ...data,
-      honorarios_broker: honorariosBroker,
+      honorarios_broker: honorarios_broker, // Usar el valor calculado con el porcentaje actualizado
       honorarios_asesor: honorariosAsesor,
       user_uid: selectedUser_id,
       user_uid_adicional: selectedUser_idAdicional,
-      pais: addressData.country,
-      numero_casa: addressData.houseNumber,
-      direccion_reserva: addressData.address,
-      localidad_reserva: addressData.city,
-      provincia_reserva: addressData.province,
+      pais: addressData.country || undefined,
+      numero_casa: addressData.houseNumber || undefined,
+      direccion_reserva: addressData.address || undefined,
+      localidad_reserva: addressData.city || undefined,
+      provincia_reserva: addressData.province || undefined,
       reparticion_honorarios_asesor:
         data.reparticion_honorarios_asesor ?? undefined,
       fecha_operacion: fechaOperacion,
       fecha_reserva: fechaReserva,
       fecha_captacion: fechaCaptacion,
-    };
-
-    // Ensure realizador_venta is not null before submitting
-    const sanitizedPayload = {
-      ...payload,
-      realizador_venta: realizador_venta ?? '',
-      realizador_venta_adicional: showAdditionalAdvisor
-        ? payload.realizador_venta_adicional
-        : undefined,
-      porcentaje_honorarios_asesor_adicional: showAdditionalAdvisor
-        ? payload.porcentaje_honorarios_asesor_adicional
-        : undefined,
-      user_uid_adicional: showAdditionalAdvisor
-        ? selectedUser_idAdicional
-        : null,
+      porcentaje_honorarios_broker: porcentajeHonorariosBroker,
+      realizador_venta: realizador_venta || undefined,
       porcentaje_honorarios_asesor:
-        payload.porcentaje_honorarios_asesor ?? undefined,
-      reparticion_honorarios_asesor:
-        payload.reparticion_honorarios_asesor ?? undefined,
-      localidad_reserva: payload.localidad_reserva || undefined,
-      provincia_reserva: payload.provincia_reserva || undefined,
-      pais: payload.pais || undefined,
-      numero_casa: payload.numero_casa || undefined,
-      direccion_reserva: payload.direccion_reserva || undefined,
-      fecha_operacion:
-        payload.fecha_operacion !== undefined ? payload.fecha_operacion : '',
-      fecha_captacion:
-        payload.fecha_captacion !== undefined ? payload.fecha_captacion : '',
-      fecha_reserva:
-        payload.fecha_reserva !== undefined ? payload.fecha_reserva : '',
+        data.porcentaje_honorarios_asesor || undefined,
     };
-    mutation.mutate({ id: operation.id, data: sanitizedPayload });
+    mutation.mutate({ id: operation.id, data: payload });
   };
 
   const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
@@ -260,11 +240,14 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg font-bold w-[90%] lg:w-[80%] xl:w-[40%] max-h-[80vh] overflow-y-auto flex flex-col">
-        <h2 className="text-2xl font-bold mb-4 text-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg font-bold w-[90%] lg:w-[80%] xl:w-[40%] max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4 text-center top-0 bg-white pt-2 z-10">
           Editar Operación
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4 overflow-y-auto"
+        >
           <Input
             label="Fecha de Captación / Publicación"
             type="date"
