@@ -10,7 +10,7 @@ export default function ChatHelper() {
   const [showChat, setShowChat] = useState(false);
 
   return (
-    <div className="fixed bottom-20 left-6 flex flex-col items-start z-50 isolate">
+    <div className="fixed bottom-20 right-6 flex flex-col items-start z-50 isolate">
       {/* Chatbot Container */}
       <div
         className={`transition-all duration-300 transform ${
