@@ -1,4 +1,4 @@
-import { OperationStatus, OperationType } from '@/common/enums';
+import { OperationStatus, OperationType, TipodeVentas } from '@/common/enums';
 
 export const months = [
   'Ene',
@@ -55,6 +55,16 @@ export const operationTypes = [
     value: OperationType.LOTES_PARA_DESARROLLOS,
     label: 'Lotes Para Desarrollos',
   },
+];
+
+export const propertyTypes = [
+  { value: TipodeVentas.CASA, label: 'Casa' },
+  { value: TipodeVentas.PH, label: 'PH' },
+  { value: TipodeVentas.DEPARTAMENTOS, label: 'Departamentos' },
+  { value: TipodeVentas.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
+  { value: TipodeVentas.OFICINAS, label: 'Oficinas' },
+  { value: TipodeVentas.NAVE_INDUSTRIAL, label: 'Naves Industriales' },
+  { value: TipodeVentas.OTRO, label: 'Otro' },
 ];
 
 export const yearsFilter = [

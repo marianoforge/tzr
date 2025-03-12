@@ -170,6 +170,9 @@ const OperationsCarousel: React.FC = () => {
                     {operacion.tipo_operacion}
                   </p>
                   <p>
+                    <strong>Tipo de Inmueble:</strong> {operacion.tipo_inmueble}
+                  </p>
+                  <p>
                     <strong>Valor Reserva / Cierre</strong> $
                     {formatNumber(operacion.valor_reserva)}
                   </p>

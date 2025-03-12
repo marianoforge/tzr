@@ -13,7 +13,7 @@ import { updateOperation } from '@/lib/api/operationsApi';
 import { TeamMember, UserData } from '@/common/types/';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { operationTypes } from '@/lib/data';
+import { operationTypes, propertyTypes } from '@/lib/data';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import AddressAutocompleteManual from '@/components/PrivateComponente/PlacesComponents/AddressAutocomplete';
 import { UserRole } from '@/common/enums';
@@ -290,6 +290,14 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             register={register}
             name="tipo_operacion"
             error={errors.tipo_operacion?.message}
+          />
+
+          <Select
+            label="Tipo de Inmueble"
+            options={propertyTypes}
+            register={register}
+            name="tipo_inmueble"
+            error={errors.tipo_inmueble?.message}
           />
 
           <label className="font-semibold text-mediumBlue">

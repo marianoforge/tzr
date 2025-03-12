@@ -135,3 +135,13 @@ export enum ExpenseType {
   SERVICIOS_OFICINA = 'Servicios de Oficina',
   OTROS = 'Otros',
 }
+
+export enum TipodeVentas {
+  CASA = 'Casa',
+  PH = 'PH',
+  DEPARTAMENTOS = 'Departamentos',
+  LOCALES_COMERCIALES = 'Locales Comerciales',
+  OFICINAS = 'Oficinas',
+  NAVE_INDUSTRIAL = 'Naves Industriales',
+  OTRO = 'Otro',
+}
