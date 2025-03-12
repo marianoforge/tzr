@@ -124,6 +124,8 @@ const FormularioExpenses: React.FC = () => {
             placeholder="1000000"
             {...register('amount')}
             marginBottom="mb-8"
+            showTooltip={true}
+            tooltipContent="Ingrese el monto total del gasto en moneda Local"
           />
           {errors.amount && (
             <p className="text-red-500 mb-4 -mt-8">{errors.amount.message}</p>
@@ -137,6 +139,8 @@ const FormularioExpenses: React.FC = () => {
                 placeholder="1250"
                 {...register('dollarRate')}
                 marginBottom="mb-8"
+                showTooltip={true}
+                tooltipContent="Ingrese la cotización del dólar en el momento del gasto si sus gastos estan en moneda local y las operaciones en dolares. Si sus gastos estan en dolares, solo ponga 1"
               />
               {errors.dollarRate && (
                 <p className="text-red-500 mb-4 -mt-8">
