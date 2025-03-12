@@ -29,11 +29,9 @@ export enum OperationType {
   COCHERA = 'Cochera',
   ALQUILER_TEMPORAL = 'Alquiler Temporal',
   ALQUILER_COMERCIAL = 'Alquiler Comercial',
-  LOCALES_COMERCIALES = 'Locales Comerciales',
   FONDO_DE_COMERCIO = 'Fondo de Comercio',
   DESARROLLO = 'Desarrollo',
   LOTEAMIENTO = 'Loteamiento',
-  NAVES_INDUSTRIALES = 'Naves Industriales',
   LOTES_PARA_DESARROLLOS = 'Lotes Para Desarrollos',
 }
 

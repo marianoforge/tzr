@@ -48,9 +48,7 @@ export const operationTypes = [
     label: 'Desarrollo Inmobiliario',
   },
   { value: OperationType.COCHERA, label: 'Cochera' },
-  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
   { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
-  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
   {
     value: OperationType.LOTES_PARA_DESARROLLOS,
     label: 'Lotes Para Desarrollos',
@@ -95,9 +93,7 @@ export const operationVentasTypeFilter = [
     label: 'Desarrollo Inmobiliario',
   },
   { value: OperationType.COCHERA, label: 'Cochera' },
-  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
   { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
-  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
   {
     value: OperationType.LOTES_PARA_DESARROLLOS,
     label: 'Lotes Para Desarrollos',
