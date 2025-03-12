@@ -163,7 +163,6 @@ const averageDaysToSell = (operations: Operation[]) => {
     : 0;
 };
 
-// Calculo de honorarios basado en el valor de reserva y porcentajes
 export const calculateHonorarios = (
   valor_reserva: number,
   porcentaje_honorarios_asesor: number,
@@ -171,24 +170,18 @@ export const calculateHonorarios = (
   porcentaje_compartido: number,
   porcentaje_referido: number
 ) => {
-  //HONORARIOS BROKER
-  const porcentaje_honorarios_broker_comp =
-    valor_reserva * (porcentaje_honorarios_broker - porcentaje_compartido);
-
   const porcentaje_honorarios_broker_normal =
     valor_reserva * porcentaje_honorarios_broker;
 
   let honorariosBroker = porcentaje_honorarios_broker_normal;
 
+  // Aplicar descuentos de forma más DRY
   if (porcentaje_compartido) {
-    honorariosBroker = porcentaje_honorarios_broker_comp / 100;
-  } else {
-    honorariosBroker = porcentaje_honorarios_broker_normal / 100;
+    honorariosBroker -= (honorariosBroker * porcentaje_compartido) / 100;
   }
 
   if (porcentaje_referido) {
-    honorariosBroker =
-      honorariosBroker - (honorariosBroker * porcentaje_referido) / 100;
+    honorariosBroker -= (honorariosBroker * porcentaje_referido) / 100;
   }
 
   //HONORARIOS ASESOR
