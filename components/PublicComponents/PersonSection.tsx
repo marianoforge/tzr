@@ -23,15 +23,17 @@ const PersonSection = () => {
             </div>
             <div className="flex flex-col mb-10 sm:mb-60 lg:mb-20 lg:mt-10 md:items-start lg:w-full w-[full] md:w-1/2 items-center">
               <p className="text-[18px] text-white mb-1">Gustavo De Simone</p>
-              <p className=" w-[300px] mb-1 sm:w-full text-sm bg-gradient-to-r from-[#fff1be]  via-[#ee87cb] bg-clip-text  to-[#b060ff] text-transparent">
-                CEO de Gustavo De Simone Soluciones Inmobiliarias, Buenos Aires
-                - Argentina
+              <p className=" w-[300px] mb-1 sm:w-full text-sm text-white">
+                <span className="text-xl pt-2">🇦🇷</span> CEO de Gustavo De
+                Simone Soluciones Inmobiliarias, Buenos Aires - Argentina
               </p>
-              <p className=" w-[300px] mb-1 sm:w-full text-sm bg-gradient-to-r from-[#fff1be]  via-[#ee87cb] bg-clip-text  to-[#b060ff] text-transparent">
-                CEO ULTRA Real Estate, Asunción - Paraguay
+              <p className=" w-[300px] mb-1 sm:w-full text-sm  text-white text-transparent">
+                <span className="text-xl">🇵🇾</span> CEO ULTRA Real Estate,
+                Asunción - Paraguay
               </p>
-              <p className=" w-[300px] sm:w-full text-sm bg-gradient-to-r from-[#fff1be]  via-[#ee87cb] bg-clip-text  to-[#b060ff] text-transparent">
-                Broker Owner Remax, Lima - Perú
+              <p className=" w-[300px] sm:w-full text-sm text-white">
+                <span className="text-xl">🇵🇪</span> Broker Owner Re/Max
+                Almafuerte, Lima - Perú
               </p>
             </div>
           </div>

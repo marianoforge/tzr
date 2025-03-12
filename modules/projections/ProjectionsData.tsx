@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQuery } from '@tanstack/react-query';
 
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
-import { calculateTotals } from '@/common/utils/calculations';
-import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
@@ -45,11 +43,7 @@ const schema = yup.object().shape({
 });
 
 const ProjectionsData = ({ userId }: { userId: string }) => {
-  const {
-    data: operations = [],
-    isLoading,
-    error,
-  } = useQuery({
+  const { isLoading, error } = useQuery({
     queryKey: ['operations', userId],
     queryFn: () => fetchUserOperations(userId),
     enabled: !!userId,
@@ -59,31 +53,11 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
     console.error('Error fetching operations:', error);
   }
 
-  const currentYear = new Date().getFullYear();
-
-  const totals = calculateTotals(
-    currentYearOperations(operations, currentYear)
-  );
-
-  const ticketPromedio = (
-    (totals.valor_reserva_cerradas ?? 0) / (totals.cantidad_operaciones ?? 1)
-  ).toFixed(2);
-
-  const promedioHonorariosNetos = (
-    ((totals.honorarios_asesor_cerradas ?? 0) / (totals.valor_reserva ?? 1)) *
-    100
-  ).toFixed(2);
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm({
+  const { handleSubmit } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      ticketPromedio: 0,
-      promedioHonorariosNetos: 0,
+      ticketPromedio: 5000,
+      promedioHonorariosNetos: 3,
       efectividad: 15,
     },
   });
@@ -91,15 +65,10 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
   const semanasDelAno = 52;
 
   const [formData, setFormData] = useState({
-    ticketPromedio: 0,
-    promedioHonorariosNetos: 0,
-    efectividad: 0,
+    ticketPromedio: 75000,
+    promedioHonorariosNetos: 3,
+    efectividad: 15,
   });
-
-  useEffect(() => {
-    setValue('ticketPromedio', Number(ticketPromedio));
-    setValue('promedioHonorariosNetos', Number(promedioHonorariosNetos));
-  }, [ticketPromedio, promedioHonorariosNetos, setValue]);
 
   const onSubmit = (
     data: React.SetStateAction<{
@@ -126,56 +95,53 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
         <form className="flex flex-col items-center">
           <div className="flex flex-col w-full mb-8">
             <h2 className=" font-bold mb-4">
-              Edita tus números para ver distintas proyecciones
+              Edita los números para ver distintos escenarios
             </h2>
             <div className="flex flex-col w-full  items-center">
-              <Controller
-                name="ticketPromedio"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    label="Ticket Promedio"
-                    type="number"
-                    className="w-[240px] max-w-[240px] min-w-[240px]"
-                    labelSize="text-sm"
-                    {...field}
-                    error={errors.ticketPromedio?.message}
-                    showTooltip={true}
-                    tooltipContent="Cálculo del ticket promedio de las operaciones cerradas en el año."
-                  />
-                )}
+              <Input
+                label="Ticket Promedio"
+                type="number"
+                className="w-[240px] max-w-[240px] min-w-[240px]"
+                labelSize="text-sm"
+                value={formData.ticketPromedio}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    ticketPromedio: Number(e.target.value),
+                  })
+                }
+                showTooltip={true}
+                tooltipContent="Cálculo del ticket promedio de las operaciones cerradas en el año."
               />
-              <Controller
-                name="promedioHonorariosNetos"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    label="Promedio en % de honorarios netos"
-                    type="number"
-                    className="w-[240px] max-w-[240px] min-w-[240px]"
-                    labelSize="text-sm"
-                    {...field}
-                    error={errors.promedioHonorariosNetos?.message}
-                    showTooltip={true}
-                    tooltipContent="Cálculo del porcentaje promedio de los honorarios netos de las operaciones cerradas en el año."
-                  />
-                )}
+              <Input
+                label="Promedio en % de honorarios netos"
+                type="number"
+                className="w-[240px] max-w-[240px] min-w-[240px]"
+                labelSize="text-sm"
+                value={formData.promedioHonorariosNetos}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    promedioHonorariosNetos: Number(e.target.value),
+                  })
+                }
+                showTooltip={true}
+                tooltipContent="Cálculo del porcentaje promedio de los honorarios netos de las operaciones cerradas en el año."
               />
-              <Controller
-                name="efectividad"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    label="Efectividad (%)"
-                    type="number"
-                    className="w-[240px] max-w-[240px] min-w-[240px]"
-                    labelSize="text-sm"
-                    {...field}
-                    error={errors.efectividad?.message}
-                    showTooltip={true}
-                    tooltipContent="Segun estadísticas de la industria, el asesor inmobiliario promedio tiene cerca de 15% de efectividad. Los asesores mas experimentados pueden llegar a alcanzar un 35% de efectividad."
-                  />
-                )}
+              <Input
+                label="Efectividad (%)"
+                type="number"
+                className="w-[240px] max-w-[240px] min-w-[240px]"
+                labelSize="text-sm"
+                value={formData.efectividad}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    efectividad: Number(e.target.value),
+                  })
+                }
+                showTooltip={true}
+                tooltipContent="Segun estadísticas de la industria, el asesor inmobiliario promedio tiene cerca de 15% de efectividad. Los asesores mas experimentados pueden llegar a alcanzar un 35% de efectividad."
               />
               <Input
                 label="Semanas del Año"

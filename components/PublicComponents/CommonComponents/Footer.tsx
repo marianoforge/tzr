@@ -54,17 +54,21 @@ const Footer = () => {
             </div>
             <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
               <h5 className="mt-1 mb-6 text-slate-300">Contacto</h5>
-              <a
-                href="mailto:info@realtortrackpro.com"
-                className="hover:underline mb-3"
-              >
-                info@realtortrackpro.com
+
+              <a href="tel:+5491130411111" className="hover:underline mb-2">
+                Argentina: +54 9 11 6676-6615
               </a>
               <a href="tel:+34637017737" className="hover:underline mb-2">
                 España: +34 637 01 7737
               </a>
               <a href="tel:+14077511733" className="hover:underline mb-4">
                 USA: +1 (407) 751-1733
+              </a>
+              <a
+                href="mailto:info@realtortrackpro.com"
+                className="hover:underline mb-3"
+              >
+                info@realtortrackpro.com
               </a>
             </div>
             <div className="flex flex-col justify-center md:justify-start h-auto items-center md:items-start text-white">
@@ -75,7 +79,15 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="hover:underline mb-3"
               >
-                España: Carrer De L&apos;argenter Suarez 4 - Apto 1
+                Argentina: Avda. Cabildo 3950, Piso 13, CABA 1602
+              </a>
+              <a
+                href="https://www.google.com/maps?q=Carrer+De+L%27argenter+Suarez+4+-+Apto+1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline mb-3"
+              >
+                España: Carrer De L&apos;argenter Suarez 4, Valencia 46009
               </a>
               <a
                 href="https://www.google.com/maps?q=8330+SW+12th+Street,+Pembroke+Pines,+FL+33025"
