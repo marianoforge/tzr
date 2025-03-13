@@ -1,4 +1,4 @@
-import { OperationStatus, OperationType } from '@/common/enums';
+import { OperationStatus, OperationType, TipodeVentas } from '@/common/enums';
 
 export const months = [
   'Ene',
@@ -48,13 +48,22 @@ export const operationTypes = [
     label: 'Desarrollo Inmobiliario',
   },
   { value: OperationType.COCHERA, label: 'Cochera' },
-  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
   { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
-  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
   {
     value: OperationType.LOTES_PARA_DESARROLLOS,
     label: 'Lotes Para Desarrollos',
   },
+];
+
+export const propertyTypes = [
+  { value: '', label: 'Selecciona el Tipo de Inmueble' },
+  { value: TipodeVentas.CASA, label: 'Casa' },
+  { value: TipodeVentas.PH, label: 'PH' },
+  { value: TipodeVentas.DEPARTAMENTOS, label: 'Departamentos' },
+  { value: TipodeVentas.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
+  { value: TipodeVentas.OFICINAS, label: 'Oficinas' },
+  { value: TipodeVentas.NAVE_INDUSTRIAL, label: 'Naves Industriales' },
+  { value: TipodeVentas.OTRO, label: 'Otro' },
 ];
 
 export const yearsFilter = [
@@ -85,9 +94,7 @@ export const operationVentasTypeFilter = [
     label: 'Desarrollo Inmobiliario',
   },
   { value: OperationType.COCHERA, label: 'Cochera' },
-  { value: OperationType.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
   { value: OperationType.LOTEAMIENTO, label: 'Loteamiento' },
-  { value: OperationType.NAVES_INDUSTRIALES, label: 'Naves Industriales' },
   {
     value: OperationType.LOTES_PARA_DESARROLLOS,
     label: 'Lotes Para Desarrollos',

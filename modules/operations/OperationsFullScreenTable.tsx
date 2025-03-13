@@ -56,7 +56,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
 
           <p>
-            <span className="font-semibold">Operación:</span>{' '}
+            <span className="font-semibold">Dirección:</span>{' '}
             {displayValue(operation.direccion_reserva)}
           </p>
           <p>
@@ -79,6 +79,10 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           <p>
             <span className="font-semibold">Tipo: </span>
             {displayValue(operation.tipo_operacion)}
+          </p>
+          <p>
+            <span className="font-semibold">Tipo de Inmueble: </span>
+            {displayValue(operation.tipo_inmueble)}
           </p>
           <p>
             <span className="font-semibold">Valor Reserva / Cierre: </span> $

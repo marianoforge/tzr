@@ -29,11 +29,9 @@ export enum OperationType {
   COCHERA = 'Cochera',
   ALQUILER_TEMPORAL = 'Alquiler Temporal',
   ALQUILER_COMERCIAL = 'Alquiler Comercial',
-  LOCALES_COMERCIALES = 'Locales Comerciales',
   FONDO_DE_COMERCIO = 'Fondo de Comercio',
   DESARROLLO = 'Desarrollo',
   LOTEAMIENTO = 'Loteamiento',
-  NAVES_INDUSTRIALES = 'Naves Industriales',
   LOTES_PARA_DESARROLLOS = 'Lotes Para Desarrollos',
 }
 
@@ -134,4 +132,14 @@ export enum ExpenseType {
   EXPENSAS = 'Expensas',
   SERVICIOS_OFICINA = 'Servicios de Oficina',
   OTROS = 'Otros',
+}
+
+export enum TipodeVentas {
+  CASA = 'Casa',
+  PH = 'PH',
+  DEPARTAMENTOS = 'Departamentos',
+  LOCALES_COMERCIALES = 'Locales Comerciales',
+  OFICINAS = 'Oficinas',
+  NAVE_INDUSTRIAL = 'Naves Industriales',
+  OTRO = 'Otro',
 }
