@@ -171,7 +171,7 @@ export const calculateHonorarios = (
   porcentaje_referido: number
 ) => {
   const porcentaje_honorarios_broker_normal =
-    valor_reserva * porcentaje_honorarios_broker;
+    valor_reserva * (porcentaje_honorarios_broker / 100);
 
   let honorariosBroker = porcentaje_honorarios_broker_normal;
 
