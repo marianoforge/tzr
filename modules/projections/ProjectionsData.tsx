@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -8,6 +8,7 @@ import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
+import { useProjectionData } from '@/common/hooks/useProjectionData';
 
 import ProjectionsObjetive from './ProjectionsObjetive';
 
@@ -43,14 +44,14 @@ const schema = yup.object().shape({
 });
 
 const ProjectionsData = ({ userId }: { userId: string }) => {
-  const { isLoading, error } = useQuery({
+  const { isLoading: isLoadingOperations, error: operationsError } = useQuery({
     queryKey: ['operations', userId],
     queryFn: () => fetchUserOperations(userId),
     enabled: !!userId,
   });
 
-  if (error) {
-    console.error('Error fetching operations:', error);
+  if (operationsError) {
+    console.error('Error fetching operations:', operationsError);
   }
 
   const { handleSubmit } = useForm({
@@ -70,6 +71,34 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
     efectividad: 15,
   });
 
+  // Necesitamos un estado para almacenar el valor de objetivoHonorariosAnuales
+  const [objetivoHonorariosAnuales, setObjetivoHonorariosAnuales] = useState(0);
+
+  // Usar nuestro hook personalizado
+  const { saveProjection, loadProjection } = useProjectionData();
+
+  // Estado para controlar el mensaje de éxito
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  // Cargar datos guardados cuando el componente se monta
+  useEffect(() => {
+    if (loadProjection.data && !loadProjection.isLoading) {
+      const savedData = loadProjection.data;
+
+      // Actualizar formData con los datos guardados
+      setFormData({
+        ticketPromedio: savedData.ticketPromedio || 75000,
+        promedioHonorariosNetos: savedData.promedioHonorariosNetos || 3,
+        efectividad: savedData.efectividad || 15,
+      });
+
+      // Actualizar objetivoHonorariosAnuales
+      if (savedData.objetivoHonorariosAnuales) {
+        setObjetivoHonorariosAnuales(savedData.objetivoHonorariosAnuales);
+      }
+    }
+  }, [loadProjection.data, loadProjection.isLoading]);
+
   const onSubmit = (
     data: React.SetStateAction<{
       ticketPromedio: number;
@@ -79,13 +108,71 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
   ) => {
     setFormData(data);
   };
-  if (isLoading) {
+
+  // Función para manejar el guardado de la proyección
+  const handleSave = () => {
+    const esValido =
+      objetivoHonorariosAnuales > 0 &&
+      formData.promedioHonorariosNetos > 0 &&
+      formData.efectividad > 0 &&
+      formData.ticketPromedio > 0;
+
+    const volumenAFacturar = esValido
+      ? objetivoHonorariosAnuales / (formData.promedioHonorariosNetos / 100)
+      : 0;
+
+    const totalPuntasCierres = esValido
+      ? Number(volumenAFacturar) / formData.ticketPromedio
+      : 0;
+
+    const totalPuntasCierresAnuales = esValido
+      ? (Number(totalPuntasCierres) / formData.efectividad) * 100
+      : 0;
+
+    const totalPuntasCierresSemanales = esValido
+      ? Number(totalPuntasCierresAnuales) / semanasDelAno
+      : 0;
+
+    // Datos a guardar
+    const dataToSave = {
+      ticketPromedio: formData.ticketPromedio,
+      promedioHonorariosNetos: formData.promedioHonorariosNetos,
+      efectividad: formData.efectividad,
+      semanasDelAno,
+      objetivoHonorariosAnuales,
+      volumenAFacturar,
+      totalPuntasCierres,
+      totalPuntasCierresAnuales,
+      totalPuntasCierresSemanales,
+    };
+
+    // Guardar los datos usando nuestro hook
+    saveProjection.mutate(dataToSave, {
+      onSuccess: () => {
+        // Mostrar el mensaje de éxito
+        setShowSuccessMessage(true);
+        // Ocultar el mensaje después de 3 segundos
+        setTimeout(() => {
+          setShowSuccessMessage(false);
+        }, 3000);
+      },
+      onError: (error) => {
+        console.error('Error al guardar la proyección:', error);
+        // Asegurarse de que el mensaje de éxito no se muestre en caso de error
+        setShowSuccessMessage(false);
+      },
+    });
+  };
+
+  // Mostrar un loader mientras se cargan los datos
+  if (isLoadingOperations || loadProjection.isLoading) {
     return (
       <div className="w-full">
         <SkeletonLoader height={60} count={10} />
       </div>
     );
   }
+
   return (
     <div className="bg-white p-4  rounded-xl shadow-md flex flex-col items-center w-full">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center">
@@ -97,7 +184,7 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
             <h2 className=" font-bold mb-4">
               Edita los números para ver distintos escenarios
             </h2>
-            <div className="flex flex-col w-full  items-center">
+            <div className="flex flex-col w-full items-center">
               <Input
                 label="Ticket Promedio"
                 type="number"
@@ -149,10 +236,16 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
                 className="w-[240px] max-w-[240px] min-w-[240px]"
                 labelSize="text-sm"
                 disabled
+                marginBottom="mb-2"
                 value={semanasDelAno}
                 showTooltip={true}
                 tooltipContent="Si bien el año tiene 48 semanas, se calculan 52 ya que en Diciembre se empieza a trabajar posibles cierres del año siguiente"
               />
+              {showSuccessMessage && (
+                <div className=" text-green-600 font-medium text-sm bg-green-50 p-2 rounded-md border border-green-200 w-[240px] text-center">
+                  ¡Proyección Guardada con Éxito!
+                </div>
+              )}
             </div>
           </div>
         </form>
@@ -161,15 +254,24 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
           promedioHonorariosNetos={formData.promedioHonorariosNetos}
           efectividad={formData.efectividad}
           semanasDelAno={semanasDelAno}
+          onObjetivoChange={setObjetivoHonorariosAnuales}
+          initialObjetivoValue={objetivoHonorariosAnuales}
         />
       </div>
-      <div className="flex items-center mt-4 justify-center">
+      <div className="flex items-center mt-4 justify-center gap-4">
         <Button
           type="button"
           onClick={handleSubmit(onSubmit)}
           className="h-[42px] w-[200px] bg-mediumBlue text-white hover:bg-lightBlue transition-colors duration-300"
         >
           Calcular Proyección
+        </Button>
+        <Button
+          type="button"
+          onClick={handleSave}
+          className="h-[42px] w-[200px] bg-lightBlue text-white hover:bg-mediumBlue transition-colors duration-300"
+        >
+          Guardar Proyección
         </Button>
       </div>
       {/* <p className="text-gray-500 mt-4">By Métricas Pablo Viti - 2025</p> */}
