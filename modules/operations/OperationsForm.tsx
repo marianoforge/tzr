@@ -18,7 +18,7 @@ import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import Select from '@/components/PrivateComponente/FormComponents/Select';
 import { formatDateForUser } from '@/common/utils/formatDateForUser';
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
-import { operationTypes } from '@/lib/data';
+import { operationTypes, propertyTypes } from '@/lib/data';
 import { PATHS, QueryKeys, UserRole } from '@/common/enums';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import AddressAutocompleteManual from '@/components/PrivateComponente/PlacesComponents/AddressAutocomplete';
@@ -217,6 +217,7 @@ const OperationsForm = () => {
       porcentaje_punta_vendedora: data.porcentaje_punta_vendedora || 0,
       porcentaje_honorarios_broker: porcentajeHonorariosBroker,
       reparticion_honorarios_asesor: data.reparticion_honorarios_asesor || 0,
+      tipo_inmueble: data.tipo_inmueble,
     };
 
     mutation.mutate(dataToSubmit as unknown as Operation);
@@ -290,6 +291,22 @@ const OperationsForm = () => {
             />
             {errors.tipo_operacion && (
               <p className="text-red-500">{errors.tipo_operacion.message}</p>
+            )}
+
+            {watch('tipo_operacion') === 'Venta' && (
+              <>
+                <Select
+                  label="Tipo de Inmueble*"
+                  register={register}
+                  {...register('tipo_inmueble')}
+                  options={propertyTypes}
+                  className="w-full p-2 mb-8 border border-gray-300 rounded"
+                  required
+                />
+                {errors.tipo_inmueble && (
+                  <p className="text-red-500">{errors.tipo_inmueble.message}</p>
+                )}
+              </>
             )}
 
             <label className="font-semibold text-mediumBlue">

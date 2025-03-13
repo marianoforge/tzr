@@ -96,4 +96,5 @@ export const schema = yup.object().shape({
   pais: yup.string(),
   isFranchiseOrBroker: yup.number().nullable(),
   reparticion_honorarios_asesor: yup.number().nullable(),
+  tipo_inmueble: yup.string().nullable(),
 });

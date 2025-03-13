@@ -47,6 +47,7 @@ export interface Operation {
   exclusiva?: boolean;
   no_exclusiva?: boolean;
   fecha_reserva?: string;
+  tipo_inmueble?: string | null;
 }
 
 export interface EventFormData {
