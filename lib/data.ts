@@ -56,6 +56,7 @@ export const operationTypes = [
 ];
 
 export const propertyTypes = [
+  { value: '', label: 'Selecciona el Tipo de Inmueble' },
   { value: TipodeVentas.CASA, label: 'Casa' },
   { value: TipodeVentas.PH, label: 'PH' },
   { value: TipodeVentas.DEPARTAMENTOS, label: 'Departamentos' },
