@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -26,6 +26,8 @@ interface ProjectionsObjetiveProps {
   promedioHonorariosNetos: number;
   efectividad: number;
   semanasDelAno: number;
+  onObjetivoChange?: (value: number) => void;
+  initialObjetivoValue?: number;
 }
 
 const ProjectionsObjective = ({
@@ -33,17 +35,27 @@ const ProjectionsObjective = ({
   promedioHonorariosNetos,
   efectividad,
   semanasDelAno,
+  onObjetivoChange,
+  initialObjetivoValue = 0,
 }: ProjectionsObjetiveProps) => {
   const {
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      objetivoHonorariosAnuales: 0,
+      objetivoHonorariosAnuales: initialObjetivoValue,
     },
   });
+
+  // Actualizar el valor cuando cambia initialObjetivoValue
+  useEffect(() => {
+    if (initialObjetivoValue > 0) {
+      setValue('objetivoHonorariosAnuales', initialObjetivoValue);
+    }
+  }, [initialObjetivoValue, setValue]);
 
   const objetivoHonorariosAnuales = watch('objetivoHonorariosAnuales');
 
@@ -69,6 +81,13 @@ const ProjectionsObjective = ({
   const totalPuntasCierresSemanales = esValido
     ? Number(totalPuntasCierresAnuales) / semanasDelAno
     : 0;
+
+  // Observar cambios en objetivoHonorariosAnuales y notificar al padre
+  React.useEffect(() => {
+    if (onObjetivoChange) {
+      onObjetivoChange(objetivoHonorariosAnuales);
+    }
+  }, [objetivoHonorariosAnuales, onObjetivoChange]);
 
   return (
     <div className="flex flex-col w-full items-center">
