@@ -63,6 +63,7 @@ export const propertyTypes = [
   { value: TipodeVentas.LOCALES_COMERCIALES, label: 'Locales Comerciales' },
   { value: TipodeVentas.OFICINAS, label: 'Oficinas' },
   { value: TipodeVentas.NAVE_INDUSTRIAL, label: 'Naves Industriales' },
+  { value: TipodeVentas.TERRENOS, label: 'Terrenos' },
   { value: TipodeVentas.OTRO, label: 'Otro' },
 ];
 
