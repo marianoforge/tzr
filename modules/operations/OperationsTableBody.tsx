@@ -12,7 +12,7 @@ import { Operation, UserData } from '@/common/types/';
 import { formatDate } from '@/common/utils/formatDate';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { calculateNetFees } from '@/common/utils/calculateNetFees';
-
+import { calculateHonorarios } from '@/common/utils/calculations';
 interface OperationTotal {
   valor_reserva?: number;
   promedio_punta_compradora_porcentaje?: number;
@@ -115,7 +115,17 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
             )}
           </td>
           <td className="py-3 px-2 before:content-['Honorarios Agencia:'] md:before:content-none">
-            {`${currencySymbol}${formatNumber(operacion.honorarios_broker)}`}
+            {(() => {
+              const honorariosBroker = calculateHonorarios(
+                operacion.valor_reserva,
+                operacion.porcentaje_honorarios_asesor,
+                operacion.porcentaje_honorarios_broker,
+                operacion.porcentaje_compartido ?? 0,
+                operacion.porcentaje_referido ?? 0
+              ).honorariosBroker;
+
+              return `${currencySymbol}${formatNumber(honorariosBroker)}`;
+            })()}
           </td>
           <td className="py-3 px-2 before:content-['Honorarios Netos:'] md:before:content-none">
             {`${currencySymbol}${formatNumber(calculateNetFees(operacion, userData))}`}

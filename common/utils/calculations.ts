@@ -23,6 +23,13 @@ export const totalHonorariosTeamLead = (
     console.error('UserData is undefined');
     return 0;
   }
+  const baseHonorarios = calculateHonorarios(
+    operation.valor_reserva,
+    operation.porcentaje_honorarios_asesor,
+    operation.porcentaje_honorarios_broker,
+    operation.porcentaje_compartido ?? 0,
+    operation.porcentaje_referido ?? 0
+  ).honorariosBroker;
 
   const isTeamLeaderBroker = userRole === UserRole.TEAM_LEADER_BROKER;
 
@@ -35,18 +42,13 @@ export const totalHonorariosTeamLead = (
   const isReparticionHonorariosAsesor = operation.reparticion_honorarios_asesor;
 
   const franchiseDiscount =
-    (operation.honorarios_broker * (operation.isFranchiseOrBroker || 0)) / 100;
+    (baseHonorarios * (operation.isFranchiseOrBroker || 0)) / 100;
 
   const reparticionHonorariosAsesor =
-    (operation.honorarios_broker *
-      (operation.reparticion_honorarios_asesor || 0)) /
-    100;
+    (baseHonorarios * (operation.reparticion_honorarios_asesor || 0)) / 100;
 
   const asesorDiscount =
-    (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
-    100;
-
-  const baseHonorarios = operation.honorarios_broker;
+    (baseHonorarios * operation.porcentaje_honorarios_asesor) / 100;
 
   const promedioPorcentajesAsesores =
     ((operation.porcentaje_honorarios_asesor || 0) +
@@ -61,7 +63,7 @@ export const totalHonorariosTeamLead = (
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
         return baseHonorarios - reparticionHonorariosAsesor;
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return baseHonorarios - franchiseDiscount;
+        return baseHonorarios - franchiseDiscount - asesorDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return baseHonorarios - franchiseDiscount - reparticionHonorariosAsesor;
       }
@@ -173,18 +175,20 @@ export const calculateHonorarios = (
   const porcentaje_honorarios_broker_normal =
     valor_reserva * (porcentaje_honorarios_broker / 100);
 
-  let honorariosBroker = porcentaje_honorarios_broker_normal;
+  // Apply deductions based on the original amount
+  const compartidoDeduction = porcentaje_compartido
+    ? (porcentaje_honorarios_broker_normal * porcentaje_compartido) / 100
+    : 0;
 
-  // Aplicar descuentos de forma más DRY
-  if (porcentaje_compartido) {
-    honorariosBroker -= (honorariosBroker * porcentaje_compartido) / 100;
-  }
+  const referidoDeduction = porcentaje_referido
+    ? (porcentaje_honorarios_broker_normal * porcentaje_referido) / 100
+    : 0;
 
-  if (porcentaje_referido) {
-    honorariosBroker -= (honorariosBroker * porcentaje_referido) / 100;
-  }
+  const honorariosBroker =
+    porcentaje_honorarios_broker_normal -
+    compartidoDeduction -
+    referidoDeduction;
 
-  //HONORARIOS ASESOR
   const honorariosAsesor =
     (honorariosBroker * porcentaje_honorarios_asesor) / 100;
 
