@@ -161,9 +161,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
             </div>
             <h3 className="font-semibold text-mediumBlue text-base">
               {`Objetivo Anual de Ventas: $${formatNumber(
-                userData?.role === 'team_leader_broker'
-                  ? (totals.honorarios_broker_cerradas ?? 0)
-                  : (totals.honorarios_asesor_cerradas ?? 0)
+                totals.honorarios_broker_cerradas ?? 0
               )} / $${formatNumber(userData?.objetivoAnual ?? 0)}`}
             </h3>
           </>
