@@ -24,6 +24,14 @@ export const totalHonorariosTeamLead = (
     return 0;
   }
 
+  const baseHonorarios = calculateHonorarios(
+    operation.valor_reserva,
+    operation.porcentaje_honorarios_asesor,
+    operation.porcentaje_honorarios_broker,
+    operation.porcentaje_compartido ?? 0,
+    operation.porcentaje_referido ?? 0
+  ).honorariosBroker;
+
   const isTeamLeaderBroker = userRole === UserRole.TEAM_LEADER_BROKER;
 
   const hasUserUid = !!operation.user_uid;
@@ -35,18 +43,19 @@ export const totalHonorariosTeamLead = (
   const isReparticionHonorariosAsesor = operation.reparticion_honorarios_asesor;
 
   const franchiseDiscount =
-    (operation.honorarios_broker * (operation.isFranchiseOrBroker || 0)) / 100;
+    (baseHonorarios * (operation.isFranchiseOrBroker || 0)) / 100;
+
+  const baseHonorariosMenosFranchise = baseHonorarios - franchiseDiscount;
 
   const reparticionHonorariosAsesor =
-    (operation.honorarios_broker *
+    (baseHonorariosMenosFranchise *
       (operation.reparticion_honorarios_asesor || 0)) /
     100;
 
   const asesorDiscount =
-    (operation.honorarios_broker * operation.porcentaje_honorarios_asesor) /
+    ((baseHonorariosMenosFranchise - reparticionHonorariosAsesor) *
+      (operation.porcentaje_honorarios_asesor || 0)) /
     100;
-
-  const baseHonorarios = operation.honorarios_broker;
 
   const promedioPorcentajesAsesores =
     ((operation.porcentaje_honorarios_asesor || 0) +
@@ -168,23 +177,35 @@ export const calculateHonorarios = (
   porcentaje_honorarios_asesor: number,
   porcentaje_honorarios_broker: number,
   porcentaje_compartido: number,
-  porcentaje_referido: number
+  porcentaje_referido: number = 0,
+  porcentaje_franchise: number = 0,
+  porcentaje_reparticion_honorarios_asesor: number = 0
 ) => {
   const porcentaje_honorarios_broker_normal =
     valor_reserva * (porcentaje_honorarios_broker / 100);
 
   let honorariosBroker = porcentaje_honorarios_broker_normal;
 
-  // Aplicar descuentos de forma más DRY
+  // Aplicar descuento del compartido primero
   if (porcentaje_compartido) {
-    honorariosBroker -= (honorariosBroker * porcentaje_compartido) / 100;
+    honorariosBroker -= (valor_reserva * porcentaje_compartido) / 100;
   }
 
+  // Aplicar descuento del referido sobre el resultado final
   if (porcentaje_referido) {
     honorariosBroker -= (honorariosBroker * porcentaje_referido) / 100;
   }
 
-  //HONORARIOS ASESOR
+  if (porcentaje_franchise) {
+    honorariosBroker -= (honorariosBroker * porcentaje_franchise) / 100;
+  }
+
+  if (porcentaje_reparticion_honorarios_asesor) {
+    honorariosBroker -=
+      (honorariosBroker * porcentaje_reparticion_honorarios_asesor) / 100;
+  }
+
+  // HONORARIOS ASESOR
   const honorariosAsesor =
     (honorariosBroker * porcentaje_honorarios_asesor) / 100;
 
