@@ -24,7 +24,7 @@ export const totalHonorariosTeamLead = (
     return 0;
   }
 
-  const baseHonorarios = calculateHonorarios(
+  const honorariosBrutos = calculateHonorarios(
     operation.valor_reserva,
     operation.porcentaje_honorarios_asesor,
     operation.porcentaje_honorarios_broker,
@@ -43,9 +43,9 @@ export const totalHonorariosTeamLead = (
   const isReparticionHonorariosAsesor = operation.reparticion_honorarios_asesor;
 
   const franchiseDiscount =
-    (baseHonorarios * (operation.isFranchiseOrBroker || 0)) / 100;
+    (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
 
-  const baseHonorariosMenosFranchise = baseHonorarios - franchiseDiscount;
+  const baseHonorariosMenosFranchise = honorariosBrutos - franchiseDiscount;
 
   const reparticionHonorariosAsesor =
     (baseHonorariosMenosFranchise *
@@ -66,26 +66,28 @@ export const totalHonorariosTeamLead = (
   if (isTeamLeaderBroker) {
     if (!hasUserUid && !hasAdditionalUserUid) {
       if (!isFranchise && !isReparticionHonorariosAsesor) {
-        return baseHonorarios;
+        return honorariosBrutos;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
-        return baseHonorarios - reparticionHonorariosAsesor;
+        return honorariosBrutos - reparticionHonorariosAsesor;
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return baseHonorarios - franchiseDiscount;
+        return honorariosBrutos - franchiseDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
-        return baseHonorarios - franchiseDiscount - reparticionHonorariosAsesor;
+        return (
+          honorariosBrutos - franchiseDiscount - reparticionHonorariosAsesor
+        );
       }
     }
 
     if (hasUserUid && !hasAdditionalUserUid) {
       if (!isFranchise && !isReparticionHonorariosAsesor) {
-        return baseHonorarios - asesorDiscount;
+        return honorariosBrutos - asesorDiscount;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
-        return baseHonorarios - reparticionHonorariosAsesor - asesorDiscount;
+        return honorariosBrutos - reparticionHonorariosAsesor - asesorDiscount;
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return baseHonorarios - franchiseDiscount - asesorDiscount;
+        return honorariosBrutos - franchiseDiscount - asesorDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return (
-          baseHonorarios -
+          honorariosBrutos -
           franchiseDiscount -
           reparticionHonorariosAsesor -
           asesorDiscount
@@ -95,25 +97,27 @@ export const totalHonorariosTeamLead = (
 
     if (hasUserUid && hasAdditionalUserUid) {
       if (!isFranchise && !isReparticionHonorariosAsesor) {
-        return baseHonorarios - baseHonorarios * promedioPorcentajesAsesores;
+        return (
+          honorariosBrutos - honorariosBrutos * promedioPorcentajesAsesores
+        );
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
         return (
-          baseHonorarios -
+          honorariosBrutos -
           reparticionHonorariosAsesor -
-          baseHonorarios * promedioPorcentajesAsesores
+          honorariosBrutos * promedioPorcentajesAsesores
         );
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
         return (
-          baseHonorarios -
+          honorariosBrutos -
           franchiseDiscount -
-          baseHonorarios * promedioPorcentajesAsesores
+          honorariosBrutos * promedioPorcentajesAsesores
         );
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return (
-          baseHonorarios -
+          honorariosBrutos -
           franchiseDiscount -
           reparticionHonorariosAsesor -
-          baseHonorarios * promedioPorcentajesAsesores
+          honorariosBrutos * promedioPorcentajesAsesores
         );
       }
     }
