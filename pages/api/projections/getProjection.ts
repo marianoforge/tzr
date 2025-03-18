@@ -57,13 +57,14 @@ export default async function handler(
         '⚠️ No se encontraron datos de proyección para el usuario:',
         userID
       );
-      return res.status(404).json({ error: 'Projection data not found' });
+      // Return empty data with 200 status instead of 404
+      return res.status(200).json({ exists: false });
     }
 
     const data = doc.data();
 
     console.log('✅ Datos de proyección obtenidos correctamente.');
-    return res.status(200).json(data);
+    return res.status(200).json({ ...data, exists: true });
   } catch (error) {
     console.error('❌ Error en la API /api/projections/getProjection:', error);
     return res.status(500).json({ error: 'Internal server error' });

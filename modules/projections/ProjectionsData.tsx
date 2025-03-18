@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useQuery } from '@tanstack/react-query';
 
 import Input from '@/components/PrivateComponente/FormComponents/Input';
@@ -11,37 +8,6 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { useProjectionData } from '@/common/hooks/useProjectionData';
 
 import ProjectionsObjetive from './ProjectionsObjetive';
-
-const schema = yup.object().shape({
-  ticketPromedio: yup
-    .number()
-    .transform((value, originalValue) =>
-      typeof originalValue === 'string' && originalValue.trim() === ''
-        ? undefined
-        : value
-    )
-    .required('Ticket Promedio is required')
-    .positive('Must be positive'),
-  promedioHonorariosNetos: yup
-    .number()
-    .transform((value, originalValue) =>
-      typeof originalValue === 'string' && originalValue.trim() === ''
-        ? undefined
-        : value
-    )
-    .required('Promedio Honorarios Netos is required')
-    .positive('Must be positive'),
-  efectividad: yup
-    .number()
-    .transform((value, originalValue) =>
-      typeof originalValue === 'string' && originalValue.trim() === ''
-        ? undefined
-        : value
-    )
-    .required('Efectividad is required')
-    .min(0, 'Must be at least 0')
-    .max(100, 'Must be at most 100'),
-});
 
 const ProjectionsData = ({ userId }: { userId: string }) => {
   const { isLoading: isLoadingOperations, error: operationsError } = useQuery({
@@ -54,21 +20,19 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
     console.error('Error fetching operations:', operationsError);
   }
 
-  const { handleSubmit } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      ticketPromedio: 5000,
-      promedioHonorariosNetos: 3,
-      efectividad: 15,
-    },
-  });
-
   const semanasDelAno = 52;
 
   const [formData, setFormData] = useState({
     ticketPromedio: 75000,
     promedioHonorariosNetos: 3,
     efectividad: 15,
+  });
+
+  // For tracking input field state
+  const [inputValues, setInputValues] = useState({
+    ticketPromedio: '75000',
+    promedioHonorariosNetos: '3',
+    efectividad: '15',
   });
 
   // Necesitamos un estado para almacenar el valor de objetivoHonorariosAnuales
@@ -85,11 +49,22 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
     if (loadProjection.data && !loadProjection.isLoading) {
       const savedData = loadProjection.data;
 
+      const ticketPromedio = savedData.ticketPromedio || 75000;
+      const promedioHonorariosNetos = savedData.promedioHonorariosNetos || 3;
+      const efectividad = savedData.efectividad || 15;
+
       // Actualizar formData con los datos guardados
       setFormData({
-        ticketPromedio: savedData.ticketPromedio || 75000,
-        promedioHonorariosNetos: savedData.promedioHonorariosNetos || 3,
-        efectividad: savedData.efectividad || 15,
+        ticketPromedio,
+        promedioHonorariosNetos,
+        efectividad,
+      });
+
+      // Actualizar inputValues
+      setInputValues({
+        ticketPromedio: ticketPromedio.toString(),
+        promedioHonorariosNetos: promedioHonorariosNetos.toString(),
+        efectividad: efectividad.toString(),
       });
 
       // Actualizar objetivoHonorariosAnuales
@@ -98,16 +73,6 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
       }
     }
   }, [loadProjection.data, loadProjection.isLoading]);
-
-  const onSubmit = (
-    data: React.SetStateAction<{
-      ticketPromedio: number;
-      promedioHonorariosNetos: number;
-      efectividad: number;
-    }>
-  ) => {
-    setFormData(data);
-  };
 
   // Función para manejar el guardado de la proyección
   const handleSave = () => {
@@ -187,46 +152,88 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
             <div className="flex flex-col w-full items-center">
               <Input
                 label="Ticket Promedio"
-                type="number"
+                type="text"
                 className="w-[240px] max-w-[240px] min-w-[240px]"
                 labelSize="text-sm"
-                value={formData.ticketPromedio}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    ticketPromedio: Number(e.target.value),
-                  })
-                }
+                value={inputValues.ticketPromedio}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setInputValues({
+                    ...inputValues,
+                    ticketPromedio: val,
+                  });
+                  if (val === '') {
+                    // Empty field - set to 0 in the form data but keep input empty
+                    setFormData({
+                      ...formData,
+                      ticketPromedio: 0,
+                    });
+                  } else if (!isNaN(Number(val))) {
+                    // Valid number
+                    setFormData({
+                      ...formData,
+                      ticketPromedio: Number(val),
+                    });
+                  }
+                }}
                 showTooltip={true}
                 tooltipContent="Cálculo del ticket promedio de las operaciones cerradas en el año."
               />
               <Input
                 label="Promedio en % de honorarios netos"
-                type="number"
+                type="text"
                 className="w-[240px] max-w-[240px] min-w-[240px]"
                 labelSize="text-sm"
-                value={formData.promedioHonorariosNetos}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    promedioHonorariosNetos: Number(e.target.value),
-                  })
-                }
+                value={inputValues.promedioHonorariosNetos}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setInputValues({
+                    ...inputValues,
+                    promedioHonorariosNetos: val,
+                  });
+                  if (val === '') {
+                    // Empty field - set to 0 in the form data but keep input empty
+                    setFormData({
+                      ...formData,
+                      promedioHonorariosNetos: 0,
+                    });
+                  } else if (!isNaN(Number(val))) {
+                    // Valid number
+                    setFormData({
+                      ...formData,
+                      promedioHonorariosNetos: Number(val),
+                    });
+                  }
+                }}
                 showTooltip={true}
                 tooltipContent="Cálculo del porcentaje promedio de los honorarios netos de las operaciones cerradas en el año."
               />
               <Input
                 label="Efectividad (%)"
-                type="number"
+                type="text"
                 className="w-[240px] max-w-[240px] min-w-[240px]"
                 labelSize="text-sm"
-                value={formData.efectividad}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    efectividad: Number(e.target.value),
-                  })
-                }
+                value={inputValues.efectividad}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setInputValues({
+                    ...inputValues,
+                    efectividad: val,
+                  });
+                  if (val === '') {
+                    // Empty field - set to 0 in the form data but keep input empty
+                    setFormData({
+                      ...formData,
+                      efectividad: 0,
+                    });
+                  } else if (!isNaN(Number(val))) {
+                    // Valid number
+                    setFormData({
+                      ...formData,
+                      efectividad: Number(val),
+                    });
+                  }
+                }}
                 showTooltip={true}
                 tooltipContent="Segun estadísticas de la industria, el asesor inmobiliario promedio tiene cerca de 15% de efectividad. Los asesores mas experimentados pueden llegar a alcanzar un 35% de efectividad."
               />
@@ -261,7 +268,20 @@ const ProjectionsData = ({ userId }: { userId: string }) => {
       <div className="flex items-center mt-4 justify-center gap-4">
         <Button
           type="button"
-          onClick={handleSubmit(onSubmit)}
+          onClick={() => {
+            // Instead of using handleSubmit, directly update calculations
+            // This ensures we're using the current input values
+            const ticketPromedio = Number(inputValues.ticketPromedio) || 0;
+            const promedioHonorariosNetos =
+              Number(inputValues.promedioHonorariosNetos) || 0;
+            const efectividad = Number(inputValues.efectividad) || 0;
+
+            setFormData({
+              ticketPromedio,
+              promedioHonorariosNetos,
+              efectividad,
+            });
+          }}
           className="h-[42px] w-[200px] bg-mediumBlue text-white hover:bg-lightBlue transition-colors duration-300"
         >
           Calcular Proyección

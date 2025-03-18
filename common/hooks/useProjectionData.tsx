@@ -63,6 +63,22 @@ export const useProjectionData = () => {
           },
         }
       );
+
+      // If data doesn't exist, return default values
+      if (response.data && response.data.exists === false) {
+        return {
+          ticketPromedio: 75000,
+          promedioHonorariosNetos: 3,
+          efectividad: 15,
+          semanasDelAno: 52,
+          objetivoHonorariosAnuales: 0,
+          volumenAFacturar: 0,
+          totalPuntasCierres: 0,
+          totalPuntasCierresAnuales: 0,
+          totalPuntasCierresSemanales: 0,
+        };
+      }
+
       return response.data;
     },
     enabled: !!userID,
