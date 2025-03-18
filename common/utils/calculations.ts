@@ -23,6 +23,13 @@ export const totalHonorariosTeamLead = (
     console.error('UserData is undefined');
     return 0;
   }
+  const baseHonorarios = calculateHonorarios(
+    operation.valor_reserva,
+    operation.porcentaje_honorarios_asesor,
+    operation.porcentaje_honorarios_broker,
+    operation.porcentaje_compartido ?? 0,
+    operation.porcentaje_referido ?? 0
+  ).honorariosBroker;
 
   const baseHonorarios = calculateHonorarios(
     operation.valor_reserva,
@@ -45,6 +52,7 @@ export const totalHonorariosTeamLead = (
   const franchiseDiscount =
     (baseHonorarios * (operation.isFranchiseOrBroker || 0)) / 100;
 
+
   const baseHonorariosMenosFranchise = baseHonorarios - franchiseDiscount;
 
   const reparticionHonorariosAsesor =
@@ -56,6 +64,7 @@ export const totalHonorariosTeamLead = (
     ((baseHonorariosMenosFranchise - reparticionHonorariosAsesor) *
       (operation.porcentaje_honorarios_asesor || 0)) /
     100;
+
 
   const promedioPorcentajesAsesores =
     ((operation.porcentaje_honorarios_asesor || 0) +
@@ -70,7 +79,7 @@ export const totalHonorariosTeamLead = (
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
         return baseHonorarios - reparticionHonorariosAsesor;
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return baseHonorarios - franchiseDiscount;
+        return baseHonorarios - franchiseDiscount - asesorDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return baseHonorarios - franchiseDiscount - reparticionHonorariosAsesor;
       }
@@ -184,7 +193,11 @@ export const calculateHonorarios = (
   const porcentaje_honorarios_broker_normal =
     valor_reserva * (porcentaje_honorarios_broker / 100);
 
-  let honorariosBroker = porcentaje_honorarios_broker_normal;
+  // Apply deductions based on the original amount
+  const compartidoDeduction = porcentaje_compartido
+    ? (porcentaje_honorarios_broker_normal * porcentaje_compartido) / 100
+    : 0;
+
 
   // Aplicar descuento del compartido primero
   if (porcentaje_compartido) {
