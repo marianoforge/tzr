@@ -29,11 +29,11 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white pt-6 pb-10 px-12 rounded-lg w-[60%] 2xl:w-[50%]">
+      <div className="bg-white pt-6 px-12 rounded-lg w-[60%] 2xl:w-[50%] max-h-[90vh] flex flex-col">
         <h2 className="text-2xl text-mediumBlue font-bold mb-6">
           Ficha de la Operación
         </h2>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6 overflow-y-auto pb-6">
           <p>
             <span className="font-semibold">
               Fecha de Captación / Publicación:
@@ -178,14 +178,11 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {displayValue(operation.observaciones)}
           </p>
         </div>
-        <div
-          className="flex justify-center items-center
-        "
-        >
+        <div className="flex justify-center items-center py-4">
           <Button
             type="button"
             onClick={onClose}
-            className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-48 mt-10"
+            className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-48"
           >
             Cerrar
           </Button>
