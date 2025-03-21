@@ -174,6 +174,18 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             )}
           </p>
           <p>
+            <span className="font-semibold">
+              Reparticion Honorarios Asesor / Martillero / Otros:{' '}
+            </span>{' '}
+            {displayValue(operation.reparticion_honorarios_asesor)}%
+          </p>
+          <p>
+            <span className="font-semibold">
+              Porcentaje Destinado a Franquicia / Broker:{' '}
+            </span>{' '}
+            {displayValue(operation.isFranchiseOrBroker)}%
+          </p>
+          <p>
             <span className="font-semibold">Observaciones: </span>{' '}
             {displayValue(operation.observaciones)}
           </p>
