@@ -22,6 +22,12 @@ export default function Document() {
             __html: GTM_SCRIPT,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`,
+          }}
+        />
+        <script async src="https://r.wdfl.co/rw.js" data-rewardful="8ee8ed" />
         {/* <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
           strategy="beforeInteractive"

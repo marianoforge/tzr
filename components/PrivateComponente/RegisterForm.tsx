@@ -7,6 +7,13 @@ import Image from 'next/image';
 import { nanoid } from 'nanoid';
 import ReCAPTCHA from 'react-google-recaptcha';
 
+// Add rewardful declaration
+declare global {
+  interface Window {
+    rewardful?: (event: string, data: { email: string }) => void;
+  }
+}
+
 import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
@@ -124,7 +131,9 @@ const RegisterForm = () => {
           noUpdates,
         }),
       });
-
+      if (typeof window !== 'undefined' && window.rewardful && data.email) {
+        window.rewardful('convert', { email: data.email });
+      }
       if (!registerResponse.ok) {
         const errorData = await registerResponse.json();
         throw new Error(errorData.message || 'Error al registrar el usuario.');
