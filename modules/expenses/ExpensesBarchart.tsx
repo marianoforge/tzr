@@ -38,7 +38,7 @@ const CustomTooltip: React.FC<{
         <p className="intro">{`Monto en Dólares: ${currencySymbol}${formatNumber(
           payload[0].value
         )}`}</p>
-        <p className="intro">{`Monto en Pesos: AR${currencySymbol}
+        <p className="intro">{`Monto en Moneda Local: ${currencySymbol}
 ${formatNumber(payload[0].payload.amountInPesos)}`}</p>
       </div>
     );

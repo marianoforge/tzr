@@ -190,7 +190,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           Total
         </td>
         <td className="py-3 px-2 text-center">
-          ${formatNumber(Number(filteredTotals?.valor_reserva))}
+          {`${currencySymbol}${formatNumber(Number(filteredTotals?.valor_reserva))}`}
         </td>
         <td className="py-3 px-2 text-center">
           {filteredTotals?.promedio_punta_compradora_porcentaje !== undefined &&
@@ -258,7 +258,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           )}
         </td>
         <td className="py-3 px-2 text-center">
-          ${formatNumber(Number(filteredTotals?.honorarios_broker))}
+          {`${currencySymbol}${formatNumber(Number(filteredTotals?.honorarios_broker))}`}
         </td>
         <td className="py-3 px-2 text-center">
           {currentOperations.length > 0 ? (
