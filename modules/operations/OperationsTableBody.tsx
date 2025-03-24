@@ -258,7 +258,26 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           )}
         </td>
         <td className="py-3 px-2 text-center">
-          {`${currencySymbol}${formatNumber(Number(filteredTotals?.honorarios_broker))}`}
+          {(() => {
+            // Calcular la suma de honorarios_broker de todas las operaciones
+            const totalHonorariosBroker = currentOperations.reduce(
+              (total, op) => {
+                const honorariosBroker = calculateHonorarios(
+                  op.valor_reserva,
+                  op.porcentaje_honorarios_asesor,
+                  op.porcentaje_honorarios_broker,
+                  op.porcentaje_compartido ?? 0,
+                  op.porcentaje_referido ?? 0,
+                  op.isFranchiseOrBroker ?? 0
+                ).honorariosBroker;
+
+                return total + honorariosBroker;
+              },
+              0
+            );
+
+            return `${currencySymbol}${formatNumber(totalHonorariosBroker)}`;
+          })()}
         </td>
         <td className="py-3 px-2 text-center">
           {currentOperations.length > 0 ? (
