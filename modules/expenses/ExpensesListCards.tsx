@@ -20,6 +20,7 @@ import {
 } from '@/lib/api/expensesApi';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import { QueryKeys } from '@/common/enums';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 import ExpensesModal from './ExpensesModal';
 
@@ -38,7 +39,7 @@ const ExpensesListCards: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const { currencySymbol } = useUserCurrencySymbol(userUID || '');
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -146,7 +147,9 @@ const ExpensesListCards: React.FC = () => {
                   {new Date(expense.date).toLocaleDateString()}
                 </p>
                 <p>
-                  <strong>Monto en ARS:</strong> ${formatNumber(expense.amount)}
+                  <strong>Monto en Moneda Local:</strong>
+                  {currencySymbol}
+                  {formatNumber(expense.amount)}
                 </p>
                 <p>
                   <strong>Monto en Dólares:</strong> $

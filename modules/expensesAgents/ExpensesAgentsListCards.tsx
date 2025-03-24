@@ -4,7 +4,8 @@ import { ServerIcon } from '@heroicons/react/24/solid';
 
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
-import { Expense, ExpenseAgents } from '@/common/types/';
+import { ExpenseAgents } from '@/common/types/';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -12,6 +13,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import useFetchUserExpenses from '@/common/hooks/useFetchUserExpenses';
 import { formatDate } from '@/common/utils/formatDate';
+import { useAuthStore } from '@/stores/authStore';
 
 const ExpensesAgentsListCards: React.FC = () => {
   const settings = {
@@ -21,6 +23,9 @@ const ExpensesAgentsListCards: React.FC = () => {
     slidesToShow: 1,
     slidesToScroll: 2,
   };
+
+  const { userID } = useAuthStore();
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,7 +45,7 @@ const ExpensesAgentsListCards: React.FC = () => {
 
     usersWithExpenses.forEach((user: ExpenseAgents) => {
       // Filtrar los gastos del usuario
-      const filteredExpenses = user.expenses.filter((expense: Expense) => {
+      const filteredExpenses = user.expenses.filter(() => {
         const matchesSearch = `${user.firstname} ${user.lastname}`
           .toLowerCase()
           .includes(searchQuery.toLowerCase()); // Busca por nombre completo
@@ -118,7 +123,8 @@ const ExpensesAgentsListCards: React.FC = () => {
                   {`${user.firstname} ${user.lastname}`}
                 </p>
                 <p>
-                  <strong>Monto Total en ARS:</strong> $
+                  <strong>Monto Total en Moneda Local:</strong>
+                  {currencySymbol}
                   {formatNumber(user.totalInPesos)}
                 </p>
                 <p>

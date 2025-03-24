@@ -20,6 +20,7 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/common/types';
 import { formatNumber } from '@/common/utils/formatNumber';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 const generateData = (closedOperations: any, openOperations: any) => {
   const currentDate = new Date();
@@ -41,7 +42,12 @@ const generateData = (closedOperations: any, openOperations: any) => {
   });
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+  currencySymbol = '$',
+}: any) => {
   if (active && payload && payload.length) {
     const currentMonthIndex = new Date().getMonth();
     const labelMonthIndex = new Date(
@@ -64,7 +70,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         }}
       >
         <p className="label">{`Mes: ${label}`}</p>
-        <p className="intro">{`${ventasOrProyeccion.charAt(0).toUpperCase() + ventasOrProyeccion.slice(1)}: $${formatNumber(value)}`}</p>
+        <p className="intro">{`${ventasOrProyeccion.charAt(0).toUpperCase() + ventasOrProyeccion.slice(1)}: ${currencySymbol}${formatNumber(value)}`}</p>
       </div>
     );
   }
@@ -75,6 +81,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 const VentasAcumuladas = () => {
   const { userID } = useAuthStore();
   const currentMonthIndex = new Date().getMonth();
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const { data: operations = [] } = useQuery({
     queryKey: ['operations', userID],
@@ -108,7 +115,11 @@ const VentasAcumuladas = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="mes" />
             <YAxis />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip
+              content={(props) => (
+                <CustomTooltip {...props} currencySymbol={currencySymbol} />
+              )}
+            />
             <Legend />
 
             <Line

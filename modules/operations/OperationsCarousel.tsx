@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { PencilIcon, ServerIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   fetchUserOperations,
@@ -47,6 +48,8 @@ const OperationsCarousel: React.FC = () => {
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const { data: operations = [], isLoading } = useQuery({
     queryKey: [QueryKeys.OPERATIONS, userID],
@@ -174,7 +177,7 @@ const OperationsCarousel: React.FC = () => {
                   </p>
                   <p>
                     <strong>Valor Reserva / Cierre</strong> $
-                    {formatNumber(operacion.valor_reserva)}
+                    {`${currencySymbol}${formatNumber(operacion.valor_reserva)}`}
                   </p>
                   <p>
                     <strong>Puntas:</strong>{' '}
@@ -206,12 +209,12 @@ const OperationsCarousel: React.FC = () => {
                     %
                   </p>
                   <p>
-                    <strong>Honorarios Brutos:</strong> $
-                    {formatNumber(operacion.honorarios_broker)}
+                    <strong>Honorarios Brutos:</strong>
+                    {`${currencySymbol}${formatNumber(operacion.honorarios_broker)}`}
                   </p>
                   <p>
-                    <strong>Honorarios Netos:</strong> $
-                    {formatNumber(operacion.honorarios_asesor)}
+                    <strong>Honorarios Netos:</strong>
+                    {`${currencySymbol}${formatNumber(operacion.honorarios_asesor)}`}
                   </p>
                   <p>
                     <strong>Compartido:</strong>{' '}
