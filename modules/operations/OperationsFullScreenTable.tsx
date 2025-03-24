@@ -85,8 +85,8 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {displayValue(operation.tipo_inmueble)}
           </p>
           <p>
-            <span className="font-semibold">Valor Reserva / Cierre: </span> $
-            {formatNumber(operation.valor_reserva)}
+            <span className="font-semibold">Valor Reserva / Cierre: </span>
+            {`${currencySymbol}${formatNumber(operation.valor_reserva)}`}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Punta Compradora:</span>{' '}
@@ -104,8 +104,8 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             )}
           </p>
           <p>
-            <span className="font-semibold">Honorarios Brutos:</span> $
-            {formatNumber(operation.honorarios_broker)}
+            <span className="font-semibold">Honorarios Brutos:</span>
+            {`${currencySymbol}${formatNumber(operation.honorarios_broker)}`}
           </p>
           <p>
             <span className="font-semibold">Honorarios Netos:</span>

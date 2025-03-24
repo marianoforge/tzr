@@ -15,7 +15,7 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import 'react-tooltip/dist/react-tooltip.css';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 const RADIAN = Math.PI / 180;
 
 const needle = (
@@ -57,6 +57,8 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
   return function WrappedComponent(props: React.JSX.IntrinsicAttributes) {
     const { userData } = useUserDataStore();
     const { userID } = useAuthStore();
+    const { currencySymbol } = useUserCurrencySymbol(userID || '');
+
     const {
       data: operations = [],
       isLoading: isLoadingOperations,
@@ -75,7 +77,12 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
       );
     }
     return (
-      <Component {...props} userData={userData!} operations={operations} />
+      <Component
+        {...props}
+        userData={userData!}
+        operations={operations}
+        currencySymbol={currencySymbol}
+      />
     );
   };
 }
@@ -84,11 +91,12 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
 interface ObjectiveChartProps {
   userData: UserData;
   operations: Operation[];
+  currencySymbol: string;
 }
 
 class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
   render() {
-    const { userData, operations } = this.props;
+    const { userData, operations, currencySymbol } = this.props;
     const currentYear = new Date().getFullYear();
     // Calcular los totales usando las operaciones filtradas
     const totals = calculateTotals(
@@ -160,9 +168,9 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
               </PieChart>
             </div>
             <h3 className="font-semibold text-mediumBlue text-base">
-              {`Objetivo Anual de Ventas: $${formatNumber(
+              {`Objetivo Anual de Ventas: ${currencySymbol}${formatNumber(
                 totals.honorarios_broker_cerradas ?? 0
-              )} / $${formatNumber(userData?.objetivoAnual ?? 0)}`}
+              )} / ${currencySymbol}${formatNumber(userData?.objetivoAnual ?? 0)}`}
             </h3>
           </>
         )}

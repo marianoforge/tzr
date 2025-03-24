@@ -19,18 +19,22 @@ import { Operation } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { OperationData, OperationStatus } from '@/common/enums';
+import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
   payload?: Array<{ value: number }>;
   label?: string;
 }> = ({ active, payload, label }) => {
+  const { userID } = useAuthStore();
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
+
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`${new Date().getFullYear() - 1}: $${formatNumber(payload[0].value)}`}</p>
-        <p className="intro">{`${new Date().getFullYear()}: $${formatNumber(payload[1].value)}`}</p>
+        <p className="intro">{`${new Date().getFullYear() - 1}: ${currencySymbol}${formatNumber(payload[0].value)}`}</p>
+        <p className="intro">{`${new Date().getFullYear()}: ${currencySymbol}${formatNumber(payload[1].value)}`}</p>
         <p className="intro">{`Diferencia Interanual: $${formatNumber(
           payload[1].value - payload[0].value
         )}`}</p>
