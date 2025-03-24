@@ -20,6 +20,27 @@ import { useUserDataStore } from '@/stores/userDataStore';
 import { Operation, UserData } from '@/common/types';
 import { OperationStatus } from '@/common/enums';
 
+// Función para calcular el total de honorarios de broker para operaciones según su estado
+const calculateTotalHonorariosBroker = (
+  operations: Operation[],
+  estado: string
+): number => {
+  return operations
+    .filter((op: Operation) => op.estado === estado)
+    .reduce((total: number, op: Operation) => {
+      const honorariosBroker = calculateHonorarios(
+        op.valor_reserva,
+        op.porcentaje_honorarios_asesor,
+        op.porcentaje_honorarios_broker,
+        op.porcentaje_compartido ?? 0,
+        op.porcentaje_referido ?? 0,
+        op.isFranchiseOrBroker ?? 0
+      ).honorariosBroker;
+
+      return total + honorariosBroker;
+    }, 0);
+};
+
 const Bubbles = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
@@ -115,7 +136,10 @@ const Bubbles = () => {
     0
   );
 
-  const totalHonorarioBrokerEnCurso = calculateTotals(operationsEnCurso);
+  const totalHonorarioBrokerEnCurso = calculateTotalHonorariosBroker(
+    operations,
+    'En Curso'
+  );
 
   const bubbleData = [
     {
@@ -130,20 +154,10 @@ const Bubbles = () => {
       title: 'Honorarios Brutos',
       figure: (() => {
         // Calcular la suma de honorarios_broker de todas las operaciones cerradas
-        const totalHonorariosBroker = operations
-          .filter((op: Operation) => op.estado === 'Cerrada')
-          .reduce((total: number, op: Operation) => {
-            const honorariosBroker = calculateHonorarios(
-              op.valor_reserva,
-              op.porcentaje_honorarios_asesor,
-              op.porcentaje_honorarios_broker,
-              op.porcentaje_compartido ?? 0,
-              op.porcentaje_referido ?? 0,
-              op.isFranchiseOrBroker ?? 0
-            ).honorariosBroker;
-
-            return total + honorariosBroker;
-          }, 0);
+        const totalHonorariosBroker = calculateTotalHonorariosBroker(
+          operations,
+          'Cerrada'
+        );
 
         return `${currencySymbol}${formatNumber(totalHonorariosBroker)}`;
       })(),
@@ -200,9 +214,7 @@ const Bubbles = () => {
     },
     {
       title: 'Honorarios Brutos en Curso',
-      figure: `${currencySymbol}${formatNumber(
-        totalHonorarioBrokerEnCurso.honorarios_broker_abiertas ?? 0
-      )}`,
+      figure: `${currencySymbol}${formatNumber(totalHonorarioBrokerEnCurso)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Brutos sobre las operaciones en curso.',
