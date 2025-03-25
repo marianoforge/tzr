@@ -14,12 +14,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { COLORS, MAX_BAR_SIZE } from '@/lib/constants';
-import { formatOperationsData } from '@/common/utils/formatOperationsData';
 import { Operation } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
-import { OperationData, OperationStatus } from '@/common/enums';
+import { OperationStatus } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { calculateTotalHonorariosBroker } from '@/common/utils/calculations';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -48,8 +48,27 @@ const CustomTooltip: React.FC<{
 const MonthlyBarChartGross: React.FC = () => {
   const { userID } = useAuthStore();
   const [data, setData] = useState<
-    { month: string; currentYear: number; previousYear: number }[]
+    { name: string; currentYear: number; previousYear: number }[]
   >([]);
+
+  // Function to get month name from index
+  const getMonthName = (index: number): string => {
+    const months = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
+    ];
+    return months[index];
+  };
 
   const {
     data: operations = [],
@@ -71,18 +90,51 @@ const MonthlyBarChartGross: React.FC = () => {
       const closedOperations = operations.filter(
         (operation: Operation) => operation.estado === OperationStatus.CERRADA
       );
-      const formattedData = formatOperationsData(
+
+      const calculateHonorariosByMonth = (
+        operations: Operation[],
+        year: number
+      ) => {
+        const operationsByMonth = Array(12)
+          .fill(0)
+          .map((_, index) => {
+            const monthOperations = operations.filter((op) => {
+              const date = new Date(
+                op.fecha_operacion || op.fecha_reserva || ''
+              );
+              return date.getFullYear() === year && date.getMonth() === index;
+            });
+
+            return calculateTotalHonorariosBroker(
+              monthOperations,
+              OperationStatus.CERRADA
+            );
+          });
+
+        return operationsByMonth;
+      };
+
+      const currentYear = new Date().getFullYear();
+      const previousYear = currentYear - 1;
+
+      const currentYearData = calculateHonorariosByMonth(
         closedOperations,
-        OperationData.HONORARIOS_BROKER
+        currentYear
+      );
+      const previousYearData = calculateHonorariosByMonth(
+        closedOperations,
+        previousYear
       );
 
-      // Verificar que los datos estén correctamente formateados
-      const validData = formattedData.map((item) => ({
-        ...item,
-        currentYear: isNaN(item.currentYear) ? 0 : item.currentYear,
-        previousYear: isNaN(item.previousYear) ? 0 : item.previousYear,
-      }));
-      setData(validData);
+      const formattedData = Array(12)
+        .fill(0)
+        .map((_, index) => ({
+          name: getMonthName(index),
+          currentYear: currentYearData[index] || 0,
+          previousYear: previousYearData[index] || 0,
+        }));
+
+      setData(formattedData);
     }
   }, [operations]);
 
@@ -112,7 +164,7 @@ const MonthlyBarChartGross: React.FC = () => {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} barSize={MAX_BAR_SIZE} barGap={5}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis dataKey="month" axisLine={false} tickLine={false} />
+            <XAxis dataKey="name" axisLine={false} tickLine={false} />
             <YAxis axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />

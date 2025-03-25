@@ -14,6 +14,28 @@ import { calculateGrossByMonth } from './calculationsGrossByMonth';
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
 
+export const calculateTotalHonorariosBroker = (
+  operations: Operation[],
+  estado?: string
+): number => {
+  const filteredOperations = estado
+    ? operations.filter((op: Operation) => op.estado === estado)
+    : operations;
+
+  return filteredOperations.reduce((total: number, op: Operation) => {
+    const honorariosBroker = calculateHonorarios(
+      op.valor_reserva,
+      op.porcentaje_honorarios_asesor,
+      op.porcentaje_honorarios_broker,
+      op.porcentaje_compartido ?? 0,
+      op.porcentaje_referido ?? 0,
+      op.isFranchiseOrBroker ?? 0
+    ).honorariosBroker;
+
+    return total + honorariosBroker;
+  }, 0);
+};
+
 export const totalHonorariosTeamLead = (
   operation: Operation,
   userRole: UserRole,
@@ -440,12 +462,12 @@ export const calculateTotals = (operations: Operation[]) => {
     validOperations.length;
 
   // Calculate the percentage for each month
-  const porcentajeHonorariosBrokerPorMes2024 = calculateGrossByMonth(
+  const porcentajeHonorariosBrokerPorMescurrentYear = calculateGrossByMonth(
     validOperations,
     new Date().getFullYear()
   );
 
-  const porcentajeHonorariosBrokerPorMes2023 = calculateGrossByMonth(
+  const porcentajeHonorariosBrokerPorMespastYear = calculateGrossByMonth(
     validOperations,
     new Date().getFullYear() - 1
   );
@@ -479,10 +501,10 @@ export const calculateTotals = (operations: Operation[]) => {
     promedio_suma_puntas: promedioSumaPuntas,
     total_honorarios_asesor_mes_vencido_promedio:
       totalHonorariosAsesorMesVencidoPromedio,
-    porcentaje_honorarios_broker_por_mes_2024:
-      porcentajeHonorariosBrokerPorMes2024,
-    porcentaje_honorarios_broker_por_mes_2023:
-      porcentajeHonorariosBrokerPorMes2023,
+    porcentaje_honorarios_broker_por_mes_currentYear:
+      porcentajeHonorariosBrokerPorMescurrentYear,
+    porcentaje_honorarios_broker_por_mes_pastYear:
+      porcentajeHonorariosBrokerPorMespastYear,
     total_honorarios_team_lead: totalHonorariosTeamLead,
     promedio_dias_venta: promedioDiasVenta,
   };
