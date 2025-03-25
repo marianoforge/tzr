@@ -8,14 +8,15 @@ import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { OBJECTIVE_CHART_COLORS } from '@/lib/constants';
 import { Operation, UserData } from '@/common/types/';
-import { calculateTotals } from '@/common/utils/calculations';
 import { fetchUserOperations } from '@/common/utils/operationsApi';
 import { useAuthStore } from '@/stores/authStore';
 import { formatNumber } from '@/common/utils/formatNumber';
-import { currentYearOperations } from '@/common/utils/currentYearOps';
 import 'react-tooltip/dist/react-tooltip.css';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { useCalculationsStore } from '@/stores';
+import { UserRole } from '@/common/enums';
+
 const RADIAN = Math.PI / 180;
 
 const needle = (
@@ -58,30 +59,91 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
     const { userData } = useUserDataStore();
     const { userID } = useAuthStore();
     const { currencySymbol } = useUserCurrencySymbol(userID || '');
+    const {
+      results,
+      setOperations,
+      setUserData,
+      setUserRole,
+      calculateResults,
+    } = useCalculationsStore();
 
     const {
       data: operations = [],
-      isLoading: isLoadingOperations,
+      isLoading,
       error: operationsError,
+      isSuccess: operationsLoaded,
     } = useQuery({
       queryKey: ['operations', userID],
       queryFn: () => fetchUserOperations(userID || ''),
       enabled: !!userID,
+      staleTime: 60000, // 1 minuto
+      refetchOnWindowFocus: false,
     });
-    if (isLoadingOperations) {
-      return <SkeletonLoader height={220} count={1} />;
-    }
-    if (operationsError) {
+
+    // Combinamos los efectos en uno solo para asegurar que la secuencia sea correcta
+    React.useEffect(() => {
+      const updateCalculations = async () => {
+        if (operations.length > 0 && userData) {
+          // Primero configuramos las operaciones
+          setOperations(operations);
+
+          // Luego configuramos los datos del usuario
+          setUserData(userData);
+
+          // Configuramos el rol del usuario
+          if (userData.role) {
+            setUserRole(userData.role as UserRole);
+          }
+
+          // Finalmente calculamos los resultados
+          calculateResults();
+        }
+      };
+
+      if (operationsLoaded) {
+        updateCalculations();
+      }
+    }, [
+      operations,
+      userData,
+      operationsLoaded,
+      setOperations,
+      setUserData,
+      setUserRole,
+      calculateResults,
+    ]);
+
+    // Verificar explícitamente si está cargando
+    if (isLoading === true) {
+      // Intenta un enfoque diferente para el esqueleto
       return (
-        <p>Error: {operationsError?.message || 'An unknown error occurred'}</p>
+        <div className="relative   w-full" style={{ height: '225px' }}>
+          <SkeletonLoader height={225} count={1} />
+        </div>
       );
     }
+
+    // Manejo de error
+    if (operationsError) {
+      return (
+        <div
+          className="relative bg-white rounded-lg p-2 text-center shadow-md w-full"
+          style={{ height: '225px' }}
+        >
+          <p className="text-red-500 pt-10">
+            Error: {operationsError?.message || 'An unknown error occurred'}
+          </p>
+        </div>
+      );
+    }
+
     return (
       <Component
         {...props}
         userData={userData!}
         operations={operations}
         currencySymbol={currencySymbol}
+        honorariosBrutos2025={results.honorariosBrutos}
       />
     );
   };
@@ -92,21 +154,17 @@ interface ObjectiveChartProps {
   userData: UserData;
   operations: Operation[];
   currencySymbol: string;
+  honorariosBrutos2025?: number;
 }
 
 class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
   render() {
-    const { userData, operations, currencySymbol } = this.props;
-    const currentYear = new Date().getFullYear();
-    // Calcular los totales usando las operaciones filtradas
-    const totals = calculateTotals(
-      currentYearOperations(operations, currentYear)
-    );
+    const { userData, currencySymbol, honorariosBrutos2025 } = this.props;
 
-    const percentage =
-      ((totals.honorarios_broker_cerradas ?? 0) /
-        (userData?.objetivoAnual ?? 1)) *
-      100;
+    // Use honorariosBrutos2025 from calculationsStore
+    const honorariosValue = honorariosBrutos2025 ?? 0;
+
+    const percentage = (honorariosValue / (userData?.objetivoAnual ?? 1)) * 100;
 
     return (
       <div
@@ -114,7 +172,7 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
         style={{ height: '225px' }}
       >
         <p className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[18px] font-semibold pt-2 pb-2">
-          Objetivo Anual de Ventas
+          Objetivo Anual de Ventas 2025
         </p>
         <div
           className="absolute top-2 right-2  cursor-pointer"
@@ -168,8 +226,8 @@ class ObjectiveChart extends PureComponent<ObjectiveChartProps> {
               </PieChart>
             </div>
             <h3 className="font-semibold text-mediumBlue text-base">
-              {`Objetivo Anual de Ventas: ${currencySymbol}${formatNumber(
-                totals.honorarios_broker_cerradas ?? 0
+              {`Objetivo Anual 2025: ${currencySymbol}${formatNumber(
+                honorariosValue
               )} / ${currencySymbol}${formatNumber(userData?.objetivoAnual ?? 0)}`}
             </h3>
           </>

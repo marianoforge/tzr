@@ -16,6 +16,7 @@ export const useOperations = (userUID: string | null) => {
     data: operations = [],
     isLoading,
     error: operationsError,
+    isSuccess,
   } = useQuery({
     queryKey: [QueryKeys.OPERATIONS, userUID],
     queryFn: () => fetchUserOperations(userUID || ''),
@@ -59,6 +60,7 @@ export const useOperations = (userUID: string | null) => {
     operationsError,
     deleteMutation,
     updateMutation,
-    queryClient, // Return queryClient here
+    queryClient,
+    isSuccess,
   };
 };

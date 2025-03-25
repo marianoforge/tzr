@@ -245,7 +245,7 @@ export const calculateTotals = (operations: Operation[]) => {
       valor_reserva: 0,
       porcentaje_honorarios_asesor: 0,
       porcentaje_honorarios_broker: 0,
-      honorarios_broker: 0,
+      honorariosBrutos: 0,
       honorarios_asesor: 0,
       mayor_venta_efectuada: 0,
       promedio_valor_reserva: 0,
