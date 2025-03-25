@@ -61,21 +61,38 @@ function withUserData(Component: React.ComponentType<ObjectiveChartProps>) {
 
     const {
       data: operations = [],
-      isLoading: isLoadingOperations,
+      isLoading,
       error: operationsError,
     } = useQuery({
       queryKey: ['operations', userID],
       queryFn: () => fetchUserOperations(userID || ''),
       enabled: !!userID,
     });
-    if (isLoadingOperations) {
-      return <SkeletonLoader height={220} count={1} />;
-    }
-    if (operationsError) {
+
+    // Verificar explícitamente si está cargando
+    if (isLoading === true) {
+      // Intenta un enfoque diferente para el esqueleto
       return (
-        <p>Error: {operationsError?.message || 'An unknown error occurred'}</p>
+        <div className="relative   w-full" style={{ height: '225px' }}>
+          <SkeletonLoader height={225} count={1} />
+        </div>
       );
     }
+
+    // Manejo de error
+    if (operationsError) {
+      return (
+        <div
+          className="relative bg-white rounded-lg p-2 text-center shadow-md w-full"
+          style={{ height: '225px' }}
+        >
+          <p className="text-red-500 pt-10">
+            Error: {operationsError?.message || 'An unknown error occurred'}
+          </p>
+        </div>
+      );
+    }
+
     return (
       <Component
         {...props}

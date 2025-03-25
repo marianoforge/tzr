@@ -139,11 +139,21 @@ const MonthlyLineChartPoints = () => {
   if (isLoading) {
     return <SkeletonLoader height={380} count={1} />;
   }
+
   if (operationsError) {
     return (
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
+
+  if (chartData.length === 0) {
+    return (
+      <div className="bg-white p-4 rounded shadow-md w-full">
+        <p className="text-center text-gray-600">No existen operaciones</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold text-center">
