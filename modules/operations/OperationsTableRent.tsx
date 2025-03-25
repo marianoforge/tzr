@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
@@ -7,6 +7,7 @@ import {
   updateOperation,
 } from '@/lib/api/operationsApi';
 import { useAuthStore } from '@/stores/authStore';
+import { useCalculationsStore } from '@/stores';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { calculateTotals } from '@/common/utils/calculations';
@@ -20,9 +21,8 @@ import {
   statusOptions,
   yearsFilter,
 } from '@/lib/data';
-import { ALQUILER, OperationStatus, QueryKeys } from '@/common/enums';
+import { ALQUILER, OperationStatus, QueryKeys, UserRole } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
-import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
 import OperationsTableFilters from './OperationsTableFilter';
 import OperationsTableBody from './OperationsTableBody';
@@ -50,17 +50,36 @@ const OperationsTableTent: React.FC = () => {
   const [operationTypeFilter, setOperationTypeFilter] = useState('all');
   const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [filteredHonorarios, setFilteredHonorarios] = useState({
+    brutos: 0,
+    netos: 0,
+  });
+
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
   const { userData } = useUserDataStore();
   const { currencySymbol } = useUserCurrencySymbol(userID || '');
+  const {
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+    calculateResultsByFilters,
+  } = useCalculationsStore();
 
   const itemsPerPage = 10;
 
-  const { data: operations } = useQuery({
+  const {
+    data: operations = [],
+    isLoading,
+    error: operationsError,
+    isSuccess: operationsLoaded,
+  } = useQuery({
     queryKey: ['operations', userID || ''],
     queryFn: () => fetchUserOperations(userID || ''),
     enabled: !!userID,
+    staleTime: 60000, // 1 minuto
+    refetchOnWindowFocus: false,
   });
 
   const transformedOperations = useMemo(() => {
@@ -72,6 +91,66 @@ const OperationsTableTent: React.FC = () => {
         operation.tipo_operacion.startsWith(ALQUILER.ALQUILER)
       );
   }, [operations]);
+
+  // Configurar los datos en el store cuando las operaciones se cargan
+  useEffect(() => {
+    const updateStore = async () => {
+      if (transformedOperations.length > 0 && userData) {
+        // Configuramos las operaciones en el store
+        setOperations(transformedOperations);
+
+        // Configuramos los datos del usuario
+        setUserData(userData);
+
+        // Configuramos el rol del usuario
+        if (userData.role) {
+          setUserRole(userData.role as UserRole);
+        }
+
+        // Calculamos los resultados generales
+        calculateResults();
+
+        // Calculamos los resultados filtrados para la tabla actual
+        const filtered = calculateResultsByFilters(yearFilter, statusFilter);
+        setFilteredHonorarios({
+          brutos: filtered.honorariosBrutos,
+          netos: filtered.honorariosNetos,
+        });
+      }
+    };
+
+    if (operationsLoaded) {
+      updateStore();
+    }
+  }, [
+    transformedOperations,
+    userData,
+    operationsLoaded,
+    yearFilter,
+    statusFilter,
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+    calculateResultsByFilters,
+  ]);
+
+  // Actualizar los honorarios filtrados cuando cambien los filtros
+  useEffect(() => {
+    if (transformedOperations.length > 0 && userData) {
+      const filtered = calculateResultsByFilters(yearFilter, statusFilter);
+      setFilteredHonorarios({
+        brutos: filtered.honorariosBrutos,
+        netos: filtered.honorariosNetos,
+      });
+    }
+  }, [
+    yearFilter,
+    statusFilter,
+    transformedOperations,
+    userData,
+    calculateResultsByFilters,
+  ]);
 
   const deleteMutation = useMutation({
     mutationFn: deleteOperation,
@@ -92,7 +171,7 @@ const OperationsTableTent: React.FC = () => {
     },
   });
 
-  const { currentOperations, filteredTotals, totalNetFees } = useMemo(() => {
+  const { currentOperations, filteredTotals } = useMemo(() => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
@@ -115,11 +194,12 @@ const OperationsTableTent: React.FC = () => {
     const allOps = searchedOps.filter((op) => {
       if (statusFilter === OperationStatus.CAIDA) {
         return op.estado === OperationStatus.CAIDA;
+      } else if (statusFilter === 'all') {
+        // Si el filtro es 'all', excluir operaciones CAIDA
+        return op.estado !== OperationStatus.CAIDA;
       } else {
-        return (
-          op.estado === OperationStatus.EN_CURSO ||
-          op.estado === OperationStatus.CERRADA
-        );
+        // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
+        return op.estado === statusFilter;
       }
     });
 
@@ -138,10 +218,6 @@ const OperationsTableTent: React.FC = () => {
             )
           : dateSortedOps;
 
-    const totalNetFees = sortedOps.reduce((acc, operacion) => {
-      return acc + calculateNetFees(operacion, userData);
-    }, 0);
-
     const totals = calculateTotals(sortedOps);
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -151,7 +227,6 @@ const OperationsTableTent: React.FC = () => {
     return {
       currentOperations: currentOps,
       filteredTotals: totals,
-      totalNetFees,
     };
   }, [
     transformedOperations,
@@ -264,6 +339,30 @@ const OperationsTableTent: React.FC = () => {
     setIsDateAscending(!isDateAscending);
   };
 
+  if (isLoading) {
+    return (
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Lista de Operaciones - Alquileres
+        </h2>
+        <p className="text-center">Cargando datos...</p>
+      </div>
+    );
+  }
+
+  if (operationsError) {
+    return (
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Lista de Operaciones - Alquileres
+        </h2>
+        <p className="text-center text-red-500">
+          Error: {operationsError.message || 'An unknown error occurred'}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-4 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">
@@ -302,7 +401,8 @@ const OperationsTableTent: React.FC = () => {
             handleViewClick={handleViewClick}
             filteredTotals={filteredTotals}
             currencySymbol={currencySymbol}
-            totalNetFees={totalNetFees}
+            totalNetFees={filteredHonorarios.netos}
+            totalHonorariosBrutos={filteredHonorarios.brutos}
           />
         </table>
         <div className="flex justify-center mt-4 mb-4">

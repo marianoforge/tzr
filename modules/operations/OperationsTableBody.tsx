@@ -33,6 +33,7 @@ interface OperationsTableBodyProps {
   filteredTotals: OperationTotal;
   currencySymbol: string;
   totalNetFees: number;
+  totalHonorariosBrutos?: number;
 }
 
 const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
@@ -45,6 +46,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
   filteredTotals,
   currencySymbol,
   totalNetFees,
+  totalHonorariosBrutos,
 }) => {
   return (
     <tbody>
@@ -259,33 +261,10 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           )}
         </td>
         <td className="py-3 px-2 text-center">
-          {(() => {
-            // Calcular la suma de honorarios_broker de todas las operaciones
-            const totalHonorariosBroker = currentOperations.reduce(
-              (total, op) => {
-                const honorariosBroker = calculateHonorarios(
-                  op.valor_reserva,
-                  op.porcentaje_honorarios_asesor,
-                  op.porcentaje_honorarios_broker,
-                  op.porcentaje_compartido ?? 0,
-                  op.porcentaje_referido ?? 0,
-                  op.isFranchiseOrBroker ?? 0
-                ).honorariosBroker;
-
-                return total + honorariosBroker;
-              },
-              0
-            );
-
-            return `${currencySymbol}${formatNumber(totalHonorariosBroker)}`;
-          })()}
+          {`${currencySymbol}${formatNumber(totalHonorariosBrutos || 0)}`}
         </td>
         <td className="py-3 px-2 text-center">
-          {currentOperations.length > 0 ? (
-            <>{`${currencySymbol}${formatNumber(totalNetFees)}`}</>
-          ) : (
-            'Cálculo no disponible'
-          )}
+          {`${currencySymbol}${formatNumber(totalNetFees)}`}
         </td>
         <td className="py-3 px-2 text-center" colSpan={4}></td>
       </tr>

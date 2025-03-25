@@ -101,8 +101,8 @@ const ProjectionsModal: React.FC<ProjectionsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg font-bold w-[50%] h-auto flex flex-col justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+      <div className="bg-white p-6 rounded-xl shadow-lg font-bold w-[50%] max-h-[90vh] overflow-y-auto my-4 flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4 text-center">
           Editar Proyección Semanal
         </h2>
