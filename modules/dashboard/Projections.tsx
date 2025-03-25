@@ -12,30 +12,75 @@ import {
 } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 
-import {
-  months,
-  openOperationsByMonth2024,
-  closedOperationsByMonth2024,
-} from '@/common/utils/currentYearOps';
+import { months } from '@/common/utils/currentYearOps';
 import { useAuthStore } from '@/stores/authStore';
 import { Operation } from '@/common/types';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { OperationStatus } from '@/common/enums';
+import { calculateTotalHonorariosBroker } from '@/common/utils/calculations';
 
-const generateData = (closedOperations: any, openOperations: any) => {
+const generateData = (operations: Operation[]) => {
   const currentDate = new Date();
   const currentMonthIndex = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  // Calcular honorarios totales para operaciones cerradas y en curso
+  const totalHonorariosCerradas = parseFloat(
+    calculateTotalHonorariosBroker(operations, OperationStatus.CERRADA).toFixed(
+      2
+    )
+  );
+
+  const totalHonorariosEnCurso = parseFloat(
+    calculateTotalHonorariosBroker(
+      operations,
+      OperationStatus.EN_CURSO
+    ).toFixed(2)
+  );
+
+  const totalProyeccion = parseFloat(
+    (totalHonorariosCerradas + totalHonorariosEnCurso).toFixed(2)
+  );
+
+  // Agrupar operaciones por mes
+  const operationsByMonth = operations.reduce(
+    (acc: Record<number, Operation[]>, op: Operation) => {
+      const opDate = new Date(op.fecha_operacion || op.fecha_reserva || '');
+      if (opDate.getFullYear() === currentYear) {
+        const month = opDate.getMonth();
+        if (!acc[month]) acc[month] = [];
+        acc[month].push(op);
+      }
+      return acc;
+    },
+    {}
+  );
+
+  // Distribuir los valores acumulados a lo largo de los meses
+  let acumuladoCerradas = 0;
 
   return months.map((month, index) => {
+    // Calcular honorarios para operaciones cerradas (meses pasados y actual)
     let ventas = null;
-    let proyeccion = null;
-
     if (index <= currentMonthIndex) {
-      ventas = closedOperations[month] || null;
+      // Para meses pasados, usamos datos acumulados reales
+      const monthOperations = operationsByMonth[index] || [];
+      const monthHonorarios = parseFloat(
+        calculateTotalHonorariosBroker(
+          monthOperations,
+          OperationStatus.CERRADA
+        ).toFixed(2)
+      );
+      acumuladoCerradas += monthHonorarios;
+      ventas = parseFloat(acumuladoCerradas.toFixed(2));
     }
 
-    if (index >= currentMonthIndex && index <= 11) {
-      proyeccion = (closedOperations[month] || 0) + openOperations;
+    // Calcular proyección para meses futuros y actual
+    let proyeccion = null;
+    if (index >= currentMonthIndex) {
+      // Para la proyección, usamos el valor total fijo para todos los meses futuros
+      proyeccion = totalProyeccion;
     }
 
     return { mes: month, ventas, proyeccion };
@@ -80,7 +125,6 @@ const CustomTooltip = ({
 
 const VentasAcumuladas = () => {
   const { userID } = useAuthStore();
-  const currentMonthIndex = new Date().getMonth();
   const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const { data: operations = [] } = useQuery({
@@ -88,14 +132,20 @@ const VentasAcumuladas = () => {
     enabled: !!userID,
   });
 
-  const closedOperationsByMonth = closedOperationsByMonth2024(
-    operations as Operation[]
-  );
-  const openOperationsByMonth = openOperationsByMonth2024(
-    operations as Operation[]
+  const data = generateData(operations as Operation[]);
+
+  // Calcular totales para mostrar en la leyenda
+  const totalHonorariosCerradas = calculateTotalHonorariosBroker(
+    operations as Operation[],
+    OperationStatus.CERRADA
   );
 
-  const data = generateData(closedOperationsByMonth, openOperationsByMonth);
+  const totalProyeccion =
+    totalHonorariosCerradas +
+    calculateTotalHonorariosBroker(
+      operations as Operation[],
+      OperationStatus.EN_CURSO
+    );
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
@@ -132,23 +182,28 @@ const VentasAcumuladas = () => {
                 fill: '#FFFFFF',
               }}
               activeDot={{ r: 6 }}
-              name={`Honorarios Brutos Acumulados: $${formatNumber(
-                closedOperationsByMonth[months[currentMonthIndex]] || 0
-              )}`}
-              label={({ x, y, stroke, value }) => (
-                <text
-                  x={x}
-                  y={y}
-                  dy={-10}
-                  fill={stroke}
-                  fontWeight="bold"
-                  fontSize={14}
-                  opacity={0.5}
-                  textAnchor="middle"
-                >
-                  ${value}
-                </text>
-              )}
+              name={`Honorarios Brutos Acumulados: ${currencySymbol}${formatNumber(totalHonorariosCerradas)}`}
+              label={({ x, y, stroke, value }) => {
+                const formattedValue =
+                  value !== null && value !== undefined
+                    ? formatNumber(value)
+                    : '0';
+
+                return (
+                  <text
+                    x={x}
+                    y={y}
+                    dy={-10}
+                    fill={stroke}
+                    fontWeight="bold"
+                    fontSize={14}
+                    opacity={0.5}
+                    textAnchor="middle"
+                  >
+                    ${formattedValue}
+                  </text>
+                );
+              }}
             />
 
             <Line
@@ -158,9 +213,7 @@ const VentasAcumuladas = () => {
               dot={false}
               strokeWidth={4}
               strokeDasharray="4"
-              name={`Proyección de Honorarios Brutos: $${formatNumber(
-                data[data.length - 1].proyeccion
-              )}`}
+              name={`Proyección de Honorarios Brutos: ${currencySymbol}${formatNumber(totalProyeccion)}`}
             />
           </LineChart>
         </ResponsiveContainer>
