@@ -6,7 +6,10 @@ import { auth } from '@/lib/firebase';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { useCalculationsStore } from '@/stores';
-import { calculateTotals } from '@/common/utils/calculations';
+import {
+  calculateTotals,
+  calculateHonorarios,
+} from '@/common/utils/calculations';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperationsBySearch';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -188,8 +191,21 @@ const OperationsTable: React.FC = () => {
 
       const totals = calculateTotals(sortedOps);
 
-      // Calcular los honorarios filtrados aquí sin actualizar el estado
-      const honorariosBrutos = totals.honorarios_broker || 0;
+      // Calcular los honorarios brutos correctamente
+      // Utilizamos la función calculateHonorarios de @/common/utils/calculations para cada operación
+      const honorariosBrutos = sortedOps.reduce((total, op) => {
+        const resultado = calculateHonorarios(
+          op.valor_reserva,
+          op.porcentaje_honorarios_asesor || 0,
+          op.porcentaje_honorarios_broker || 0,
+          op.porcentaje_compartido || 0,
+          op.porcentaje_referido || 0,
+          op.isFranchiseOrBroker || 0
+        );
+
+        return total + resultado.honorariosBroker;
+      }, 0);
+
       let honorariosNetos = 0;
 
       // Verificar que userData existe antes de calcular

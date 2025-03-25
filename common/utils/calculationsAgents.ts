@@ -1,4 +1,5 @@
 import { Operation } from '@/common/types';
+import { calculateTotalHonorariosBroker } from '@/common/utils/calculations';
 
 import { OperationStatus } from '../enums';
 
@@ -6,22 +7,29 @@ import { OperationStatus } from '../enums';
 export const calculateAdjustedBrokerFees = (
   operations: Operation[],
   year: number
-) =>
-  operations
-    .filter(
-      (op) =>
-        op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
-    )
-    .reduce((acc: number, op: Operation) => {
-      const isHalfOperation =
-        op.user_uid &&
-        op.user_uid_adicional &&
-        op.user_uid !== op.user_uid_adicional;
+) => {
+  // Filtrar operaciones por año y estado
+  const filteredOperations = operations.filter(
+    (op) =>
+      op.estado === OperationStatus.CERRADA &&
+      new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
+        year
+  );
 
-      return acc + op.honorarios_broker * (isHalfOperation ? 0.5 : 1);
-    }, 0);
+  // Ahora dividimos los honorarios entre asesores cuando es necesario
+  return filteredOperations.reduce((acc: number, op: Operation) => {
+    const isHalfOperation =
+      op.user_uid &&
+      op.user_uid_adicional &&
+      op.user_uid !== op.user_uid_adicional;
+
+    // Calculamos la contribución de esta operación al total
+    const contribucion = calculateTotalHonorariosBroker([op]);
+
+    // Añadimos la contribución ajustada según si es operación compartida
+    return acc + contribucion * (isHalfOperation ? 0.5 : 1);
+  }, 0);
+};
 
 // Function to calculate total operations
 export const calculateTotalOperations = (
