@@ -100,7 +100,7 @@ const ProjectionsObjective = ({
           control={control}
           render={({ field }) => (
             <Input
-              label="Objetivo Hon. Anuales"
+              label="Objetivo Hon. Anuales Brutos"
               type="number"
               className="w-[240px] max-w-[240px] min-w-[240px]"
               {...field}

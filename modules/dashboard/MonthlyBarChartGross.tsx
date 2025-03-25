@@ -17,9 +17,11 @@ import { COLORS, MAX_BAR_SIZE } from '@/lib/constants';
 import { Operation } from '@/common/types/';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { formatNumber } from '@/common/utils/formatNumber';
-import { OperationStatus } from '@/common/enums';
+import { OperationStatus, UserRole } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import { calculateTotalHonorariosBroker } from '@/common/utils/calculations';
+import { useUserDataStore, useCalculationsStore } from '@/stores';
+import { months } from '@/common/utils/currentYearOps';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -33,8 +35,8 @@ const CustomTooltip: React.FC<{
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`${new Date().getFullYear() - 1}: ${currencySymbol}${formatNumber(payload[0].value)}`}</p>
-        <p className="intro">{`${new Date().getFullYear()}: ${currencySymbol}${formatNumber(payload[1].value)}`}</p>
+        <p className="intro">{`2024: ${currencySymbol}${formatNumber(payload[0].value)}`}</p>
+        <p className="intro">{`2025: ${currencySymbol}${formatNumber(payload[1].value)}`}</p>
         <p className="intro">{`Diferencia Interanual: $${formatNumber(
           payload[1].value - payload[0].value
         )}`}</p>
@@ -47,33 +49,18 @@ const CustomTooltip: React.FC<{
 
 const MonthlyBarChartGross: React.FC = () => {
   const { userID } = useAuthStore();
+  const { userData } = useUserDataStore();
+  const { setOperations, setUserData, setUserRole, calculateResults } =
+    useCalculationsStore();
   const [data, setData] = useState<
     { name: string; currentYear: number; previousYear: number }[]
   >([]);
-
-  // Function to get month name from index
-  const getMonthName = (index: number): string => {
-    const months = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ];
-    return months[index];
-  };
 
   const {
     data: operations = [],
     isLoading,
     error: operationsError,
+    isSuccess: operationsLoaded,
   } = useQuery({
     queryKey: ['operations', userID],
     queryFn: async () => {
@@ -83,64 +70,111 @@ const MonthlyBarChartGross: React.FC = () => {
       );
     },
     enabled: !!userID,
+    staleTime: 60000, // 1 minuto
+    refetchOnWindowFocus: false,
   });
 
+  // Combinamos los efectos en uno solo para asegurar que la secuencia sea correcta
   useEffect(() => {
-    if (operations.length > 0) {
-      const closedOperations = operations.filter(
-        (operation: Operation) => operation.estado === OperationStatus.CERRADA
-      );
+    const updateCalculations = async () => {
+      if (operations.length > 0 && userData) {
+        // Primero configuramos las operaciones
+        setOperations(operations);
 
-      const calculateHonorariosByMonth = (
-        operations: Operation[],
-        year: number
-      ) => {
-        const operationsByMonth = Array(12)
-          .fill(0)
-          .map((_, index) => {
-            const monthOperations = operations.filter((op) => {
-              const date = new Date(
-                op.fecha_operacion || op.fecha_reserva || ''
-              );
-              return date.getFullYear() === year && date.getMonth() === index;
-            });
+        // Luego configuramos los datos del usuario
+        setUserData(userData);
 
-            return calculateTotalHonorariosBroker(
-              monthOperations,
-              OperationStatus.CERRADA
-            );
-          });
+        // Configuramos el rol del usuario
+        if (userData.role) {
+          setUserRole(userData.role as UserRole);
+        }
 
-        return operationsByMonth;
-      };
+        // Finalmente calculamos los resultados
+        calculateResults();
 
-      const currentYear = new Date().getFullYear();
-      const previousYear = currentYear - 1;
+        // Procesamos los datos para el gráfico
+        const operations2024 = operations.filter(
+          (operation: Operation) =>
+            new Date(
+              operation.fecha_operacion || operation.fecha_reserva || ''
+            ).getFullYear() === 2024 &&
+            operation.estado === OperationStatus.CERRADA
+        );
 
-      const currentYearData = calculateHonorariosByMonth(
-        closedOperations,
-        currentYear
-      );
-      const previousYearData = calculateHonorariosByMonth(
-        closedOperations,
-        previousYear
-      );
+        const operations2025 = operations.filter(
+          (operation: Operation) =>
+            new Date(
+              operation.fecha_operacion || operation.fecha_reserva || ''
+            ).getFullYear() === 2025 &&
+            operation.estado === OperationStatus.CERRADA
+        );
 
-      const formattedData = Array(12)
-        .fill(0)
-        .map((_, index) => ({
-          name: getMonthName(index),
-          currentYear: currentYearData[index] || 0,
-          previousYear: previousYearData[index] || 0,
+        // Initialize the array with months and zero values
+        const dataByMonth = months.map((month) => ({
+          name: month,
+          currentYear: 0,
+          previousYear: 0,
         }));
 
-      setData(formattedData);
+        // Calculate honorarios brutos by month for 2024
+        operations2024.forEach((operation: Operation) => {
+          const operationDate = new Date(
+            operation.fecha_operacion || operation.fecha_reserva || ''
+          );
+          const monthIndex = operationDate.getMonth();
+
+          // Calculate honorarios brutos for this operation
+          const honorariosBrutos = calculateTotalHonorariosBroker([operation]);
+
+          // Add to the previous year total for this month
+          dataByMonth[monthIndex].previousYear += honorariosBrutos;
+        });
+
+        // Calculate honorarios brutos by month for 2025
+        operations2025.forEach((operation: Operation) => {
+          const operationDate = new Date(
+            operation.fecha_operacion || operation.fecha_reserva || ''
+          );
+          const monthIndex = operationDate.getMonth();
+
+          // Calculate honorarios brutos for this operation
+          const honorariosBrutos = calculateTotalHonorariosBroker([operation]);
+
+          // Add to the current year total for this month
+          dataByMonth[monthIndex].currentYear += honorariosBrutos;
+        });
+
+        // Format values to 2 decimal places
+        const formattedData = dataByMonth.map((item) => ({
+          ...item,
+          currentYear: parseFloat(item.currentYear.toFixed(2)),
+          previousYear: parseFloat(item.previousYear.toFixed(2)),
+        }));
+
+        setData(formattedData);
+      }
+    };
+
+    if (operationsLoaded) {
+      updateCalculations();
     }
-  }, [operations]);
+  }, [
+    operations,
+    userData,
+    operationsLoaded,
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+    setData,
+  ]);
 
   if (data.length === 0) {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Honorarios Brutos Mensuales
+        </h2>
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
     );
@@ -158,7 +192,7 @@ const MonthlyBarChartGross: React.FC = () => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold mb-6 text-center">
-        Honorarios Brutos Mensuales
+        Honorarios Brutos Mensuales 2025
       </h2>
       <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -171,14 +205,14 @@ const MonthlyBarChartGross: React.FC = () => {
             <Bar
               dataKey="previousYear"
               fill={COLORS[1]}
-              name={(new Date().getFullYear() - 1).toString()}
+              name="2024"
               maxBarSize={MAX_BAR_SIZE}
               radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="currentYear"
               fill={COLORS[2]}
-              name={new Date().getFullYear().toString()}
+              name="2025"
               maxBarSize={MAX_BAR_SIZE}
               radius={[4, 4, 0, 0]}
             />

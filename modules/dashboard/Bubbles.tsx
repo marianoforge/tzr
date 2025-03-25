@@ -1,41 +1,73 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Tooltip } from 'react-tooltip';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import { fetchUserOperations } from '@/lib/api/operationsApi';
-import {
-  calculateTotals,
-  calculateTotalHonorariosBroker,
-} from '@/common/utils/calculations';
+import { calculateTotals } from '@/common/utils/calculations';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, useUserDataStore, useCalculationsStore } from '@/stores';
 import { formatValue } from '@/common/utils/formatValue';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
 import { formatNumber } from '@/common/utils/formatNumber';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import { calculateNetFees } from '@/common/utils/calculateNetFees';
-import { useUserDataStore } from '@/stores/userDataStore';
 import { Operation, UserData } from '@/common/types';
-import { OperationStatus } from '@/common/enums';
-
-// Función para calcular el total de honorarios de broker para operaciones según su estado
+import { OperationStatus, UserRole } from '@/common/enums';
 
 const Bubbles = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
   const { currencySymbol } = useUserCurrencySymbol(userID || '');
+  const { results, setOperations, setUserData, setUserRole, calculateResults } =
+    useCalculationsStore();
 
   const {
     data: operations = [],
     isLoading,
     error: operationsError,
+    isSuccess: operationsLoaded,
   } = useQuery({
     queryKey: ['operations', userID],
     queryFn: () => fetchUserOperations(userID || ''),
     enabled: !!userID,
+    staleTime: 60000, // 1 minuto
+    refetchOnWindowFocus: false,
   });
+
+  // Combinamos los efectos en uno solo para asegurar que la secuencia sea correcta
+  useEffect(() => {
+    const updateCalculations = async () => {
+      if (operations.length > 0 && userData) {
+        // Primero configuramos las operaciones
+        setOperations(operations);
+
+        // Luego configuramos los datos del usuario
+        setUserData(userData);
+
+        // Configuramos el rol del usuario
+        if (userData.role) {
+          setUserRole(userData.role as UserRole);
+        }
+
+        // Finalmente calculamos los resultados
+        calculateResults();
+      }
+    };
+
+    if (operationsLoaded) {
+      updateCalculations();
+    }
+  }, [
+    operations,
+    userData,
+    operationsLoaded,
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+  ]);
 
   const currentYear = new Date().getFullYear();
 
@@ -44,20 +76,14 @@ const Bubbles = () => {
     currentYearOperations(operations, currentYear)
   );
 
-  // Filtrar operaciones del año 2025
-  const operations2025 = operations.filter(
+  // Filtrar operaciones del año actual
+  const operationsCurrentYear = operations.filter(
     (op: Operation) =>
       new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
         currentYear && op.estado === OperationStatus.CERRADA
   );
 
-  // Calcular tarifas netas para cada operación del 2025
-  operations2025.forEach((op: Operation) => {
-    const netFees = calculateNetFees(op, userData as UserData);
-    return netFees;
-  });
-
-  const operationsByMonth = operations2025.reduce(
+  const operationsByMonth = operationsCurrentYear.reduce(
     (acc: Record<number, Operation[]>, op: Operation) => {
       const operationDate = new Date(
         op.fecha_operacion || op.fecha_reserva || ''
@@ -95,57 +121,27 @@ const Bubbles = () => {
     0
   );
 
-  // Haz un reduce de las operaciones del 2025 y suma las tarifas netas
-  const totalNetFees = operations2025.reduce(
-    (total: number, op: Operation) =>
-      total + calculateNetFees(op, userData as UserData),
-    0
-  );
-
   const totalNetFeesPromedioMesVencido =
     completedMonthsWithOperations.length > 0
       ? totalNetFeesMesVencido / completedMonthsWithOperations.length
       : 0;
 
-  const operationsEnCurso = operations.filter(
-    (op: Operation) => op.estado === OperationStatus.EN_CURSO
-  );
-
-  const totalNetFeesEnCurso = operationsEnCurso.reduce(
-    (total: number, op: Operation) =>
-      total + calculateNetFees(op, userData as UserData),
-    0
-  );
-
-  const totalHonorarioBrokerEnCurso = calculateTotalHonorariosBroker(
-    operations,
-    'En Curso'
-  );
-
   const bubbleData = [
     {
       title: 'Honorarios Netos',
-      figure: `${currencySymbol}${formatNumber(totalNetFees)}`,
+      figure: `${currencySymbol}${formatNumber(results.honorariosNetos)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip:
-        'Este es el monto total de honorarios netos obtenidos de las operaciones cerradas.',
+        'Este es el monto total de honorarios netos obtenidos de las operaciones cerradas del año 2025.',
     },
     {
       title: 'Honorarios Brutos',
-      figure: (() => {
-        // Calcular la suma de honorarios_broker de todas las operaciones cerradas
-        const totalHonorariosBroker = calculateTotalHonorariosBroker(
-          operations,
-          'Cerrada'
-        );
-
-        return `${currencySymbol}${formatNumber(totalHonorariosBroker)}`;
-      })(),
+      figure: `${currencySymbol}${formatNumber(results.honorariosBrutos)}`,
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
       tooltip:
-        'Este es el monto total de honorarios brutos obtenido de las operaciones cerradas.',
+        'Este es el monto total de honorarios brutos obtenido de las operaciones cerradas del año 2025.',
     },
     {
       title: 'Monto Ops. Cerradas',
@@ -188,14 +184,14 @@ const Bubbles = () => {
     },
     {
       title: 'Honorarios Netos en Curso',
-      figure: `${currencySymbol}${formatNumber(totalNetFeesEnCurso)}`,
+      figure: `${currencySymbol}${formatNumber(results.honorariosNetosEnCurso)}`,
       bgColor: 'bg-darkBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Netos sobre las operaciones en curso.',
     },
     {
       title: 'Honorarios Brutos en Curso',
-      figure: `${currencySymbol}${formatNumber(totalHonorarioBrokerEnCurso)}`,
+      figure: `${currencySymbol}${formatNumber(results.honorariosBrutosEnCurso)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Brutos sobre las operaciones en curso.',

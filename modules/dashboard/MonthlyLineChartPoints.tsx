@@ -16,9 +16,9 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { calculateTotals } from '@/common/utils/calculations';
 import { Operation } from '@/common/types/';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, useUserDataStore, useCalculationsStore } from '@/stores';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { MonthNames, OperationStatus } from '@/common/enums';
+import { MonthNames, OperationStatus, UserRole } from '@/common/enums';
 
 // Datos proporcionados
 const monthNames = [
@@ -59,14 +59,20 @@ const CustomTooltip: React.FC<{
 
 const MonthlyLineChartPoints = () => {
   const { userID } = useAuthStore();
+  const { userData } = useUserDataStore();
+  const { setOperations, setUserData, setUserRole, calculateResults } =
+    useCalculationsStore();
+
   const [chartData, setChartData] = useState<
     { name: string; value2023: number; value2024: number }[]
   >([]);
   const [average2024, setAverage2024] = useState<number>(0);
+
   const {
     data: operations = [],
     isLoading,
     error: operationsError,
+    isSuccess: operationsLoaded,
   } = useQuery({
     queryKey: ['operations', userID],
     queryFn: async () => {
@@ -76,7 +82,42 @@ const MonthlyLineChartPoints = () => {
       );
     },
     enabled: !!userID,
+    staleTime: 60000, // 1 minuto
+    refetchOnWindowFocus: false,
   });
+
+  // Combinamos los efectos en uno solo para asegurar que la secuencia sea correcta
+  useEffect(() => {
+    const updateCalculations = async () => {
+      if (operations.length > 0 && userData) {
+        // Primero configuramos las operaciones
+        setOperations(operations);
+
+        // Luego configuramos los datos del usuario
+        setUserData(userData);
+
+        // Configuramos el rol del usuario
+        if (userData.role) {
+          setUserRole(userData.role as UserRole);
+        }
+
+        // Finalmente calculamos los resultados
+        calculateResults();
+      }
+    };
+
+    if (operationsLoaded) {
+      updateCalculations();
+    }
+  }, [
+    operations,
+    userData,
+    operationsLoaded,
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+  ]);
 
   useEffect(() => {
     if (operations.length > 0) {

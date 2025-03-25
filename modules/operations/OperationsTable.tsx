@@ -5,8 +5,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
+import { useCalculationsStore } from '@/stores';
 import { calculateTotals } from '@/common/utils/calculations';
-import { calculateNetFees } from '@/common/utils/calculateNetFees';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperationsBySearch';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -18,7 +18,7 @@ import {
   statusOptions,
   yearsFilter,
 } from '@/lib/data';
-import { OperationStatus } from '@/common/enums';
+import { OperationStatus, UserRole } from '@/common/enums';
 import { useOperations } from '@/common/hooks/useOperactions';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 
@@ -49,10 +49,21 @@ const OperationsTable: React.FC = () => {
   const [operationTypeFilter, setOperationTypeFilter] = useState('all');
   const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [filteredHonorarios, setFilteredHonorarios] = useState({
+    brutos: 0,
+    netos: 0,
+  });
 
   const router = useRouter();
   const { userData } = useUserDataStore();
   const { currencySymbol } = useUserCurrencySymbol(userUID || '');
+  const {
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+    calculateResultsByFilters,
+  } = useCalculationsStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -75,17 +86,78 @@ const OperationsTable: React.FC = () => {
     deleteMutation,
     updateMutation,
     queryClient,
+    isSuccess: operationsLoaded,
   } = useOperations(userUID);
+
+  // Configurar los datos en el store cuando las operaciones se cargan
+  useEffect(() => {
+    const updateStore = async () => {
+      if (transformedOperations.length > 0 && userData) {
+        // Configuramos las operaciones
+        setOperations(transformedOperations);
+
+        // Configuramos los datos del usuario
+        setUserData(userData);
+
+        // Configuramos el rol del usuario
+        if (userData.role) {
+          setUserRole(userData.role as UserRole);
+        }
+
+        // Calculamos los resultados generales
+        calculateResults();
+
+        // Calculamos los resultados filtrados para la tabla actual
+        const filtered = calculateResultsByFilters(yearFilter, statusFilter);
+        setFilteredHonorarios({
+          brutos: filtered.honorariosBrutos,
+          netos: filtered.honorariosNetos,
+        });
+      }
+    };
+
+    if (operationsLoaded) {
+      updateStore();
+    }
+  }, [
+    transformedOperations,
+    userData,
+    operationsLoaded,
+    yearFilter,
+    statusFilter,
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+    calculateResultsByFilters,
+  ]);
+
+  // Actualizar los honorarios filtrados cuando cambien los filtros
+  useEffect(() => {
+    if (transformedOperations.length > 0 && userData) {
+      const filtered = calculateResultsByFilters(yearFilter, statusFilter);
+      setFilteredHonorarios({
+        brutos: filtered.honorariosBrutos,
+        netos: filtered.honorariosNetos,
+      });
+    }
+  }, [
+    yearFilter,
+    statusFilter,
+    transformedOperations,
+    userData,
+    calculateResultsByFilters,
+  ]);
 
   const filterOperations = (operations: Operation[]) => {
     if (statusFilter === OperationStatus.CAIDA) {
       return operations.filter((op) => op.estado === OperationStatus.CAIDA);
+    } else if (statusFilter === 'all') {
+      // Si el filtro es 'all', excluir operaciones CAIDA
+      return operations.filter((op) => op.estado !== OperationStatus.CAIDA);
     } else {
-      return operations.filter(
-        (op) =>
-          op.estado === OperationStatus.EN_CURSO ||
-          op.estado === OperationStatus.CERRADA
-      );
+      // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
+      return operations.filter((op) => op.estado === statusFilter);
     }
   };
 
@@ -106,7 +178,7 @@ const OperationsTable: React.FC = () => {
     return dateSortedOps;
   };
 
-  const { currentOperations, filteredTotals, totalNetFees } = useMemo(() => {
+  const { currentOperations, filteredTotals } = useMemo(() => {
     const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
@@ -129,11 +201,6 @@ const OperationsTable: React.FC = () => {
     const nonFallenOps = filterOperations(searchedOps);
     const sortedOps = sortOperations(nonFallenOps);
 
-    // Calculate total net fees for all filtered operations
-    const totalNetFees = sortedOps.reduce((acc, operacion) => {
-      return acc + calculateNetFees(operacion, userData);
-    }, 0);
-
     const totals = calculateTotals(sortedOps);
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -143,7 +210,6 @@ const OperationsTable: React.FC = () => {
     return {
       currentOperations: currentOps,
       filteredTotals: totals,
-      totalNetFees,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -308,7 +374,8 @@ const OperationsTable: React.FC = () => {
             handleViewClick={handleViewClick}
             filteredTotals={filteredTotals}
             currencySymbol={currencySymbol}
-            totalNetFees={totalNetFees}
+            totalNetFees={filteredHonorarios.netos}
+            totalHonorariosBrutos={filteredHonorarios.brutos}
           />
         </table>
         <div className="flex justify-center mt-4 mb-4">
