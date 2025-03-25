@@ -227,7 +227,7 @@ const MonthlyLineChartPoints = () => {
                 position="top"
                 offset={20}
                 className="font-bold"
-                formatter={(value: number) => `${value}%`}
+                formatter={(value: number) => `${formatNumber(value)}%`}
               />
             </Line>
             <Line
@@ -242,7 +242,7 @@ const MonthlyLineChartPoints = () => {
                 position="bottom"
                 offset={20}
                 className="font-bold"
-                formatter={(value: number) => `${value}%`}
+                formatter={(value: number) => `${formatNumber(value)}%`}
               />
             </Line>
             <Line
