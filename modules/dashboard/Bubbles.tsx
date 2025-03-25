@@ -6,7 +6,7 @@ import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import {
   calculateTotals,
-  calculateHonorarios,
+  calculateTotalHonorariosBroker,
 } from '@/common/utils/calculations';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -21,25 +21,6 @@ import { Operation, UserData } from '@/common/types';
 import { OperationStatus } from '@/common/enums';
 
 // Función para calcular el total de honorarios de broker para operaciones según su estado
-const calculateTotalHonorariosBroker = (
-  operations: Operation[],
-  estado: string
-): number => {
-  return operations
-    .filter((op: Operation) => op.estado === estado)
-    .reduce((total: number, op: Operation) => {
-      const honorariosBroker = calculateHonorarios(
-        op.valor_reserva,
-        op.porcentaje_honorarios_asesor,
-        op.porcentaje_honorarios_broker,
-        op.porcentaje_compartido ?? 0,
-        op.porcentaje_referido ?? 0,
-        op.isFranchiseOrBroker ?? 0
-      ).honorariosBroker;
-
-      return total + honorariosBroker;
-    }, 0);
-};
 
 const Bubbles = () => {
   const { userID } = useAuthStore();

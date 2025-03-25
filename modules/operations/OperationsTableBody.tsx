@@ -193,25 +193,6 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           {`${currencySymbol}${formatNumber(Number(filteredTotals?.valor_reserva))}`}
         </td>
         <td className="py-3 px-2 text-center">
-          {filteredTotals?.promedio_punta_compradora_porcentaje !== undefined &&
-          filteredTotals?.promedio_punta_compradora_porcentaje !== null &&
-          filteredTotals?.promedio_punta_compradora_porcentaje !== 0 ? (
-            <>
-              {`${formatNumber(
-                Number(filteredTotals?.promedio_punta_compradora_porcentaje)
-              )}%`}
-              <InformationCircleIcon
-                className="inline-block mb-1 ml-1 text-lightBlue h-4 w-4 cursor-pointer"
-                data-tooltip-id="tooltip-compradora"
-                data-tooltip-content="Promedio del % excluyendo alquileres y operaciones abiertas. Puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
-              />
-              <Tooltip id="tooltip-compradora" place="top" />
-            </>
-          ) : (
-            'N/A'
-          )}
-        </td>
-        <td className="py-3 px-2 text-center">
           {filteredTotals?.promedio_punta_vendedora_porcentaje !== undefined &&
           filteredTotals?.promedio_punta_vendedora_porcentaje !== null &&
           filteredTotals?.promedio_punta_vendedora_porcentaje !== 0 ? (
@@ -230,6 +211,26 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
             'N/A'
           )}
         </td>
+        <td className="py-3 px-2 text-center">
+          {filteredTotals?.promedio_punta_compradora_porcentaje !== undefined &&
+          filteredTotals?.promedio_punta_compradora_porcentaje !== null &&
+          filteredTotals?.promedio_punta_compradora_porcentaje !== 0 ? (
+            <>
+              {`${formatNumber(
+                Number(filteredTotals?.promedio_punta_compradora_porcentaje)
+              )}%`}
+              <InformationCircleIcon
+                className="inline-block mb-1 ml-1 text-lightBlue h-4 w-4 cursor-pointer"
+                data-tooltip-id="tooltip-compradora"
+                data-tooltip-content="Promedio del % excluyendo alquileres y operaciones abiertas. Puntas no obtenidas / 0% (no existentes) no son tomadas en cuenta."
+              />
+              <Tooltip id="tooltip-compradora" place="top" />
+            </>
+          ) : (
+            'N/A'
+          )}
+        </td>
+
         <td className="text-center pr-2">
           {filteredTotals?.promedio_suma_puntas !== undefined &&
           filteredTotals?.promedio_suma_puntas !== null &&

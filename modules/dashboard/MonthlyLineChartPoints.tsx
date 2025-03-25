@@ -81,23 +81,25 @@ const MonthlyLineChartPoints = () => {
   useEffect(() => {
     if (operations.length > 0) {
       const totals = calculateTotals(operations);
-      const formattedData2024 = totals.porcentaje_honorarios_broker_por_mes_2024
-        ? Object.entries(totals.porcentaje_honorarios_broker_por_mes_2024).map(
-            ([month, value]) => ({
+      const formattedData2024 =
+        totals.porcentaje_honorarios_broker_por_mes_currentYear
+          ? Object.entries(
+              totals.porcentaje_honorarios_broker_por_mes_currentYear
+            ).map(([month, value]) => ({
               name: monthNames[parseInt(month, 10) - 1],
               value2024: value,
-            })
-          )
-        : [];
+            }))
+          : [];
 
-      const formattedData2023 = totals.porcentaje_honorarios_broker_por_mes_2023
-        ? Object.entries(totals.porcentaje_honorarios_broker_por_mes_2023).map(
-            ([month, value]) => ({
+      const formattedData2023 =
+        totals.porcentaje_honorarios_broker_por_mes_pastYear
+          ? Object.entries(
+              totals.porcentaje_honorarios_broker_por_mes_pastYear
+            ).map(([month, value]) => ({
               name: monthNames[parseInt(month, 10) - 1],
               value2023: value,
-            })
-          )
-        : [];
+            }))
+          : [];
 
       const mergedData = monthNames.map((month) => {
         const data2023 = formattedData2023.find(
