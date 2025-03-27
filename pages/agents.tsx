@@ -7,6 +7,7 @@ import AgentsReportByOps from '@/modules/agents/AgentsReportByOps';
 import PrivateRoute from '@/components/PrivateComponente/PrivateRoute';
 import PrivateLayout from '@/components/PrivateComponente/PrivateLayout';
 import { UserRole } from '@/common/enums';
+import AgentsLists from '@/modules/agents/AgentsLists';
 
 const Agents = () => {
   const { userData } = useUserDataStore();
@@ -18,9 +19,17 @@ const Agents = () => {
             <div className="hidden lg:block">
               {userData && <AgentsReport userId={userData?.uid || ''} />}
             </div>
-            <div className="hidden lg:block">
-              {userData && <AgentsReportByOps userId={userData?.uid || ''} />}
-            </div>
+
+            {userData && (
+              <div className="hidden lg:flex gap-6">
+                <div className="w-2/3">
+                  <AgentsReportByOps userId={userData?.uid || ''} />
+                </div>
+                <div className="w-1/3">
+                  <AgentsLists userId={userData?.uid || ''} />
+                </div>
+              </div>
+            )}
 
             <div className="block lg:hidden">
               {userData && (
