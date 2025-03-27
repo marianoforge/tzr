@@ -250,6 +250,7 @@ export interface TeamMember {
   lastName: string;
   email: string;
   numeroTelefono: string;
+  teamLeadID?: string;
   operaciones: Operation[]; // Aquí aseguramos que es el mismo tipo Operation[]
 }
 

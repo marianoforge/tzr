@@ -15,9 +15,6 @@ import {
 import { Operation } from '@/common/types';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { calculateTotals } from '@/common/utils/calculations';
-import { currentYearOperations } from '@/common/utils/currentYearOps';
-import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { useAuthStore } from '@/stores/authStore';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
@@ -101,12 +98,6 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   const { data, error, isLoading } = useQuery({
     queryKey: ['teamMembersWithOperations'],
     queryFn: fetchTeamMembersWithOperations,
-  });
-
-  const { data: operations = [] } = useQuery({
-    queryKey: ['operations', userId],
-    queryFn: () => fetchUserOperations(userId || ''),
-    enabled: !!userId,
   });
 
   const deleteMemberMutation = useMutation({
@@ -193,11 +184,13 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
     currentPage * itemsPerPage
   );
 
-  const totals = calculateTotals(
-    currentYearOperations(operations, Number(selectedYear))
+  // Primero calculamos el total de honorarios mostrados en la tabla actual
+  const visibleTotalHonorarios = filteredMembers.reduce(
+    (sum, member) =>
+      sum +
+      calculateAdjustedBrokerFees(member.operations, Number(selectedYear)),
+    0
   );
-
-  const totalHonorariosBroker = Number(totals.honorarios_broker_cerradas);
 
   if (isLoading) {
     return <SkeletonLoader height={60} count={14} />;
@@ -309,9 +302,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                               Number(selectedYear)
                             ) *
                               100) /
-                              (totalHonorariosBroker !== 0
-                                ? totalHonorariosBroker
-                                : 1)
+                              visibleTotalHonorarios
                           )}
                           %
                         </li>

@@ -6,7 +6,10 @@ import { auth } from '@/lib/firebase';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { useCalculationsStore } from '@/stores';
-import { calculateTotals } from '@/common/utils/calculations';
+import {
+  calculateTotals,
+  calculateHonorarios,
+} from '@/common/utils/calculations';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperationsBySearch';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -21,6 +24,7 @@ import {
 import { OperationStatus, UserRole } from '@/common/enums';
 import { useOperations } from '@/common/hooks/useOperactions';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
 import OperationsTableFilters from './OperationsTableFilter';
 import OperationsTableBody from './OperationsTableBody';
@@ -132,23 +136,6 @@ const OperationsTable: React.FC = () => {
     calculateResultsByFilters,
   ]);
 
-  // Actualizar los honorarios filtrados cuando cambien los filtros
-  useEffect(() => {
-    if (transformedOperations.length > 0 && userData) {
-      const filtered = calculateResultsByFilters(yearFilter, statusFilter);
-      setFilteredHonorarios({
-        brutos: filtered.honorariosBrutos,
-        netos: filtered.honorariosNetos,
-      });
-    }
-  }, [
-    yearFilter,
-    statusFilter,
-    transformedOperations,
-    userData,
-    calculateResultsByFilters,
-  ]);
-
   const filterOperations = (operations: Operation[]) => {
     if (statusFilter === OperationStatus.CAIDA) {
       return operations.filter((op) => op.estado === OperationStatus.CAIDA);
@@ -178,52 +165,89 @@ const OperationsTable: React.FC = () => {
     return dateSortedOps;
   };
 
-  const { currentOperations, filteredTotals } = useMemo(() => {
-    const filteredOps = filteredOperations(
+  const { currentOperations, filteredTotals, calculatedHonorarios } =
+    useMemo(() => {
+      const filteredOps = filteredOperations(
+        transformedOperations,
+        statusFilter,
+        yearFilter,
+        monthFilter
+      );
+
+      const typeFilteredOps =
+        operationTypeFilter === 'all'
+          ? filteredOps
+          : filteredOps?.filter(
+              (op) => op.tipo_operacion === operationTypeFilter
+            );
+
+      const searchedOps = filterOperationsBySearch(
+        typeFilteredOps || [],
+        searchQuery
+      );
+
+      const nonFallenOps = filterOperations(searchedOps);
+      const sortedOps = sortOperations(nonFallenOps);
+
+      const totals = calculateTotals(sortedOps);
+
+      // Calcular los honorarios brutos correctamente
+      // Utilizamos la función calculateHonorarios de @/common/utils/calculations para cada operación
+      const honorariosBrutos = sortedOps.reduce((total, op) => {
+        const resultado = calculateHonorarios(
+          op.valor_reserva,
+          op.porcentaje_honorarios_asesor || 0,
+          op.porcentaje_honorarios_broker || 0,
+          op.porcentaje_compartido || 0,
+          op.porcentaje_referido || 0,
+          op.isFranchiseOrBroker || 0
+        );
+
+        return total + resultado.honorariosBroker;
+      }, 0);
+
+      let honorariosNetos = 0;
+
+      // Verificar que userData existe antes de calcular
+      if (userData) {
+        honorariosNetos = sortedOps.reduce(
+          (total, op) => total + calculateNetFees(op, userData as UserData),
+          0
+        );
+      }
+
+      const indexOfLastItem = currentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
+
+      return {
+        currentOperations: currentOps,
+        filteredTotals: totals,
+        calculatedHonorarios: {
+          brutos: honorariosBrutos,
+          netos: honorariosNetos,
+        },
+      };
+    }, [
       transformedOperations,
       statusFilter,
       yearFilter,
-      monthFilter
-    );
+      monthFilter,
+      operationTypeFilter,
+      currentPage,
+      itemsPerPage,
+      searchQuery,
+      isValueAscending,
+      isDateAscending,
+      userData,
+    ]);
 
-    const typeFilteredOps =
-      operationTypeFilter === 'all'
-        ? filteredOps
-        : filteredOps?.filter(
-            (op) => op.tipo_operacion === operationTypeFilter
-          );
-
-    const searchedOps = filterOperationsBySearch(
-      typeFilteredOps || [],
-      searchQuery
-    );
-
-    const nonFallenOps = filterOperations(searchedOps);
-    const sortedOps = sortOperations(nonFallenOps);
-
-    const totals = calculateTotals(sortedOps);
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
-
-    return {
-      currentOperations: currentOps,
-      filteredTotals: totals,
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    transformedOperations,
-    statusFilter,
-    yearFilter,
-    monthFilter,
-    operationTypeFilter,
-    currentPage,
-    itemsPerPage,
-    searchQuery,
-    isValueAscending,
-    isDateAscending,
-  ]);
+  // Actualizar el estado fuera del useMemo en un useEffect
+  useEffect(() => {
+    if (calculatedHonorarios) {
+      setFilteredHonorarios(calculatedHonorarios);
+    }
+  }, [calculatedHonorarios]);
 
   const totalPages = useMemo(() => {
     return Math.ceil(

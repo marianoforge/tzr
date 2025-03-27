@@ -23,6 +23,7 @@ import {
 } from '@/lib/data';
 import { ALQUILER, OperationStatus, QueryKeys, UserRole } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
 import OperationsTableFilters from './OperationsTableFilter';
 import OperationsTableBody from './OperationsTableBody';
@@ -171,75 +172,100 @@ const OperationsTableTent: React.FC = () => {
     },
   });
 
-  const { currentOperations, filteredTotals } = useMemo(() => {
-    const filteredOps = filteredOperations(
+  const { currentOperations, filteredTotals, calculatedHonorarios } =
+    useMemo(() => {
+      const filteredOps = filteredOperations(
+        transformedOperations,
+        statusFilter,
+        yearFilter,
+        monthFilter
+      );
+
+      const typeFilteredOps =
+        operationTypeFilter === 'all'
+          ? filteredOps
+          : filteredOps?.filter(
+              (op) => op.tipo_operacion === operationTypeFilter
+            );
+
+      const searchedOps = filterOperationsBySearch(
+        typeFilteredOps || [],
+        searchQuery
+      );
+
+      const allOps = searchedOps.filter((op) => {
+        if (statusFilter === OperationStatus.CAIDA) {
+          return op.estado === OperationStatus.CAIDA;
+        } else if (statusFilter === 'all') {
+          // Si el filtro es 'all', excluir operaciones CAIDA
+          return op.estado !== OperationStatus.CAIDA;
+        } else {
+          // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
+          return op.estado === statusFilter;
+        }
+      });
+
+      const dateSortedOps = allOps.sort((a, b) => {
+        return b.fecha_operacion.localeCompare(a.fecha_operacion);
+      });
+
+      const sortedOps =
+        isValueAscending !== null
+          ? sortOperationValue(dateSortedOps, isValueAscending)
+          : isDateAscending !== null
+            ? dateSortedOps.sort((a, b) =>
+                isDateAscending
+                  ? a.fecha_operacion.localeCompare(b.fecha_operacion)
+                  : b.fecha_operacion.localeCompare(a.fecha_operacion)
+              )
+            : dateSortedOps;
+
+      const totals = calculateTotals(sortedOps);
+
+      // Calcular los honorarios filtrados aquí sin actualizar el estado
+      const honorariosBrutos = totals.honorarios_broker || 0;
+      let honorariosNetos = 0;
+
+      // Verificar que userData existe antes de calcular
+      if (userData) {
+        honorariosNetos = sortedOps.reduce(
+          (total, op) => total + calculateNetFees(op, userData as UserData),
+          0
+        );
+      }
+
+      const indexOfLastItem = currentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
+
+      return {
+        currentOperations: currentOps,
+        filteredTotals: totals,
+        calculatedHonorarios: {
+          brutos: honorariosBrutos,
+          netos: honorariosNetos,
+        },
+      };
+    }, [
       transformedOperations,
       statusFilter,
       yearFilter,
-      monthFilter
-    );
+      monthFilter,
+      operationTypeFilter,
+      currentPage,
+      itemsPerPage,
+      searchQuery,
+      isValueAscending,
+      isDateAscending,
+      userData,
+    ]);
 
-    const typeFilteredOps =
-      operationTypeFilter === 'all'
-        ? filteredOps
-        : filteredOps?.filter(
-            (op) => op.tipo_operacion === operationTypeFilter
-          );
-
-    const searchedOps = filterOperationsBySearch(
-      typeFilteredOps || [],
-      searchQuery
-    );
-
-    const allOps = searchedOps.filter((op) => {
-      if (statusFilter === OperationStatus.CAIDA) {
-        return op.estado === OperationStatus.CAIDA;
-      } else if (statusFilter === 'all') {
-        // Si el filtro es 'all', excluir operaciones CAIDA
-        return op.estado !== OperationStatus.CAIDA;
-      } else {
-        // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
-        return op.estado === statusFilter;
-      }
-    });
-
-    const dateSortedOps = allOps.sort((a, b) => {
-      return b.fecha_operacion.localeCompare(a.fecha_operacion);
-    });
-
-    const sortedOps =
-      isValueAscending !== null
-        ? sortOperationValue(dateSortedOps, isValueAscending)
-        : isDateAscending !== null
-          ? dateSortedOps.sort((a, b) =>
-              isDateAscending
-                ? a.fecha_operacion.localeCompare(b.fecha_operacion)
-                : b.fecha_operacion.localeCompare(a.fecha_operacion)
-            )
-          : dateSortedOps;
-
-    const totals = calculateTotals(sortedOps);
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
-
-    return {
-      currentOperations: currentOps,
-      filteredTotals: totals,
-    };
-  }, [
-    transformedOperations,
-    statusFilter,
-    yearFilter,
-    monthFilter,
-    operationTypeFilter,
-    currentPage,
-    itemsPerPage,
-    searchQuery,
-    isValueAscending,
-    isDateAscending,
-  ]);
+  // Actualizar el estado fuera del useMemo en un useEffect
+  useEffect(() => {
+    if (calculatedHonorarios) {
+      setFilteredHonorarios(calculatedHonorarios);
+    }
+  }, [calculatedHonorarios]);
 
   const totalPages = useMemo(() => {
     return Math.ceil(
