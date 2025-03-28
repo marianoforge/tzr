@@ -101,6 +101,9 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   const [porcentajeHonorariosBroker, setPorcentajeHonorariosBroker] =
     useState(0);
 
+  // Custom style for select components to override the text color
+  const selectStyle = '!text-black font-normal';
+
   useEffect(() => {
     if (operation) {
       const formattedOperation = {
@@ -112,6 +115,10 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         porcentaje_punta_vendedora: operation.porcentaje_punta_vendedora || 0,
         realizador_venta: operation.realizador_venta || '',
         realizador_venta_adicional: operation.realizador_venta_adicional || '',
+        porcentaje_honorarios_asesor:
+          operation.porcentaje_honorarios_asesor || 0,
+        porcentaje_honorarios_asesor_adicional:
+          operation.porcentaje_honorarios_asesor_adicional || 0,
       };
       reset(formattedOperation);
 
@@ -472,8 +479,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
                       label: member.name,
                     })),
                 ]}
-                className="w-full p-2 mb-8 border border-gray-300 rounded"
-                defaultValue={operation?.realizador_venta || ''}
+                className={`w-full p-2 mb-8 border border-gray-300 rounded ${selectStyle}`}
+                defaultValue={watch('realizador_venta') || ''}
               />
               {errors.realizador_venta && (
                 <p className="text-red-500">
@@ -512,8 +519,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
                       label: member.name,
                     })),
                 ]}
-                className="w-full p-2 mb-8 border border-gray-300 rounded"
-                defaultValue={operation?.realizador_venta_adicional || ''}
+                className={`w-full p-2 mb-8 border border-gray-300 rounded ${selectStyle}`}
+                defaultValue={watch('realizador_venta_adicional') || ''}
               />
               {errors.realizador_venta_adicional && (
                 <p className="text-red-500">
