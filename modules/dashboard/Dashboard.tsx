@@ -16,6 +16,7 @@ import ChartFallenOps from './ChartFallenOps';
 import Projections from './Projections';
 import Exclusiveness from './Exclusiveness';
 import DaysToSell from './DaysToSell';
+import CarteraActiva from './CarteraActiva';
 
 const DashBoard = () => {
   const { userData } = useUserDataStore();
@@ -73,6 +74,9 @@ const DashBoard = () => {
         </div>
         <div style={{ marginTop: '2.5rem' }}>
           <MonthlyBarChartGross />
+        </div>
+        <div className="hidden lg:block">
+          <CarteraActiva />
         </div>
       </div>
     </>
