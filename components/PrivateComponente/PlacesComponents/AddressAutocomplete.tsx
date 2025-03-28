@@ -150,10 +150,10 @@ export default function AddressAutocompleteManual({
         </ul>
       )}
       <Input
-        label="Número de Apto o Casa"
+        label="Número de Apto - Casa - Piso - Barrio - Más Info"
         value={houseNumber}
         onChange={handleHouseNumberInputChange}
-        placeholder="Por Ejemplo: Piso 4 - Apto D"
+        placeholder="Por Ejemplo: Piso 4 - Apto D - Balvanera - Etc."
         className="p-2 border rounded w-full"
       />
       {country && city && province && (

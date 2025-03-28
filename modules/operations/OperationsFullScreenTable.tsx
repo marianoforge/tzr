@@ -122,19 +122,19 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {formatNumber(operation.porcentaje_honorarios_broker)}%
           </p>
           <p>
-            <span className="font-semibold">Sobre de Reserva: </span>{' '}
+            <span className="font-semibold">Tipo de reserva: </span>{' '}
             {displayValue(operation.numero_sobre_reserva)}
           </p>
           <p>
-            <span className="font-semibold">Monto Sobre de Reserva:</span>{' '}
+            <span className="font-semibold">Monto de Reserva:</span>{' '}
             {formatNumber(operation.monto_sobre_reserva ?? 'N/A')}
           </p>
           <p>
-            <span className="font-semibold">Sobre de Refuerzo:</span>{' '}
+            <span className="font-semibold">Tipo de refuerzo: </span>{' '}
             {displayValue(operation.numero_sobre_refuerzo)}
           </p>
           <p>
-            <span className="font-semibold">Monto Sobre de Refuerzo:</span>{' '}
+            <span className="font-semibold">Monto de refuerzo:</span>{' '}
             {formatNumber(operation.monto_sobre_refuerzo ?? 'N/A')}
           </p>
           <p>

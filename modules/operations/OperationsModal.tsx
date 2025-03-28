@@ -361,15 +361,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           />
 
           <Input
-            label="Sobre de Reserva"
+            label="Tipo de reserva"
             type="text"
             {...register('numero_sobre_reserva')}
-            placeholder="Sobre de Reserva"
+            placeholder="Tipo de reserva"
             error={errors.numero_sobre_reserva?.message}
           />
 
           <Input
-            label="Monto Sobre de Reserva"
+            label="Monto de Reserva"
             type="text"
             {...register('monto_sobre_reserva')}
             placeholder="Por ejemplo: 2000"
@@ -377,15 +377,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
           />
 
           <Input
-            label="Sobre de Refuerzo"
+            label="Tipo de refuerzo"
             type="text"
             {...register('numero_sobre_refuerzo')}
-            placeholder="Sobre de Refuerzo"
+            placeholder="Tipo de refuerzo"
             error={errors.numero_sobre_refuerzo?.message}
           />
 
           <Input
-            label="Monto Sobre de Refuerzo"
+            label="Monto de refuerzo"
             type="text"
             {...register('monto_sobre_refuerzo')}
             placeholder="Por ejemplo: 4000"
