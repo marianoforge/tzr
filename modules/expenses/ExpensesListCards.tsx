@@ -21,6 +21,7 @@ import {
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
 import { QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 import ExpensesModal from './ExpensesModal';
 
@@ -42,6 +43,8 @@ const ExpensesListCards: React.FC = () => {
   const { currencySymbol } = useUserCurrencySymbol(userUID || '');
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -151,10 +154,12 @@ const ExpensesListCards: React.FC = () => {
                   {currencySymbol}
                   {formatNumber(expense.amount)}
                 </p>
-                <p>
-                  <strong>Monto en Dólares:</strong> $
-                  {formatNumber(expense.amountInDollars)}
-                </p>
+                {currency === 'USD' && (
+                  <p>
+                    <strong>Monto en Dólares:</strong> $
+                    {formatNumber(expense.amountInDollars)}
+                  </p>
+                )}
                 <p>
                   <strong>Tipo:</strong> {expense.expenseType}
                 </p>

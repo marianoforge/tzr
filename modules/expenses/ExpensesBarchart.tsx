@@ -23,6 +23,7 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { MonthNames, QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import { useAuthStore } from '@/stores/authStore';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -51,6 +52,8 @@ const ExpensesBarchart: React.FC = () => {
   const { calculateTotals } = useExpensesStore();
   const [userUID, setUserUID] = useState<string | null>(null); // Initialize userUID state
   const router = useRouter();
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -176,7 +179,11 @@ const ExpensesBarchart: React.FC = () => {
             <Bar
               dataKey="amountInDollars"
               fill={COLORS[3]}
-              name="Monto en Dólares"
+              name={
+                currency === 'USD'
+                  ? 'Monto del gasto en dólares'
+                  : 'Monto del gasto en pesos'
+              }
               barSize={50}
             />
           </BarChart>

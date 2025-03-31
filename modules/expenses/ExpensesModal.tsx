@@ -12,6 +12,7 @@ import { updateExpense } from '@/lib/api/expensesApi';
 import { expenseTypes } from '@/lib/data';
 import { schema } from '@/common/schemas/expensesModalSchema';
 import { QueryKeys } from '@/common/enums';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 type FormData = yup.InferType<typeof schema>;
 
@@ -28,6 +29,8 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
   expense,
 }) => {
   const queryClient = useQueryClient();
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
 
   const {
     register,
@@ -81,7 +84,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg  font-bold w-[50%] h-auto flex flex-col justify-center">
+      <div className="bg-white w-[90%] md:w-[80%] lg:w-[70%] xl:w-[50%] 2xl:w-[30%] p-6 rounded-xl shadow-lg  font-bold h-auto flex flex-col justify-center">
         <h2 className="text-2xl font-bold mb-4 text-center">Editar Gasto</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
@@ -102,15 +105,17 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
             required
           />
 
-          <Input
-            label="Cotización del dólar"
-            type="number"
-            placeholder="Cotización del dólar"
-            step="any"
-            {...register('dollarRate')}
-            error={errors.dollarRate?.message}
-            required
-          />
+          {currency === 'USD' && (
+            <Input
+              label="Cotización del dólar"
+              type="number"
+              placeholder="Cotización del dólar"
+              step="any"
+              {...register('dollarRate')}
+              error={errors.dollarRate?.message}
+              required
+            />
+          )}
 
           <Input
             label="Descripción"

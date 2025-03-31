@@ -26,6 +26,7 @@ import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
 import { ExpenseType, QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 import ExpensesModal from './ExpensesModal';
 
@@ -40,6 +41,8 @@ const ExpensesList = () => {
   const [monthFilter, setMonthFilter] = useState('all');
   const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
   const { currencySymbol } = useUserCurrencySymbol(userUID || '');
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
 
   const {
     data: expenses,
@@ -172,7 +175,6 @@ const ExpensesList = () => {
   if (expensesError) {
     return <p>Error: {expensesError.message || 'An unknown error occurred'}</p>;
   }
-
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
@@ -246,11 +248,14 @@ const ExpensesList = () => {
                   >
                     Monto en Moneda Local
                   </th>
-                  <th
-                    className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-                  >
-                    Monto en Dólares
-                  </th>
+                  {currency === 'USD' && (
+                    <th
+                      className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                    >
+                      Monto en Dólares
+                    </th>
+                  )}
+
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
@@ -278,9 +283,12 @@ const ExpensesList = () => {
                     <td className="py-3 px-4">
                       {`${currencySymbol}${formatNumber(expense.amount)}`}
                     </td>
-                    <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(expense.amountInDollars)}`}
-                    </td>
+                    {currency === 'USD' && (
+                      <td className="py-3 px-4">
+                        {`${currencySymbol}${formatNumber(expense.amountInDollars)}`}
+                      </td>
+                    )}
+
                     <td className="py-3 px-4">{expense.expenseType}</td>
                     <td className="py-3 px-4">{expense.description}</td>
 
@@ -313,16 +321,18 @@ const ExpensesList = () => {
                       )
                     )}
                   </td>
-                  <td className="py-3 px-4 text-center">
-                    {currencySymbol}
-                    {formatNumber(
-                      filteredExpenses.reduce(
-                        (acc: number, expense: Expense) =>
-                          acc + expense.amountInDollars,
-                        0
-                      )
-                    )}
-                  </td>
+                  {currency === 'USD' && (
+                    <td className="py-3 px-4 text-center">
+                      {currencySymbol}
+                      {formatNumber(
+                        filteredExpenses.reduce(
+                          (acc: number, expense: Expense) =>
+                            acc + expense.amountInDollars,
+                          0
+                        )
+                      )}
+                    </td>
+                  )}
                   <td className="py-3 px-4" colSpan={3}></td>
                 </tr>
               </tbody>
