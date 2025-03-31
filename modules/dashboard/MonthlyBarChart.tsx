@@ -55,6 +55,9 @@ const MonthlyBarChart: React.FC = () => {
   const { userData } = useUserDataStore();
   const { setOperations, setUserData, setUserRole, calculateResults } =
     useCalculationsStore();
+  const [totalPreviousYear, setTotalPreviousYear] = useState(0);
+  const [totalCurrentYear, setTotalCurrentYear] = useState(0);
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   // Utilizamos useQuery para obtener las operaciones del usuario
   const {
@@ -117,14 +120,16 @@ const MonthlyBarChart: React.FC = () => {
           previousYear: 0,
         }));
 
+        let total2024 = 0;
+        let total2025 = 0;
+
         operations2024.forEach((operation: Operation) => {
           const operationDate = new Date(
             operation.fecha_operacion || operation.fecha_reserva || ''
           );
           const monthIndex = operationDate.getMonth();
           const netFees = calculateNetFees(operation, userData as UserData);
-
-          // Sumamos las tarifas netas del año 2024
+          total2024 += netFees;
           data2024_2025[monthIndex].previousYear += netFees;
         });
 
@@ -134,10 +139,12 @@ const MonthlyBarChart: React.FC = () => {
           );
           const monthIndex = operationDate.getMonth();
           const netFees = calculateNetFees(operation, userData as UserData);
-
-          // Sumamos las tarifas netas del año 2025
+          total2025 += netFees;
           data2024_2025[monthIndex].currentYear += netFees;
         });
+
+        setTotalPreviousYear(parseFloat(total2024.toFixed(2)));
+        setTotalCurrentYear(parseFloat(total2025.toFixed(2)));
 
         // Formateamos los valores finales a 2 decimales también
         const validData2024_2025 = data2024_2025.map((item) => ({
@@ -195,7 +202,34 @@ const MonthlyBarChart: React.FC = () => {
             <XAxis dataKey="month" axisLine={false} tickLine={false} />
             <YAxis axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+            <Legend
+              wrapperStyle={{ paddingTop: '20px' }}
+              formatter={(value) => {
+                if (value === '2024') {
+                  return (
+                    <span>
+                      {value}{' '}
+                      <span className="ml-1">
+                        Honorarios Netos Acumulados: {currencySymbol}
+                        {formatNumber(totalPreviousYear)}
+                      </span>
+                    </span>
+                  );
+                }
+                if (value === '2025') {
+                  return (
+                    <span>
+                      {value}{' '}
+                      <span className="ml-1">
+                        Honorarios Netos Acumulados: {currencySymbol}
+                        {formatNumber(totalCurrentYear)}
+                      </span>
+                    </span>
+                  );
+                }
+                return value;
+              }}
+            />
             <Bar
               dataKey="previousYear"
               fill={COLORS[1]}

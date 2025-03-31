@@ -94,7 +94,7 @@ export interface ExpenseFormData {
   amountInDollars?: number;
   expenseType: string;
   description?: string;
-  dollarRate: number;
+  dollarRate?: number;
   otherType?: string;
 }
 
@@ -153,6 +153,8 @@ export interface UserData {
   trialEndsAt: Date | { toDate: () => Date } | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  currency: string | null;
+  currencySymbol: string | null;
 }
 
 export interface UserDataState extends BaseState<UserData> {

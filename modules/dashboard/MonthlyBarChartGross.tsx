@@ -55,6 +55,9 @@ const MonthlyBarChartGross: React.FC = () => {
   const [data, setData] = useState<
     { name: string; currentYear: number; previousYear: number }[]
   >([]);
+  const [totalPreviousYear, setTotalPreviousYear] = useState(0);
+  const [totalCurrentYear, setTotalCurrentYear] = useState(0);
+  const { currencySymbol } = useUserCurrencySymbol(userID || '');
 
   const {
     data: operations = [],
@@ -116,6 +119,9 @@ const MonthlyBarChartGross: React.FC = () => {
           previousYear: 0,
         }));
 
+        let total2024 = 0;
+        let total2025 = 0;
+
         // Calculate honorarios brutos by month for 2024
         operations2024.forEach((operation: Operation) => {
           const operationDate = new Date(
@@ -125,6 +131,7 @@ const MonthlyBarChartGross: React.FC = () => {
 
           // Calculate honorarios brutos for this operation
           const honorariosBrutos = calculateTotalHonorariosBroker([operation]);
+          total2024 += honorariosBrutos;
 
           // Add to the previous year total for this month
           dataByMonth[monthIndex].previousYear += honorariosBrutos;
@@ -139,10 +146,14 @@ const MonthlyBarChartGross: React.FC = () => {
 
           // Calculate honorarios brutos for this operation
           const honorariosBrutos = calculateTotalHonorariosBroker([operation]);
+          total2025 += honorariosBrutos;
 
           // Add to the current year total for this month
           dataByMonth[monthIndex].currentYear += honorariosBrutos;
         });
+
+        setTotalPreviousYear(parseFloat(total2024.toFixed(2)));
+        setTotalCurrentYear(parseFloat(total2025.toFixed(2)));
 
         // Format values to 2 decimal places
         const formattedData = dataByMonth.map((item) => ({
@@ -201,7 +212,34 @@ const MonthlyBarChartGross: React.FC = () => {
             <XAxis dataKey="name" axisLine={false} tickLine={false} />
             <YAxis axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+            <Legend
+              wrapperStyle={{ paddingTop: '20px' }}
+              formatter={(value) => {
+                if (value === '2024') {
+                  return (
+                    <span>
+                      {value}{' '}
+                      <span className="ml-1">
+                        Honorarios Netos Acumulados: {currencySymbol}
+                        {formatNumber(totalPreviousYear)}
+                      </span>
+                    </span>
+                  );
+                }
+                if (value === '2025') {
+                  return (
+                    <span>
+                      {value}{' '}
+                      <span className="ml-1">
+                        Honorarios Netos Acumulados: {currencySymbol}
+                        {formatNumber(totalCurrentYear)}
+                      </span>
+                    </span>
+                  );
+                }
+                return value;
+              }}
+            />
             <Bar
               dataKey="previousYear"
               fill={COLORS[1]}
