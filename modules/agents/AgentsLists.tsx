@@ -31,11 +31,28 @@ const AgentsLists = ({ userId }: { userId: string }) => {
 
   const filteredAgents =
     data?.filter((agent: TeamMember) => {
-      const fullName = `${agent.firstName.toLowerCase()} ${agent.lastName.toLowerCase()}`;
-      const searchWords = searchQuery.toLowerCase().split(' ');
-      return (
-        agent.teamLeadID === userId &&
-        searchWords.every((word) => fullName.includes(word))
+      if (agent.teamLeadID !== userId) return false;
+
+      // Si no hay búsqueda, mostrar todos los agentes del team leader
+      if (!searchQuery.trim()) return true;
+
+      // Normalizar todo a minúsculas y eliminar espacios extra
+      const fullName = `${agent.firstName} ${agent.lastName}`.toLowerCase();
+      const email = (agent.email || '').toLowerCase();
+      const phone = (agent.numeroTelefono || '').toLowerCase();
+
+      // Normalizar la búsqueda
+      const normalizedQuery = searchQuery.toLowerCase().trim();
+      const searchWords = normalizedQuery
+        .split(/\s+/)
+        .filter((word) => word.length > 0);
+
+      // Buscar en todos los campos relevantes
+      return searchWords.every(
+        (word) =>
+          fullName.includes(word) ||
+          email.includes(word) ||
+          phone.includes(word)
       );
     }) || [];
 

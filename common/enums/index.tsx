@@ -142,5 +142,6 @@ export enum TipodeVentas {
   OFICINAS = 'Oficinas',
   NAVE_INDUSTRIAL = 'Naves Industriales',
   TERRENOS = 'Terrenos',
+  CHACRAS = 'Chacras',
   OTRO = 'Otro',
 }

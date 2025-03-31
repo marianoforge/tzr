@@ -149,18 +149,33 @@ const OperationsTable: React.FC = () => {
   };
 
   const sortOperations = (operations: Operation[]) => {
+    // Default sort by fecha_operacion
     const dateSortedOps = operations.sort((a, b) => {
-      return b.fecha_operacion.localeCompare(a.fecha_operacion);
+      const aOp = a.fecha_operacion || '';
+      const bOp = b.fecha_operacion || '';
+      return bOp.localeCompare(aOp);
     });
 
     if (isValueAscending !== null) {
       return sortOperationValue(dateSortedOps, isValueAscending);
     } else if (isDateAscending !== null) {
-      return dateSortedOps.sort((a, b) =>
-        isDateAscending
-          ? a.fecha_operacion.localeCompare(b.fecha_operacion)
-          : b.fecha_operacion.localeCompare(a.fecha_operacion)
-      );
+      return operations.sort((a, b) => {
+        // Sort by fecha_reserva for the Reserva column
+        const aDate = a.fecha_reserva || a.fecha_operacion || '';
+        const bDate = b.fecha_reserva || b.fecha_operacion || '';
+
+        // If both dates are empty, keep their original order
+        if (!aDate && !bDate) return 0;
+        // If only aDate is empty, it should come last
+        if (!aDate) return isDateAscending ? 1 : -1;
+        // If only bDate is empty, it should come last
+        if (!bDate) return isDateAscending ? -1 : 1;
+
+        // Normal comparison for non-empty dates
+        return isDateAscending
+          ? aDate.localeCompare(bDate)
+          : bDate.localeCompare(aDate);
+      });
     }
     return dateSortedOps;
   };

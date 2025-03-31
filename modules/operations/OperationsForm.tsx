@@ -331,7 +331,7 @@ const OperationsForm = () => {
             </div>
 
             <Input
-              label="Valor de reserva / operación*"
+              label="Valor de oferta / operación*"
               type="number"
               placeholder="Por ejemplo: 200000"
               {...register('valor_reserva')}
@@ -369,15 +369,15 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Número sobre de reserva"
+              label="Tipo de reserva"
               type="text"
-              placeholder="Por ejemplo: E12549"
+              placeholder="Por ejemplo: Sobre nº / Transferencia"
               {...register('numero_sobre_reserva')}
               error={errors.numero_sobre_reserva?.message}
             />
 
             <Input
-              label="Monto sobre de reserva"
+              label="Monto de Reserva"
               type="number"
               placeholder="Por ejemplo: 2000"
               {...register('monto_sobre_reserva')}
@@ -388,14 +388,14 @@ const OperationsForm = () => {
           <div className="w-full md:w-[40%] px-2">
             {/* Right column */}
             <Input
-              label="Número sobre de refuerzo"
+              label="Tipo de refuerzo"
               type="text"
-              placeholder="Por ejemplo: E12549"
+              placeholder="Por ejemplo: Sobre nº / Transferencia"
               {...register('numero_sobre_refuerzo')}
               error={errors.numero_sobre_refuerzo?.message}
             />
             <Input
-              label="Monto sobre refuerzo"
+              label="Monto de refuerzo"
               type="number"
               placeholder="Por ejemplo: 4000"
               {...register('monto_sobre_refuerzo')}
