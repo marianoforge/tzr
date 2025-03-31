@@ -32,13 +32,17 @@ const CustomTooltip: React.FC<{
 }> = ({ active, payload, label }) => {
   const { userID } = useAuthStore();
   const { currencySymbol } = useUserCurrencySymbol(userID || '');
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`Monto en Dólares: ${currencySymbol}${formatNumber(
-          payload[0].value
-        )}`}</p>
+        {currency === 'USD' && (
+          <p className="intro">{`Monto en Dólares: ${currencySymbol}${formatNumber(
+            payload[0].value
+          )}`}</p>
+        )}
         <p className="intro">{`Monto en Moneda Local: ${currencySymbol}
 ${formatNumber(payload[0].payload.amountInPesos)}`}</p>
       </div>
@@ -182,7 +186,7 @@ const ExpensesBarchart: React.FC = () => {
               name={
                 currency === 'USD'
                   ? 'Monto del gasto en dólares'
-                  : 'Monto del gasto en pesos'
+                  : 'Monto del gasto'
               }
               barSize={50}
             />
