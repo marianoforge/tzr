@@ -15,13 +15,19 @@ import Image from 'next/image';
 
 import { auth } from '@/lib/firebase';
 import { useUserDataStore } from '@/stores/userDataStore';
+import { useAuthStore } from '@/stores/authStore';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
 import { UserRole } from '@/common/enums';
 
 import { NavLink } from '../NavComponents/NavLink';
 
 const VerticalNavbar = () => {
-  const { userData, isLoading, fetchItems } = useUserDataStore();
+  const {
+    userData,
+    isLoading: isUserDataLoading,
+    fetchItems,
+  } = useUserDataStore();
+  const { role: authRole } = useAuthStore();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -123,9 +129,13 @@ const VerticalNavbar = () => {
   );
 
   const renderNavLinksBasedOnRole = () => {
-    if (isLoading || !userData) return null;
+    // Usar el rol de userData o authRole, lo que esté disponible
+    const roleToUse = userData?.role || authRole;
 
-    switch (userData.role) {
+    // Si está cargando y no hay rol disponible, mostrar nada
+    if (isUserDataLoading && !roleToUse) return null;
+
+    switch (roleToUse) {
       case UserRole.TEAM_LEADER_BROKER:
         return renderAdminNavButtons();
       case UserRole.AGENTE_ASESOR:
