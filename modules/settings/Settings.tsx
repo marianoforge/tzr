@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import router from 'next/router';
 
 import { useAuthStore } from '@/stores/authStore';
+import { useUserDataStore } from '@/stores/userDataStore';
 import { cleanString } from '@/common/utils/cleanString';
 import { formatNumber } from '@/common/utils/formatNumber';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
@@ -15,7 +16,8 @@ import { QueryKeys } from '@/common/enums';
 import DownloadOperations from './DownloadOperations';
 
 const Settings = () => {
-  const { userID } = useAuthStore();
+  const { userID, setUserRole } = useAuthStore();
+  const { setUserData } = useUserDataStore();
   const queryClient = useQueryClient();
 
   const [firstName, setFirstName] = useState('');
@@ -86,7 +88,9 @@ const Settings = () => {
       setAgenciaBroker(userDataQuery.agenciaBroker);
       setNumeroTelefono(userDataQuery.numeroTelefono);
       setObjetivoAnual(
-        userDataQuery.objetivoAnual ?? 'Objetivo anual no definido'
+        typeof userDataQuery.objetivoAnual === 'number'
+          ? userDataQuery.objetivoAnual
+          : 0
       );
     }
   }, [userDataQuery]);
@@ -138,9 +142,15 @@ const Settings = () => {
     e.preventDefault();
     setErrorMessage(null);
     try {
+      // Obtener los datos actuales del usuario antes de la actualización
+      const currentUserData = useUserDataStore.getState().userData;
+      const currentAuthRole = useAuthStore.getState().role;
+      const userRole = currentUserData?.role || currentAuthRole;
+
       const token = await useAuthStore.getState().getAuthToken();
       if (!token) throw new Error('User not authenticated');
 
+      // Enviar la solicitud de actualización con todos los campos incluidos
       const response = await axios.put(
         `/api/users/${userID}`,
         {
@@ -149,15 +159,72 @@ const Settings = () => {
           agenciaBroker: cleanString(agenciaBroker),
           numeroTelefono: cleanString(numeroTelefono),
           objetivoAnual,
+          // Preservar el rol actual para asegurarnos de que no se pierda
+          role: userRole,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       if (response.status === 200) {
-        setOpenModalUpdate(true);
         setSuccess('Datos actualizados correctamente');
+
+        // Invalidar todas las consultas relacionadas con el usuario para forzar una recarga de datos
         queryClient.invalidateQueries({ queryKey: ['userData', userID] });
+        queryClient.invalidateQueries({ queryKey: ['operations', userID] });
+
+        // Mostrar el modal después de actualizar los stores
+        setOpenModalUpdate(true);
+
+        // Actualizar los estados locales en ambos stores
+        const updatedUserData = response.data;
+
+        if (updatedUserData) {
+          // Asegurarnos de que el rol está incluido en los datos actualizados
+          const updatedDataWithRole = {
+            ...updatedUserData,
+            role: updatedUserData.role || userRole, // Si no hay rol en la respuesta, usar el existente
+          };
+
+          // Actualizar el store userData con los datos completos
+          setUserData(updatedDataWithRole);
+
+          // Actualizar explícitamente el rol en authStore
+          setUserRole(updatedDataWithRole.role);
+
+          // Actualizar también el campo role en userDataStore
+          useUserDataStore.setState((state) => ({
+            ...state,
+            role: updatedDataWithRole.role,
+          }));
+        } else {
+          // Si no hay datos en la respuesta, actualizar con los valores locales
+          if (currentUserData) {
+            // Crear un nuevo objeto con los datos actualizados y preservar el rol
+            const newUserData = {
+              ...currentUserData,
+              firstName,
+              lastName,
+              agenciaBroker: cleanString(agenciaBroker),
+              numeroTelefono: cleanString(numeroTelefono),
+              objetivoAnual,
+              role: userRole, // Mantener el rol explícitamente
+            };
+
+            // Actualizar el store con los nuevos datos
+            setUserData(newUserData);
+
+            // Actualizar explícitamente el rol en authStore
+            setUserRole(userRole);
+
+            // Actualizar también el campo role en userDataStore
+            useUserDataStore.setState((state) => ({
+              ...state,
+              role: userRole,
+            }));
+          }
+        }
       }
     } catch (error) {
       console.error('Error updating user data:', error);
@@ -293,7 +360,11 @@ const Settings = () => {
                 type="text"
                 placeholder="Objetivo de Anual de Ventas"
                 name="objetivoAnual"
-                value={`${formatNumber(objetivoAnual) ?? 'Objetivo anual no definido'}`}
+                value={
+                  typeof objetivoAnual === 'number'
+                    ? formatNumber(objetivoAnual) || '0'
+                    : '0'
+                }
                 onChange={(e) => {
                   const value = e.target.value.replace(/[^0-9]/g, '');
                   setObjetivoAnual(Number(value) || 0);
@@ -408,7 +479,9 @@ const Settings = () => {
 
       <ModalUpdate
         isOpen={openModalUpdate}
-        onClose={() => setOpenModalUpdate(false)}
+        onClose={() => {
+          setOpenModalUpdate(false);
+        }}
         onAccept={() => {
           setOpenModalUpdate(false);
         }}

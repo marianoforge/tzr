@@ -1,6 +1,11 @@
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
 import { UserInfo } from '@/components/PrivateComponente/NavComponents/UserInfo';
 import { UserAvatar } from '@/components/PrivateComponente/NavComponents/UserAvatar';
 import { useUserDataStore } from '@/stores/userDataStore';
+import { useAuthStore } from '@/stores/authStore';
 
 import ChatHelper from '../chatbot/Chatbot';
 
@@ -18,9 +23,60 @@ import Exclusiveness from './Exclusiveness';
 import DaysToSell from './DaysToSell';
 
 const DashBoard = () => {
-  const { userData } = useUserDataStore();
+  const { userData, fetchUserData, isLoading, setUserData } =
+    useUserDataStore();
+  const { userID, setUserRole } = useAuthStore();
 
-  localStorage.setItem('userUID', userData?.uid || '');
+  // Consulta React Query para obtener datos del usuario directamente del API
+  const { data: userDataFromQuery, isLoading: isUserQueryLoading } = useQuery({
+    queryKey: ['userData', userID],
+    queryFn: async () => {
+      if (!userID) return null;
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
+      const response = await axios.get(`/api/users/${userID}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    enabled: !!userID,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Siempre obtenemos datos frescos
+  });
+
+  // Usar el userData más actualizado (de la consulta o del store)
+  const mergedUserData = userDataFromQuery || userData;
+
+  // Cargar datos del usuario si no están disponibles
+  useEffect(() => {
+    if (userID && !userData && !isLoading) {
+      fetchUserData(userID);
+    }
+
+    // Si tenemos datos de la consulta, actualizar el store
+    if (userDataFromQuery && !isUserQueryLoading) {
+      setUserData(userDataFromQuery);
+      if (userDataFromQuery.role) {
+        setUserRole(userDataFromQuery.role);
+      }
+    }
+
+    // También guardamos el userUID en localStorage para otros componentes
+    if (mergedUserData?.uid) {
+      localStorage.setItem('userUID', mergedUserData.uid);
+    }
+  }, [
+    userID,
+    userData,
+    userDataFromQuery,
+    isLoading,
+    isUserQueryLoading,
+    fetchUserData,
+    setUserData,
+    setUserRole,
+    mergedUserData,
+  ]);
 
   return (
     <>
