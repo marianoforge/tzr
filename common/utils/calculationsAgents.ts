@@ -6,15 +6,23 @@ import { OperationStatus } from '../enums';
 // Function to calculate adjusted broker fees
 export const calculateAdjustedBrokerFees = (
   operations: Operation[],
-  year: number
+  year: number | string,
+  month: string = 'all'
 ) => {
   // Filtrar operaciones por año y estado
-  const filteredOperations = operations.filter(
-    (op) =>
+  const filteredOperations = operations.filter((op) => {
+    const operationDate = new Date(
+      op.fecha_operacion || op.fecha_reserva || ''
+    );
+    const operationYear = operationDate.getFullYear();
+    const operationMonth = (operationDate.getMonth() + 1).toString();
+
+    return (
       op.estado === OperationStatus.CERRADA &&
-      new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-        year
-  );
+      (year === 'all' || operationYear === Number(year)) &&
+      (month === 'all' || operationMonth === month)
+    );
+  });
 
   // Ahora dividimos los honorarios entre asesores cuando es necesario
   return filteredOperations.reduce((acc: number, op: Operation) => {
@@ -34,65 +42,88 @@ export const calculateAdjustedBrokerFees = (
 // Function to calculate total operations
 export const calculateTotalOperations = (
   operations: Operation[],
-  year: number
+  year: number | string,
+  month: string = 'all'
 ) =>
-  operations
-    .filter(
-      (op) =>
-        op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
-    )
-    .reduce((total, op) => {
-      const isHalfOperation =
-        op.user_uid &&
-        op.user_uid_adicional &&
-        op.user_uid !== op.user_uid_adicional;
-      const isSingleOperation = op.user_uid && !op.user_uid_adicional;
-      return total + (isHalfOperation ? 0.5 : 0) + (isSingleOperation ? 1 : 0);
-    }, 0);
+  operations.filter((op) => {
+    const operationDate = new Date(
+      op.fecha_operacion || op.fecha_reserva || ''
+    );
+    const operationYear = operationDate.getFullYear();
+    const operationMonth = (operationDate.getMonth() + 1).toString();
+
+    return (
+      op.estado === OperationStatus.CERRADA &&
+      (year === 'all' || operationYear === Number(year)) &&
+      (month === 'all' || operationMonth === month)
+    );
+  }).length;
 
 // Function to calculate total buyer tips
 export const calculateTotalBuyerTips = (
   operations: Operation[],
-  year: number
+  year: number | string,
+  month: string = 'all'
 ) =>
   operations
-    .filter(
-      (op) =>
+    .filter((op) => {
+      const operationDate = new Date(
+        op.fecha_operacion || op.fecha_reserva || ''
+      );
+      const operationYear = operationDate.getFullYear();
+      const operationMonth = (operationDate.getMonth() + 1).toString();
+
+      return (
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
-    )
+        (year === 'all' || operationYear === Number(year)) &&
+        (month === 'all' || operationMonth === month)
+      );
+    })
     .reduce((acc, op) => acc + (op.punta_compradora ? 1 : 0), 0);
 
 // Function to calculate total seller tips
 export const calculateTotalSellerTips = (
   operations: Operation[],
-  year: number
+  year: number | string,
+  month: string = 'all'
 ) =>
   operations
-    .filter(
-      (op) =>
+    .filter((op) => {
+      const operationDate = new Date(
+        op.fecha_operacion || op.fecha_reserva || ''
+      );
+      const operationYear = operationDate.getFullYear();
+      const operationMonth = (operationDate.getMonth() + 1).toString();
+
+      return (
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
-    )
+        (year === 'all' || operationYear === Number(year)) &&
+        (month === 'all' || operationMonth === month)
+      );
+    })
     .reduce((acc, op) => acc + (op.punta_vendedora ? 1 : 0), 0);
 
 // Function to calculate total tips
 export const calculateTotalTips = (
   operations: Operation[],
-  year: number,
-  userId: string
+  year: number | string,
+  userId: string,
+  month: string = 'all'
 ) =>
   operations
-    .filter(
-      (op) =>
+    .filter((op) => {
+      const operationDate = new Date(
+        op.fecha_operacion || op.fecha_reserva || ''
+      );
+      const operationYear = operationDate.getFullYear();
+      const operationMonth = (operationDate.getMonth() + 1).toString();
+
+      return (
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
-    )
+        (year === 'all' || operationYear === Number(year)) &&
+        (month === 'all' || operationMonth === month)
+      );
+    })
     .reduce((acc, op) => {
       let puntas = 0;
       const totalPuntas =
@@ -117,13 +148,21 @@ export const calculateTotalTips = (
 // Function to calculate total reservation value
 export const calculateTotalReservationValue = (
   operations: Operation[],
-  year: number
+  year: number | string,
+  month: string = 'all'
 ) =>
   operations
-    .filter(
-      (op) =>
+    .filter((op) => {
+      const operationDate = new Date(
+        op.fecha_operacion || op.fecha_reserva || ''
+      );
+      const operationYear = operationDate.getFullYear();
+      const operationMonth = (operationDate.getMonth() + 1).toString();
+
+      return (
         op.estado === OperationStatus.CERRADA &&
-        new Date(op.fecha_operacion || op.fecha_reserva || '').getFullYear() ===
-          year
-    )
+        (year === 'all' || operationYear === Number(year)) &&
+        (month === 'all' || operationMonth === month)
+      );
+    })
     .reduce((acc, op) => acc + Number(op.valor_reserva), 0);

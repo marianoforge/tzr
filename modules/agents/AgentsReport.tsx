@@ -18,7 +18,7 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { useAuthStore } from '@/stores/authStore';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import Select from '@/components/PrivateComponente/CommonComponents/Select';
-import { yearsFilter } from '@/lib/data';
+import { yearsFilter, monthsFilter } from '@/lib/data';
 
 import EditAgentsModal from './EditAgentsModal';
 import AddUserModal from './AddUserModal';
@@ -94,6 +94,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [selectedYear, setSelectedYear] = useState<string>('2025');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['teamMembersWithOperations'],
@@ -160,10 +161,22 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
         const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
         const searchWords = searchQuery.toLowerCase().split(' ');
         const operationsInSelectedYear = member.operations.filter(
-          (operation) =>
-            new Date(operation.fecha_operacion || operation.fecha_reserva || '')
-              .getFullYear()
-              .toString() === selectedYear
+          (operation) => {
+            const operationDate = new Date(
+              operation.fecha_operacion || operation.fecha_reserva || ''
+            );
+            const year = operationDate.getFullYear().toString();
+            const month = (operationDate.getMonth() + 1).toString();
+
+            // Filtrar por año seleccionado si no es "todos los años"
+            if (selectedYear !== 'all' && year !== selectedYear) return false;
+
+            // Filtrar por mes seleccionado si no es "todos los meses"
+            if (selectedMonth !== 'all' && month !== selectedMonth)
+              return false;
+
+            return true;
+          }
         );
         return (
           member.teamLeadID === userId &&
@@ -173,8 +186,12 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
       })
       .sort(
         (a, b) =>
-          calculateAdjustedBrokerFees(b.operations, Number(selectedYear)) -
-          calculateAdjustedBrokerFees(a.operations, Number(selectedYear))
+          calculateAdjustedBrokerFees(
+            b.operations,
+            selectedYear,
+            selectedMonth
+          ) -
+          calculateAdjustedBrokerFees(a.operations, selectedYear, selectedMonth)
       ) || [];
 
   const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
@@ -188,7 +205,11 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   const visibleTotalHonorarios = filteredMembers.reduce(
     (sum, member) =>
       sum +
-      calculateAdjustedBrokerFees(member.operations, Number(selectedYear)),
+      calculateAdjustedBrokerFees(
+        member.operations,
+        selectedYear,
+        selectedMonth
+      ),
     0
   );
 
@@ -208,12 +229,20 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-[220px] p-2 border border-gray-300 rounded font-semibold mr-4 placeholder-mediumBlue placeholder-italic"
           />
-          <div className="flex md:w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] lg:justify-around justify-center items-center w-1/2 space-x-4">
+          <div className="flex md:w-[400px] lg:w-[350px] xl:w-[450px] 2xl:w-[550px] lg:justify-around justify-center items-center space-x-4">
             <Select
               options={yearsFilter}
               value={selectedYear}
               onChange={(value: string | number) =>
                 setSelectedYear(value.toString())
+              }
+              className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 border text-mediumBlue border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
+            />
+            <Select
+              options={monthsFilter}
+              value={selectedMonth}
+              onChange={(value: string | number) =>
+                setSelectedMonth(value.toString())
               }
               className="w-[200px] lg:w-[150px] xl:w-[200px] 2xl:w-[250px] h-[40px] p-2 border text-mediumBlue border-gray-300 rounded font-semibold lg:text-sm xl:text-base"
             />
@@ -283,7 +312,8 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                           {formatNumber(
                             calculateAdjustedBrokerFees(
                               member.operations,
-                              Number(selectedYear)
+                              selectedYear,
+                              selectedMonth
                             )
                           )}
                         </li>
@@ -299,7 +329,8 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                           {formatNumber(
                             (calculateAdjustedBrokerFees(
                               member.operations,
-                              Number(selectedYear)
+                              selectedYear,
+                              selectedMonth
                             ) *
                               100) /
                               visibleTotalHonorarios
@@ -314,26 +345,30 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                   <td className="py-3 px-4">
                     {calculateTotalOperations(
                       member.operations,
-                      Number(selectedYear)
+                      selectedYear,
+                      selectedMonth
                     )}
                   </td>
                   <td className="py-3 px-4">
                     {calculateTotalBuyerTips(
                       member.operations,
-                      Number(selectedYear)
+                      selectedYear,
+                      selectedMonth
                     )}
                   </td>
                   <td className="py-3 px-4">
                     {calculateTotalSellerTips(
                       member.operations,
-                      Number(selectedYear)
+                      selectedYear,
+                      selectedMonth
                     )}
                   </td>
                   <td className="py-3 px-4">
                     {calculateTotalTips(
                       member.operations,
-                      Number(selectedYear),
-                      member.id
+                      selectedYear,
+                      member.id,
+                      selectedMonth
                     )}
                   </td>
                   <td className="py-3 px-4">
@@ -341,7 +376,8 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                     {formatNumber(
                       calculateTotalReservationValue(
                         member.operations,
-                        Number(selectedYear)
+                        selectedYear,
+                        selectedMonth
                       )
                     )}
                   </td>

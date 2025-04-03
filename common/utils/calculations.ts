@@ -145,7 +145,11 @@ export const totalHonorariosTeamLead = (
     }
   }
 
-  return operation.honorarios_asesor;
+  return isFranchise
+    ? ((honorariosBrutos - franchiseDiscount) *
+        operation.porcentaje_honorarios_asesor) /
+        100
+    : operation.honorarios_asesor;
 };
 
 // Funcion para sumatoria de un campo en operaciones
