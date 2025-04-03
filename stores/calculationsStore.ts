@@ -97,7 +97,16 @@ export const useCalculationsStore = create<CalculationsState>()(
         const { operations, userData, userRole } = get();
 
         if (operations.length === 0 || !userData || !userRole) {
-          // Don't reset results to 0 if we can't calculate yet
+          // Reset results to 0 when there are no operations
+          set({
+            results: {
+              honorariosBrutos: 0,
+              honorariosNetos: 0,
+              honorariosBrutosEnCurso: 0,
+              honorariosNetosEnCurso: 0,
+            },
+            lastCalculated: Date.now(),
+          });
           return;
         }
 
@@ -116,6 +125,16 @@ export const useCalculationsStore = create<CalculationsState>()(
           });
 
           if (operations2025.length === 0) {
+            // Reset results to 0 when there are no 2025 operations
+            set({
+              results: {
+                honorariosBrutos: 0,
+                honorariosNetos: 0,
+                honorariosBrutosEnCurso: 0,
+                honorariosNetosEnCurso: 0,
+              },
+              lastCalculated: Date.now(),
+            });
             return;
           }
 
