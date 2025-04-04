@@ -23,15 +23,6 @@ export const loginWithEmailAndPassword = async (
 };
 
 export const resetPassword = async (email: string) => {
-  const token = await useAuthStore.getState().getAuthToken();
-  if (!token) throw new Error('User not authenticated');
-
-  const response = await axios.post(
-    '/api/auth/reset-password',
-    { email },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
+  const response = await axios.post('/api/auth/reset-password', { email });
   return response.data;
 };

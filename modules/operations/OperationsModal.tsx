@@ -437,17 +437,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             error={errors.porcentaje_compartido?.message}
           />
 
-          {userRole === UserRole.TEAM_LEADER_BROKER && (
-            <Input
-              label="Porcentaje destinado a franquicia o broker"
-              type="text"
-              {...register('isFranchiseOrBroker', {
-                setValueAs: (value) => parseFloat(value) || 0,
-              })}
-              placeholder="Por ejemplo: 10%"
-              error={errors.isFranchiseOrBroker?.message}
-            />
-          )}
+          <Input
+            label="Porcentaje destinado a franquicia o broker"
+            type="text"
+            {...register('isFranchiseOrBroker', {
+              setValueAs: (value) => parseFloat(value) || 0,
+            })}
+            placeholder="Por ejemplo: 10%"
+            error={errors.isFranchiseOrBroker?.message}
+          />
 
           {userRole === UserRole.TEAM_LEADER_BROKER && (
             <Input
