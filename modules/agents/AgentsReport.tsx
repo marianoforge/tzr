@@ -6,10 +6,8 @@ import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
-  calculateTotalBuyerTips,
   calculateTotalOperations,
   calculateTotalReservationValue,
-  calculateTotalSellerTips,
   calculateTotalTips,
 } from '@/common/utils/calculationsAgents';
 import { Operation } from '@/common/types';
@@ -277,12 +275,6 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                   Cantidad de Operaciones
                 </th>
                 <th className="py-3 px-4 font-semibold text-center">
-                  Puntas Compradoras
-                </th>
-                <th className="py-3 px-4 font-semibold text-center">
-                  Puntas Vendedoras
-                </th>
-                <th className="py-3 px-4 font-semibold text-center">
                   Puntas Totales
                 </th>
                 <th className="py-3 px-4 font-semibold text-center">
@@ -344,20 +336,6 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                   </td>
                   <td className="py-3 px-4">
                     {calculateTotalOperations(
-                      member.operations,
-                      selectedYear,
-                      selectedMonth
-                    )}
-                  </td>
-                  <td className="py-3 px-4">
-                    {calculateTotalBuyerTips(
-                      member.operations,
-                      selectedYear,
-                      selectedMonth
-                    )}
-                  </td>
-                  <td className="py-3 px-4">
-                    {calculateTotalSellerTips(
                       member.operations,
                       selectedYear,
                       selectedMonth
