@@ -10,6 +10,7 @@ import {
   UserPlusIcon,
   UserIcon,
   VideoCameraIcon,
+  Cog8ToothIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
@@ -34,6 +35,19 @@ const VerticalNavbar = () => {
 
     return () => unsubscribe();
   }, [fetchItems]);
+
+  const renderAdminLink = () => {
+    if (userData?.uid === '8QEPCwamFSYYIPcrhdQUsyZJgup1') {
+      return (
+        <NavLink
+          href="/adminOffice"
+          icon={<Cog8ToothIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+          label="Admin"
+        />
+      );
+    }
+    return null;
+  };
 
   const renderNavButtons = () => (
     <>
@@ -125,18 +139,34 @@ const VerticalNavbar = () => {
   const renderNavLinksBasedOnRole = () => {
     if (isLoading || !userData) return null;
 
+    // Render admin link for specific user regardless of role
+    const adminLinkForSpecificUser = renderAdminLink();
+
     switch (userData.role) {
       case UserRole.TEAM_LEADER_BROKER:
-        return renderAdminNavButtons();
+        return (
+          <>
+            {adminLinkForSpecificUser}
+            {renderAdminNavButtons()}
+          </>
+        );
       case UserRole.AGENTE_ASESOR:
-        return renderNavButtons();
+        return (
+          <>
+            {adminLinkForSpecificUser}
+            {renderNavButtons()}
+          </>
+        );
       default:
         return (
-          <NavLink
-            href="/dashboard"
-            icon={<HomeIcon className="w-5 h-5 mr-2" />}
-            label="Dashboard"
-          />
+          <>
+            {adminLinkForSpecificUser}
+            <NavLink
+              href="/dashboard"
+              icon={<HomeIcon className="w-5 h-5 mr-2" />}
+              label="Dashboard"
+            />
+          </>
         );
     }
   };
