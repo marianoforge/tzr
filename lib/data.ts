@@ -33,6 +33,7 @@ export const expenseTypes = [
   { value: 'Viáticos', label: 'Viáticos' },
   { value: 'Expensas', label: 'Expensas' },
   { value: 'Servicios de Oficina', label: 'Servicios de Oficina' },
+  { value: 'Caja Chica', label: 'Caja Chica' },
   { value: 'Otros', label: 'Otros' },
 ];
 

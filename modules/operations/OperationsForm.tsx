@@ -22,6 +22,7 @@ import { operationTypes, propertyTypes } from '@/lib/data';
 import { PATHS, QueryKeys, UserRole } from '@/common/enums';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import AddressAutocompleteManual from '@/components/PrivateComponente/PlacesComponents/AddressAutocomplete';
+import AddUserModal from '@/modules/agents/AddUserModal';
 
 type FormData = InferType<typeof schema>;
 type AddressData = {
@@ -78,6 +79,7 @@ const OperationsForm = () => {
     country: null,
     houseNumber: '',
   });
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -568,14 +570,22 @@ const OperationsForm = () => {
               </>
             )}
             {userRole === UserRole.TEAM_LEADER_BROKER && (
-              <p
-                className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
-                onClick={toggleAdditionalAdvisor}
-              >
-                {showAdditionalAdvisor
-                  ? 'Eliminar Segundo Asesor'
-                  : 'Agregar Otro Asesor'}
-              </p>
+              <div className="flex justify-between">
+                <p
+                  className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                  onClick={toggleAdditionalAdvisor}
+                >
+                  {showAdditionalAdvisor
+                    ? 'Eliminar asesor adicional'
+                    : 'Agregar asesor adicional a la operación'}
+                </p>
+                <p
+                  className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                  onClick={() => setIsAddUserModalOpen(true)}
+                >
+                  Crear Asesor
+                </p>
+              </div>
             )}
             <label className="font-semibold text-mediumBlue">
               Cantidad de puntas*
@@ -623,6 +633,10 @@ const OperationsForm = () => {
         message={modalMessage}
         onAccept={handleModalAccept}
       />
+
+      {isAddUserModalOpen && (
+        <AddUserModal onClose={() => setIsAddUserModalOpen(false)} />
+      )}
     </div>
   );
 };
