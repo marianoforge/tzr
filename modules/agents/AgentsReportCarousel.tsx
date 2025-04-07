@@ -10,8 +10,6 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import {
   calculateAdjustedBrokerFees,
   calculateTotalOperations,
-  calculateTotalBuyerTips,
-  calculateTotalSellerTips,
   calculateTotalTips,
   calculateTotalReservationValue,
 } from '@/common/utils/calculationsAgents';
@@ -240,20 +238,6 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
                       )
                     ) : (
                       <span>No operations</span>
-                    )}
-                  </p>
-                  <p>
-                    <strong>Puntas Compradoras:</strong>{' '}
-                    {calculateTotalBuyerTips(
-                      usuario.operations,
-                      Number(selectedYear)
-                    )}
-                  </p>
-                  <p>
-                    <strong>Puntas Vendedoras:</strong>{' '}
-                    {calculateTotalSellerTips(
-                      usuario.operations,
-                      Number(selectedYear)
                     )}
                   </p>
                   <p>
