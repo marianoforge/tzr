@@ -148,9 +148,17 @@ const LoginForm = () => {
     } catch (err) {
       console.error('❌ Error in login process:', err);
       if (err instanceof Error) {
-        setFormError(err.message);
+        // Check if the error message is from our API
+        if (
+          err.message.includes('Email no registrado') ||
+          err.message.includes('Contraseña incorrecta')
+        ) {
+          setFormError(err.message);
+        } else {
+          setFormError('Error al iniciar sesión, verifica tus credenciales.');
+        }
       } else {
-        setFormError('Error desconocido al iniciar sesión.');
+        setFormError('Error al iniciar sesión, verifica tus credenciales.');
       }
     } finally {
       setLoading(false);

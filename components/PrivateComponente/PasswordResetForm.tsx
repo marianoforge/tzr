@@ -43,7 +43,7 @@ const PasswordResetForm = () => {
           onSubmit={handlePasswordReset}
           className="bg-white p-6 rounded shadow-md w-11/12 max-w-lg"
         >
-          <h2 className="text-2xl mb-4 text-center">
+          <h2 className="text-xl mb-4 text-center">
             Recuperación de Contraseña
           </h2>
           {message && <p className="text-green-500 mb-4">{message}</p>}
