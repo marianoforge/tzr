@@ -269,6 +269,11 @@ const ExpensesList = () => {
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
+                    Recurrente
+                  </th>
+                  <th
+                    className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                  >
                     Acciones
                   </th>
                 </tr>
@@ -291,6 +296,17 @@ const ExpensesList = () => {
 
                     <td className="py-3 px-4">{expense.expenseType}</td>
                     <td className="py-3 px-4">{expense.description}</td>
+                    <td className="py-3 px-4">
+                      {expense.isRecurring ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-mediumBlue text-white">
+                          Mensual
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          No
+                        </span>
+                      )}
+                    </td>
 
                     <td className="py-3 px-4">
                       <button

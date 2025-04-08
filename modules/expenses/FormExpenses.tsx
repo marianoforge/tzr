@@ -49,6 +49,7 @@ const FormularioExpenses: React.FC = () => {
     resolver: yupResolver(getSchema(userCurrency)),
     defaultValues: {
       date: '',
+      isRecurring: false,
     },
   });
 
@@ -111,6 +112,7 @@ const FormularioExpenses: React.FC = () => {
       description: data.description ?? '',
       dollarRate: numDollarRate,
       user_uid: userID ?? '',
+      isRecurring: data.isRecurring ?? false,
     };
 
     mutation.mutate(expenseData);
@@ -213,6 +215,27 @@ const FormularioExpenses: React.FC = () => {
           {errors.description && (
             <p className="text-red-500 -mt-8">{errors.description.message}</p>
           )}
+
+          <div className="flex items-center mb-8 mt-4">
+            <input
+              type="checkbox"
+              id="isRecurring"
+              {...register('isRecurring')}
+              className="h-5 w-5 text-mediumBlue rounded border-gray-300 focus:ring-mediumBlue"
+            />
+            <label htmlFor="isRecurring" className="ml-2 text-gray-700">
+              Repetir Mensualmente
+            </label>
+            <div className="ml-2 cursor-help group relative">
+              <span className="flex items-center justify-center w-5 h-5 bg-mediumBlue text-white rounded-full text-xs">
+                ?
+              </span>
+              <div className="absolute hidden group-hover:block bg-black text-white text-xs rounded p-2 w-64 -ml-32 mt-2 z-10">
+                Al activar esta opción, este gasto se repetirá automáticamente
+                cada mes con los mismos datos.
+              </div>
+            </div>
+          </div>
 
           <div className="flex justify-center items-center mt-8 w-full">
             <button

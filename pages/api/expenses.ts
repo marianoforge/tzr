@@ -82,6 +82,7 @@ const createExpense = async (
       description,
       dollarRate,
       otherType,
+      isRecurring,
     } = req.body;
 
     // Obtener el usuario y su moneda
@@ -116,6 +117,7 @@ const createExpense = async (
       dollarRate: userCurrency === 'USD' ? 1 : dollarRate, // Si es USD, usar 1 como tasa
       user_uid: userUID,
       otherType: otherType ?? '',
+      isRecurring: isRecurring ?? false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
