@@ -77,6 +77,7 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
       amountInDollars: data.amount / data.dollarRate,
       user_uid: expense.user_uid,
       otherType: data.otherType ?? '',
+      isRecurring: data.isRecurring ?? false,
     });
   };
 
@@ -146,6 +147,27 @@ const ExpensesModal: React.FC<ExpensesModalProps> = ({
               {...register('otherType')}
             />
           )}
+
+          <div className="flex items-center mb-2">
+            <input
+              type="checkbox"
+              id="isRecurring"
+              {...register('isRecurring')}
+              className="h-5 w-5 text-mediumBlue rounded border-gray-300 focus:ring-mediumBlue"
+            />
+            <label htmlFor="isRecurring" className="ml-2 text-gray-700">
+              Repetir Mensualmente
+            </label>
+            <div className="ml-2 cursor-help group relative">
+              <span className="flex items-center justify-center w-5 h-5 bg-mediumBlue text-white rounded-full text-xs">
+                ?
+              </span>
+              <div className="absolute hidden group-hover:block bg-black text-white text-xs rounded p-2 w-64 -ml-32 mt-2 z-10">
+                Al activar esta opción, este gasto se repetirá automáticamente
+                cada mes con los mismos datos.
+              </div>
+            </div>
+          </div>
 
           <div className="flex gap-4 justify-center items-center">
             <Button

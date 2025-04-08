@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { getFirestore } from 'firebase-admin/firestore';
 
 import { adminAuth } from '@/lib/firebaseAdmin';

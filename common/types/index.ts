@@ -86,6 +86,7 @@ export interface Expense {
   dollarRate: number;
   user_uid?: string;
   otherType?: string;
+  isRecurring?: boolean;
 }
 
 export interface ExpenseFormData {
@@ -96,6 +97,7 @@ export interface ExpenseFormData {
   description?: string;
   dollarRate?: number;
   otherType?: string;
+  isRecurring?: boolean;
 }
 
 export interface ExpenseAgents {

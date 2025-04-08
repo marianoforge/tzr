@@ -383,7 +383,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
           </table>
         </div>
       ) : (
-        <p>No team members found for this team lead.</p>
+        <p>No se encontraron miembros para este equipo.</p>
       )}
 
       <div className="flex justify-center mt-4">

@@ -16,4 +16,5 @@ export const schema = yup.object().shape({
   description: yup.string().required('La descripción es requerida'),
   otherType: yup.string().nullable(),
   expenseAssociationType: yup.string().nullable(),
+  isRecurring: yup.boolean().default(false),
 });
