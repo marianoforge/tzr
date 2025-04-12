@@ -213,9 +213,7 @@ const OperationsTable: React.FC = () => {
           op.valor_reserva,
           op.porcentaje_honorarios_asesor || 0,
           op.porcentaje_honorarios_broker || 0,
-          op.porcentaje_compartido || 0,
-          op.porcentaje_referido || 0,
-          op.isFranchiseOrBroker || 0
+          op.porcentaje_compartido || 0
         );
 
         return total + resultado.honorariosBroker;

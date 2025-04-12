@@ -27,7 +27,8 @@ export const calculateTotalHonorariosBroker = (
       op.valor_reserva,
       op.porcentaje_honorarios_asesor,
       op.porcentaje_honorarios_broker,
-      op.porcentaje_compartido ?? 0
+      op.porcentaje_compartido ?? 0,
+      op.porcentaje_referido ?? 0
     ).honorariosBroker;
 
     return total + honorariosBroker;
@@ -44,12 +45,14 @@ export const totalHonorariosTeamLead = (
     return 0;
   }
 
+  // Calculamos los honorarios brutos (solo aplicando compartido y referido)
   const honorariosBrutos = calculateHonorarios(
     operation.valor_reserva,
     operation.porcentaje_honorarios_asesor,
     operation.porcentaje_honorarios_broker,
     operation.porcentaje_compartido ?? 0,
     operation.porcentaje_referido ?? 0
+    // No pasamos porcentaje_franchise ni porcentaje_reparticion_honorarios_asesor
   ).honorariosBroker;
 
   const isTeamLeaderBroker = userRole === UserRole.TEAM_LEADER_BROKER;
@@ -62,20 +65,36 @@ export const totalHonorariosTeamLead = (
 
   const isReparticionHonorariosAsesor = operation.reparticion_honorarios_asesor;
 
+  // NUEVA LÓGICA: Primero se calcula la parte de los asesores
+
+  // Para un asesor
+  let asesorDiscount = 0;
+  if (hasUserUid && !hasAdditionalUserUid) {
+    asesorDiscount =
+      (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
+  }
+
+  // Para dos asesores
+  let totalAsesoresHonorarios = 0;
+  if (hasUserUid && hasAdditionalUserUid) {
+    const asesor1Honorarios =
+      (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
+    const asesor2Honorarios =
+      (honorariosBrutos *
+        (operation.porcentaje_honorarios_asesor_adicional || 0)) /
+      100;
+    totalAsesoresHonorarios = asesor1Honorarios + asesor2Honorarios;
+  }
+
+  // Luego se calculan los descuentos de franquicia y repartición
   const franchiseDiscount =
     (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
-
   const reparticionHonorariosAsesor =
     (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) / 100;
 
-  const baseAfterDiscounts =
-    honorariosBrutos - franchiseDiscount - reparticionHonorariosAsesor;
-
-  const asesorDiscount =
-    (baseAfterDiscounts * (operation.porcentaje_honorarios_asesor || 0)) / 100;
-
   if (isTeamLeaderBroker) {
     if (!hasUserUid && !hasAdditionalUserUid) {
+      // Sin asesores
       if (!isFranchise && !isReparticionHonorariosAsesor) {
         return honorariosBrutos;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
@@ -90,56 +109,50 @@ export const totalHonorariosTeamLead = (
     }
 
     if (hasUserUid && !hasAdditionalUserUid) {
+      // Un asesor
       if (!isFranchise && !isReparticionHonorariosAsesor) {
         return honorariosBrutos - asesorDiscount;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
-        return honorariosBrutos - reparticionHonorariosAsesor - asesorDiscount;
+        return honorariosBrutos - asesorDiscount - reparticionHonorariosAsesor;
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return honorariosBrutos - franchiseDiscount - asesorDiscount;
+        return honorariosBrutos - asesorDiscount - franchiseDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return (
           honorariosBrutos -
+          asesorDiscount -
           franchiseDiscount -
-          reparticionHonorariosAsesor -
-          asesorDiscount
+          reparticionHonorariosAsesor
         );
       }
     }
 
     if (hasUserUid && hasAdditionalUserUid) {
-      const asesor1Honorarios =
-        (baseAfterDiscounts * (operation.porcentaje_honorarios_asesor || 0)) /
-        100;
-      const asesor2Honorarios =
-        (baseAfterDiscounts *
-          (operation.porcentaje_honorarios_asesor_adicional || 0)) /
-        100;
-      const totalAsesoresHonorarios = asesor1Honorarios + asesor2Honorarios;
-
+      // Dos asesores
       if (!isFranchise && !isReparticionHonorariosAsesor) {
         return honorariosBrutos - totalAsesoresHonorarios;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
         return (
           honorariosBrutos -
-          reparticionHonorariosAsesor -
-          totalAsesoresHonorarios
+          totalAsesoresHonorarios -
+          reparticionHonorariosAsesor
         );
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return honorariosBrutos - franchiseDiscount - totalAsesoresHonorarios;
+        return honorariosBrutos - totalAsesoresHonorarios - franchiseDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return (
           honorariosBrutos -
+          totalAsesoresHonorarios -
           franchiseDiscount -
-          reparticionHonorariosAsesor -
-          totalAsesoresHonorarios
+          reparticionHonorariosAsesor
         );
       }
     }
   }
 
+  // Para usuarios que no son team leaders
   return isFranchise
     ? ((honorariosBrutos - franchiseDiscount) *
-        operation.porcentaje_honorarios_asesor) /
+        (operation.porcentaje_honorarios_asesor || 0)) /
         100
     : operation.honorarios_asesor;
 };
@@ -199,9 +212,7 @@ export const calculateHonorarios = (
   porcentaje_honorarios_asesor: number,
   porcentaje_honorarios_broker: number,
   porcentaje_compartido: number,
-  porcentaje_referido: number = 0,
-  porcentaje_franchise: number = 0,
-  porcentaje_reparticion_honorarios_asesor: number = 0
+  porcentaje_referido: number = 0
 ) => {
   const porcentaje_honorarios_broker_normal =
     valor_reserva * (porcentaje_honorarios_broker / 100);
@@ -218,18 +229,10 @@ export const calculateHonorarios = (
     honorariosBroker -= (honorariosBroker * porcentaje_referido) / 100;
   }
 
-  // Aplicar descuento de franquicia
-  if (porcentaje_franchise) {
-    honorariosBroker -= (honorariosBroker * porcentaje_franchise) / 100;
-  }
+  // En el nuevo flujo, los descuentos de franquicia y repartición se aplican después
+  // de calcular los honorarios de los asesores, por lo que ya no los aplicamos aquí
 
-  // Aplicar descuento de repartición
-  if (porcentaje_reparticion_honorarios_asesor) {
-    honorariosBroker -=
-      (honorariosBroker * porcentaje_reparticion_honorarios_asesor) / 100;
-  }
-
-  // HONORARIOS ASESOR
+  // HONORARIOS ASESOR (Para mantener compatibilidad con código que use esta función)
   const honorariosAsesor =
     (honorariosBroker * porcentaje_honorarios_asesor) / 100;
 
