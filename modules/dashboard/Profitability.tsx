@@ -8,15 +8,16 @@ import { fetchUserExpenses } from '@/lib/api/expensesApi';
 import { useAuthStore } from '@/stores/authStore';
 import { Expense } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { calculateTotals } from '@/common/utils/calculations';
-import { currentYearOperations } from '@/common/utils/currentYearOps';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { QueryKeys } from '@/common/enums';
+import { useCalculationsStore } from '@/stores';
 
 const Profitability = () => {
   const { userID } = useAuthStore();
   const { userData } = useUserDataStore();
   const validUserID = userID || ''; // Ensure userID is a string
+
+  const { results } = useCalculationsStore();
 
   const {
     data: expenses = [],
@@ -27,23 +28,11 @@ const Profitability = () => {
     queryFn: () => fetchUserExpenses(validUserID),
   });
 
-  const {
-    data: operations = [],
-    isLoading: isLoadingOperations,
-    error: operationsError,
-  } = useQuery({
+  const { isLoading: isLoadingOperations, error: operationsError } = useQuery({
     queryKey: [QueryKeys.OPERATIONS, validUserID],
     queryFn: () => fetchUserOperations(validUserID),
     enabled: !!userID,
   });
-
-  const currentYear = new Date().getFullYear();
-  const totals = calculateTotals(
-    currentYearOperations(operations, currentYear)
-  );
-
-  const totalHonorariosNetosAsesor = totals.honorarios_asesor_cerradas;
-  const totalHonorariosBroker = totals.honorarios_broker_cerradas;
 
   const totalAmountInDollarsExpenses = expenses.reduce(
     (acc: number, exp: Expense) => {
@@ -54,6 +43,7 @@ const Profitability = () => {
     },
     0
   );
+
   const totalExpensesTeamBroker = expenses.reduce(
     (acc: number, exp: Expense) => {
       const expenseYear = new Date(exp.date).getFullYear();
@@ -63,6 +53,9 @@ const Profitability = () => {
     },
     0
   );
+
+  const totalHonorariosNetosAsesor = results.honorariosNetos;
+  const totalHonorariosBroker = results.honorariosBrutos;
 
   const profitability =
     totalHonorariosNetosAsesor && totalHonorariosNetosAsesor > 0

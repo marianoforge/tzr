@@ -27,9 +27,7 @@ export const calculateTotalHonorariosBroker = (
       op.valor_reserva,
       op.porcentaje_honorarios_asesor,
       op.porcentaje_honorarios_broker,
-      op.porcentaje_compartido ?? 0,
-      op.porcentaje_referido ?? 0,
-      op.isFranchiseOrBroker ?? 0
+      op.porcentaje_compartido ?? 0
     ).honorariosBroker;
 
     return total + honorariosBroker;
@@ -67,23 +65,14 @@ export const totalHonorariosTeamLead = (
   const franchiseDiscount =
     (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
 
-  const baseHonorariosMenosFranchise = honorariosBrutos - franchiseDiscount;
-
   const reparticionHonorariosAsesor =
-    (baseHonorariosMenosFranchise *
-      (operation.reparticion_honorarios_asesor || 0)) /
-    100;
+    (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) / 100;
+
+  const baseAfterDiscounts =
+    honorariosBrutos - franchiseDiscount - reparticionHonorariosAsesor;
 
   const asesorDiscount =
-    ((baseHonorariosMenosFranchise - reparticionHonorariosAsesor) *
-      (operation.porcentaje_honorarios_asesor || 0)) /
-    100;
-
-  const promedioPorcentajesAsesores =
-    ((operation.porcentaje_honorarios_asesor || 0) +
-      (operation.porcentaje_honorarios_asesor_adicional || 0)) /
-    2 /
-    100;
+    (baseAfterDiscounts * (operation.porcentaje_honorarios_asesor || 0)) / 100;
 
   if (isTeamLeaderBroker) {
     if (!hasUserUid && !hasAdditionalUserUid) {
@@ -118,28 +107,31 @@ export const totalHonorariosTeamLead = (
     }
 
     if (hasUserUid && hasAdditionalUserUid) {
+      const asesor1Honorarios =
+        (baseAfterDiscounts * (operation.porcentaje_honorarios_asesor || 0)) /
+        100;
+      const asesor2Honorarios =
+        (baseAfterDiscounts *
+          (operation.porcentaje_honorarios_asesor_adicional || 0)) /
+        100;
+      const totalAsesoresHonorarios = asesor1Honorarios + asesor2Honorarios;
+
       if (!isFranchise && !isReparticionHonorariosAsesor) {
-        return (
-          honorariosBrutos - honorariosBrutos * promedioPorcentajesAsesores
-        );
+        return honorariosBrutos - totalAsesoresHonorarios;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
         return (
           honorariosBrutos -
           reparticionHonorariosAsesor -
-          honorariosBrutos * promedioPorcentajesAsesores
+          totalAsesoresHonorarios
         );
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return (
-          honorariosBrutos -
-          franchiseDiscount -
-          honorariosBrutos * promedioPorcentajesAsesores
-        );
+        return honorariosBrutos - franchiseDiscount - totalAsesoresHonorarios;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return (
           honorariosBrutos -
           franchiseDiscount -
           reparticionHonorariosAsesor -
-          honorariosBrutos * promedioPorcentajesAsesores
+          totalAsesoresHonorarios
         );
       }
     }
@@ -226,10 +218,12 @@ export const calculateHonorarios = (
     honorariosBroker -= (honorariosBroker * porcentaje_referido) / 100;
   }
 
+  // Aplicar descuento de franquicia
   if (porcentaje_franchise) {
     honorariosBroker -= (honorariosBroker * porcentaje_franchise) / 100;
   }
 
+  // Aplicar descuento de repartición
   if (porcentaje_reparticion_honorarios_asesor) {
     honorariosBroker -=
       (honorariosBroker * porcentaje_reparticion_honorarios_asesor) / 100;
