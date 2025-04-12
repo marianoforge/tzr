@@ -123,9 +123,7 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
                 operacion.porcentaje_honorarios_asesor,
                 operacion.porcentaje_honorarios_broker,
                 operacion.porcentaje_compartido ?? 0,
-                operacion.porcentaje_referido ?? 0,
-                operacion.isFranchiseOrBroker ?? 0,
-                operacion.reparticion_honorarios_asesor ?? 0
+                operacion.porcentaje_referido ?? 0
               ).honorariosBroker;
 
               return `${currencySymbol}${formatNumber(honorariosBroker)}`;
