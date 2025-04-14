@@ -349,7 +349,7 @@ const ExpensesList = () => {
                       )}
                     </td>
                   )}
-                  <td className="py-3 px-4" colSpan={3}></td>
+                  <td className="py-3 px-4" colSpan={4}></td>
                 </tr>
               </tbody>
             </table>

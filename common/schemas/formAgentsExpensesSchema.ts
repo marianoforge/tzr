@@ -8,8 +8,7 @@ export const schema = yup.object().shape({
     .transform((value, originalValue) => {
       return originalValue.trim() === '' ? undefined : value;
     })
-    .required('El monto es requerido')
-    .positive('El monto debe ser un número positivo'),
+    .required('El monto es requerido'),
   dollarRate: yup
     .number()
     .transform((value, originalValue) => {

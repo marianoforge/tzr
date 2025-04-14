@@ -8,7 +8,6 @@ export const getSchema = (currency: string | null) => {
       .transform((value, originalValue) => {
         return originalValue.trim() === '' ? undefined : value;
       })
-      .positive('El monto debe ser un número positivo')
       .required('El monto es requerido'),
     expenseType: yup.string().required('El tipo de gasto es requerido'),
     description: yup.string().optional(),

@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { db, adminAuth } from '@/lib/firebaseAdmin'; // 🔹 Usa Firestore Admin SDK
-import { getDocs, getDoc, addDoc, deleteDoc } from 'firebase/firestore';
 
 export default async function handler(
   req: NextApiRequest,
