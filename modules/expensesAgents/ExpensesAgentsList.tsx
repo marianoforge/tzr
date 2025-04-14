@@ -17,6 +17,7 @@ import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import useFetchUserExpenses from '@/common/hooks/useFetchUserExpenses';
 import { useTeamMembers } from '@/common/hooks/useTeamMembers';
 import { QueryKeys } from '@/common/enums';
+import { useAuthStore } from '@/stores/authStore';
 
 import UserExpensesModal from './UserExpensesModal';
 
@@ -143,23 +144,95 @@ const ExpensesAgentsList = () => {
       agentId: string;
       expenseId: string;
     }) => {
+      // Get the auth token from the auth store
+      const token = await useAuthStore.getState().getAuthToken();
+      if (!token) throw new Error('User not authenticated');
+
       const response = await fetch(
         `/api/teamMembers/${agentId}/expenses?expenseId=${expenseId}`,
         {
           method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       if (!response.ok) {
         throw new Error('Error al eliminar el gasto');
       }
+      return { agentId, expenseId };
+    },
+    onMutate: async ({ agentId, expenseId }) => {
+      // Cancel any outgoing refetches so they don't overwrite our optimistic update
+      await queryClient.cancelQueries({ queryKey: [QueryKeys.EXPENSES] });
+
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData([
+        QueryKeys.EXPENSES,
+        teamMemberIds?.join(','),
+      ]);
+
+      // Optimistically update to the new value
+      if (usersWithExpenses) {
+        const updatedData = usersWithExpenses.map((user: ExpenseAgents) => {
+          if (user.id === agentId) {
+            return {
+              ...user,
+              expenses: user.expenses.filter(
+                (expense: Expense) => expense.id !== expenseId
+              ),
+            };
+          }
+          return user;
+        });
+
+        queryClient.setQueryData(
+          [QueryKeys.EXPENSES, teamMemberIds?.join(',')],
+          updatedData
+        );
+      }
+
+      // Return a context object with the snapshotted value
+      return { previousData };
+    },
+    onError: (_error, _variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          [QueryKeys.EXPENSES, teamMemberIds?.join(',')],
+          context.previousData
+        );
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.EXPENSES] }); // Invalida las queries relacionadas
+      // Invalidate the query with the correct key structure
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.EXPENSES, teamMemberIds?.join(',')],
+      });
+
+      // Force a refetch to ensure we have the latest data
+      queryClient.refetchQueries({
+        queryKey: [QueryKeys.EXPENSES, teamMemberIds?.join(',')],
+      });
+
       calculateTotals(); // Recalcula totales
     },
   });
 
-  const handleDeleteExpense = (agentId: string, expenseId: string) => {
+  const handleDeleteExpense = (expenseId: string, agentId: string) => {
+    // Keep track of the expense being deleted
+    const expenseBeingDeleted = selectedUserExpenses?.find(
+      (exp) => exp.id === expenseId
+    );
+
+    // If we're viewing the expenses, update the local state immediately
+    if (selectedUserExpenses && expenseBeingDeleted) {
+      setSelectedUserExpenses((prev) =>
+        prev ? prev.filter((exp) => exp.id !== expenseId) : []
+      );
+    }
+
+    // Call the mutation to actually delete the expense in the backend
     mutationDeleteExpense.mutate({ agentId, expenseId });
   };
 
@@ -346,7 +419,7 @@ const ExpensesAgentsList = () => {
         expenses={selectedUserExpenses || []}
         currencySymbol={currencySymbol}
         onDeleteExpense={(expenseId) =>
-          handleDeleteExpense(selectedAgentId!, expenseId)
+          handleDeleteExpense(expenseId, selectedAgentId!)
         }
         agentId={selectedAgentId!}
         message="Detalle de Gastos"
