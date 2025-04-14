@@ -6,8 +6,19 @@ export const formatNumber = (
   if (isNaN(num)) {
     return null;
   }
-  const parts = num.toFixed(2).split('.');
+
+  // Check if the number is negative
+  const isNegative = num < 0;
+  // Get the absolute value for formatting
+  const absNum = Math.abs(num);
+
+  const parts = absNum.toFixed(2).split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const formattedNumber = parts[1] === '00' ? parts[0] : parts.join(',');
-  return isPercentage ? `${formattedNumber}%` : formattedNumber;
+
+  if (isPercentage) {
+    return `${isNegative ? '-' : ''}${formattedNumber}%`;
+  }
+
+  return isNegative ? `-${formattedNumber}` : formattedNumber;
 };

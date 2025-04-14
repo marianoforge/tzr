@@ -124,12 +124,15 @@ const ExpensesAgentsListCards: React.FC = () => {
                 </p>
                 <p>
                   <strong>Monto Total en Moneda Local:</strong>
-                  {currencySymbol}
-                  {formatNumber(user.totalInPesos)}
+                  {user.totalInPesos < 0
+                    ? `-${currencySymbol}${formatNumber(Math.abs(user.totalInPesos))}`
+                    : `${currencySymbol}${formatNumber(user.totalInPesos)}`}
                 </p>
                 <p>
-                  <strong>Monto Total en Dólares:</strong> $
-                  {formatNumber(user.totalInDollars)}
+                  <strong>Monto Total en Dólares:</strong>
+                  {user.totalInDollars < 0
+                    ? `-$${formatNumber(Math.abs(user.totalInDollars))}`
+                    : `$${formatNumber(user.totalInDollars)}`}
                 </p>
                 {/* <Link href={`/expenses-agents/${user.id}`}>
                   <strong>Ver Detalle de Gastos</strong>

@@ -80,12 +80,14 @@ const UserExpensesModal: React.FC<UserExpensesModalProps> = ({
                   <td className="py-3 px-4">{formatDate(expense.date)}</td>
                   <td className="py-3 px-4">{expense.description}</td>
                   <td className="py-3 px-4">
-                    {currencySymbol}
-                    {formatNumber(expense.amount)}
+                    {expense.amount < 0
+                      ? `-${currencySymbol}${formatNumber(Math.abs(expense.amount))}`
+                      : `${currencySymbol}${formatNumber(expense.amount)}`}
                   </td>
                   <td className="py-3 px-4">
-                    {currencySymbol}
-                    {formatNumber(expense.amountInDollars)}
+                    {expense.amountInDollars < 0
+                      ? `-${currencySymbol}${formatNumber(Math.abs(expense.amountInDollars))}`
+                      : `${currencySymbol}${formatNumber(expense.amountInDollars)}`}
                   </td>
                   <td className="py-3 px-4">
                     <button
@@ -119,7 +121,7 @@ const UserExpensesModal: React.FC<UserExpensesModalProps> = ({
         onClose={closeDeleteModal}
         message="¿Estás seguro de querer eliminar este gasto?"
         onSecondButtonClick={confirmDelete}
-        secondButtonText="Borrar Gasto del Agente"
+        secondButtonText="Borrar Gasto"
         className="w-[450px]"
       />
     </div>
