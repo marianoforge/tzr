@@ -95,17 +95,18 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
           <div className="flex items-center justify-center">
             Valor Operación
             <span className="ml-1 text-xs text-mediumBlue">
-              {isValueAscending ? (
-                <ArrowUpIcon
-                  className="h-4 w-4 text-mediumBlue"
-                  strokeWidth={3}
-                />
-              ) : (
-                <ArrowDownIcon
-                  className="h-4 w-4 text-mediumBlue"
-                  strokeWidth={3}
-                />
-              )}
+              {isValueAscending !== null &&
+                (isValueAscending ? (
+                  <ArrowUpIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ) : (
+                  <ArrowDownIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ))}
             </span>
           </div>
         </th>

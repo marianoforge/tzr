@@ -218,17 +218,41 @@ const OperationsTableTent: React.FC = () => {
         isValueAscending !== null
           ? sortOperationValue(dateSortedOps, isValueAscending)
           : isReservaDateAscending !== null
-            ? dateSortedOps.sort((a, b) =>
-                isReservaDateAscending
-                  ? a.fecha_operacion.localeCompare(b.fecha_operacion)
-                  : b.fecha_operacion.localeCompare(a.fecha_operacion)
-              )
+            ? dateSortedOps.sort((a, b) => {
+                // Ordenar por fecha_reserva para la columna de Reserva
+                const aDate = a.fecha_reserva || '';
+                const bDate = b.fecha_reserva || '';
+
+                // Si ambas fechas están vacías, mantener el orden original
+                if (!aDate && !bDate) return 0;
+                // Si solo aDate está vacía, debe ir al final
+                if (!aDate) return isReservaDateAscending ? 1 : -1;
+                // Si solo bDate está vacía, debe ir al final
+                if (!bDate) return isReservaDateAscending ? -1 : 1;
+
+                // Comparación normal para fechas no vacías
+                return isReservaDateAscending
+                  ? aDate.localeCompare(bDate)
+                  : bDate.localeCompare(aDate);
+              })
             : isClosingDateAscending !== null
-              ? dateSortedOps.sort((a, b) =>
-                  isClosingDateAscending
-                    ? a.fecha_operacion.localeCompare(b.fecha_operacion)
-                    : b.fecha_operacion.localeCompare(a.fecha_operacion)
-                )
+              ? dateSortedOps.sort((a, b) => {
+                  // Ordenar por fecha_operacion para la columna de Cierre
+                  const aOp = a.fecha_operacion || '';
+                  const bOp = b.fecha_operacion || '';
+
+                  // Si ambas fechas están vacías, mantener el orden original
+                  if (!aOp && !bOp) return 0;
+                  // Si solo aOp está vacía, debe ir al final
+                  if (!aOp) return isClosingDateAscending ? 1 : -1;
+                  // Si solo bOp está vacía, debe ir al final
+                  if (!bOp) return isClosingDateAscending ? -1 : 1;
+
+                  // Comparación normal para fechas no vacías
+                  return isClosingDateAscending
+                    ? aOp.localeCompare(bOp)
+                    : bOp.localeCompare(aOp);
+                })
               : dateSortedOps;
 
       const totals = calculateTotals(sortedOps);
