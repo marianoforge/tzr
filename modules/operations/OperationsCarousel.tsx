@@ -5,7 +5,7 @@ import { PencilIcon, ServerIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
-import { formatNumber } from '@/common/utils/formatNumber';
+import { formatOperationsNumber } from '@/common/utils/formatNumber';
 import {
   fetchUserOperations,
   updateOperation,
@@ -177,32 +177,34 @@ const OperationsCarousel: React.FC = () => {
                   </p>
                   <p>
                     <strong>Valor Reserva / Cierre</strong> $
-                    {`${currencySymbol}${formatNumber(operacion.valor_reserva)}`}
+                    {`${currencySymbol}${formatOperationsNumber(operacion.valor_reserva)}`}
                   </p>
                   <p>
                     <strong>Puntas:</strong>{' '}
-                    {formatNumber(
+                    {formatOperationsNumber(
                       Number(operacion.punta_vendedora) +
                         Number(operacion.punta_compradora)
                     )}
                   </p>
                   <p>
                     <strong>% Punta Compradora:</strong>{' '}
-                    {formatNumber(
+                    {formatOperationsNumber(
                       Number(operacion.porcentaje_punta_compradora)
                     )}
                     %
                   </p>
                   <p>
                     <strong>% Punta Vendedora:</strong>{' '}
-                    {formatNumber(Number(operacion.porcentaje_punta_vendedora))}
+                    {formatOperationsNumber(
+                      Number(operacion.porcentaje_punta_vendedora)
+                    )}
                     %
                   </p>
                 </div>
                 <div className="space-y-2 sm:space-y-4 flex flex-col justify-around w-1/2">
                   <p>
                     <strong>% Puntas</strong>{' '}
-                    {formatNumber(
+                    {formatOperationsNumber(
                       Number(operacion.porcentaje_punta_compradora) +
                         Number(operacion.porcentaje_punta_vendedora)
                     )}
@@ -210,11 +212,11 @@ const OperationsCarousel: React.FC = () => {
                   </p>
                   <p>
                     <strong>Honorarios Brutos:</strong>
-                    {`${currencySymbol}${formatNumber(operacion.honorarios_broker)}`}
+                    {`${currencySymbol}${formatOperationsNumber(operacion.honorarios_broker)}`}
                   </p>
                   <p>
                     <strong>Honorarios Netos:</strong>
-                    {`${currencySymbol}${formatNumber(operacion.honorarios_asesor)}`}
+                    {`${currencySymbol}${formatOperationsNumber(operacion.honorarios_asesor)}`}
                   </p>
                   <p>
                     <strong>Compartido:</strong>{' '}
@@ -222,7 +224,9 @@ const OperationsCarousel: React.FC = () => {
                   </p>
                   <p>
                     <strong>% Compartido:</strong>{' '}
-                    {formatNumber(Number(operacion.porcentaje_compartido) ?? 0)}
+                    {formatOperationsNumber(
+                      Number(operacion.porcentaje_compartido) ?? 0
+                    )}
                     %
                   </p>
                   <p>
@@ -231,7 +235,10 @@ const OperationsCarousel: React.FC = () => {
                   </p>
                   <p>
                     <strong>% Referido:</strong>{' '}
-                    {formatNumber(Number(operacion.porcentaje_referido) ?? 0)}%
+                    {formatOperationsNumber(
+                      Number(operacion.porcentaje_referido) ?? 0
+                    )}
+                    %
                   </p>
                   <div className="flex justify-around">
                     <button
