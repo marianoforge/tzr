@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Operation, UserData } from '@/common/types/';
-import { formatNumber } from '@/common/utils/formatNumber';
+import { formatOperationsNumber } from '@/common/utils/formatNumber';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
@@ -86,40 +86,60 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Valor Reserva / Cierre: </span>
-            {`${currencySymbol}${formatNumber(operation.valor_reserva)}`}
+            {`${currencySymbol}${formatOperationsNumber(operation.valor_reserva)}`}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Punta Compradora:</span>{' '}
-            {operation.porcentaje_punta_compradora}%
+            {typeof operation.porcentaje_punta_compradora === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_punta_compradora,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Punta Vendedora:</span>{' '}
-            {operation.porcentaje_punta_vendedora}%
+            {typeof operation.porcentaje_punta_vendedora === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_punta_vendedora,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Cantidad de Puntas:</span>{' '}
-            {formatNumber(
+            {formatOperationsNumber(
               Number(operation.punta_vendedora) +
                 Number(operation.punta_compradora)
             )}
           </p>
           <p>
             <span className="font-semibold">Honorarios Brutos:</span>
-            {`${currencySymbol}${formatNumber(operation.honorarios_broker)}`}
+            {`${currencySymbol}${formatOperationsNumber(operation.honorarios_broker)}`}
           </p>
           <p>
             <span className="font-semibold">Honorarios Netos:</span>
-            {`${currencySymbol}${formatNumber(calculateNetFees(operation, userData))}`}
+            {`${currencySymbol}${formatOperationsNumber(calculateNetFees(operation, userData))}`}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Honorarios Asesor:</span>{' '}
-            {formatNumber(operation.porcentaje_honorarios_asesor)}%
+            {typeof operation.porcentaje_honorarios_asesor === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_honorarios_asesor,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">
               Porcentaje Honorarios Broker / Team Leader:{' '}
             </span>
-            {formatNumber(operation.porcentaje_honorarios_broker)}%
+            {typeof operation.porcentaje_honorarios_broker === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_honorarios_broker,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Tipo de reserva: </span>{' '}
@@ -127,7 +147,9 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Monto de Reserva:</span>{' '}
-            {formatNumber(operation.monto_sobre_reserva ?? 'N/A')}
+            {operation.monto_sobre_reserva
+              ? formatOperationsNumber(operation.monto_sobre_reserva)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Tipo de refuerzo: </span>{' '}
@@ -135,7 +157,9 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Monto de refuerzo:</span>{' '}
-            {formatNumber(operation.monto_sobre_refuerzo ?? 'N/A')}
+            {operation.monto_sobre_refuerzo
+              ? formatOperationsNumber(operation.monto_sobre_refuerzo)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Referido:</span>{' '}
@@ -143,11 +167,15 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Porcentaje Referido:</span>{' '}
-            {operation.porcentaje_referido}%
+            {typeof operation.porcentaje_referido === 'number'
+              ? formatOperationsNumber(operation.porcentaje_referido, true)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Compartido:</span>{' '}
-            {operation.porcentaje_compartido}%
+            {typeof operation.porcentaje_compartido === 'number'
+              ? formatOperationsNumber(operation.porcentaje_compartido, true)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Compartido:</span>{' '}
@@ -177,13 +205,20 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             <span className="font-semibold">
               Reparticion Honorarios Asesor / Martillero / Otros:{' '}
             </span>{' '}
-            {displayValue(operation.reparticion_honorarios_asesor)}%
+            {typeof operation.reparticion_honorarios_asesor === 'number'
+              ? formatOperationsNumber(
+                  operation.reparticion_honorarios_asesor,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">
               Porcentaje Destinado a Franquicia / Broker:{' '}
             </span>{' '}
-            {displayValue(operation.isFranchiseOrBroker)}%
+            {typeof operation.isFranchiseOrBroker === 'number'
+              ? formatOperationsNumber(operation.isFranchiseOrBroker, true)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Observaciones: </span>{' '}
