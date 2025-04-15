@@ -35,7 +35,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose }) => {
     setIsModalOpen(true);
     reset();
 
-    // Invalidar queries después de agregar un usuario
+    // Invalidar ambas queries después de agregar un usuario
     queryClient.invalidateQueries({ queryKey: [QueryKeys.TEAM_MEMBERS] });
   });
 

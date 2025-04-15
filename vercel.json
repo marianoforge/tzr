@@ -9,5 +9,11 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/process-recurring-expenses",
+      "schedule": "0 0 1 * *"
+    }
   ]
 }

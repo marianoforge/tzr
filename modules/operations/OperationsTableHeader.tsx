@@ -9,16 +9,20 @@ import { Tooltip } from 'react-tooltip';
 import { OPERATIONS_LIST_COLORS } from '@/lib/constants';
 
 interface OperationsTableHeaderProps {
-  isDateAscending: boolean | null;
+  isReservaDateAscending: boolean | null;
+  isClosingDateAscending: boolean | null;
   isValueAscending: boolean | null;
-  toggleDateSortOrder: () => void;
+  toggleReservaDateSortOrder: () => void;
+  toggleClosingDateSortOrder: () => void;
   toggleValueSortOrder: () => void;
 }
 
 const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
-  isDateAscending,
+  isReservaDateAscending,
+  isClosingDateAscending,
   isValueAscending,
-  toggleDateSortOrder,
+  toggleReservaDateSortOrder,
+  toggleClosingDateSortOrder,
   toggleValueSortOrder,
 }) => {
   return (
@@ -30,28 +34,48 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
           Captación / Publicación
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[120px]`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[130px] cursor-pointer`}
+          onClick={toggleReservaDateSortOrder}
         >
-          Reserva
+          <div className="flex items-center justify-center">
+            Reserva
+            <span className="ml-1 text-xs text-mediumBlue">
+              {isReservaDateAscending !== null &&
+                (isReservaDateAscending ? (
+                  <ArrowUpIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ) : (
+                  <ArrowDownIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ))}
+            </span>
+          </div>
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold flex items-center justify-center w-[120px]`}
-          onClick={toggleDateSortOrder}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[120px] cursor-pointer`}
+          onClick={toggleClosingDateSortOrder}
         >
-          Cierre
-          <span className="ml-1 text-xs text-mediumBlue items-center justify-center">
-            {isDateAscending ? (
-              <ArrowUpIcon
-                className="h-4 w-4 text-mediumBlue"
-                strokeWidth={3}
-              />
-            ) : (
-              <ArrowDownIcon
-                className="h-4 w-4 text-mediumBlue"
-                strokeWidth={3}
-              />
-            )}
-          </span>
+          <div className="flex items-center justify-center">
+            Cierre
+            <span className="ml-1 text-xs text-mediumBlue">
+              {isClosingDateAscending !== null &&
+                (isClosingDateAscending ? (
+                  <ArrowUpIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ) : (
+                  <ArrowDownIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ))}
+            </span>
+          </div>
         </th>
 
         <th
@@ -65,23 +89,26 @@ const OperationsTableHeader: React.FC<OperationsTableHeaderProps> = ({
           Operación
         </th>
         <th
-          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[180px]`}
+          className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold w-[180px] cursor-pointer`}
           onClick={toggleValueSortOrder}
         >
-          Valor Operación
-          <span className="ml-2 text-xs text-mediumBlue inline-flex items-center justify-center">
-            {isValueAscending ? (
-              <ArrowUpIcon
-                className="h-4 w-4 text-mediumBlue"
-                strokeWidth={3}
-              />
-            ) : (
-              <ArrowDownIcon
-                className="h-4 w-4 text-mediumBlue"
-                strokeWidth={3}
-              />
-            )}
-          </span>
+          <div className="flex items-center justify-center">
+            Valor Operación
+            <span className="ml-1 text-xs text-mediumBlue">
+              {isValueAscending !== null &&
+                (isValueAscending ? (
+                  <ArrowUpIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ) : (
+                  <ArrowDownIcon
+                    className="h-4 w-4 text-mediumBlue"
+                    strokeWidth={3}
+                  />
+                ))}
+            </span>
+          </div>
         </th>
         <th
           className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}

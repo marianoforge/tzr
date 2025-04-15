@@ -26,6 +26,7 @@ import Select from '@/components/PrivateComponente/CommonComponents/Select';
 import { monthsFilter, yearsFilter, expenseTypes } from '@/lib/data'; // Importa los filtros necesarios
 import { ExpenseType, QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 import ExpensesModal from './ExpensesModal';
 
@@ -40,6 +41,8 @@ const ExpensesList = () => {
   const [monthFilter, setMonthFilter] = useState('all');
   const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
   const { currencySymbol } = useUserCurrencySymbol(userUID || '');
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
 
   const {
     data: expenses,
@@ -172,7 +175,6 @@ const ExpensesList = () => {
   if (expensesError) {
     return <p>Error: {expensesError.message || 'An unknown error occurred'}</p>;
   }
-
   return (
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
@@ -246,11 +248,14 @@ const ExpensesList = () => {
                   >
                     Monto en Moneda Local
                   </th>
-                  <th
-                    className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
-                  >
-                    Monto en Dólares
-                  </th>
+                  {currency === 'USD' && (
+                    <th
+                      className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                    >
+                      Monto en Dólares
+                    </th>
+                  )}
+
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
@@ -260,6 +265,11 @@ const ExpensesList = () => {
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
                   >
                     Descripción
+                  </th>
+                  <th
+                    className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
+                  >
+                    Recurrente
                   </th>
                   <th
                     className={`py-3 px-4 ${OPERATIONS_LIST_COLORS.headerText} font-semibold`}
@@ -276,13 +286,31 @@ const ExpensesList = () => {
                   >
                     <td className="py-3 px-4">{formatDate(expense.date)}</td>
                     <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(expense.amount)}`}
+                      {expense.amount < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(expense.amount))}`
+                        : `${currencySymbol}${formatNumber(expense.amount)}`}
                     </td>
-                    <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(expense.amountInDollars)}`}
-                    </td>
+                    {currency === 'USD' && (
+                      <td className="py-3 px-4">
+                        {expense.amountInDollars < 0
+                          ? `-${currencySymbol}${formatNumber(Math.abs(expense.amountInDollars))}`
+                          : `${currencySymbol}${formatNumber(expense.amountInDollars)}`}
+                      </td>
+                    )}
+
                     <td className="py-3 px-4">{expense.expenseType}</td>
                     <td className="py-3 px-4">{expense.description}</td>
+                    <td className="py-3 px-4">
+                      {expense.isRecurring ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-mediumBlue text-white">
+                          Mensual
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          No
+                        </span>
+                      )}
+                    </td>
 
                     <td className="py-3 px-4">
                       <button
@@ -305,25 +333,31 @@ const ExpensesList = () => {
                     Total
                   </td>
                   <td className="py-3 px-4 text-center">
-                    {currencySymbol}
-                    {formatNumber(
-                      filteredExpenses.reduce(
+                    {(() => {
+                      const totalAmount = filteredExpenses.reduce(
                         (acc: number, expense: Expense) => acc + expense.amount,
                         0
-                      )
-                    )}
+                      );
+                      return totalAmount < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(totalAmount))}`
+                        : `${currencySymbol}${formatNumber(totalAmount)}`;
+                    })()}
                   </td>
-                  <td className="py-3 px-4 text-center">
-                    {currencySymbol}
-                    {formatNumber(
-                      filteredExpenses.reduce(
-                        (acc: number, expense: Expense) =>
-                          acc + expense.amountInDollars,
-                        0
-                      )
-                    )}
-                  </td>
-                  <td className="py-3 px-4" colSpan={3}></td>
+                  {currency === 'USD' && (
+                    <td className="py-3 px-4 text-center">
+                      {(() => {
+                        const totalAmountInDollars = filteredExpenses.reduce(
+                          (acc: number, expense: Expense) =>
+                            acc + expense.amountInDollars,
+                          0
+                        );
+                        return totalAmountInDollars < 0
+                          ? `-${currencySymbol}${formatNumber(Math.abs(totalAmountInDollars))}`
+                          : `${currencySymbol}${formatNumber(totalAmountInDollars)}`;
+                      })()}
+                    </td>
+                  )}
+                  <td className="py-3 px-4" colSpan={4}></td>
                 </tr>
               </tbody>
             </table>

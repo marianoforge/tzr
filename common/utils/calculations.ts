@@ -14,6 +14,27 @@ import { calculateGrossByMonth } from './calculationsGrossByMonth';
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
 
+export const calculateTotalHonorariosBroker = (
+  operations: Operation[],
+  estado?: string
+): number => {
+  const filteredOperations = estado
+    ? operations.filter((op: Operation) => op.estado === estado)
+    : operations;
+
+  return filteredOperations.reduce((total: number, op: Operation) => {
+    const honorariosBroker = calculateHonorarios(
+      op.valor_reserva,
+      op.porcentaje_honorarios_asesor,
+      op.porcentaje_honorarios_broker,
+      op.porcentaje_compartido ?? 0,
+      op.porcentaje_referido ?? 0
+    ).honorariosBroker;
+
+    return total + honorariosBroker;
+  }, 0);
+};
+
 export const totalHonorariosTeamLead = (
   operation: Operation,
   userRole: UserRole,
@@ -24,12 +45,14 @@ export const totalHonorariosTeamLead = (
     return 0;
   }
 
+  // Calculamos los honorarios brutos (solo aplicando compartido y referido)
   const honorariosBrutos = calculateHonorarios(
     operation.valor_reserva,
     operation.porcentaje_honorarios_asesor,
     operation.porcentaje_honorarios_broker,
     operation.porcentaje_compartido ?? 0,
     operation.porcentaje_referido ?? 0
+    // No pasamos porcentaje_franchise ni porcentaje_reparticion_honorarios_asesor
   ).honorariosBroker;
 
   const isTeamLeaderBroker = userRole === UserRole.TEAM_LEADER_BROKER;
@@ -42,29 +65,36 @@ export const totalHonorariosTeamLead = (
 
   const isReparticionHonorariosAsesor = operation.reparticion_honorarios_asesor;
 
+  // NUEVA LÓGICA: Primero se calcula la parte de los asesores
+
+  // Para un asesor
+  let asesorDiscount = 0;
+  if (hasUserUid && !hasAdditionalUserUid) {
+    asesorDiscount =
+      (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
+  }
+
+  // Para dos asesores
+  let totalAsesoresHonorarios = 0;
+  if (hasUserUid && hasAdditionalUserUid) {
+    const asesor1Honorarios =
+      (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
+    const asesor2Honorarios =
+      (honorariosBrutos *
+        (operation.porcentaje_honorarios_asesor_adicional || 0)) /
+      100;
+    totalAsesoresHonorarios = asesor1Honorarios + asesor2Honorarios;
+  }
+
+  // Luego se calculan los descuentos de franquicia y repartición
   const franchiseDiscount =
     (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
-
-  const baseHonorariosMenosFranchise = honorariosBrutos - franchiseDiscount;
-
   const reparticionHonorariosAsesor =
-    (baseHonorariosMenosFranchise *
-      (operation.reparticion_honorarios_asesor || 0)) /
-    100;
-
-  const asesorDiscount =
-    ((baseHonorariosMenosFranchise - reparticionHonorariosAsesor) *
-      (operation.porcentaje_honorarios_asesor || 0)) /
-    100;
-
-  const promedioPorcentajesAsesores =
-    ((operation.porcentaje_honorarios_asesor || 0) +
-      (operation.porcentaje_honorarios_asesor_adicional || 0)) /
-    2 /
-    100;
+    (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) / 100;
 
   if (isTeamLeaderBroker) {
     if (!hasUserUid && !hasAdditionalUserUid) {
+      // Sin asesores
       if (!isFranchise && !isReparticionHonorariosAsesor) {
         return honorariosBrutos;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
@@ -79,51 +109,52 @@ export const totalHonorariosTeamLead = (
     }
 
     if (hasUserUid && !hasAdditionalUserUid) {
+      // Un asesor
       if (!isFranchise && !isReparticionHonorariosAsesor) {
         return honorariosBrutos - asesorDiscount;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
-        return honorariosBrutos - reparticionHonorariosAsesor - asesorDiscount;
+        return honorariosBrutos - asesorDiscount - reparticionHonorariosAsesor;
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return honorariosBrutos - franchiseDiscount - asesorDiscount;
+        return honorariosBrutos - asesorDiscount - franchiseDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return (
           honorariosBrutos -
+          asesorDiscount -
           franchiseDiscount -
-          reparticionHonorariosAsesor -
-          asesorDiscount
+          reparticionHonorariosAsesor
         );
       }
     }
 
     if (hasUserUid && hasAdditionalUserUid) {
+      // Dos asesores
       if (!isFranchise && !isReparticionHonorariosAsesor) {
-        return (
-          honorariosBrutos - honorariosBrutos * promedioPorcentajesAsesores
-        );
+        return honorariosBrutos - totalAsesoresHonorarios;
       } else if (isReparticionHonorariosAsesor && !isFranchise) {
         return (
           honorariosBrutos -
-          reparticionHonorariosAsesor -
-          honorariosBrutos * promedioPorcentajesAsesores
+          totalAsesoresHonorarios -
+          reparticionHonorariosAsesor
         );
       } else if (isFranchise && !isReparticionHonorariosAsesor) {
-        return (
-          honorariosBrutos -
-          franchiseDiscount -
-          honorariosBrutos * promedioPorcentajesAsesores
-        );
+        return honorariosBrutos - totalAsesoresHonorarios - franchiseDiscount;
       } else if (isFranchise && isReparticionHonorariosAsesor) {
         return (
           honorariosBrutos -
+          totalAsesoresHonorarios -
           franchiseDiscount -
-          reparticionHonorariosAsesor -
-          honorariosBrutos * promedioPorcentajesAsesores
+          reparticionHonorariosAsesor
         );
       }
     }
   }
 
-  return operation.honorarios_asesor;
+  // Para usuarios que no son team leaders
+  return isFranchise
+    ? ((honorariosBrutos - franchiseDiscount) *
+        (operation.porcentaje_honorarios_asesor || 0)) /
+        100
+    : operation.honorarios_asesor;
 };
 
 // Funcion para sumatoria de un campo en operaciones
@@ -181,9 +212,7 @@ export const calculateHonorarios = (
   porcentaje_honorarios_asesor: number,
   porcentaje_honorarios_broker: number,
   porcentaje_compartido: number,
-  porcentaje_referido: number = 0,
-  porcentaje_franchise: number = 0,
-  porcentaje_reparticion_honorarios_asesor: number = 0
+  porcentaje_referido: number = 0
 ) => {
   const porcentaje_honorarios_broker_normal =
     valor_reserva * (porcentaje_honorarios_broker / 100);
@@ -200,16 +229,10 @@ export const calculateHonorarios = (
     honorariosBroker -= (honorariosBroker * porcentaje_referido) / 100;
   }
 
-  if (porcentaje_franchise) {
-    honorariosBroker -= (honorariosBroker * porcentaje_franchise) / 100;
-  }
+  // En el nuevo flujo, los descuentos de franquicia y repartición se aplican después
+  // de calcular los honorarios de los asesores, por lo que ya no los aplicamos aquí
 
-  if (porcentaje_reparticion_honorarios_asesor) {
-    honorariosBroker -=
-      (honorariosBroker * porcentaje_reparticion_honorarios_asesor) / 100;
-  }
-
-  // HONORARIOS ASESOR
+  // HONORARIOS ASESOR (Para mantener compatibilidad con código que use esta función)
   const honorariosAsesor =
     (honorariosBroker * porcentaje_honorarios_asesor) / 100;
 
@@ -223,7 +246,7 @@ export const calculateTotals = (operations: Operation[]) => {
       valor_reserva: 0,
       porcentaje_honorarios_asesor: 0,
       porcentaje_honorarios_broker: 0,
-      honorarios_broker: 0,
+      honorariosBrutos: 0,
       honorarios_asesor: 0,
       mayor_venta_efectuada: 0,
       promedio_valor_reserva: 0,
@@ -440,12 +463,12 @@ export const calculateTotals = (operations: Operation[]) => {
     validOperations.length;
 
   // Calculate the percentage for each month
-  const porcentajeHonorariosBrokerPorMes2024 = calculateGrossByMonth(
+  const porcentajeHonorariosBrokerPorMescurrentYear = calculateGrossByMonth(
     validOperations,
     new Date().getFullYear()
   );
 
-  const porcentajeHonorariosBrokerPorMes2023 = calculateGrossByMonth(
+  const porcentajeHonorariosBrokerPorMespastYear = calculateGrossByMonth(
     validOperations,
     new Date().getFullYear() - 1
   );
@@ -479,10 +502,10 @@ export const calculateTotals = (operations: Operation[]) => {
     promedio_suma_puntas: promedioSumaPuntas,
     total_honorarios_asesor_mes_vencido_promedio:
       totalHonorariosAsesorMesVencidoPromedio,
-    porcentaje_honorarios_broker_por_mes_2024:
-      porcentajeHonorariosBrokerPorMes2024,
-    porcentaje_honorarios_broker_por_mes_2023:
-      porcentajeHonorariosBrokerPorMes2023,
+    porcentaje_honorarios_broker_por_mes_currentYear:
+      porcentajeHonorariosBrokerPorMescurrentYear,
+    porcentaje_honorarios_broker_por_mes_pastYear:
+      porcentajeHonorariosBrokerPorMespastYear,
     total_honorarios_team_lead: totalHonorariosTeamLead,
     promedio_dias_venta: promedioDiasVenta,
   };

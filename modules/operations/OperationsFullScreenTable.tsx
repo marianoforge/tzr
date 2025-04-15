@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Operation, UserData } from '@/common/types/';
-import { formatNumber } from '@/common/utils/formatNumber';
+import { formatOperationsNumber } from '@/common/utils/formatNumber';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
@@ -29,11 +29,11 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white pt-6 pb-10 px-12 rounded-lg w-[60%] 2xl:w-[50%]">
+      <div className="bg-white pt-6 px-12 rounded-lg w-[60%] 2xl:w-[50%] max-h-[90vh] flex flex-col">
         <h2 className="text-2xl text-mediumBlue font-bold mb-6">
           Ficha de la Operación
         </h2>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6 overflow-y-auto pb-6">
           <p>
             <span className="font-semibold">
               Fecha de Captación / Publicación:
@@ -85,57 +85,81 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             {displayValue(operation.tipo_inmueble)}
           </p>
           <p>
-            <span className="font-semibold">Valor Reserva / Cierre: </span> $
-            {formatNumber(operation.valor_reserva)}
+            <span className="font-semibold">Valor Reserva / Cierre: </span>
+            {`${currencySymbol}${formatOperationsNumber(operation.valor_reserva)}`}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Punta Compradora:</span>{' '}
-            {operation.porcentaje_punta_compradora}%
+            {typeof operation.porcentaje_punta_compradora === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_punta_compradora,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Punta Vendedora:</span>{' '}
-            {operation.porcentaje_punta_vendedora}%
+            {typeof operation.porcentaje_punta_vendedora === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_punta_vendedora,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Cantidad de Puntas:</span>{' '}
-            {formatNumber(
+            {formatOperationsNumber(
               Number(operation.punta_vendedora) +
                 Number(operation.punta_compradora)
             )}
           </p>
           <p>
-            <span className="font-semibold">Honorarios Brutos:</span> $
-            {formatNumber(operation.honorarios_broker)}
+            <span className="font-semibold">Honorarios Brutos:</span>
+            {`${currencySymbol}${formatOperationsNumber(operation.honorarios_broker)}`}
           </p>
           <p>
             <span className="font-semibold">Honorarios Netos:</span>
-            {`${currencySymbol}${formatNumber(calculateNetFees(operation, userData))}`}
+            {`${currencySymbol}${formatOperationsNumber(calculateNetFees(operation, userData))}`}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Honorarios Asesor:</span>{' '}
-            {formatNumber(operation.porcentaje_honorarios_asesor)}%
+            {typeof operation.porcentaje_honorarios_asesor === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_honorarios_asesor,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">
               Porcentaje Honorarios Broker / Team Leader:{' '}
             </span>
-            {formatNumber(operation.porcentaje_honorarios_broker)}%
+            {typeof operation.porcentaje_honorarios_broker === 'number'
+              ? formatOperationsNumber(
+                  operation.porcentaje_honorarios_broker,
+                  true
+                )
+              : 'N/A'}
           </p>
           <p>
-            <span className="font-semibold">Sobre de Reserva: </span>{' '}
+            <span className="font-semibold">Tipo de reserva: </span>{' '}
             {displayValue(operation.numero_sobre_reserva)}
           </p>
           <p>
-            <span className="font-semibold">Monto Sobre de Reserva:</span>{' '}
-            {formatNumber(operation.monto_sobre_reserva ?? 'N/A')}
+            <span className="font-semibold">Monto de Reserva:</span>{' '}
+            {operation.monto_sobre_reserva
+              ? formatOperationsNumber(operation.monto_sobre_reserva)
+              : 'N/A'}
           </p>
           <p>
-            <span className="font-semibold">Sobre de Refuerzo:</span>{' '}
+            <span className="font-semibold">Tipo de refuerzo: </span>{' '}
             {displayValue(operation.numero_sobre_refuerzo)}
           </p>
           <p>
-            <span className="font-semibold">Monto Sobre de Refuerzo:</span>{' '}
-            {formatNumber(operation.monto_sobre_refuerzo ?? 'N/A')}
+            <span className="font-semibold">Monto de refuerzo:</span>{' '}
+            {operation.monto_sobre_refuerzo
+              ? formatOperationsNumber(operation.monto_sobre_refuerzo)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Referido:</span>{' '}
@@ -143,11 +167,15 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
           </p>
           <p>
             <span className="font-semibold">Porcentaje Referido:</span>{' '}
-            {operation.porcentaje_referido}%
+            {typeof operation.porcentaje_referido === 'number'
+              ? formatOperationsNumber(operation.porcentaje_referido, true)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Porcentaje Compartido:</span>{' '}
-            {operation.porcentaje_compartido}%
+            {typeof operation.porcentaje_compartido === 'number'
+              ? formatOperationsNumber(operation.porcentaje_compartido, true)
+              : 'N/A'}
           </p>
           <p>
             <span className="font-semibold">Compartido:</span>{' '}
@@ -174,18 +202,34 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             )}
           </p>
           <p>
+            <span className="font-semibold">
+              Reparticion Honorarios Asesor / Martillero / Otros:{' '}
+            </span>{' '}
+            {typeof operation.reparticion_honorarios_asesor === 'number'
+              ? formatOperationsNumber(
+                  operation.reparticion_honorarios_asesor,
+                  true
+                )
+              : 'N/A'}
+          </p>
+          <p>
+            <span className="font-semibold">
+              Porcentaje Destinado a Franquicia / Broker:{' '}
+            </span>{' '}
+            {typeof operation.isFranchiseOrBroker === 'number'
+              ? formatOperationsNumber(operation.isFranchiseOrBroker, true)
+              : 'N/A'}
+          </p>
+          <p>
             <span className="font-semibold">Observaciones: </span>{' '}
             {displayValue(operation.observaciones)}
           </p>
         </div>
-        <div
-          className="flex justify-center items-center
-        "
-        >
+        <div className="flex justify-center items-center py-4">
           <Button
             type="button"
             onClick={onClose}
-            className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-48 mt-10"
+            className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-48"
           >
             Cerrar
           </Button>

@@ -5,8 +5,11 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { calculateTotals } from '@/common/utils/calculations';
-import { calculateNetFees } from '@/common/utils/calculateNetFees';
+import { useCalculationsStore } from '@/stores';
+import {
+  calculateTotals,
+  calculateHonorarios,
+} from '@/common/utils/calculations';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperationsBySearch';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -18,9 +21,10 @@ import {
   statusOptions,
   yearsFilter,
 } from '@/lib/data';
-import { OperationStatus } from '@/common/enums';
+import { OperationStatus, UserRole } from '@/common/enums';
 import { useOperations } from '@/common/hooks/useOperactions';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
+import { calculateNetFees } from '@/common/utils/calculateNetFees';
 
 import OperationsTableFilters from './OperationsTableFilter';
 import OperationsTableBody from './OperationsTableBody';
@@ -47,12 +51,28 @@ const OperationsTable: React.FC = () => {
     null
   );
   const [operationTypeFilter, setOperationTypeFilter] = useState('all');
-  const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null);
+  const [isReservaDateAscending, setIsReservaDateAscending] = useState<
+    boolean | null
+  >(null);
+  const [isClosingDateAscending, setIsClosingDateAscending] = useState<
+    boolean | null
+  >(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [filteredHonorarios, setFilteredHonorarios] = useState({
+    brutos: 0,
+    netos: 0,
+  });
 
   const router = useRouter();
   const { userData } = useUserDataStore();
   const { currencySymbol } = useUserCurrencySymbol(userUID || '');
+  const {
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+    calculateResultsByFilters,
+  } = useCalculationsStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -75,89 +95,211 @@ const OperationsTable: React.FC = () => {
     deleteMutation,
     updateMutation,
     queryClient,
+    isSuccess: operationsLoaded,
   } = useOperations(userUID);
+
+  // Configurar los datos en el store cuando las operaciones se cargan
+  useEffect(() => {
+    const updateStore = async () => {
+      if (transformedOperations.length > 0 && userData) {
+        // Configuramos las operaciones
+        setOperations(transformedOperations);
+
+        // Configuramos los datos del usuario
+        setUserData(userData);
+
+        // Configuramos el rol del usuario
+        if (userData.role) {
+          setUserRole(userData.role as UserRole);
+        }
+
+        // Calculamos los resultados generales
+        calculateResults();
+
+        // Calculamos los resultados filtrados para la tabla actual
+        const filtered = calculateResultsByFilters(yearFilter, statusFilter);
+        setFilteredHonorarios({
+          brutos: filtered.honorariosBrutos,
+          netos: filtered.honorariosNetos,
+        });
+      }
+    };
+
+    if (operationsLoaded) {
+      updateStore();
+    }
+  }, [
+    transformedOperations,
+    userData,
+    operationsLoaded,
+    yearFilter,
+    statusFilter,
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+    calculateResultsByFilters,
+  ]);
 
   const filterOperations = (operations: Operation[]) => {
     if (statusFilter === OperationStatus.CAIDA) {
       return operations.filter((op) => op.estado === OperationStatus.CAIDA);
+    } else if (statusFilter === 'all') {
+      // Si el filtro es 'all', excluir operaciones CAIDA
+      return operations.filter((op) => op.estado !== OperationStatus.CAIDA);
     } else {
-      return operations.filter(
-        (op) =>
-          op.estado === OperationStatus.EN_CURSO ||
-          op.estado === OperationStatus.CERRADA
-      );
+      // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
+      return operations.filter((op) => op.estado === statusFilter);
     }
   };
 
   const sortOperations = (operations: Operation[]) => {
-    const dateSortedOps = operations.sort((a, b) => {
-      return b.fecha_operacion.localeCompare(a.fecha_operacion);
-    });
+    // Make a copy of the operations array to avoid modifying the original
+    let sortedOps = [...operations];
 
+    // Apply value sorting if active
     if (isValueAscending !== null) {
-      return sortOperationValue(dateSortedOps, isValueAscending);
-    } else if (isDateAscending !== null) {
-      return dateSortedOps.sort((a, b) =>
-        isDateAscending
-          ? a.fecha_operacion.localeCompare(b.fecha_operacion)
-          : b.fecha_operacion.localeCompare(a.fecha_operacion)
-      );
+      sortedOps = sortOperationValue(sortedOps, isValueAscending);
     }
-    return dateSortedOps;
+
+    // Apply closing date sorting if active
+    if (isClosingDateAscending !== null) {
+      sortedOps = sortedOps.sort((a, b) => {
+        const aOp = a.fecha_operacion || '';
+        const bOp = b.fecha_operacion || '';
+
+        // If both dates are empty, keep their original order
+        if (!aOp && !bOp) return 0;
+        // If only aOp is empty, it should come last
+        if (!aOp) return isClosingDateAscending ? 1 : -1;
+        // If only bOp is empty, it should come last
+        if (!bOp) return isClosingDateAscending ? -1 : 1;
+
+        // Normal comparison for non-empty dates
+        return isClosingDateAscending
+          ? aOp.localeCompare(bOp)
+          : bOp.localeCompare(aOp);
+      });
+    }
+
+    // Apply reserva date sorting if active
+    if (isReservaDateAscending !== null) {
+      sortedOps = sortedOps.sort((a, b) => {
+        const aDate = a.fecha_reserva || '';
+        const bDate = b.fecha_reserva || '';
+
+        // If both dates are empty, keep their original order
+        if (!aDate && !bDate) return 0;
+        // If only aDate is empty, it should come last
+        if (!aDate) return isReservaDateAscending ? 1 : -1;
+        // If only bDate is empty, it should come last
+        if (!bDate) return isReservaDateAscending ? -1 : 1;
+
+        // Normal comparison for non-empty dates
+        return isReservaDateAscending
+          ? aDate.localeCompare(bDate)
+          : bDate.localeCompare(aDate);
+      });
+    }
+
+    // If no sorting is active, default sort by fecha_operacion (descending)
+    if (
+      isValueAscending === null &&
+      isReservaDateAscending === null &&
+      isClosingDateAscending === null
+    ) {
+      sortedOps = sortedOps.sort((a, b) => {
+        const aOp = a.fecha_operacion || '';
+        const bOp = b.fecha_operacion || '';
+        return bOp.localeCompare(aOp);
+      });
+    }
+
+    return sortedOps;
   };
 
-  const { currentOperations, filteredTotals, totalNetFees } = useMemo(() => {
-    const filteredOps = filteredOperations(
+  const { currentOperations, filteredTotals, calculatedHonorarios } =
+    useMemo(() => {
+      const filteredOps = filteredOperations(
+        transformedOperations,
+        statusFilter,
+        yearFilter,
+        monthFilter
+      );
+
+      const typeFilteredOps =
+        operationTypeFilter === 'all'
+          ? filteredOps
+          : filteredOps?.filter(
+              (op) => op.tipo_operacion === operationTypeFilter
+            );
+
+      const searchedOps = filterOperationsBySearch(
+        typeFilteredOps || [],
+        searchQuery
+      );
+
+      const nonFallenOps = filterOperations(searchedOps);
+      const sortedOps = sortOperations(nonFallenOps);
+
+      const totals = calculateTotals(sortedOps);
+
+      // Calcular los honorarios brutos correctamente
+      // Utilizamos la función calculateHonorarios de @/common/utils/calculations para cada operación
+      const honorariosBrutos = sortedOps.reduce((total, op) => {
+        const resultado = calculateHonorarios(
+          op.valor_reserva,
+          op.porcentaje_honorarios_asesor || 0,
+          op.porcentaje_honorarios_broker || 0,
+          op.porcentaje_compartido || 0
+        );
+
+        return total + resultado.honorariosBroker;
+      }, 0);
+
+      let honorariosNetos = 0;
+
+      // Verificar que userData existe antes de calcular
+      if (userData) {
+        honorariosNetos = sortedOps.reduce(
+          (total, op) => total + calculateNetFees(op, userData as UserData),
+          0
+        );
+      }
+
+      const indexOfLastItem = currentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
+
+      return {
+        currentOperations: currentOps,
+        filteredTotals: totals,
+        calculatedHonorarios: {
+          brutos: honorariosBrutos,
+          netos: honorariosNetos,
+        },
+      };
+    }, [
       transformedOperations,
       statusFilter,
       yearFilter,
-      monthFilter
-    );
+      monthFilter,
+      operationTypeFilter,
+      currentPage,
+      itemsPerPage,
+      searchQuery,
+      isValueAscending,
+      isReservaDateAscending,
+      isClosingDateAscending,
+      userData,
+    ]);
 
-    const typeFilteredOps =
-      operationTypeFilter === 'all'
-        ? filteredOps
-        : filteredOps?.filter(
-            (op) => op.tipo_operacion === operationTypeFilter
-          );
-
-    const searchedOps = filterOperationsBySearch(
-      typeFilteredOps || [],
-      searchQuery
-    );
-
-    const nonFallenOps = filterOperations(searchedOps);
-    const sortedOps = sortOperations(nonFallenOps);
-
-    // Calculate total net fees for all filtered operations
-    const totalNetFees = sortedOps.reduce((acc, operacion) => {
-      return acc + calculateNetFees(operacion, userData);
-    }, 0);
-
-    const totals = calculateTotals(sortedOps);
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
-
-    return {
-      currentOperations: currentOps,
-      filteredTotals: totals,
-      totalNetFees,
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    transformedOperations,
-    statusFilter,
-    yearFilter,
-    monthFilter,
-    operationTypeFilter,
-    currentPage,
-    itemsPerPage,
-    searchQuery,
-    isValueAscending,
-    isDateAscending,
-  ]);
+  // Actualizar el estado fuera del useMemo en un useEffect
+  useEffect(() => {
+    if (calculatedHonorarios) {
+      setFilteredHonorarios(calculatedHonorarios);
+    }
+  }, [calculatedHonorarios]);
 
   const totalPages = useMemo(() => {
     return Math.ceil(
@@ -251,10 +393,20 @@ const OperationsTable: React.FC = () => {
 
   const toggleValueSortOrder = () => {
     setIsValueAscending(!isValueAscending);
+    setIsReservaDateAscending(null);
+    setIsClosingDateAscending(null);
   };
 
-  const toggleDateSortOrder = () => {
-    setIsDateAscending(!isDateAscending);
+  const toggleReservaDateSortOrder = () => {
+    setIsReservaDateAscending(!isReservaDateAscending);
+    setIsValueAscending(null);
+    setIsClosingDateAscending(null);
+  };
+
+  const toggleClosingDateSortOrder = () => {
+    setIsClosingDateAscending(!isClosingDateAscending);
+    setIsValueAscending(null);
+    setIsReservaDateAscending(null);
   };
 
   if (isLoading) {
@@ -294,9 +446,11 @@ const OperationsTable: React.FC = () => {
         />
         <table className="w-full text-left border-collapse">
           <OperationsTableHeader
-            isDateAscending={isDateAscending}
+            isReservaDateAscending={isReservaDateAscending}
+            isClosingDateAscending={isClosingDateAscending}
             isValueAscending={isValueAscending}
-            toggleDateSortOrder={toggleDateSortOrder}
+            toggleReservaDateSortOrder={toggleReservaDateSortOrder}
+            toggleClosingDateSortOrder={toggleClosingDateSortOrder}
             toggleValueSortOrder={toggleValueSortOrder}
           />
           <OperationsTableBody
@@ -308,7 +462,8 @@ const OperationsTable: React.FC = () => {
             handleViewClick={handleViewClick}
             filteredTotals={filteredTotals}
             currencySymbol={currencySymbol}
-            totalNetFees={totalNetFees}
+            totalNetFees={filteredHonorarios.netos}
+            totalHonorariosBrutos={filteredHonorarios.brutos}
           />
         </table>
         <div className="flex justify-center mt-4 mb-4">

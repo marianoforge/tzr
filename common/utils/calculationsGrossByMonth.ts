@@ -2,63 +2,47 @@
 import { Operation } from '@/common/types';
 
 export const calculateGrossByMonth = (
-  validOperations: Operation[],
+  operations: Operation[],
   year: number
 ) => {
-  const validOperationsTotalValorPorMes = validOperations.reduce(
-    (acc: Record<number, number>, op: Operation) => {
-      const operationDate = new Date(
-        op.fecha_operacion || op.fecha_reserva || ''
-      );
-      const operationYear = operationDate.getFullYear();
-      const month = operationDate.getMonth() + 1; // Get month (1-12)
+  // Objeto para almacenar los resultados por mes
+  const monthlyResults: Record<string, number> = {};
 
-      if (operationYear === year) {
-        if (!acc[month]) {
-          acc[month] = 0;
-        }
-        acc[month] += Number(op.valor_reserva) || 0;
+  // Agrupar operaciones por mes
+  const operationsByMonth: Record<string, Operation[]> = {};
+
+  // Filtrar operaciones que tengan fecha_operacion definida
+  const operationsWithDate = operations.filter((op) => !!op.fecha_operacion);
+
+  // Filtrar por año y agrupar por mes
+  operationsWithDate.forEach((op) => {
+    const date = new Date(op.fecha_operacion as string);
+    if (date.getFullYear() === year) {
+      const month = (date.getMonth() + 1).toString();
+      if (!operationsByMonth[month]) {
+        operationsByMonth[month] = [];
       }
-      return acc;
-    },
-    {} as Record<number, number>
-  );
+      operationsByMonth[month].push(op);
+    }
+  });
 
-  const validOperationsTotalHonorariosBrokerPorMes = validOperations.reduce(
-    (acc: Record<number, number>, op: Operation) => {
-      const operationDate = new Date(
-        op.fecha_operacion || op.fecha_reserva || ''
-      );
-      const operationYear = operationDate.getFullYear();
-      const month = operationDate.getMonth() + 1;
+  // Calcular el promedio para cada mes según la nueva lógica
+  Object.entries(operationsByMonth).forEach(([month, ops]) => {
+    if (ops.length > 0) {
+      // Para cada operación, sumar los porcentajes de ambas puntas
+      const totalSum = ops.reduce((sum, op) => {
+        const puntaComprador = Number(op.porcentaje_punta_compradora) || 0;
+        const puntaVendedor = Number(op.porcentaje_punta_vendedora) || 0;
+        return sum + (puntaComprador + puntaVendedor);
+      }, 0);
 
-      if (operationYear === year) {
-        if (!acc[month]) {
-          acc[month] = 0;
-        }
-        acc[month] +=
-          Number((op.valor_reserva * op.porcentaje_honorarios_broker) / 100) ||
-          0;
-      }
-      return acc;
-    },
-    {} as Record<number, number>
-  );
+      // Calcular el promedio dividiendo por la cantidad de operaciones
+      const average = totalSum / ops.length;
+      monthlyResults[month] = average;
+    } else {
+      monthlyResults[month] = 0;
+    }
+  });
 
-  const porcentajeHonorariosBrokerPorMes = Object.keys(
-    validOperationsTotalHonorariosBrokerPorMes
-  ).reduce(
-    (acc: Record<number, number>, month: string) => {
-      const brokerValue =
-        validOperationsTotalHonorariosBrokerPorMes[Number(month)] || 0;
-      const reservaValue = validOperationsTotalValorPorMes[Number(month)] || 0;
-      acc[Number(month)] = reservaValue
-        ? parseFloat(((brokerValue * 100) / reservaValue).toFixed(2))
-        : 0;
-      return acc;
-    },
-    {} as Record<number, number>
-  );
-
-  return porcentajeHonorariosBrokerPorMes;
+  return monthlyResults;
 };

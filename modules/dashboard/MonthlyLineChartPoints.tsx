@@ -16,9 +16,9 @@ import { formatNumber } from '@/common/utils/formatNumber';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
 import { calculateTotals } from '@/common/utils/calculations';
 import { Operation } from '@/common/types/';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore, useUserDataStore, useCalculationsStore } from '@/stores';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
-import { MonthNames, OperationStatus } from '@/common/enums';
+import { MonthNames, OperationStatus, UserRole } from '@/common/enums';
 
 // Datos proporcionados
 const monthNames = [
@@ -59,14 +59,20 @@ const CustomTooltip: React.FC<{
 
 const MonthlyLineChartPoints = () => {
   const { userID } = useAuthStore();
+  const { userData } = useUserDataStore();
+  const { setOperations, setUserData, setUserRole, calculateResults } =
+    useCalculationsStore();
+
   const [chartData, setChartData] = useState<
     { name: string; value2023: number; value2024: number }[]
   >([]);
   const [average2024, setAverage2024] = useState<number>(0);
+
   const {
     data: operations = [],
     isLoading,
     error: operationsError,
+    isSuccess: operationsLoaded,
   } = useQuery({
     queryKey: ['operations', userID],
     queryFn: async () => {
@@ -76,28 +82,65 @@ const MonthlyLineChartPoints = () => {
       );
     },
     enabled: !!userID,
+    staleTime: 60000, // 1 minuto
+    refetchOnWindowFocus: false,
   });
+
+  // Combinamos los efectos en uno solo para asegurar que la secuencia sea correcta
+  useEffect(() => {
+    const updateCalculations = async () => {
+      if (operations.length > 0 && userData) {
+        // Primero configuramos las operaciones
+        setOperations(operations);
+
+        // Luego configuramos los datos del usuario
+        setUserData(userData);
+
+        // Configuramos el rol del usuario
+        if (userData.role) {
+          setUserRole(userData.role as UserRole);
+        }
+
+        // Finalmente calculamos los resultados
+        calculateResults();
+      }
+    };
+
+    if (operationsLoaded) {
+      updateCalculations();
+    }
+  }, [
+    operations,
+    userData,
+    operationsLoaded,
+    setOperations,
+    setUserData,
+    setUserRole,
+    calculateResults,
+  ]);
 
   useEffect(() => {
     if (operations.length > 0) {
       const totals = calculateTotals(operations);
-      const formattedData2024 = totals.porcentaje_honorarios_broker_por_mes_2024
-        ? Object.entries(totals.porcentaje_honorarios_broker_por_mes_2024).map(
-            ([month, value]) => ({
+      const formattedData2024 =
+        totals.porcentaje_honorarios_broker_por_mes_currentYear
+          ? Object.entries(
+              totals.porcentaje_honorarios_broker_por_mes_currentYear
+            ).map(([month, value]) => ({
               name: monthNames[parseInt(month, 10) - 1],
               value2024: value,
-            })
-          )
-        : [];
+            }))
+          : [];
 
-      const formattedData2023 = totals.porcentaje_honorarios_broker_por_mes_2023
-        ? Object.entries(totals.porcentaje_honorarios_broker_por_mes_2023).map(
-            ([month, value]) => ({
+      const formattedData2023 =
+        totals.porcentaje_honorarios_broker_por_mes_pastYear
+          ? Object.entries(
+              totals.porcentaje_honorarios_broker_por_mes_pastYear
+            ).map(([month, value]) => ({
               name: monthNames[parseInt(month, 10) - 1],
               value2023: value,
-            })
-          )
-        : [];
+            }))
+          : [];
 
       const mergedData = monthNames.map((month) => {
         const data2023 = formattedData2023.find(
@@ -137,11 +180,21 @@ const MonthlyLineChartPoints = () => {
   if (isLoading) {
     return <SkeletonLoader height={380} count={1} />;
   }
+
   if (operationsError) {
     return (
       <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
+
+  if (chartData.length === 0) {
+    return (
+      <div className="bg-white p-4 rounded shadow-md w-full">
+        <p className="text-center text-gray-600">No existen operaciones</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-md w-full">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[24px] 2xl:text-[22px] font-semibold text-center">
@@ -174,7 +227,7 @@ const MonthlyLineChartPoints = () => {
                 position="top"
                 offset={20}
                 className="font-bold"
-                formatter={(value: number) => `${value}%`}
+                formatter={(value: number) => `${formatNumber(value)}%`}
               />
             </Line>
             <Line
@@ -189,7 +242,7 @@ const MonthlyLineChartPoints = () => {
                 position="bottom"
                 offset={20}
                 className="font-bold"
-                formatter={(value: number) => `${value}%`}
+                formatter={(value: number) => `${formatNumber(value)}%`}
               />
             </Line>
             <Line

@@ -9,7 +9,7 @@ const Footer = ({ setActiveView }: FooterProps) => {
     <footer className="bg-[#3f37c9] p-4 fixed bottom-0 w-full z-50">
       <div className="container mx-auto flex justify-around items-center">
         <div className="text-white text-sm">
-          © 2024 Realtor Track Profit - All Rights Reserved
+          © 2025 Realtor TrackPro - All Rights Reserved
         </div>
         <div className="flex space-x-4">
           <button

@@ -33,6 +33,7 @@ export const expenseTypes = [
   { value: 'Viáticos', label: 'Viáticos' },
   { value: 'Expensas', label: 'Expensas' },
   { value: 'Servicios de Oficina', label: 'Servicios de Oficina' },
+  { value: 'Caja Chica', label: 'Caja Chica' },
   { value: 'Otros', label: 'Otros' },
 ];
 
@@ -64,6 +65,7 @@ export const propertyTypes = [
   { value: TipodeVentas.OFICINAS, label: 'Oficinas' },
   { value: TipodeVentas.NAVE_INDUSTRIAL, label: 'Naves Industriales' },
   { value: TipodeVentas.TERRENOS, label: 'Terrenos' },
+  { value: TipodeVentas.CHACRAS, label: 'Chacras' },
   { value: TipodeVentas.OTRO, label: 'Otro' },
 ];
 

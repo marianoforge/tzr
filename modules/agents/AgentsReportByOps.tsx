@@ -71,7 +71,7 @@ const AgentsReportByOps = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md">
+    <div className="bg-white p-4 mt-20 mb-20 rounded-xl shadow-md w-full">
       <div className="flex items-center mb-4 w-full">
         <h2 className="text-2xl font-bold text-center w-full">
           Informe Operaciones Por Asesor
@@ -105,12 +105,6 @@ const AgentsReportByOps = ({ userId }: { userId: string }) => {
                 <th className="py-3 px-4 font-semibold text-center">Tipo</th>
                 <th className="py-3 px-4 font-semibold text-center">Fecha</th>
                 <th className="py-3 px-4 font-semibold text-center">
-                  Punta Compradora
-                </th>
-                <th className="py-3 px-4 font-semibold text-center">
-                  Punta Vendedora
-                </th>
-                <th className="py-3 px-4 font-semibold text-center">
                   Puntas de la Operación
                 </th>
               </tr>
@@ -131,12 +125,6 @@ const AgentsReportByOps = ({ userId }: { userId: string }) => {
                     </td>
                     <td className="py-3 px-4">{operacion.tipo_operacion}</td>
                     <td className="py-3 px-4">{operacion.fecha_operacion}</td>
-                    <td className="py-3 px-4">
-                      {operacion.punta_compradora === true ? 1 : 0}
-                    </td>
-                    <td className="py-3 px-4">
-                      {operacion.punta_vendedora === true ? 1 : 0}
-                    </td>
                     <td className="py-3 px-4">
                       {Number(operacion.punta_compradora) +
                         Number(operacion.punta_vendedora)}

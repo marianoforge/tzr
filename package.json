@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "update:env": "vercel env remove NEXT_PUBLIC_APP_VERSION production && vercel env add NEXT_PUBLIC_APP_VERSION production"
+    "update:env": "vercel env remove NEXT_PUBLIC_APP_VERSION production && vercel env add NEXT_PUBLIC_APP_VERSION production",
+    "cron": "npx tsc scripts/setup-cron-job.ts --outDir dist --esModuleInterop true && node dist/setup-cron-job.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.8",
@@ -44,7 +45,7 @@
     "next": "14.2.13",
     "next-swagger-doc": "^0.4.1",
     "nextjs-breadcrumbs": "^1.1.9",
-    "node-fetch": "^3.3.2",
+    "node-fetch": "2",
     "puppeteer": "^24.4.0",
     "react": "^18",
     "react-big-calendar": "^1.14.1",

@@ -23,6 +23,7 @@ import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/Skel
 import { MonthNames, QueryKeys } from '@/common/enums';
 import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import { useAuthStore } from '@/stores/authStore';
+import { useUserDataStore } from '@/stores/userDataStore';
 
 const CustomTooltip: React.FC<{
   active?: boolean;
@@ -31,14 +32,18 @@ const CustomTooltip: React.FC<{
 }> = ({ active, payload, label }) => {
   const { userID } = useAuthStore();
   const { currencySymbol } = useUserCurrencySymbol(userID || '');
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip bg-white p-2 border border-gray-300 rounded-xl shadow-md">
         <p className="label font-semibold">{`Mes: ${label}`}</p>
-        <p className="intro">{`Monto en Dólares: ${currencySymbol}${formatNumber(
-          payload[0].value
-        )}`}</p>
-        <p className="intro">{`Monto en Pesos: AR${currencySymbol}
+        {currency === 'USD' && (
+          <p className="intro">{`Monto en Dólares: ${currencySymbol}${formatNumber(
+            payload[0].value
+          )}`}</p>
+        )}
+        <p className="intro">{`Monto en Moneda Local: ${currencySymbol}
 ${formatNumber(payload[0].payload.amountInPesos)}`}</p>
       </div>
     );
@@ -51,6 +56,8 @@ const ExpensesBarchart: React.FC = () => {
   const { calculateTotals } = useExpensesStore();
   const [userUID, setUserUID] = useState<string | null>(null); // Initialize userUID state
   const router = useRouter();
+  const { userData } = useUserDataStore();
+  const currency = userData?.currency;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -176,7 +183,11 @@ const ExpensesBarchart: React.FC = () => {
             <Bar
               dataKey="amountInDollars"
               fill={COLORS[3]}
-              name="Monto en Dólares"
+              name={
+                currency === 'USD'
+                  ? 'Monto del gasto en dólares'
+                  : 'Monto del gasto'
+              }
               barSize={50}
             />
           </BarChart>

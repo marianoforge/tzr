@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
 
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
@@ -25,6 +25,12 @@ const UserExpensesModal: React.FC<UserExpensesModalProps> = ({
   const [selectedExpenseId, setSelectedExpenseId] = useState<string | null>(
     null
   );
+  const [localExpenses, setLocalExpenses] = useState<Expense[]>(expenses);
+
+  // Update local expenses when the prop changes
+  useEffect(() => {
+    setLocalExpenses(expenses);
+  }, [expenses]);
 
   const openDeleteModal = (expenseId: string) => {
     setSelectedExpenseId(expenseId);
@@ -38,9 +44,16 @@ const UserExpensesModal: React.FC<UserExpensesModalProps> = ({
 
   const confirmDelete = () => {
     if (selectedExpenseId) {
+      // Update local state immediately for responsive UI
+      setLocalExpenses((prev) =>
+        prev.filter((exp) => exp.id !== selectedExpenseId)
+      );
+
+      // Call the parent delete handler
       onDeleteExpense(selectedExpenseId, agentId);
+
+      // Close only the confirmation modal, keep the expenses list open
       closeDeleteModal();
-      onClose();
     }
   };
 
@@ -61,28 +74,38 @@ const UserExpensesModal: React.FC<UserExpensesModalProps> = ({
             </tr>
           </thead>
           <tbody>
-            {expenses.map((expense) => (
-              <tr key={expense.id} className="border-b text-center">
-                <td className="py-3 px-4">{formatDate(expense.date)}</td>
-                <td className="py-3 px-4">{expense.description}</td>
-                <td className="py-3 px-4">
-                  {currencySymbol}
-                  {formatNumber(expense.amount)}
-                </td>
-                <td className="py-3 px-4">
-                  {currencySymbol}
-                  {formatNumber(expense.amountInDollars)}
-                </td>
-                <td className="py-3 px-4">
-                  <button
-                    onClick={() => openDeleteModal(expense.id || '')}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </button>
+            {localExpenses.length > 0 ? (
+              localExpenses.map((expense) => (
+                <tr key={expense.id} className="border-b text-center">
+                  <td className="py-3 px-4">{formatDate(expense.date)}</td>
+                  <td className="py-3 px-4">{expense.description}</td>
+                  <td className="py-3 px-4">
+                    {expense.amount < 0
+                      ? `-${currencySymbol}${formatNumber(Math.abs(expense.amount))}`
+                      : `${currencySymbol}${formatNumber(expense.amount)}`}
+                  </td>
+                  <td className="py-3 px-4">
+                    {expense.amountInDollars < 0
+                      ? `-${currencySymbol}${formatNumber(Math.abs(expense.amountInDollars))}`
+                      : `${currencySymbol}${formatNumber(expense.amountInDollars)}`}
+                  </td>
+                  <td className="py-3 px-4">
+                    <button
+                      onClick={() => openDeleteModal(expense.id || '')}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="py-4 text-center text-gray-500">
+                  No hay gastos para mostrar
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
         <button
@@ -98,7 +121,7 @@ const UserExpensesModal: React.FC<UserExpensesModalProps> = ({
         onClose={closeDeleteModal}
         message="¿Estás seguro de querer eliminar este gasto?"
         onSecondButtonClick={confirmDelete}
-        secondButtonText="Borrar Operación"
+        secondButtonText="Borrar Gasto"
         className="w-[450px]"
       />
     </div>

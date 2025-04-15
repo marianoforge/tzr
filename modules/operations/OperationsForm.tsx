@@ -22,6 +22,7 @@ import { operationTypes, propertyTypes } from '@/lib/data';
 import { PATHS, QueryKeys, UserRole } from '@/common/enums';
 import TextArea from '@/components/PrivateComponente/FormComponents/TextArea';
 import AddressAutocompleteManual from '@/components/PrivateComponente/PlacesComponents/AddressAutocomplete';
+import AddUserModal from '@/modules/agents/AddUserModal';
 
 type FormData = InferType<typeof schema>;
 type AddressData = {
@@ -78,6 +79,7 @@ const OperationsForm = () => {
     country: null,
     houseNumber: '',
   });
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -331,7 +333,7 @@ const OperationsForm = () => {
             </div>
 
             <Input
-              label="Valor de reserva / operación*"
+              label="Valor de oferta / operación*"
               type="number"
               placeholder="Por ejemplo: 200000"
               {...register('valor_reserva')}
@@ -369,15 +371,15 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Número sobre de reserva"
+              label="Tipo de reserva"
               type="text"
-              placeholder="Por ejemplo: E12549"
+              placeholder="Por ejemplo: Sobre nº / Transferencia"
               {...register('numero_sobre_reserva')}
               error={errors.numero_sobre_reserva?.message}
             />
 
             <Input
-              label="Monto sobre de reserva"
+              label="Monto de Reserva"
               type="number"
               placeholder="Por ejemplo: 2000"
               {...register('monto_sobre_reserva')}
@@ -388,14 +390,14 @@ const OperationsForm = () => {
           <div className="w-full md:w-[40%] px-2">
             {/* Right column */}
             <Input
-              label="Número sobre de refuerzo"
+              label="Tipo de refuerzo"
               type="text"
-              placeholder="Por ejemplo: E12549"
+              placeholder="Por ejemplo: Sobre nº / Transferencia"
               {...register('numero_sobre_refuerzo')}
               error={errors.numero_sobre_refuerzo?.message}
             />
             <Input
-              label="Monto sobre refuerzo"
+              label="Monto de refuerzo"
               type="number"
               placeholder="Por ejemplo: 4000"
               {...register('monto_sobre_refuerzo')}
@@ -436,33 +438,33 @@ const OperationsForm = () => {
               })}
               error={errors.porcentaje_compartido?.message}
             />
-            {userRole === UserRole.TEAM_LEADER_BROKER && (
-              <p className="text-sm text-mutedBlue mb-5">
-                <span className="font-bold">Importante:</span> Si sos Broker de
-                una oficina o Team leader y comercializas propiedades, en el
-                siguiente input debes poner el porcentaje que se lleva la
-                franquicia o el broker respectivamente para poder calcular el
-                neto de tu operación de manera correcta.
-              </p>
-            )}
-            {userRole === UserRole.TEAM_LEADER_BROKER && (
-              <>
-                <Input
-                  label="Porcentaje destinado a franquicia o broker"
-                  type="text"
-                  placeholder="Por ejemplo: 11%"
-                  {...register('isFranchiseOrBroker', {
-                    setValueAs: (value) => parseFloat(value) || 0,
-                  })}
-                  error={errors.isFranchiseOrBroker?.message}
-                />
-                {errors.isFranchiseOrBroker && (
-                  <p className="text-red-500">
-                    {errors.isFranchiseOrBroker.message}
-                  </p>
-                )}
-              </>
-            )}
+            {/* {userRole === UserRole.TEAM_LEADER_BROKER && ( */}
+            <p className="text-sm text-mutedBlue mb-5">
+              <span className="font-bold">Importante:</span> Si sos Broker de
+              una oficina o Team leader y comercializas propiedades, en el
+              siguiente input debes poner el porcentaje que se lleva la
+              franquicia o el broker respectivamente para poder calcular el neto
+              de tu operación de manera correcta.
+            </p>
+            {/* )} */}
+            {/* {userRole === UserRole.TEAM_LEADER_BROKER && ( */}
+            <>
+              <Input
+                label="Porcentaje destinado a franquicia o broker"
+                type="text"
+                placeholder="Por ejemplo: 11%"
+                {...register('isFranchiseOrBroker', {
+                  setValueAs: (value) => parseFloat(value) || 0,
+                })}
+                error={errors.isFranchiseOrBroker?.message}
+              />
+              {errors.isFranchiseOrBroker && (
+                <p className="text-red-500">
+                  {errors.isFranchiseOrBroker.message}
+                </p>
+              )}
+            </>
+            {/* )} */}
 
             {userRole === UserRole.TEAM_LEADER_BROKER && (
               <p className="text-sm text-mutedBlue mb-5">
@@ -568,14 +570,22 @@ const OperationsForm = () => {
               </>
             )}
             {userRole === UserRole.TEAM_LEADER_BROKER && (
-              <p
-                className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
-                onClick={toggleAdditionalAdvisor}
-              >
-                {showAdditionalAdvisor
-                  ? 'Eliminar Segundo Asesor'
-                  : 'Agregar Otro Asesor'}
-              </p>
+              <div className="flex justify-between">
+                <p
+                  className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                  onClick={toggleAdditionalAdvisor}
+                >
+                  {showAdditionalAdvisor
+                    ? 'Eliminar asesor adicional'
+                    : 'Agregar asesor adicional a la operación'}
+                </p>
+                <p
+                  className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                  onClick={() => setIsAddUserModalOpen(true)}
+                >
+                  Crear Asesor
+                </p>
+              </div>
             )}
             <label className="font-semibold text-mediumBlue">
               Cantidad de puntas*
@@ -623,6 +633,10 @@ const OperationsForm = () => {
         message={modalMessage}
         onAccept={handleModalAccept}
       />
+
+      {isAddUserModalOpen && (
+        <AddUserModal onClose={() => setIsAddUserModalOpen(false)} />
+      )}
     </div>
   );
 };

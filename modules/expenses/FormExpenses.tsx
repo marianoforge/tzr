@@ -12,7 +12,7 @@ import Select from '@/components/PrivateComponente/FormComponents/Select';
 import { Expense, ExpenseFormData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { createExpense } from '@/lib/api/expensesApi';
-import { schema } from '@/common/schemas/formExpensesSchema';
+import { getSchema } from '@/common/schemas/formExpensesSchema';
 import { expenseTypes } from '@/lib/data';
 import useUserAuth from '@/common/hooks/useUserAuth';
 import useModal from '@/common/hooks/useModal';
@@ -26,15 +26,18 @@ const FormularioExpenses: React.FC = () => {
   const { isOpen: isModalOpen, openModal, closeModal } = useModal();
   const [modalMessage, setModalMessage] = useState('');
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [userCurrency, setUserCurrency] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   const role = userData?.role;
+  const currency = userData?.currency;
 
   useEffect(() => {
     if (userID) {
       setUserRole(role ?? null);
+      setUserCurrency(currency ?? null);
     }
-  }, [role, userID]);
+  }, [role, userID, currency]);
 
   const {
     register,
@@ -43,16 +46,30 @@ const FormularioExpenses: React.FC = () => {
     watch,
     reset,
   } = useForm<ExpenseFormData>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(getSchema(userCurrency)),
     defaultValues: {
       date: '',
+      isRecurring: false,
     },
   });
 
   const selectedExpenseType = watch('expenseType');
+  const date = watch('date');
   const amount = watch('amount');
   const dollarRate = watch('dollarRate');
-  const date = watch('date');
+
+  // Calcular el monto en dólares cada vez que cambia el monto o la cotización
+  const amountInDollars = React.useMemo(() => {
+    // Convertir a números y manejar valores undefined/null
+    const numAmount = amount ? Number(amount) : 0;
+    const numDollarRate = dollarRate ? Number(dollarRate) : 1;
+
+    // Si no hay monto o tasa de cambio válida, mostrar 0
+    if (numAmount === 0 || numDollarRate <= 0) return '0';
+
+    // Calcular el monto en dólares (dividir por la tasa de cambio)
+    return (numAmount / numDollarRate).toFixed(2);
+  }, [amount, dollarRate]);
 
   const mutation = useMutation({
     mutationFn: (expenseData: Expense) => createExpense(expenseData),
@@ -78,25 +95,28 @@ const FormularioExpenses: React.FC = () => {
       return;
     }
 
-    const amountInDollars =
-      data.amount && data.dollarRate ? data.amount / data.dollarRate : 0;
+    // Asegurarse de que tenemos valores numéricos válidos
+    const numAmount = data.amount ? Number(data.amount) : 0;
+    const numDollarRate = data.dollarRate ? Number(data.dollarRate) : 1;
+
+    // Calcular el monto en dólares de la misma manera que en la UI
+    const calculatedAmountInDollars =
+      numAmount > 0 && numDollarRate > 0 ? numAmount / numDollarRate : 0;
 
     const expenseData: Expense = {
       date: data.date,
-      amount: data.amount ?? 0,
-      amountInDollars,
+      amount: numAmount,
+      amountInDollars: calculatedAmountInDollars,
       otherType: data.otherType ?? '',
       expenseType: data.expenseType,
       description: data.description ?? '',
-      dollarRate: data.dollarRate,
+      dollarRate: numDollarRate,
       user_uid: userID ?? '',
+      isRecurring: data.isRecurring ?? false,
     };
 
     mutation.mutate(expenseData);
   };
-
-  const amountInDollars =
-    amount && dollarRate ? (amount / dollarRate).toFixed(2) : 0;
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">
@@ -131,33 +151,36 @@ const FormularioExpenses: React.FC = () => {
             <p className="text-red-500 mb-4 -mt-8">{errors.amount.message}</p>
           )}
 
-          <div className="flex gap-4 items-center">
-            <div className="w-1/2">
-              <Input
-                label="Cotización del Dólar"
-                type="number"
-                placeholder="1250"
-                {...register('dollarRate')}
-                marginBottom="mb-8"
-                showTooltip={true}
-                tooltipContent="Ingrese la cotización del dólar en el momento del gasto si sus gastos estan en moneda local y las operaciones en dolares. Si sus gastos estan en dolares, solo ponga 1"
-              />
-              {errors.dollarRate && (
-                <p className="text-red-500 mb-4 -mt-8">
-                  {errors.dollarRate.message}
-                </p>
-              )}
+          {userCurrency === 'USD' && (
+            <div className="flex gap-4 items-center">
+              <div className="w-1/2">
+                <Input
+                  label="Cotización del Dólar"
+                  type="number"
+                  placeholder="1250"
+                  {...register('dollarRate')}
+                  marginBottom="mb-8"
+                  showTooltip={true}
+                  tooltipContent="Ingrese la cotización del dólar en el momento del gasto si sus gastos estan en moneda local y las operaciones en dolares. Si sus gastos estan en dolares, solo ponga 1"
+                />
+                {errors.dollarRate && (
+                  <p className="text-red-500 mb-4 -mt-8">
+                    {errors.dollarRate.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-1/2">
+                <Input
+                  label="Monto en Dólares"
+                  type="text"
+                  value={amountInDollars}
+                  readOnly
+                  className="bg-mutedBlue/80 border text-white border-mutedBlue cursor-not-allowed p-2 rounded mb-2"
+                />
+              </div>
             </div>
-            <div className="w-1/2 ">
-              <Input
-                label="Monto en Dólares"
-                type="text"
-                value={amountInDollars}
-                readOnly
-                className="bg-mutedBlue/80 border text-white border-mutedBlue cursor-not-allowed p-2 rounded mb-2"
-              />
-            </div>
-          </div>
+          )}
 
           <Select
             label="Tipo de Gasto"
@@ -192,6 +215,27 @@ const FormularioExpenses: React.FC = () => {
           {errors.description && (
             <p className="text-red-500 -mt-8">{errors.description.message}</p>
           )}
+
+          <div className="flex items-center mb-8 mt-4">
+            <input
+              type="checkbox"
+              id="isRecurring"
+              {...register('isRecurring')}
+              className="h-5 w-5 text-mediumBlue rounded border-gray-300 focus:ring-mediumBlue"
+            />
+            <label htmlFor="isRecurring" className="ml-2 text-gray-700">
+              Repetir Mensualmente
+            </label>
+            <div className="ml-2 cursor-help group relative">
+              <span className="flex items-center justify-center w-5 h-5 bg-mediumBlue text-white rounded-full text-xs">
+                ?
+              </span>
+              <div className="absolute hidden group-hover:block bg-black text-white text-xs rounded p-2 w-64 -ml-32 mt-2 z-10">
+                Al activar esta opción, este gasto se repetirá automáticamente
+                cada mes con los mismos datos.
+              </div>
+            </div>
+          </div>
 
           <div className="flex justify-center items-center mt-8 w-full">
             <button

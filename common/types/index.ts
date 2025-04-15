@@ -86,6 +86,7 @@ export interface Expense {
   dollarRate: number;
   user_uid?: string;
   otherType?: string;
+  isRecurring?: boolean;
 }
 
 export interface ExpenseFormData {
@@ -94,8 +95,9 @@ export interface ExpenseFormData {
   amountInDollars?: number;
   expenseType: string;
   description?: string;
-  dollarRate: number;
+  dollarRate?: number;
   otherType?: string;
+  isRecurring?: boolean;
 }
 
 export interface ExpenseAgents {
@@ -153,6 +155,8 @@ export interface UserData {
   trialEndsAt: Date | { toDate: () => Date } | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  currency: string | null;
+  currencySymbol: string | null;
 }
 
 export interface UserDataState extends BaseState<UserData> {
@@ -250,6 +254,7 @@ export interface TeamMember {
   lastName: string;
   email: string;
   numeroTelefono: string;
+  teamLeadID?: string;
   operaciones: Operation[]; // Aquí aseguramos que es el mismo tipo Operation[]
 }
 

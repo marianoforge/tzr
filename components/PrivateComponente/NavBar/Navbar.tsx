@@ -1,49 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { VideoCameraIcon } from '@heroicons/react/24/outline';
 
 import { useUserDataStore } from '@/stores/userDataStore';
-import { auth } from '@/lib/firebase';
-import { NavButton } from '@/components/PrivateComponente/NavComponents/NavButton';
+import { useAuthStore } from '@/stores/authStore';
+import { UserRole } from '@/common/enums';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
 
+import { NavButton } from '../NavComponents/NavButton';
+
 const Navbar = () => {
-  const { userData, isLoading, fetchUserData } = useUserDataStore();
+  const { userData, isLoading: isUserDataLoading } = useUserDataStore();
+  const { role: authRole } = useAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchUserData(user.uid);
-      } else {
-        console.error('No authenticated user');
-      }
-    });
-
-    return () => unsubscribe();
-  }, [fetchUserData]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
   const renderNavButtons = () => (
     <>
-      <NavButton href="/dashboard" label="Dashboard" fullWidth />
-      <NavButton href="/calendar" label="Calendario" fullWidth />
-      <NavButton href="/operationsList" label="Operaciones" fullWidth />
-      <NavButton href="/expensesList" label="Gastos" fullWidth />
-      <NavButton
-        href="/reservationInput"
-        label="Form de Operaciones"
-        fullWidth
-      />
-      <NavButton href="/eventForm" label="Form de Eventos" fullWidth />
-      <NavButton href="/expenses" label="Form de Gastos" fullWidth />
-      <NavButton
-        href="/expensesAsesores"
-        label="Form de Gastos de Asesores"
-        fullWidth
-      />
+      <NavButton href="/dashboard" label="Dashboard" />
+      <NavButton href="/operationsList" label="Operaciones" />
+      <NavButton href="/expensesList" label="Gastos" />
+      <NavButton href="/calendar" label="Calendario de Eventos" />
+      <NavButton href="/reservationInput" label="Form de Operaciones" />
+      <NavButton href="/expenses" label="Form de Gastos" />
+      <NavButton href="/eventForm" label="Form de Eventos" />
+      <NavButton href="/projections" label="Proyecciones" />
     </>
   );
 
@@ -53,20 +37,23 @@ const Navbar = () => {
       <NavButton
         href="/expenses-agents-form"
         label="Form de Gastos de Asesores"
-        fullWidth
       />
-      <NavButton href="/agents" label="Informe Agentes / Asesores" fullWidth />
-      <NavButton href="/expenses-agents" label="Gastos de Asesores" fullWidth />
+      <NavButton href="/agents" label="Informe Asesores" />
+      <NavButton href="/expenses-agents" label="Gastos por Asesor" />
     </>
   );
 
   const renderNavLinksBasedOnRole = () => {
-    if (isLoading || !userData) return null;
+    // Usar el rol de userData o authRole, lo que esté disponible
+    const roleToUse = userData?.role || authRole;
 
-    switch (userData.role) {
-      case 'team_leader_broker':
+    // Si está cargando y no hay rol disponible, mostrar nada
+    if (isUserDataLoading && !roleToUse) return null;
+
+    switch (roleToUse) {
+      case UserRole.TEAM_LEADER_BROKER:
         return renderAdminNavButtons();
-      case 'agente_asesor':
+      case UserRole.AGENTE_ASESOR:
         return renderNavButtons();
       default:
         return <NavButton href="/dashboard" label="Dashboard" fullWidth />;

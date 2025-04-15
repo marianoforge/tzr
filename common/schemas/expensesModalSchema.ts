@@ -5,7 +5,6 @@ export const schema = yup.object().shape({
   amount: yup
     .number()
     .typeError('El monto debe ser un número')
-    .positive('El monto debe ser positivo')
     .required('El monto es requerido'),
   dollarRate: yup
     .number()
@@ -16,4 +15,5 @@ export const schema = yup.object().shape({
   description: yup.string().required('La descripción es requerida'),
   otherType: yup.string().nullable(),
   expenseAssociationType: yup.string().nullable(),
+  isRecurring: yup.boolean().default(false),
 });

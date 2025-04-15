@@ -82,22 +82,42 @@ const createExpense = async (
       description,
       dollarRate,
       otherType,
+      isRecurring,
     } = req.body;
 
-    if (!date || !amount || !expenseType || !dollarRate) {
+    // Obtener el usuario y su moneda
+    const userDoc = await db.collection('users').doc(userUID).get();
+    const userData = userDoc.data();
+    const userCurrency = userData?.currency || null;
+
+    // Validar campos requeridos
+    if (!date || !amount || !expenseType) {
       console.warn('⚠️ Faltan campos obligatorios.');
       return res.status(400).json({ message: 'All fields are required' });
     }
 
+    // Si la moneda NO es USD, verificar que dollarRate exista
+    if (userCurrency !== 'USD' && !dollarRate) {
+      console.warn('⚠️ Falta tasa de cambio para moneda no USD.');
+      return res
+        .status(400)
+        .json({ message: 'Dollar rate is required for non-USD currency' });
+    }
+
+    // Calcular amountInDollars según la moneda
+    const calculatedAmountInDollars =
+      userCurrency === 'USD' ? amount : amount / dollarRate;
+
     const newExpense = {
       date,
       amount,
-      amountInDollars,
+      amountInDollars: calculatedAmountInDollars,
       expenseType,
       description,
-      dollarRate,
+      dollarRate: userCurrency === 'USD' ? 1 : dollarRate, // Si es USD, usar 1 como tasa
       user_uid: userUID,
       otherType: otherType ?? '',
+      isRecurring: isRecurring ?? false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
