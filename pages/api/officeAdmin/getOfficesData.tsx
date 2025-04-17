@@ -1,6 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { db, adminAuth } from '@/lib/firebaseAdmin';
 
+interface OfficeData {
+  [key: string]: {
+    office: string;
+    [key: string]: any;
+  };
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -47,8 +54,16 @@ export default async function handler(
         return res.status(200).json({ operations: [] });
       }
 
-      // Recopilar todos los UIDs de oficinas y mostrarlos
+      // Recopilar todos los UIDs de oficinas y sus nombres
       const officeUIDs = officesSnapshot.docs.map((doc) => doc.id);
+      const officeData: OfficeData = officesSnapshot.docs.reduce((acc, doc) => {
+        acc[doc.id] = {
+          office: doc.data().office || doc.id,
+          ...doc.data(),
+        };
+        return acc;
+      }, {} as OfficeData);
+
       console.log('🔹 UIDs de oficinas encontrados:', officeUIDs);
 
       // Lista los ids individuales para debugging
@@ -64,7 +79,7 @@ export default async function handler(
 
       if (operationsSnapshot.empty) {
         console.log('⚠️ No se encontraron operaciones para estas oficinas');
-        return res.status(200).json({ operations: [] });
+        return res.status(200).json({ operations: [], offices: officeData });
       }
 
       // Transformar los documentos en un array de datos
@@ -74,7 +89,7 @@ export default async function handler(
       }));
 
       console.log(`✅ Se encontraron ${operations.length} operaciones`);
-      return res.status(200).json({ operations });
+      return res.status(200).json({ operations, offices: officeData });
     }
 
     console.warn('⚠️ Método no permitido:', req.method);

@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { useGetOfficesData } from '@/common/hooks/useGetOfficesData';
 import { Operation } from '@/common/types';
+import { formatOperationsNumber } from '@/common/utils/formatNumber';
+import { calculateHonorarios } from '@/common/utils/calculations';
+
+interface OperationSummary {
+  tipo: string;
+  totalValue: number;
+  averagePuntas: number;
+  totalGrossFees: number;
+  totalNetFees: number;
+  exclusivityPercentage: number;
+  operationsCount: number;
+}
+
+// Interfaz para resumenes globales
+interface GlobalSummary {
+  totalValue: number;
+  totalGrossFees: number;
+  totalNetFees: number;
+  totalOperations: number;
+  officeCount: number;
+}
 
 const OfficeAdmin = () => {
-  const { officeOperations, isLoading, error, refetch } = useGetOfficesData();
-  const [selectedOperation, setSelectedOperation] = useState<Operation | null>(
-    null
-  );
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const { officeOperations, officeData, isLoading, error, refetch } =
+    useGetOfficesData();
 
   if (isLoading) {
     return (
@@ -37,39 +54,8 @@ const OfficeAdmin = () => {
     );
   }
 
-  // Filtrar operaciones basado en búsqueda y estado
-  const filteredOperations = officeOperations.filter((op: Operation) => {
-    const matchesSearch =
-      op.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      op.teamId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      op.tipo_operacion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      op.estado?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus = filterStatus === 'all' || op.estado === filterStatus;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  const handleOperationClick = (operation: Operation) => {
-    setSelectedOperation(operation);
-  };
-
-  const getStatusClass = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case 'activo':
-      case 'completado':
-        return 'bg-green-100 text-green-800';
-      case 'pendiente':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'cancelado':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   // Agrupamos operaciones por oficina (teamId)
-  const officeGroups = filteredOperations.reduce(
+  const officeGroups = officeOperations.reduce(
     (groups: Record<string, Operation[]>, operation: Operation) => {
       const teamId = operation.teamId || 'Sin Equipo';
       if (!groups[teamId]) {
@@ -81,60 +67,180 @@ const OfficeAdmin = () => {
     {} as Record<string, Operation[]>
   );
 
+  // Función para obtener el nombre de la oficina a partir del teamId
+  const getOfficeName = (teamId: string) => {
+    return officeData[teamId]?.office || teamId;
+  };
+
+  // Función para calcular el resumen de operaciones por tipo
+  const getOperationsSummaryByType = (
+    operations: Operation[]
+  ): OperationSummary[] => {
+    // Agrupar operaciones por tipo
+    const operationTypes = Array.from(
+      new Set(
+        operations
+          .map((op) => op.tipo_operacion)
+          .filter((tipo): tipo is string => Boolean(tipo))
+      )
+    );
+
+    return operationTypes
+      .map((tipo) => {
+        const opsOfType = operations.filter((op) => op.tipo_operacion === tipo);
+
+        if (opsOfType.length === 0) return null;
+
+        // Calcular totales
+        const totalValue = opsOfType.reduce(
+          (sum, op) => sum + (op.valor_reserva || 0),
+          0
+        );
+
+        // Calcular promedio de puntas
+        const totalPuntas = opsOfType.reduce(
+          (sum, op) =>
+            sum +
+            ((op.porcentaje_punta_compradora || 0) +
+              (op.porcentaje_punta_vendedora || 0)),
+          0
+        );
+        const averagePuntas =
+          opsOfType.length > 0 ? totalPuntas / opsOfType.length : 0;
+
+        // Calcular honorarios brutos
+        const totalGrossFees = opsOfType.reduce((sum, op) => {
+          const honorarios = calculateHonorarios(
+            op.valor_reserva || 0,
+            op.porcentaje_honorarios_asesor || 0,
+            op.porcentaje_honorarios_broker || 0,
+            op.porcentaje_compartido || 0,
+            op.porcentaje_referido || 0
+          ).honorariosBroker;
+          return sum + honorarios;
+        }, 0);
+
+        // Calcular honorarios netos (asumiendo que son los honorarios de asesor)
+        const totalNetFees = opsOfType.reduce(
+          (sum, op) => sum + (op.honorarios_asesor || 0),
+          0
+        );
+
+        // Calcular porcentaje de exclusividad
+        const exclusiveOps = opsOfType.filter((op) => op.exclusiva === true);
+        const exclusivityPercentage =
+          opsOfType.length > 0
+            ? (exclusiveOps.length / opsOfType.length) * 100
+            : 0;
+
+        return {
+          tipo,
+          totalValue,
+          averagePuntas,
+          totalGrossFees,
+          totalNetFees,
+          exclusivityPercentage,
+          operationsCount: opsOfType.length,
+        };
+      })
+      .filter((summary): summary is OperationSummary => summary !== null);
+  };
+
+  // Calcular el resumen global de todas las oficinas
+  const calculateGlobalSummary = (): GlobalSummary => {
+    const totalValue = officeOperations.reduce(
+      (sum, op) => sum + (op.valor_reserva || 0),
+      0
+    );
+
+    const totalGrossFees = officeOperations.reduce((sum, op) => {
+      const honorarios = calculateHonorarios(
+        op.valor_reserva || 0,
+        op.porcentaje_honorarios_asesor || 0,
+        op.porcentaje_honorarios_broker || 0,
+        op.porcentaje_compartido || 0,
+        op.porcentaje_referido || 0
+      ).honorariosBroker;
+      return sum + honorarios;
+    }, 0);
+
+    const totalNetFees = officeOperations.reduce(
+      (sum, op) => sum + (op.honorarios_asesor || 0),
+      0
+    );
+
+    return {
+      totalValue,
+      totalGrossFees,
+      totalNetFees,
+      totalOperations: officeOperations.length,
+      officeCount: Object.keys(officeGroups).length,
+    };
+  };
+
+  const globalSummary = calculateGlobalSummary();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Administración de Oficinas</h1>
 
-      <div className="mb-6 flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Buscar operación..."
-            className="w-full p-2 border border-gray-300 rounded"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div>
-          <select
-            className="p-2 border border-gray-300 rounded w-full md:w-auto"
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-          >
-            <option value="all">Todos los estados</option>
-            <option value="activo">Activo</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="completado">Completado</option>
-            <option value="cancelado">Cancelado</option>
-          </select>
-        </div>
-        <div>
-          <button
-            onClick={() => refetch()}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Actualizar
-          </button>
+      {/* Resumen Global */}
+      <div className="bg-blue-100 p-6 rounded-lg shadow mb-8">
+        <h2 className="text-xl font-bold text-blue-800 mb-4">Resumen Global</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="bg-white p-4 rounded shadow">
+            <p className="text-gray-500 text-sm">Valor Total</p>
+            <p className="text-2xl font-bold">
+              ${formatOperationsNumber(globalSummary.totalValue)}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            <p className="text-gray-500 text-sm">Honorarios Brutos</p>
+            <p className="text-2xl font-bold">
+              ${formatOperationsNumber(globalSummary.totalGrossFees)}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            <p className="text-gray-500 text-sm">Honorarios Netos</p>
+            <p className="text-2xl font-bold">
+              ${formatOperationsNumber(globalSummary.totalNetFees)}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            <p className="text-gray-500 text-sm">Total Operaciones</p>
+            <p className="text-2xl font-bold">
+              {globalSummary.totalOperations}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded shadow">
+            <p className="text-gray-500 text-sm">Oficinas</p>
+            <p className="text-2xl font-bold">{globalSummary.officeCount}</p>
+          </div>
         </div>
       </div>
 
-      {filteredOperations.length === 0 ? (
+      {officeOperations.length === 0 ? (
         <div className="bg-gray-100 p-4 rounded text-center">
-          No se encontraron operaciones para las oficinas con los filtros
-          actuales.
+          No se encontraron operaciones para las oficinas.
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-8">
           {Object.entries(officeGroups).map(([teamId, operations]) => {
             // Type assertion for operations
             const typedOperations = operations as Operation[];
+            // Obtener resumen por tipo de operación
+            const operationsSummaries =
+              getOperationsSummaryByType(typedOperations);
+
             return (
               <div
                 key={teamId}
                 className="border rounded-lg overflow-hidden shadow"
               >
                 <div className="bg-gray-100 p-4 border-b">
-                  <h2 className="text-xl font-semibold">Oficina: {teamId}</h2>
+                  <h2 className="text-xl font-semibold">
+                    Oficina: {getOfficeName(teamId)}
+                  </h2>
                   <div className="text-sm text-gray-600">
                     {typedOperations.length} operaciones encontradas
                   </div>
@@ -144,50 +250,58 @@ const OfficeAdmin = () => {
                   <table className="min-w-full bg-white">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="py-3 px-4 border-b text-left">ID</th>
-                        <th className="py-3 px-4 border-b text-left">Tipo</th>
-                        <th className="py-3 px-4 border-b text-left">Estado</th>
-                        <th className="py-3 px-4 border-b text-left">Fecha</th>
                         <th className="py-3 px-4 border-b text-left">
-                          Acciones
+                          Tipo de Operación
+                        </th>
+                        <th className="py-3 px-4 border-b text-center">
+                          Valor Total
+                        </th>
+                        <th className="py-3 px-4 border-b text-center">
+                          Promedio % Puntas
+                        </th>
+                        <th className="py-3 px-4 border-b text-center">
+                          Honorarios Brutos
+                        </th>
+                        <th className="py-3 px-4 border-b text-center">
+                          Honorarios Netos
+                        </th>
+                        <th className="py-3 px-4 border-b text-center">
+                          % Exclusividad
+                        </th>
+                        <th className="py-3 px-4 border-b text-center">
+                          Cantidad
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {typedOperations.map((operation: Operation) => (
-                        <tr
-                          key={operation.id}
-                          onClick={() => handleOperationClick(operation)}
-                          className="cursor-pointer hover:bg-gray-50"
-                        >
-                          <td className="py-2 px-4 border-b">{operation.id}</td>
-                          <td className="py-2 px-4 border-b">
-                            {operation.tipo_operacion || 'N/A'}
+                      {operationsSummaries.map((summary) => (
+                        <tr key={summary.tipo} className="hover:bg-gray-50">
+                          <td className="py-3 px-4 border-b font-medium">
+                            {summary.tipo}
                           </td>
-                          <td className="py-2 px-4 border-b">
-                            <span
-                              className={`px-2 py-1 rounded text-xs font-medium ${getStatusClass(operation.estado)}`}
-                            >
-                              {operation.estado || 'Sin estado'}
-                            </span>
+                          <td className="py-3 px-4 border-b text-center">
+                            ${formatOperationsNumber(summary.totalValue)}
                           </td>
-                          <td className="py-2 px-4 border-b">
-                            {operation.fecha_captacion
-                              ? new Date(
-                                  operation.fecha_captacion
-                                ).toLocaleDateString()
-                              : 'N/A'}
+                          <td className="py-3 px-4 border-b text-center">
+                            {formatOperationsNumber(
+                              summary.averagePuntas,
+                              true
+                            )}
                           </td>
-                          <td className="py-2 px-4 border-b">
-                            <button
-                              className="text-blue-500 hover:text-blue-700"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOperationClick(operation);
-                              }}
-                            >
-                              Ver detalles
-                            </button>
+                          <td className="py-3 px-4 border-b text-center">
+                            ${formatOperationsNumber(summary.totalGrossFees)}
+                          </td>
+                          <td className="py-3 px-4 border-b text-center">
+                            ${formatOperationsNumber(summary.totalNetFees)}
+                          </td>
+                          <td className="py-3 px-4 border-b text-center">
+                            {formatOperationsNumber(
+                              summary.exclusivityPercentage,
+                              true
+                            )}
+                          </td>
+                          <td className="py-3 px-4 border-b text-center">
+                            {summary.operationsCount}
                           </td>
                         </tr>
                       ))}
@@ -197,85 +311,6 @@ const OfficeAdmin = () => {
               </div>
             );
           })}
-        </div>
-      )}
-
-      {/* Modal para ver detalles de la operación */}
-      {selectedOperation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Detalles de Operación</h3>
-                <button
-                  onClick={() => setSelectedOperation(null)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">ID de Operación</p>
-                  <p className="font-medium">{selectedOperation.id}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">ID de Equipo</p>
-                  <p className="font-medium">
-                    {selectedOperation.teamId || 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Tipo de Operación</p>
-                  <p className="font-medium">
-                    {selectedOperation.tipo_operacion || 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Estado</p>
-                  <p className="font-medium">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${getStatusClass(selectedOperation.estado)}`}
-                    >
-                      {selectedOperation.estado || 'Sin estado'}
-                    </span>
-                  </p>
-                </div>
-
-                {/* Puedes agregar más campos según sea necesario */}
-
-                {selectedOperation.honorarios_broker && (
-                  <div className="col-span-2">
-                    <p className="text-sm text-gray-500">Descripción</p>
-                    <p className="font-medium">
-                      {selectedOperation.honorarios_broker}
-                    </p>
-                  </div>
-                )}
-
-                {selectedOperation.fecha_captacion && (
-                  <div>
-                    <p className="text-sm text-gray-500">Fecha de Creación</p>
-                    <p className="font-medium">
-                      {new Date(
-                        selectedOperation.fecha_captacion
-                      ).toLocaleString()}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <button
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
-                  onClick={() => setSelectedOperation(null)}
-                >
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </div>

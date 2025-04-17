@@ -40,7 +40,7 @@ const VerticalNavbar = () => {
     if (userData?.uid === '8QEPCwamFSYYIPcrhdQUsyZJgup1') {
       return (
         <NavLink
-          href="/adminOffice"
+          href="/admin-office"
           icon={<Cog8ToothIcon className="w-5 h-5 mr-2 text-lightBlue" />}
           label="Admin"
         />
