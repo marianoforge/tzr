@@ -51,7 +51,12 @@ const OperationsTable: React.FC = () => {
     null
   );
   const [operationTypeFilter, setOperationTypeFilter] = useState('all');
-  const [isDateAscending, setIsDateAscending] = useState<boolean | null>(null);
+  const [isReservaDateAscending, setIsReservaDateAscending] = useState<
+    boolean | null
+  >(null);
+  const [isClosingDateAscending, setIsClosingDateAscending] = useState<
+    boolean | null
+  >(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [filteredHonorarios, setFilteredHonorarios] = useState({
     brutos: 0,
@@ -149,35 +154,68 @@ const OperationsTable: React.FC = () => {
   };
 
   const sortOperations = (operations: Operation[]) => {
-    // Default sort by fecha_operacion
-    const dateSortedOps = operations.sort((a, b) => {
-      const aOp = a.fecha_operacion || '';
-      const bOp = b.fecha_operacion || '';
-      return bOp.localeCompare(aOp);
-    });
+    // Make a copy of the operations array to avoid modifying the original
+    let sortedOps = [...operations];
 
+    // Apply value sorting if active
     if (isValueAscending !== null) {
-      return sortOperationValue(dateSortedOps, isValueAscending);
-    } else if (isDateAscending !== null) {
-      return operations.sort((a, b) => {
-        // Sort by fecha_reserva for the Reserva column
-        const aDate = a.fecha_reserva || a.fecha_operacion || '';
-        const bDate = b.fecha_reserva || b.fecha_operacion || '';
+      sortedOps = sortOperationValue(sortedOps, isValueAscending);
+    }
+
+    // Apply closing date sorting if active
+    if (isClosingDateAscending !== null) {
+      sortedOps = sortedOps.sort((a, b) => {
+        const aOp = a.fecha_operacion || '';
+        const bOp = b.fecha_operacion || '';
+
+        // If both dates are empty, keep their original order
+        if (!aOp && !bOp) return 0;
+        // If only aOp is empty, it should come last
+        if (!aOp) return isClosingDateAscending ? 1 : -1;
+        // If only bOp is empty, it should come last
+        if (!bOp) return isClosingDateAscending ? -1 : 1;
+
+        // Normal comparison for non-empty dates
+        return isClosingDateAscending
+          ? aOp.localeCompare(bOp)
+          : bOp.localeCompare(aOp);
+      });
+    }
+
+    // Apply reserva date sorting if active
+    if (isReservaDateAscending !== null) {
+      sortedOps = sortedOps.sort((a, b) => {
+        const aDate = a.fecha_reserva || '';
+        const bDate = b.fecha_reserva || '';
 
         // If both dates are empty, keep their original order
         if (!aDate && !bDate) return 0;
         // If only aDate is empty, it should come last
-        if (!aDate) return isDateAscending ? 1 : -1;
+        if (!aDate) return isReservaDateAscending ? 1 : -1;
         // If only bDate is empty, it should come last
-        if (!bDate) return isDateAscending ? -1 : 1;
+        if (!bDate) return isReservaDateAscending ? -1 : 1;
 
         // Normal comparison for non-empty dates
-        return isDateAscending
+        return isReservaDateAscending
           ? aDate.localeCompare(bDate)
           : bDate.localeCompare(aDate);
       });
     }
-    return dateSortedOps;
+
+    // If no sorting is active, default sort by fecha_operacion (descending)
+    if (
+      isValueAscending === null &&
+      isReservaDateAscending === null &&
+      isClosingDateAscending === null
+    ) {
+      sortedOps = sortedOps.sort((a, b) => {
+        const aOp = a.fecha_operacion || '';
+        const bOp = b.fecha_operacion || '';
+        return bOp.localeCompare(aOp);
+      });
+    }
+
+    return sortedOps;
   };
 
   const { currentOperations, filteredTotals, calculatedHonorarios } =
@@ -251,7 +289,8 @@ const OperationsTable: React.FC = () => {
       itemsPerPage,
       searchQuery,
       isValueAscending,
-      isDateAscending,
+      isReservaDateAscending,
+      isClosingDateAscending,
       userData,
     ]);
 
@@ -354,10 +393,20 @@ const OperationsTable: React.FC = () => {
 
   const toggleValueSortOrder = () => {
     setIsValueAscending(!isValueAscending);
+    setIsReservaDateAscending(null);
+    setIsClosingDateAscending(null);
   };
 
-  const toggleDateSortOrder = () => {
-    setIsDateAscending(!isDateAscending);
+  const toggleReservaDateSortOrder = () => {
+    setIsReservaDateAscending(!isReservaDateAscending);
+    setIsValueAscending(null);
+    setIsClosingDateAscending(null);
+  };
+
+  const toggleClosingDateSortOrder = () => {
+    setIsClosingDateAscending(!isClosingDateAscending);
+    setIsValueAscending(null);
+    setIsReservaDateAscending(null);
   };
 
   if (isLoading) {
@@ -397,9 +446,11 @@ const OperationsTable: React.FC = () => {
         />
         <table className="w-full text-left border-collapse">
           <OperationsTableHeader
-            isDateAscending={isDateAscending}
+            isReservaDateAscending={isReservaDateAscending}
+            isClosingDateAscending={isClosingDateAscending}
             isValueAscending={isValueAscending}
-            toggleDateSortOrder={toggleDateSortOrder}
+            toggleReservaDateSortOrder={toggleReservaDateSortOrder}
+            toggleClosingDateSortOrder={toggleClosingDateSortOrder}
             toggleValueSortOrder={toggleValueSortOrder}
           />
           <OperationsTableBody

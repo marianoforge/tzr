@@ -345,10 +345,14 @@ const ExpensesAgentsList = () => {
                       {`${user.firstName} ${user.lastName}`}
                     </td>
                     <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(user.totalInPesos)}`}
+                      {user.totalInPesos < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(user.totalInPesos))}`
+                        : `${currencySymbol}${formatNumber(user.totalInPesos)}`}
                     </td>
                     <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(user.totalInDollars)}`}
+                      {user.totalInDollars < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(user.totalInDollars))}`
+                        : `${currencySymbol}${formatNumber(user.totalInDollars)}`}
                     </td>
                     <td className="py-3 px-4">
                       <button
@@ -368,24 +372,28 @@ const ExpensesAgentsList = () => {
                   </td>
                   <td></td>
                   <td className="py-3 px-4 text-center">
-                    {currencySymbol}
-                    {formatNumber(
-                      groupedExpensesByUser.reduce(
+                    {(() => {
+                      const totalInPesos = groupedExpensesByUser.reduce(
                         (acc: number, user: ExpenseAgents) =>
                           acc + user.totalInPesos,
                         0
-                      )
-                    )}
+                      );
+                      return totalInPesos < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(totalInPesos))}`
+                        : `${currencySymbol}${formatNumber(totalInPesos)}`;
+                    })()}
                   </td>
                   <td className="py-3 px-4 text-center">
-                    {currencySymbol}
-                    {formatNumber(
-                      groupedExpensesByUser.reduce(
+                    {(() => {
+                      const totalInDollars = groupedExpensesByUser.reduce(
                         (acc: number, user: ExpenseAgents) =>
                           acc + user.totalInDollars,
                         0
-                      )
-                    )}
+                      );
+                      return totalInDollars < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(totalInDollars))}`
+                        : `${currencySymbol}${formatNumber(totalInDollars)}`;
+                    })()}
                   </td>
                   <td className="py-3 px-4" colSpan={3}></td>
                 </tr>

@@ -286,11 +286,15 @@ const ExpensesList = () => {
                   >
                     <td className="py-3 px-4">{formatDate(expense.date)}</td>
                     <td className="py-3 px-4">
-                      {`${currencySymbol}${formatNumber(expense.amount)}`}
+                      {expense.amount < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(expense.amount))}`
+                        : `${currencySymbol}${formatNumber(expense.amount)}`}
                     </td>
                     {currency === 'USD' && (
                       <td className="py-3 px-4">
-                        {`${currencySymbol}${formatNumber(expense.amountInDollars)}`}
+                        {expense.amountInDollars < 0
+                          ? `-${currencySymbol}${formatNumber(Math.abs(expense.amountInDollars))}`
+                          : `${currencySymbol}${formatNumber(expense.amountInDollars)}`}
                       </td>
                     )}
 
@@ -329,24 +333,28 @@ const ExpensesList = () => {
                     Total
                   </td>
                   <td className="py-3 px-4 text-center">
-                    {currencySymbol}
-                    {formatNumber(
-                      filteredExpenses.reduce(
+                    {(() => {
+                      const totalAmount = filteredExpenses.reduce(
                         (acc: number, expense: Expense) => acc + expense.amount,
                         0
-                      )
-                    )}
+                      );
+                      return totalAmount < 0
+                        ? `-${currencySymbol}${formatNumber(Math.abs(totalAmount))}`
+                        : `${currencySymbol}${formatNumber(totalAmount)}`;
+                    })()}
                   </td>
                   {currency === 'USD' && (
                     <td className="py-3 px-4 text-center">
-                      {currencySymbol}
-                      {formatNumber(
-                        filteredExpenses.reduce(
+                      {(() => {
+                        const totalAmountInDollars = filteredExpenses.reduce(
                           (acc: number, expense: Expense) =>
                             acc + expense.amountInDollars,
                           0
-                        )
-                      )}
+                        );
+                        return totalAmountInDollars < 0
+                          ? `-${currencySymbol}${formatNumber(Math.abs(totalAmountInDollars))}`
+                          : `${currencySymbol}${formatNumber(totalAmountInDollars)}`;
+                      })()}
                     </td>
                   )}
                   <td className="py-3 px-4" colSpan={4}></td>

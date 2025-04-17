@@ -21,6 +21,7 @@ interface CalculationsState {
     honorariosNetos: number;
     honorariosBrutosEnCurso: number;
     honorariosNetosEnCurso: number;
+    honorariosBrutosEnCursoTotal: number; // Suma de honorarios brutos en curso del año actual y anterior
   };
   lastCalculated: number; // timestamp of last calculation
 
@@ -57,6 +58,7 @@ export const useCalculationsStore = create<CalculationsState>()(
         honorariosNetos: 0,
         honorariosBrutosEnCurso: 0,
         honorariosNetosEnCurso: 0,
+        honorariosBrutosEnCursoTotal: 0, // Nuevo campo inicializado
       },
 
       setOperations: (operations) => {
@@ -104,6 +106,7 @@ export const useCalculationsStore = create<CalculationsState>()(
               honorariosNetos: 0,
               honorariosBrutosEnCurso: 0,
               honorariosNetosEnCurso: 0,
+              honorariosBrutosEnCursoTotal: 0, // Reset del nuevo campo
             },
             lastCalculated: Date.now(),
           });
@@ -116,34 +119,52 @@ export const useCalculationsStore = create<CalculationsState>()(
             (op) => op.estado !== OperationStatus.CAIDA
           );
 
-          // Filter operations for the year 2025 only
-          const operations2025 = operacionesValidas.filter((op) => {
+          // Obtener el año actual
+          const currentYear = new Date().getFullYear();
+          const previousYear = currentYear - 1;
+
+          // Filter operations for the current year only
+          const operationsCurrentYear = operacionesValidas.filter((op) => {
             const operationDate = new Date(
               op.fecha_operacion || op.fecha_reserva || ''
             );
-            return operationDate.getFullYear() === 2025;
+            return operationDate.getFullYear() === currentYear;
           });
 
-          if (operations2025.length === 0) {
-            // Reset results to 0 when there are no 2025 operations
+          // Filter operations for the previous year
+          const operationsPreviousYear = operacionesValidas.filter((op) => {
+            const operationDate = new Date(
+              op.fecha_operacion || op.fecha_reserva || ''
+            );
+            return operationDate.getFullYear() === previousYear;
+          });
+
+          if (operationsCurrentYear.length === 0) {
+            // Reset results to 0 when there are no operations for current year
             set({
               results: {
                 honorariosBrutos: 0,
                 honorariosNetos: 0,
                 honorariosBrutosEnCurso: 0,
                 honorariosNetosEnCurso: 0,
+                honorariosBrutosEnCursoTotal: 0, // Reset del nuevo campo
               },
               lastCalculated: Date.now(),
             });
             return;
           }
 
-          // Filter operations by status for 2025
-          const operacionesCerradas = operations2025.filter(
+          // Filter operations by status for current year
+          const operacionesCerradas = operationsCurrentYear.filter(
             (op) => op.estado === OperationStatus.CERRADA
           );
 
-          const operacionesEnCurso = operations2025.filter(
+          const operacionesEnCurso = operationsCurrentYear.filter(
+            (op) => op.estado === OperationStatus.EN_CURSO
+          );
+
+          // Filter operations in progress for previous year
+          const operacionesEnCursoPrevYear = operationsPreviousYear.filter(
             (op) => op.estado === OperationStatus.EN_CURSO
           );
 
@@ -151,9 +172,17 @@ export const useCalculationsStore = create<CalculationsState>()(
           const honorariosBrutos =
             calculateTotalHonorariosBroker(operacionesCerradas);
 
-          // Calculate honorarios brutos for operations in progress
+          // Calculate honorarios brutos for operations in progress of current year
           const honorariosBrutosEnCurso =
             calculateTotalHonorariosBroker(operacionesEnCurso);
+
+          // Calculate honorarios brutos for operations in progress of previous year
+          const honorariosBrutosEnCursoPrevYear =
+            calculateTotalHonorariosBroker(operacionesEnCursoPrevYear);
+
+          // Calculate total honorarios brutos en curso (current + previous year)
+          const honorariosBrutosEnCursoTotal =
+            honorariosBrutosEnCurso + honorariosBrutosEnCursoPrevYear;
 
           // Calculate honorarios netos for each closed operation and sum them
           const honorariosNetos = operacionesCerradas.reduce(
@@ -175,6 +204,7 @@ export const useCalculationsStore = create<CalculationsState>()(
               honorariosNetos,
               honorariosBrutosEnCurso,
               honorariosNetosEnCurso,
+              honorariosBrutosEnCursoTotal,
             },
             lastCalculated: Date.now(),
           });
@@ -205,24 +235,20 @@ export const useCalculationsStore = create<CalculationsState>()(
             );
           });
 
-          // Filtrar por estado
           let filteredByStatus = filteredByYear;
           if (statusFilter !== 'all') {
             filteredByStatus = filteredByYear.filter(
               (op) => op.estado === statusFilter
             );
           } else {
-            // Si el filtro es 'all', excluir las operaciones con estado CAIDA
             filteredByStatus = filteredByYear.filter(
               (op) => op.estado !== OperationStatus.CAIDA
             );
           }
 
-          // Calcular honorarios brutos
           const honorariosBrutos =
             calculateTotalHonorariosBroker(filteredByStatus);
 
-          // Calcular honorarios netos
           const honorariosNetos = filteredByStatus.reduce(
             (total, operation) =>
               total + totalHonorariosTeamLead(operation, userRole, userData),
@@ -244,11 +270,11 @@ export const useCalculationsStore = create<CalculationsState>()(
       setError: (error) => set({ error }),
     }),
     {
-      name: 'calculations-storage', // nombre para guardar en localStorage
+      name: 'calculations-storage',
       partialize: (state) => ({
         results: state.results,
         lastCalculated: state.lastCalculated,
-      }), // solo guardar estos campos
+      }),
     }
   )
 );

@@ -151,13 +151,16 @@ const ExpensesListCards: React.FC = () => {
                 </p>
                 <p>
                   <strong>Monto en Moneda Local:</strong>
-                  {currencySymbol}
-                  {formatNumber(expense.amount)}
+                  {expense.amount < 0
+                    ? `-${currencySymbol}${formatNumber(Math.abs(expense.amount))}`
+                    : `${currencySymbol}${formatNumber(expense.amount)}`}
                 </p>
                 {currency === 'USD' && (
                   <p>
-                    <strong>Monto en Dólares:</strong> $
-                    {formatNumber(expense.amountInDollars)}
+                    <strong>Monto en Dólares:</strong>
+                    {expense.amountInDollars < 0
+                      ? `-$${formatNumber(Math.abs(expense.amountInDollars))}`
+                      : `$${formatNumber(expense.amountInDollars)}`}
                   </p>
                 )}
                 <p>

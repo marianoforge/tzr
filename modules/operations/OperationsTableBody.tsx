@@ -10,9 +10,10 @@ import { Tooltip } from 'react-tooltip';
 
 import { Operation, UserData } from '@/common/types/';
 import { formatDate } from '@/common/utils/formatDate';
-import { formatNumber } from '@/common/utils/formatNumber';
+import { formatOperationsNumber } from '@/common/utils/formatNumber';
 import { calculateNetFees } from '@/common/utils/calculateNetFees';
 import { calculateHonorarios } from '@/common/utils/calculations';
+
 interface OperationTotal {
   valor_reserva?: number;
   promedio_punta_compradora_porcentaje?: number;
@@ -95,23 +96,29 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
             {operacion.tipo_operacion}
           </td>
           <td className="py-3 px-2 before:content-['Valor:'] md:before:content-none">
-            {`${currencySymbol}${formatNumber(operacion.valor_reserva)}`}
+            {`${currencySymbol}${formatOperationsNumber(operacion.valor_reserva)}`}
           </td>
           <td className="py-3 px-2 before:content-['Punta Vendedora:'] md:before:content-none">
-            {formatNumber(operacion.porcentaje_punta_vendedora ?? 0)}%
+            {formatOperationsNumber(
+              operacion.porcentaje_punta_vendedora ?? 0,
+              true
+            )}
           </td>
           <td className="py-3 px-2 before:content-['Punta Compradora:'] md:before:content-none">
-            {formatNumber(operacion.porcentaje_punta_compradora ?? 0)}%
+            {formatOperationsNumber(
+              operacion.porcentaje_punta_compradora ?? 0,
+              true
+            )}
           </td>
           <td className="py-3 px-2 before:content-['Punta Vendedora:'] md:before:content-none">
-            {formatNumber(
+            {formatOperationsNumber(
               operacion.porcentaje_punta_compradora +
-                operacion.porcentaje_punta_vendedora
+                operacion.porcentaje_punta_vendedora,
+              true
             )}
-            %
           </td>
           <td className="py-3 px-2 before:content-['Puntas:'] md:before:content-none">
-            {formatNumber(
+            {formatOperationsNumber(
               Number(operacion.punta_compradora) +
                 Number(operacion.punta_vendedora)
             )}
@@ -126,11 +133,11 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
                 operacion.porcentaje_referido ?? 0
               ).honorariosBroker;
 
-              return `${currencySymbol}${formatNumber(honorariosBroker)}`;
+              return `${currencySymbol}${formatOperationsNumber(honorariosBroker)}`;
             })()}
           </td>
           <td className="py-3 px-2 before:content-['Honorarios Netos:'] md:before:content-none">
-            {`${currencySymbol}${formatNumber(calculateNetFees(operacion, userData))}`}
+            {`${currencySymbol}${formatOperationsNumber(calculateNetFees(operacion, userData))}`}
           </td>
           <td className="py-3 px-2 md:before:content-none">
             <button
@@ -191,16 +198,17 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           Total
         </td>
         <td className="py-3 px-2 text-center">
-          {`${currencySymbol}${formatNumber(Number(filteredTotals?.valor_reserva))}`}
+          {`${currencySymbol}${formatOperationsNumber(Number(filteredTotals?.valor_reserva))}`}
         </td>
         <td className="py-3 px-2 text-center">
           {filteredTotals?.promedio_punta_vendedora_porcentaje !== undefined &&
           filteredTotals?.promedio_punta_vendedora_porcentaje !== null &&
           filteredTotals?.promedio_punta_vendedora_porcentaje !== 0 ? (
             <>
-              {`${formatNumber(
-                Number(filteredTotals?.promedio_punta_vendedora_porcentaje)
-              )}%`}
+              {`${formatOperationsNumber(
+                Number(filteredTotals?.promedio_punta_vendedora_porcentaje),
+                true
+              )}`}
               <InformationCircleIcon
                 className="inline-block mb-1  ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                 data-tooltip-id="tooltip-vendedora"
@@ -217,9 +225,10 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           filteredTotals?.promedio_punta_compradora_porcentaje !== null &&
           filteredTotals?.promedio_punta_compradora_porcentaje !== 0 ? (
             <>
-              {`${formatNumber(
-                Number(filteredTotals?.promedio_punta_compradora_porcentaje)
-              )}%`}
+              {`${formatOperationsNumber(
+                Number(filteredTotals?.promedio_punta_compradora_porcentaje),
+                true
+              )}`}
               <InformationCircleIcon
                 className="inline-block mb-1 ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                 data-tooltip-id="tooltip-compradora"
@@ -238,7 +247,10 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           !isNaN(filteredTotals?.promedio_suma_puntas) &&
           filteredTotals?.promedio_suma_puntas !== 0 ? (
             <>
-              {formatNumber(Number(filteredTotals?.promedio_suma_puntas))}%
+              {formatOperationsNumber(
+                Number(filteredTotals?.promedio_suma_puntas),
+                true
+              )}
               <InformationCircleIcon
                 className="inline-block mb-1 ml-1 text-lightBlue h-4 w-4 cursor-pointer"
                 data-tooltip-id="tooltip-puntas"
@@ -254,16 +266,20 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
         <td className="py-3 px-2 text-center">
           {filteredTotals?.suma_total_de_puntas !== undefined &&
           filteredTotals?.suma_total_de_puntas !== null ? (
-            <>{formatNumber(Number(filteredTotals?.suma_total_de_puntas))}</>
+            <>
+              {formatOperationsNumber(
+                Number(filteredTotals?.suma_total_de_puntas)
+              )}
+            </>
           ) : (
             'Cálculo no disponible'
           )}
         </td>
         <td className="py-3 px-2 text-center">
-          {`${currencySymbol}${formatNumber(totalHonorariosBrutos || 0)}`}
+          {`${currencySymbol}${formatOperationsNumber(totalHonorariosBrutos || 0)}`}
         </td>
         <td className="py-3 px-2 text-center">
-          {`${currencySymbol}${formatNumber(totalNetFees)}`}
+          {`${currencySymbol}${formatOperationsNumber(totalNetFees)}`}
         </td>
         <td className="py-3 px-2 text-center" colSpan={4}></td>
       </tr>
