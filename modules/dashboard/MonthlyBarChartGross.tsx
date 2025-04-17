@@ -220,7 +220,7 @@ const MonthlyBarChartGross: React.FC = () => {
                     <span>
                       {value}{' '}
                       <span className="ml-1">
-                        Honorarios Netos Acumulados: {currencySymbol}
+                        Honorarios Brutos Acumulados: {currencySymbol}
                         {formatNumber(totalPreviousYear)}
                       </span>
                     </span>
@@ -231,7 +231,7 @@ const MonthlyBarChartGross: React.FC = () => {
                     <span>
                       {value}{' '}
                       <span className="ml-1">
-                        Honorarios Netos Acumulados: {currencySymbol}
+                        Honorarios Brutos Acumulados: {currencySymbol}
                         {formatNumber(totalCurrentYear)}
                       </span>
                     </span>

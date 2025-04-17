@@ -191,7 +191,7 @@ const Bubbles = () => {
     },
     {
       title: 'Honorarios Brutos en Curso',
-      figure: `${currencySymbol}${formatNumber(results.honorariosBrutosEnCurso)}`,
+      figure: `${currencySymbol}${formatNumber(results.honorariosBrutosEnCursoTotal)}`,
       bgColor: 'bg-lightBlue',
       textColor: 'text-white',
       tooltip: 'Honorarios Brutos sobre las operaciones en curso.',
