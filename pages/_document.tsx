@@ -8,6 +8,8 @@ export default function Document() {
     <Html lang="en">
       <Head>
         {/* DNS Prefetch for Firebase/Firestore */}
+        <link rel="manifest" href="/manifest.json" />
+
         <link rel="dns-prefetch" href="https://firebase.googleapis.com" />
         <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
         <link rel="dns-prefetch" href="https://www.googleapis.com" />
