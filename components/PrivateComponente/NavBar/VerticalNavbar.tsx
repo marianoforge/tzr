@@ -39,7 +39,7 @@ const VerticalNavbar = () => {
   const renderAdminLink = () => {
     if (
       userData?.uid === '8QEPCwamFSYYIPcrhdQUsyZJgup1' ||
-      userData?.uid === 'TURPDbsJNIWa5lHUD40Mvd4cMA83'
+      userData?.uid === 'HDDigTYJLhd5xWDG1fwpQzrER4O2'
     ) {
       return (
         <NavLink
