@@ -442,7 +442,7 @@ const Settings = () => {
               </ul>
             </div>
             <div className="flex flex-col items-center justify-center gap-4">
-              <button
+              {/* <button
                 onClick={() => setOpenModalCancel(true)}
                 className={`px-4 py-2 rounded w-full sm:w-[200px] ${
                   subscriptionId
@@ -454,6 +454,23 @@ const Settings = () => {
                 {isCanceling ? 'Cancelando...' : 'Cancelar suscripción'}
               </button>
               {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
+              */}
+              <button
+                onClick={() =>
+                  window.open(
+                    'https://billing.stripe.com/p/login/3csg1u0zm41CbHq5kk',
+                    '_blank'
+                  )
+                }
+                className={`px-4 py-2 rounded w-full sm:w-[200px] ${
+                  subscriptionId
+                    ? 'bg-lightBlue text-white hover:bg-mediumBlue'
+                    : 'bg-mutedBlue text-white cursor-not-allowed'
+                }`}
+                disabled={!subscriptionId || isCanceling}
+              >
+                Actualizar Suscripción
+              </button>
             </div>
           </div>
         </div>

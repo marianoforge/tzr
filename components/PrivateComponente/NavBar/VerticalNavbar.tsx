@@ -37,7 +37,10 @@ const VerticalNavbar = () => {
   }, [fetchItems]);
 
   const renderAdminLink = () => {
-    if (userData?.uid === '8QEPCwamFSYYIPcrhdQUsyZJgup1') {
+    if (
+      userData?.uid === '8QEPCwamFSYYIPcrhdQUsyZJgup1' ||
+      userData?.uid === 'HDDigTYJLhd5xWDG1fwpQzrER4O2'
+    ) {
       return (
         <NavLink
           href="/admin-office"
