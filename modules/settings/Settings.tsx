@@ -35,7 +35,6 @@ const Settings = () => {
     objetivoAnual: false,
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [cancelMessage, setCancelMessage] = useState<string | null>(null);
   const [isCanceling, setIsCanceling] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
   const [openModalCancel, setOpenModalCancel] = useState(false);
@@ -115,24 +114,13 @@ const Settings = () => {
       );
 
       if (response.status === 200) {
-        setCancelMessage('Suscripción cancelada exitosamente.');
-
-        await axios.put(
-          `/api/users/${userID}`,
-          {
-            stripeSubscriptionId: null,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
         queryClient.invalidateQueries({ queryKey: ['userData', userID] });
       } else {
-        setCancelMessage('No se pudo cancelar la suscripción.');
+        setErrorMessage('No se pudo cancelar la suscripción.');
       }
     } catch (error) {
       console.error('Error al cancelar la suscripción:', error);
-      setCancelMessage('Error al cancelar la suscripción.');
+      setErrorMessage('Error al cancelar la suscripción.');
     } finally {
       setIsCanceling(false);
     }
@@ -442,19 +430,6 @@ const Settings = () => {
               </ul>
             </div>
             <div className="flex flex-col items-center justify-center gap-4">
-              {/* <button
-                onClick={() => setOpenModalCancel(true)}
-                className={`px-4 py-2 rounded w-full sm:w-[200px] ${
-                  subscriptionId
-                    ? 'bg-lightBlue text-white hover:bg-mediumBlue'
-                    : 'bg-mutedBlue text-white cursor-not-allowed'
-                }`}
-                disabled={!subscriptionId || isCanceling}
-              >
-                {isCanceling ? 'Cancelando...' : 'Cancelar suscripción'}
-              </button>
-              {cancelMessage && <p className="mt-4">{cancelMessage}</p>}
-              */}
               <button
                 onClick={() =>
                   window.open(
