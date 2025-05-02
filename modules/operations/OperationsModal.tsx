@@ -78,9 +78,12 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   });
 
   const queryClient = useQueryClient();
-  const { data: teamMembers } = useTeamMembers();
+  const { data: teamMembers, isLoading: isTeamMembersLoading } =
+    useTeamMembers();
   const { userData } = useUserDataStore();
   const userRole = userData?.role;
+  const [isLoading, setIsLoading] = useState(true);
+
   const usersMapped = [
     ...(teamMembers?.map((member: TeamMember) => ({
       name: `${member.firstName} ${member.lastName}`,
@@ -150,6 +153,20 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
     setPorcentajeHonorariosBroker,
     watch,
   ]);
+
+  useEffect(() => {
+    // Set loading state based on data availability
+    if (isOpen && operation && !isTeamMembersLoading) {
+      // Give a slight delay to ensure all data is properly loaded and rendered
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setIsLoading(true);
+    }
+  }, [isOpen, operation, isTeamMembersLoading]);
+
   const mutation = useMutation({
     mutationFn: updateOperation,
     onSuccess: () => {
@@ -243,6 +260,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   const toggleAdditionalAdvisor = () => {
     setShowAdditionalAdvisor((prev) => !prev);
   };
+
+  // Skeleton loader component for inputs
+  const InputSkeleton = () => (
+    <div className="animate-pulse">
+      <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
+      <div className="h-10 bg-gray-200 rounded w-full"></div>
+    </div>
+  );
+
   if (!isOpen || !operation) return null;
 
   return (
@@ -251,345 +277,361 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         <h2 className="text-2xl font-bold mb-4 text-center top-0 bg-white pt-2 z-10">
           Editar Operación
         </h2>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 overflow-y-auto"
-        >
-          <Input
-            label="Fecha de Captación / Publicación"
-            type="date"
-            {...register('fecha_captacion')}
-            error={errors.fecha_captacion?.message}
-          />
 
-          <Input
-            label="Fecha de Reserva"
-            type="date"
-            {...register('fecha_reserva')}
-            error={errors.fecha_reserva?.message}
-            required
-          />
-          <Input
-            label="Fecha de Cierre"
-            type="date"
-            {...register('fecha_operacion', {
-              setValueAs: (value) => value || null,
-            })}
-            error={errors.fecha_operacion?.message}
-          />
-          <AddressAutocompleteManual
-            onAddressSelect={(address) => {
-              setAddressData((prev) => ({ ...prev, ...address }));
-              setValue('direccion_reserva', address.address);
-              setValue('localidad_reserva', address.city);
-              setValue('provincia_reserva', address.province);
-            }}
-            onHouseNumberChange={(houseNumber) =>
-              setAddressData((prev) => ({ ...prev, houseNumber }))
-            }
-            initialAddress={addressData.address}
-            initialHouseNumber={addressData.houseNumber}
-          />
-
-          <Select
-            label="Tipo de Operación"
-            options={operationTypes}
-            register={register}
-            name="tipo_operacion"
-            error={errors.tipo_operacion?.message}
-          />
-
-          <Select
-            label="Tipo de Inmueble"
-            options={propertyTypes}
-            register={register}
-            name="tipo_inmueble"
-            error={errors.tipo_inmueble?.message}
-          />
-
-          <label className="font-semibold text-mediumBlue">
-            Exclusividad de la Operación*
-          </label>
-          <div className="flex gap-10 mt-2 mb-6">
-            <div className="flex items-center gap-2">
-              <input type="checkbox" {...register('exclusiva')} />
-              <label>Exclusiva</label>
-            </div>
-            {errors.exclusiva && (
-              <p className="text-red-500">{errors.exclusiva.message}</p>
-            )}
-
-            <div className="flex items-center gap-2">
-              <input type="checkbox" {...register('no_exclusiva')} />
-              <label>No Exclusiva</label>
-            </div>
-            {errors.no_exclusiva && (
-              <p className="text-red-500">{errors.no_exclusiva.message}</p>
-            )}
+        {isLoading ? (
+          // Skeleton loading state
+          <div className="space-y-4 overflow-y-auto">
+            {Array(15)
+              .fill(0)
+              .map((_, index) => (
+                <InputSkeleton key={`input-skeleton-${index}`} />
+              ))}
           </div>
-
-          <Input
-            label="Valor de Reserva"
-            type="number"
-            {...register('valor_reserva')}
-            placeholder="Valor de Reserva"
-            error={errors.valor_reserva?.message}
-            required
-          />
-
-          <Input
-            label="Porcentaje Punta Compradora"
-            type="text"
-            step="any"
-            {...register('porcentaje_punta_compradora', {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            error={errors.porcentaje_punta_compradora?.message}
-            required
-          />
-
-          <Input
-            label="Porcentaje Punta Vendedora"
-            type="text"
-            step="any"
-            {...register('porcentaje_punta_vendedora', {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            error={errors.porcentaje_punta_vendedora?.message}
-            required
-          />
-
-          <Input
-            label="Porcentaje Honorarios Totales"
-            type="text"
-            step="any"
-            value={`${porcentajeHonorariosBroker.toFixed(2)}%`}
-            disabled
-          />
-
-          <Input
-            label="Tipo de reserva"
-            type="text"
-            {...register('numero_sobre_reserva')}
-            placeholder="Tipo de reserva"
-            error={errors.numero_sobre_reserva?.message}
-          />
-
-          <Input
-            label="Monto de Reserva"
-            type="text"
-            {...register('monto_sobre_reserva')}
-            placeholder="Por ejemplo: 2000"
-            error={errors.monto_sobre_reserva?.message}
-          />
-
-          <Input
-            label="Tipo de refuerzo"
-            type="text"
-            {...register('numero_sobre_refuerzo')}
-            placeholder="Tipo de refuerzo"
-            error={errors.numero_sobre_refuerzo?.message}
-          />
-
-          <Input
-            label="Monto de refuerzo"
-            type="text"
-            {...register('monto_sobre_refuerzo')}
-            placeholder="Por ejemplo: 4000"
-            error={errors.monto_sobre_refuerzo?.message}
-          />
-
-          <Input
-            label="Datos Referido"
-            type="text"
-            {...register('referido')}
-            placeholder="Datos Referido"
-            error={errors.referido?.message}
-          />
-
-          <Input
-            label="Porcentaje Referido"
-            type="text"
-            step="any"
-            {...register('porcentaje_referido', {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            placeholder="Por ejemplo 10%"
-            error={errors.porcentaje_referido?.message}
-          />
-
-          <Input
-            label="Datos Compartido"
-            type="text"
-            {...register('compartido')}
-            placeholder="Datos Compartido"
-            error={errors.compartido?.message}
-          />
-
-          <Input
-            label="Porcentaje Compartido"
-            type="text"
-            step="any"
-            {...register('porcentaje_compartido', {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            placeholder="Por ejemplo: 25%"
-            error={errors.porcentaje_compartido?.message}
-          />
-
-          <Input
-            label="Porcentaje destinado a franquicia o broker"
-            type="text"
-            {...register('isFranchiseOrBroker', {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            placeholder="Por ejemplo: 10%"
-            error={errors.isFranchiseOrBroker?.message}
-          />
-
-          {userRole === UserRole.TEAM_LEADER_BROKER && (
+        ) : (
+          // Actual form content
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4 overflow-y-auto"
+          >
             <Input
-              label="Porcentaje destinado a reparticion de honorarios asesor"
+              label="Fecha de Captación / Publicación"
+              type="date"
+              {...register('fecha_captacion')}
+              error={errors.fecha_captacion?.message}
+            />
+
+            <Input
+              label="Fecha de Reserva"
+              type="date"
+              {...register('fecha_reserva')}
+              error={errors.fecha_reserva?.message}
+              required
+            />
+            <Input
+              label="Fecha de Cierre"
+              type="date"
+              {...register('fecha_operacion', {
+                setValueAs: (value) => value || null,
+              })}
+              error={errors.fecha_operacion?.message}
+            />
+            <AddressAutocompleteManual
+              onAddressSelect={(address) => {
+                setAddressData((prev) => ({ ...prev, ...address }));
+                setValue('direccion_reserva', address.address);
+                setValue('localidad_reserva', address.city);
+                setValue('provincia_reserva', address.province);
+              }}
+              onHouseNumberChange={(houseNumber) =>
+                setAddressData((prev) => ({ ...prev, houseNumber }))
+              }
+              initialAddress={addressData.address}
+              initialHouseNumber={addressData.houseNumber}
+            />
+
+            <Select
+              label="Tipo de Operación"
+              options={operationTypes}
+              register={register}
+              name="tipo_operacion"
+              error={errors.tipo_operacion?.message}
+            />
+
+            <Select
+              label="Tipo de Inmueble"
+              options={propertyTypes}
+              register={register}
+              name="tipo_inmueble"
+              error={errors.tipo_inmueble?.message}
+            />
+
+            <label className="font-semibold text-mediumBlue">
+              Exclusividad de la Operación*
+            </label>
+            <div className="flex gap-10 mt-2 mb-6">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" {...register('exclusiva')} />
+                <label>Exclusiva</label>
+              </div>
+              {errors.exclusiva && (
+                <p className="text-red-500">{errors.exclusiva.message}</p>
+              )}
+
+              <div className="flex items-center gap-2">
+                <input type="checkbox" {...register('no_exclusiva')} />
+                <label>No Exclusiva</label>
+              </div>
+              {errors.no_exclusiva && (
+                <p className="text-red-500">{errors.no_exclusiva.message}</p>
+              )}
+            </div>
+
+            <Input
+              label="Valor de Reserva"
+              type="number"
+              {...register('valor_reserva')}
+              placeholder="Valor de Reserva"
+              error={errors.valor_reserva?.message}
+              required
+            />
+
+            <Input
+              label="Porcentaje Punta Compradora"
               type="text"
-              {...register('reparticion_honorarios_asesor', {
+              step="any"
+              {...register('porcentaje_punta_compradora', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_punta_compradora?.message}
+              required
+            />
+
+            <Input
+              label="Porcentaje Punta Vendedora"
+              type="text"
+              step="any"
+              {...register('porcentaje_punta_vendedora', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_punta_vendedora?.message}
+              required
+            />
+
+            <Input
+              label="Porcentaje Honorarios Totales"
+              type="text"
+              step="any"
+              value={`${porcentajeHonorariosBroker.toFixed(2)}%`}
+              disabled
+            />
+
+            <Input
+              label="Tipo de reserva"
+              type="text"
+              {...register('numero_sobre_reserva')}
+              placeholder="Tipo de reserva"
+              error={errors.numero_sobre_reserva?.message}
+            />
+
+            <Input
+              label="Monto de Reserva"
+              type="text"
+              {...register('monto_sobre_reserva')}
+              placeholder="Por ejemplo: 2000"
+              error={errors.monto_sobre_reserva?.message}
+            />
+
+            <Input
+              label="Tipo de refuerzo"
+              type="text"
+              {...register('numero_sobre_refuerzo')}
+              placeholder="Tipo de refuerzo"
+              error={errors.numero_sobre_refuerzo?.message}
+            />
+
+            <Input
+              label="Monto de refuerzo"
+              type="text"
+              {...register('monto_sobre_refuerzo')}
+              placeholder="Por ejemplo: 4000"
+              error={errors.monto_sobre_refuerzo?.message}
+            />
+
+            <Input
+              label="Datos Referido"
+              type="text"
+              {...register('referido')}
+              placeholder="Datos Referido"
+              error={errors.referido?.message}
+            />
+
+            <Input
+              label="Porcentaje Referido"
+              type="text"
+              step="any"
+              {...register('porcentaje_referido', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              placeholder="Por ejemplo 10%"
+              error={errors.porcentaje_referido?.message}
+            />
+
+            <Input
+              label="Datos Compartido"
+              type="text"
+              {...register('compartido')}
+              placeholder="Datos Compartido"
+              error={errors.compartido?.message}
+            />
+
+            <Input
+              label="Porcentaje Compartido"
+              type="text"
+              step="any"
+              {...register('porcentaje_compartido', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              placeholder="Por ejemplo: 25%"
+              error={errors.porcentaje_compartido?.message}
+            />
+
+            <Input
+              label="Porcentaje destinado a franquicia o broker"
+              type="text"
+              {...register('isFranchiseOrBroker', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               placeholder="Por ejemplo: 10%"
-              error={errors.reparticion_honorarios_asesor?.message}
+              error={errors.isFranchiseOrBroker?.message}
             />
-          )}
 
-          {userRole === UserRole.TEAM_LEADER_BROKER && (
-            <>
-              <Select
-                label="Asesor que realizó la venta"
-                register={register}
-                name="realizador_venta"
-                options={[
-                  {
-                    value: '',
-                    label: 'Selecciona el asesor que realizó la operación',
-                  },
-                  ...usersMapped
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((member) => ({
-                      value: member.name,
-                      label: member.name,
-                    })),
-                ]}
-                className={`w-full p-2 mb-8 border border-gray-300 rounded ${selectStyle}`}
-                defaultValue={watch('realizador_venta') || ''}
-              />
-              {errors.realizador_venta && (
-                <p className="text-red-500">
-                  {errors.realizador_venta.message}
-                </p>
-              )}
-            </>
-          )}
-
-          <Input
-            label="Porcentaje Honorarios Asesor"
-            type="text"
-            step="any"
-            {...register('porcentaje_honorarios_asesor', {
-              setValueAs: (value) => parseFloat(value) || 0,
-            })}
-            error={errors.porcentaje_honorarios_asesor?.message}
-          />
-
-          {/* Additional advisor input block */}
-          {showAdditionalAdvisor && (
-            <>
-              <Select
-                label="Asesor adicional"
-                register={register}
-                name="realizador_venta_adicional"
-                options={[
-                  {
-                    value: '',
-                    label: 'Selecciona el asesor participante en la operación',
-                  },
-                  ...usersMapped
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((member) => ({
-                      value: member.name,
-                      label: member.name,
-                    })),
-                ]}
-                className={`w-full p-2 mb-8 border border-gray-300 rounded ${selectStyle}`}
-                defaultValue={watch('realizador_venta_adicional') || ''}
-              />
-              {errors.realizador_venta_adicional && (
-                <p className="text-red-500">
-                  {errors.realizador_venta_adicional.message}
-                </p>
-              )}
-
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
               <Input
-                label="Porcentaje honorarios asesor adicional"
+                label="Porcentaje destinado a reparticion de honorarios asesor"
                 type="text"
-                placeholder="Por ejemplo: 40%"
-                {...register('porcentaje_honorarios_asesor_adicional', {
+                {...register('reparticion_honorarios_asesor', {
                   setValueAs: (value) => parseFloat(value) || 0,
                 })}
-                error={errors.porcentaje_honorarios_asesor_adicional?.message}
+                placeholder="Por ejemplo: 10%"
+                error={errors.reparticion_honorarios_asesor?.message}
               />
-            </>
-          )}
-          {userRole === 'team_leader_broker' && (
-            <p
-              className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
-              onClick={toggleAdditionalAdvisor}
-            >
-              {showAdditionalAdvisor
-                ? 'Eliminar Segundo Asesor'
-                : 'Agregar Otro Asesor'}
-            </p>
-          )}
-
-          <TextArea
-            label="Observaciones"
-            {...register('observaciones')}
-            error={errors.observaciones?.message}
-          />
-
-          <div className="flex justify-around items-center ">
-            <div className="flex items-center gap-2 my-4">
-              <input type="checkbox" {...register('punta_vendedora')} />
-              <label>Punta Vendedora</label>
-            </div>
-            {errors.punta_vendedora && (
-              <p className="text-redAccent">{errors.punta_vendedora.message}</p>
             )}
 
-            <div className="flex items-center gap-2 my-4">
-              <input type="checkbox" {...register('punta_compradora')} />
-              <label>Punta Compradora</label>
-            </div>
-            {errors.punta_compradora && (
-              <p className="text-redAccent">
-                {errors.punta_compradora.message}
+            {userRole === UserRole.TEAM_LEADER_BROKER && (
+              <>
+                <Select
+                  label="Asesor que realizó la venta"
+                  register={register}
+                  name="realizador_venta"
+                  options={[
+                    {
+                      value: '',
+                      label: 'Selecciona el asesor que realizó la operación',
+                    },
+                    ...usersMapped
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((member) => ({
+                        value: member.name,
+                        label: member.name,
+                      })),
+                  ]}
+                  className={`w-full p-2 mb-8 border border-gray-300 rounded ${selectStyle}`}
+                  defaultValue={watch('realizador_venta') || ''}
+                />
+                {errors.realizador_venta && (
+                  <p className="text-red-500">
+                    {errors.realizador_venta.message}
+                  </p>
+                )}
+              </>
+            )}
+
+            <Input
+              label="Porcentaje Honorarios Asesor"
+              type="text"
+              step="any"
+              {...register('porcentaje_honorarios_asesor', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.porcentaje_honorarios_asesor?.message}
+            />
+
+            {/* Additional advisor input block */}
+            {showAdditionalAdvisor && (
+              <>
+                <Select
+                  label="Asesor adicional"
+                  register={register}
+                  name="realizador_venta_adicional"
+                  options={[
+                    {
+                      value: '',
+                      label:
+                        'Selecciona el asesor participante en la operación',
+                    },
+                    ...usersMapped
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((member) => ({
+                        value: member.name,
+                        label: member.name,
+                      })),
+                  ]}
+                  className={`w-full p-2 mb-8 border border-gray-300 rounded ${selectStyle}`}
+                  defaultValue={watch('realizador_venta_adicional') || ''}
+                />
+                {errors.realizador_venta_adicional && (
+                  <p className="text-red-500">
+                    {errors.realizador_venta_adicional.message}
+                  </p>
+                )}
+
+                <Input
+                  label="Porcentaje honorarios asesor adicional"
+                  type="text"
+                  placeholder="Por ejemplo: 40%"
+                  {...register('porcentaje_honorarios_asesor_adicional', {
+                    setValueAs: (value) => parseFloat(value) || 0,
+                  })}
+                  error={errors.porcentaje_honorarios_asesor_adicional?.message}
+                />
+              </>
+            )}
+            {userRole === 'team_leader_broker' && (
+              <p
+                className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                onClick={toggleAdditionalAdvisor}
+              >
+                {showAdditionalAdvisor
+                  ? 'Eliminar Segundo Asesor'
+                  : 'Agregar Otro Asesor'}
               </p>
             )}
-          </div>
 
-          <div className="flex gap-4 justify-center items-center">
-            <Button
-              type="submit"
-              className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-[30%]"
-            >
-              Guardar
-            </Button>
-            <Button
-              type="button"
-              onClick={onClose}
-              className="bg-lightBlue text-white p-2 rounded hover:bg-mediumBlue transition-all duration-300 font-semibold w-[30%]"
-            >
-              Cerrar
-            </Button>
-          </div>
-        </form>
+            <TextArea
+              label="Observaciones"
+              {...register('observaciones')}
+              error={errors.observaciones?.message}
+            />
+
+            <div className="flex justify-around items-center ">
+              <div className="flex items-center gap-2 my-4">
+                <input type="checkbox" {...register('punta_vendedora')} />
+                <label>Punta Vendedora</label>
+              </div>
+              {errors.punta_vendedora && (
+                <p className="text-redAccent">
+                  {errors.punta_vendedora.message}
+                </p>
+              )}
+
+              <div className="flex items-center gap-2 my-4">
+                <input type="checkbox" {...register('punta_compradora')} />
+                <label>Punta Compradora</label>
+              </div>
+              {errors.punta_compradora && (
+                <p className="text-redAccent">
+                  {errors.punta_compradora.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-4 justify-center items-center">
+              <Button
+                type="submit"
+                className="bg-mediumBlue text-white p-2 rounded hover:bg-lightBlue transition-all duration-300 font-semibold w-[30%]"
+              >
+                Guardar
+              </Button>
+              <Button
+                type="button"
+                onClick={onClose}
+                className="bg-lightBlue text-white p-2 rounded hover:bg-mediumBlue transition-all duration-300 font-semibold w-[30%]"
+              >
+                Cerrar
+              </Button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

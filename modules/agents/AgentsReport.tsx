@@ -306,7 +306,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                               member.operations,
                               selectedYear,
                               selectedMonth
-                            )
+                            ) * 0.5
                           )}
                         </li>
                       </ul>
