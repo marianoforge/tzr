@@ -77,10 +77,13 @@ export const totalHonorariosTeamLead = (
   // Para dos asesores
   let totalAsesoresHonorarios = 0;
   if (hasUserUid && hasAdditionalUserUid) {
+    const baseHonorariosParaAsesores = honorariosBrutos * 0.5;
     const asesor1Honorarios =
-      (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
+      (baseHonorariosParaAsesores *
+        (operation.porcentaje_honorarios_asesor || 0)) /
+      100;
     const asesor2Honorarios =
-      (honorariosBrutos *
+      (baseHonorariosParaAsesores *
         (operation.porcentaje_honorarios_asesor_adicional || 0)) /
       100;
     totalAsesoresHonorarios = asesor1Honorarios + asesor2Honorarios;
