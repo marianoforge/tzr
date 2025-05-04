@@ -4,12 +4,20 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import { Analytics } from '@vercel/analytics/react';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 import { useAuthStore } from '@/stores/authStore';
 import Script from 'next/script';
 
+declare global {
+  interface Window {
+    dataLayer?: any[];
+  }
+}
+
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
+  const router = useRouter();
   const initializeAuthListener = useAuthStore(
     (state) => state.initializeAuthListener
   );
@@ -22,6 +30,20 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     console.log('Versión de la App:', process.env.NEXT_PUBLIC_APP_VERSION);
   }, []);
+
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      window.dataLayer?.push({
+        event: 'pageview',
+        page: url,
+      });
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router]);
 
   return (
     <>
