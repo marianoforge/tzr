@@ -5,11 +5,23 @@ import { useEffect } from 'react';
 
 const Gracias = () => {
   useEffect(() => {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: 'pageview',
-      page: '/gracias',
-    });
+    const handleGTMReady = () => {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'pageview',
+        page: '/gracias',
+      });
+    };
+
+    if (window.dataLayer) {
+      handleGTMReady();
+    } else {
+      window.addEventListener('gtm.js', handleGTMReady);
+    }
+
+    return () => {
+      window.removeEventListener('gtm.js', handleGTMReady);
+    };
   }, []);
 
   return (
