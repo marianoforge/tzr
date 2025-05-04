@@ -1,10 +1,16 @@
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
+import { useEffect } from 'react';
 
 const Gracias = () => {
-  const router = useRouter();
+  useEffect(() => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'pageview',
+      page: '/gracias',
+    });
+  }, []);
 
   return (
     <div className="flex flex-col gap-8 items-center justify-center min-h-screen rounded-xl ring-1 ring-black/5 bg-gradient-to-r from-lightBlue via-mediumBlue to-darkBlue">
