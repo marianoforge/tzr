@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { UseFormRegister, Path, FieldValues } from 'react-hook-form';
 
 interface SelectProps<T extends FieldValues> {
@@ -28,14 +28,30 @@ const Select = <T extends FieldValues>({
   onChange,
   defaultValue,
 }: SelectProps<T>) => {
+  const [hasValue, setHasValue] = useState(!!defaultValue);
+
+  useEffect(() => {
+    setHasValue(!!defaultValue);
+  }, [defaultValue]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setHasValue(!!e.target.value);
+    if (onChange) {
+      onChange(e);
+    }
+  };
+
   return (
     <div className={mb}>
       <label className="font-semibold text-mediumBlue">{label}</label>
       <select
-        {...register(name)} // Utilizamos Path<T> aquí
-        className={`block w-full mt-2 mb-4 p-2 border border-gray-300 text-gray-400 rounded ${className}`}
+        {...register(name, {
+          onChange: handleChange,
+        })}
+        className={`block w-full mt-2 mb-4 p-2 border border-gray-300 rounded ${
+          hasValue ? 'text-[#2D3748]' : 'text-gray-400'
+        } ${className}`}
         required={required}
-        onChange={onChange}
         defaultValue={defaultValue}
       >
         <option value="" disabled className="text-gray-500">

@@ -10,24 +10,19 @@ import {
   UserPlusIcon,
   UserIcon,
   VideoCameraIcon,
+  Cog8ToothIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
 import { auth } from '@/lib/firebase';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { useAuthStore } from '@/stores/authStore';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
 import { UserRole } from '@/common/enums';
 
 import { NavLink } from '../NavComponents/NavLink';
 
 const VerticalNavbar = () => {
-  const {
-    userData,
-    isLoading: isUserDataLoading,
-    fetchItems,
-  } = useUserDataStore();
-  const { role: authRole } = useAuthStore();
+  const { userData, isLoading, fetchItems } = useUserDataStore();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -40,6 +35,22 @@ const VerticalNavbar = () => {
 
     return () => unsubscribe();
   }, [fetchItems]);
+
+  const renderAdminLink = () => {
+    if (
+      userData?.uid === '8QEPCwamFSYYIPcrhdQUsyZJgup1' ||
+      userData?.uid === 'HDDigTYJLhd5xWDG1fwpQzrER4O2'
+    ) {
+      return (
+        <NavLink
+          href="/admin-office"
+          icon={<Cog8ToothIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+          label="Admin"
+        />
+      );
+    }
+    return null;
+  };
 
   const renderNavButtons = () => (
     <>
@@ -129,24 +140,36 @@ const VerticalNavbar = () => {
   );
 
   const renderNavLinksBasedOnRole = () => {
-    // Usar el rol de userData o authRole, lo que esté disponible
-    const roleToUse = userData?.role || authRole;
+    if (isLoading || !userData) return null;
 
-    // Si está cargando y no hay rol disponible, mostrar nada
-    if (isUserDataLoading && !roleToUse) return null;
+    // Render admin link for specific user regardless of role
+    const adminLinkForSpecificUser = renderAdminLink();
 
-    switch (roleToUse) {
+    switch (userData.role) {
       case UserRole.TEAM_LEADER_BROKER:
-        return renderAdminNavButtons();
+        return (
+          <>
+            {adminLinkForSpecificUser}
+            {renderAdminNavButtons()}
+          </>
+        );
       case UserRole.AGENTE_ASESOR:
-        return renderNavButtons();
+        return (
+          <>
+            {adminLinkForSpecificUser}
+            {renderNavButtons()}
+          </>
+        );
       default:
         return (
-          <NavLink
-            href="/dashboard"
-            icon={<HomeIcon className="w-5 h-5 mr-2" />}
-            label="Dashboard"
-          />
+          <>
+            {adminLinkForSpecificUser}
+            <NavLink
+              href="/dashboard"
+              icon={<HomeIcon className="w-5 h-5 mr-2" />}
+              label="Dashboard"
+            />
+          </>
         );
     }
   };

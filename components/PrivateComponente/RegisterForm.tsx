@@ -14,7 +14,6 @@ declare global {
   }
 }
 
-import ModalOK from '@/components/PrivateComponente/CommonComponents/Modal';
 import Input from '@/components/PrivateComponente/FormComponents/Input';
 import Button from '@/components/PrivateComponente/FormComponents/Button';
 import LicensesModal from '@/components/PublicComponents/LicensesModal';
@@ -28,8 +27,6 @@ const RegisterForm = () => {
   const { googleUser, email } = router.query;
   const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [openLicensesModal, setOpenLicensesModal] = useState(false);
@@ -154,11 +151,8 @@ const RegisterForm = () => {
         throw new Error('Error al enviar el correo de verificación.');
       }
 
-      setModalMessage(
-        'Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada y la de correo no deseado.'
-      );
-      setIsModalOpen(true);
-
+      // Redirect to the gracias page instead of showing the modal
+      router.push('/gracias');
       return;
     } catch (error) {
       console.error('Error al enviar la solicitud:', error);
@@ -358,15 +352,6 @@ const RegisterForm = () => {
           </Button>
         </div>
       </form>
-
-      <ModalOK
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        message={modalMessage}
-        onAccept={() => router.push('/login')}
-        messageClassName="text-base"
-        className="w-[360px] md:w-[700px] xl:w-auto h-auto"
-      />
 
       <LicensesModal
         isOpen={openLicensesModal}
