@@ -286,7 +286,7 @@ const OperationsForm = () => {
             <Select
               label="Tipo de operación*"
               register={register}
-              {...register('tipo_operacion')}
+              name="tipo_operacion"
               options={operationTypes}
               className="w-full p-2 mb-8 border border-gray-300 rounded"
               required
@@ -300,7 +300,7 @@ const OperationsForm = () => {
                 <Select
                   label="Tipo de Inmueble*"
                   register={register}
-                  {...register('tipo_inmueble')}
+                  name="tipo_inmueble"
                   options={propertyTypes}
                   className="w-full p-2 mb-8 border border-gray-300 rounded"
                   required
@@ -496,8 +496,8 @@ const OperationsForm = () => {
                 <Select
                   label="Asesor que realizó la venta"
                   register={register}
+                  name="realizador_venta"
                   placeholder=""
-                  {...register('realizador_venta')}
                   options={[
                     {
                       value: '',
@@ -536,7 +536,7 @@ const OperationsForm = () => {
                 <Select
                   label="Asesor adicional"
                   register={register}
-                  {...register('realizador_venta_adicional')}
+                  name="realizador_venta_adicional"
                   options={[
                     {
                       value: '',
