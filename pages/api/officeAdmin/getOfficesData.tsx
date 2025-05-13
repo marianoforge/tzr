@@ -35,7 +35,7 @@ export default async function handler(
 
     if (req.method === 'GET') {
       // UID específico a buscar
-      const targetUID = '8nP1fBedNXgS9lRhvwQcFnq2YTf2';
+      const targetUID = '2t9qNCFDD1XLEdisyXp9wOITJcc2';
 
       // Buscar el usuario específico
       const userRef = db.collection('usuarios').doc(targetUID);
