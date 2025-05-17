@@ -48,6 +48,9 @@ export interface Operation {
   no_exclusiva?: boolean;
   fecha_reserva?: string;
   tipo_inmueble?: string | null;
+  gastos_operacion?: number | null;
+  beneficio_despues_gastos?: number | null;
+  rentabilidad?: number | null;
 }
 
 export interface EventFormData {
