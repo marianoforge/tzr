@@ -97,4 +97,14 @@ export const schema = yup.object().shape({
   isFranchiseOrBroker: yup.number().nullable(),
   reparticion_honorarios_asesor: yup.number().nullable(),
   tipo_inmueble: yup.string().nullable(),
+  gastos_operacion: yup
+    .number()
+    .typeError('Debe ser un número')
+    .min(0, 'No puede ser negativo')
+    .nullable()
+    .transform((value, originalValue) =>
+      typeof originalValue === 'string' && originalValue.trim() === ''
+        ? 0
+        : value
+    ),
 });

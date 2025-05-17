@@ -3,6 +3,11 @@ import React from 'react';
 import { Operation, UserData } from '@/common/types/';
 import { formatOperationsNumber } from '@/common/utils/formatNumber';
 import { calculateNetFees } from '@/common/utils/calculateNetFees';
+import {
+  calculateOperationProfit,
+  formatProfitabilityPercentage,
+} from '@/common/utils/calculateOperationProfit';
+import { calculateHonorarios } from '@/common/utils/calculations';
 
 interface FullScreenModalProps {
   isOpen: boolean;
@@ -143,7 +148,7 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
               </span>
             </p>
             <p>
-              <span className="font-semibold">Honorarios Broker:</span>{' '}
+              <span className="font-semibold">Honorarios Brutos:</span>{' '}
               <span className="font-medium text-green-700">
                 {currencySymbol}
                 {formatOperationsNumber(operation.honorarios_broker || 0) ||
@@ -157,6 +162,36 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
                 {formatOperationsNumber(
                   calculateNetFees(operation, userData)
                 ) || '0'}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold">
+                Gastos asignados a la operación:
+              </span>{' '}
+              <span className="font-medium text-green-700">
+                {currencySymbol}
+                {formatOperationsNumber(operation.gastos_operacion || 0) || '0'}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold">
+                Beneficio despues de gastos:
+              </span>{' '}
+              <span className="font-medium text-green-700">
+                {currencySymbol}
+                {formatOperationsNumber(
+                  calculateOperationProfit(operation).beneficioNeto
+                ) || '0'}
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold">Rentabilidad:</span>{' '}
+              <span
+                className={`font-medium ${calculateOperationProfit(operation).porcentajeRentabilidad < 0 ? 'text-red-600' : 'text-green-700'}`}
+              >
+                {formatProfitabilityPercentage(
+                  calculateOperationProfit(operation).porcentajeRentabilidad
+                )}
               </span>
             </p>
           </div>
@@ -175,7 +210,55 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
                 : 'N/A'}
             </p>
             <p>
-              <span className="font-semibold">% Honorarios Broker:</span>{' '}
+              <span className="font-semibold">Honorarios Asesor:</span>{' '}
+              <span className="font-medium text-green-700">
+                {currencySymbol}
+                {formatOperationsNumber(
+                  calculateHonorarios(
+                    operation.valor_reserva || 0,
+                    operation.porcentaje_honorarios_asesor || 0,
+                    operation.porcentaje_honorarios_broker || 0,
+                    operation.porcentaje_compartido || 0,
+                    operation.porcentaje_referido || 0
+                  ).honorariosAsesor
+                ) || '0'}
+              </span>
+            </p>
+            {operation.realizador_venta_adicional && (
+              <>
+                <p>
+                  <span className="font-semibold">
+                    % Honorarios Asesor Adicional:
+                  </span>{' '}
+                  {typeof operation.porcentaje_honorarios_asesor_adicional ===
+                  'number'
+                    ? formatOperationsNumber(
+                        operation.porcentaje_honorarios_asesor_adicional,
+                        true
+                      )
+                    : 'N/A'}
+                </p>
+                <p>
+                  <span className="font-semibold">
+                    Honorarios Asesor Adicional:
+                  </span>{' '}
+                  <span className="font-medium text-green-700">
+                    {currencySymbol}
+                    {formatOperationsNumber(
+                      calculateHonorarios(
+                        operation.valor_reserva || 0,
+                        operation.porcentaje_honorarios_asesor_adicional || 0,
+                        operation.porcentaje_honorarios_broker || 0,
+                        operation.porcentaje_compartido || 0,
+                        operation.porcentaje_referido || 0
+                      ).honorariosAsesor / 2 // Dividimos entre 2 porque se reparte mitad de honorarios entre ambos asesores
+                    ) || '0'}
+                  </span>
+                </p>
+              </>
+            )}
+            <p>
+              <span className="font-semibold">% Honorarios Brutos:</span>{' '}
               {typeof operation.porcentaje_honorarios_broker === 'number'
                 ? formatOperationsNumber(
                     operation.porcentaje_honorarios_broker,
@@ -261,18 +344,6 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
             <p>
               <span className="font-semibold">Realizador Adicional:</span>{' '}
               {operation.realizador_venta_adicional || 'N/A'}
-            </p>
-            <p>
-              <span className="font-semibold">
-                % Honorarios Asesor Adicional:
-              </span>{' '}
-              {typeof operation.porcentaje_honorarios_asesor_adicional ===
-              'number'
-                ? formatOperationsNumber(
-                    operation.porcentaje_honorarios_asesor_adicional,
-                    true
-                  )
-                : 'N/A'}
             </p>
             <p>
               <span className="font-semibold">
