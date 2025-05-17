@@ -58,6 +58,7 @@ const OperationsForm = () => {
       realizador_venta_adicional: null,
       porcentaje_honorarios_asesor: null,
       porcentaje_honorarios_asesor_adicional: null,
+      gastos_operacion: null,
     },
   });
 
@@ -220,6 +221,7 @@ const OperationsForm = () => {
       porcentaje_honorarios_broker: porcentajeHonorariosBroker,
       reparticion_honorarios_asesor: data.reparticion_honorarios_asesor || 0,
       tipo_inmueble: data.tipo_inmueble,
+      gastos_operacion: data.gastos_operacion || 0,
     };
 
     mutation.mutate(dataToSubmit as unknown as Operation);
@@ -385,10 +387,7 @@ const OperationsForm = () => {
               {...register('monto_sobre_reserva')}
               error={errors.monto_sobre_reserva?.message}
             />
-          </div>
 
-          <div className="w-full md:w-[40%] px-2">
-            {/* Right column */}
             <Input
               label="Tipo de refuerzo"
               type="text"
@@ -396,6 +395,7 @@ const OperationsForm = () => {
               {...register('numero_sobre_refuerzo')}
               error={errors.numero_sobre_refuerzo?.message}
             />
+
             <Input
               label="Monto de refuerzo"
               type="number"
@@ -403,8 +403,22 @@ const OperationsForm = () => {
               {...register('monto_sobre_refuerzo')}
               error={errors.monto_sobre_refuerzo?.message}
             />
+          </div>
+
+          <div className="w-full md:w-[40%] px-2">
+            {/* Right column */}
             <Input
-              label="Referido"
+              label="Asignar Gastos a la operación"
+              type="number"
+              placeholder="Por ejemplo: 500"
+              {...register('gastos_operacion', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.gastos_operacion?.message}
+            />
+
+            <Input
+              label="Datos Referido"
               type="text"
               placeholder="Por ejemplo: Juan Pérez"
               {...register('referido')}
@@ -422,7 +436,7 @@ const OperationsForm = () => {
             />
 
             <Input
-              label="Compartido"
+              label="Datos Compartido"
               type="text"
               placeholder="Por ejemplo: Juana Pérez"
               {...register('compartido')}

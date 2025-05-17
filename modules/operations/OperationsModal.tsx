@@ -438,6 +438,16 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
             />
 
             <Input
+              label="Asignar Gastos a la operación"
+              type="text"
+              {...register('gastos_operacion', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              placeholder="Por ejemplo: 500"
+              error={errors.gastos_operacion?.message}
+            />
+
+            <Input
               label="Datos Referido"
               type="text"
               {...register('referido')}
