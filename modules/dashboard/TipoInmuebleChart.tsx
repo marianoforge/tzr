@@ -19,7 +19,12 @@ const TipoInmuebleChart = () => {
   const { operations, isLoading, operationsError } = useOperationsData();
 
   const closedOperations = useMemo(() => {
-    return operations.filter((op: Operation) => op.estado === 'Cerrada');
+    return operations.filter(
+      (op: Operation) =>
+        op.estado === 'Cerrada' &&
+        op.tipo_operacion === 'Venta' &&
+        op.tipo_inmueble
+    );
   }, [operations]);
 
   const pieChartData = useMemo(() => {
@@ -33,9 +38,12 @@ const TipoInmuebleChart = () => {
       {}
     );
 
+    const values = Object.values(propertyTypeCount) as number[];
+    const total = values.reduce((sum: number, count: number) => sum + count, 0);
+
     return Object.entries(propertyTypeCount).map(([name, value]) => ({
       name,
-      value,
+      value: Number((((value as number) / total) * 100).toFixed(1)),
     }));
   }, [closedOperations]);
 
@@ -61,7 +69,7 @@ const TipoInmuebleChart = () => {
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px]">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
-        Tipo de Inmueble
+        Tipo de Inmueble (Ventas)
       </h2>
       {currentYearOperations.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-[240px]">
@@ -82,6 +90,7 @@ const TipoInmuebleChart = () => {
                 outerRadius={outerRadius}
                 fill="#8884d8"
                 dataKey="value"
+                label={({ name, value }) => `${name}: ${value}%`}
               >
                 {pieChartData.map((_, index) => (
                   <Cell
@@ -94,7 +103,7 @@ const TipoInmuebleChart = () => {
                   />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip formatter={(value) => `${value}%`} />
               <Legend
                 wrapperStyle={{
                   paddingTop: '20px',

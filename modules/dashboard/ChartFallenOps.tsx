@@ -17,7 +17,9 @@ import useResponsiveOuterRadius from '@/common/hooks/useResponsiveOuterRadius';
 const ChartFallenOps = () => {
   const { operations, isLoading, operationsError } = useOperationsData();
 
-  const pieChartData = tiposOperacionesCaidasPieChartData(operations);
+  const rawData = tiposOperacionesCaidasPieChartData(operations);
+
+  const pieChartData = rawData.filter((item) => item.value > 0);
 
   const outerRadius = useResponsiveOuterRadius();
 
@@ -35,7 +37,7 @@ const ChartFallenOps = () => {
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
         Operaciones Caídas
       </h2>
-      {pieChartData.every((op) => op.value <= 0) ? (
+      {pieChartData.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-[240px]">
           <p className="flex flex-col text-center text-[20px] xl:text-[16px] 2xl:text-[16px] font-semibold items-center justify-center">
             <CircleStackIcon className="h-10 w-10 mr-2" />
@@ -54,6 +56,7 @@ const ChartFallenOps = () => {
                 outerRadius={outerRadius}
                 fill="#8884d8"
                 dataKey="value"
+                label={({ name, value }) => `${name}: ${value}`}
               >
                 {pieChartData.map((_, index) => (
                   <Cell

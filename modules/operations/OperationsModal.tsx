@@ -337,13 +337,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
               error={errors.tipo_operacion?.message}
             />
 
-            <Select
-              label="Tipo de Inmueble"
-              options={propertyTypes}
-              register={register}
-              name="tipo_inmueble"
-              error={errors.tipo_inmueble?.message}
-            />
+            {watch('tipo_operacion') === 'Venta' && (
+              <Select
+                label="Tipo de Inmueble"
+                options={propertyTypes}
+                register={register}
+                name="tipo_inmueble"
+                error={errors.tipo_inmueble?.message}
+              />
+            )}
 
             <label className="font-semibold text-mediumBlue">
               Exclusividad de la Operación*
