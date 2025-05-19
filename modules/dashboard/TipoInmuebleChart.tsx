@@ -25,8 +25,9 @@ const TipoInmuebleChart = () => {
   const pieChartData = useMemo(() => {
     const propertyTypeCount = closedOperations.reduce(
       (acc: { [key: string]: number }, op: Operation) => {
-        const tipoInmueble = op.tipo_inmueble || 'No especificado';
-        acc[tipoInmueble] = (acc[tipoInmueble] || 0) + 1;
+        if (op.tipo_inmueble) {
+          acc[op.tipo_inmueble] = (acc[op.tipo_inmueble] || 0) + 1;
+        }
         return acc;
       },
       {}
@@ -58,7 +59,7 @@ const TipoInmuebleChart = () => {
   );
 
   return (
-    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px] overflow-y-auto">
+    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px]">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
         Tipo de Inmueble
       </h2>
@@ -70,7 +71,7 @@ const TipoInmuebleChart = () => {
           </p>
         </div>
       ) : (
-        <div className="h-[300px] w-full align-middle">
+        <div className="h-[300px] w-full align-middle px-4">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

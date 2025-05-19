@@ -45,7 +45,7 @@ const CuadroPrincipalChart = () => {
   );
 
   return (
-    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px] overflow-y-auto">
+    <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px]">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
         Tipo de Operaciones
       </h2>
@@ -57,7 +57,7 @@ const CuadroPrincipalChart = () => {
           </p>
         </div>
       ) : (
-        <div className="h-[300px] w-full align-middle">
+        <div className="h-[300px] w-full align-middle px-4">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

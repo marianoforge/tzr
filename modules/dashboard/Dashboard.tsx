@@ -22,6 +22,7 @@ import Projections from './Projections';
 import Exclusiveness from './Exclusiveness';
 import DaysToSell from './DaysToSell';
 import TipoInmuebleChart from './TipoInmuebleChart';
+import CarteraActiva from './CarteraActiva';
 
 const DashBoard = () => {
   const { userData, fetchUserData, isLoading, setUserData } =
@@ -117,10 +118,13 @@ const DashBoard = () => {
           style={{ marginTop: '2.5rem' }}
         >
           <div className="col-span-1">
-            <TipoInmuebleChart />
+            <CuadroPrincipal />
           </div>
           <div className="col-span-1">
-            <CuadroPrincipal />
+            <TipoInmuebleChart />
+            <div className="mt-6">
+              <CarteraActiva />
+            </div>
           </div>
 
           <div className="col-span-1 space-y-6">
