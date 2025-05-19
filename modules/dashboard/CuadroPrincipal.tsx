@@ -23,6 +23,13 @@ const CuadroPrincipal = () => {
 
   const { totalMontoHonorariosBroker, summaryArray } = chartCalculations;
 
+  // Sort summaryArray by percentage of total operations
+  const sortedSummaryArray = [...summaryArray].sort((a, b) => {
+    const percentageA = (a.cantidadOperaciones / totalCantidad2024) * 100;
+    const percentageB = (b.cantidadOperaciones / totalCantidad2024) * 100;
+    return percentageB - percentageA;
+  });
+
   const calculatePercentageValue = (
     totalHonorariosBrutos: number,
     totalMontoHonorariosBroker: number
@@ -80,7 +87,7 @@ const CuadroPrincipal = () => {
                 </tr>
               </thead>
               <tbody>
-                {summaryArray.map((calcs, index) => (
+                {sortedSummaryArray.map((calcs, index) => (
                   <tr
                     key={calcs.group}
                     className={`${
