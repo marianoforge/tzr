@@ -241,12 +241,16 @@ const OperationsForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[90%] justify-center items-center mb-20"
       >
-        <h2 className="text-2xl mb-4 justify-center font-semibold">
+        <h2 className="text-2xl mb-6 text-center font-semibold text-[#0077b6]">
           Agregar Reserva / Operación
         </h2>
-        <div className="flex flex-wrap -mx-2 gap-x-24 justify-center">
-          <div className="w-full md:w-[40%] px-2">
-            {/* Left column */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Sección 1: Información General */}
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              1. INFORMACIÓN GENERAL
+            </h4>
 
             <Input
               label="Fecha de Captación / Publicación"
@@ -273,24 +277,12 @@ const OperationsForm = () => {
               error={errors.fecha_operacion?.message}
             />
 
-            <AddressAutocompleteManual
-              onAddressSelect={(address) => {
-                setAddressData((prev) => ({ ...prev, ...address }));
-                setValue('direccion_reserva', address.address);
-                setValue('localidad_reserva', address.city);
-                setValue('provincia_reserva', address.province);
-              }}
-              onHouseNumberChange={(houseNumber) =>
-                setAddressData((prev) => ({ ...prev, houseNumber }))
-              }
-            />
-
             <Select
               label="Tipo de operación*"
               register={register}
               name="tipo_operacion"
               options={operationTypes}
-              className="w-full p-2 mb-8 border border-gray-300 rounded"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
               required
             />
             {errors.tipo_operacion && (
@@ -304,7 +296,7 @@ const OperationsForm = () => {
                   register={register}
                   name="tipo_inmueble"
                   options={propertyTypes}
-                  className="w-full p-2 mb-8 border border-gray-300 rounded"
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
                   required
                 />
                 {errors.tipo_inmueble && (
@@ -313,26 +305,47 @@ const OperationsForm = () => {
               </>
             )}
 
-            <label className="font-semibold text-mediumBlue">
-              Exclusividad de la Operación*
-            </label>
-            <div className="flex gap-10 mt-2 mb-6">
-              <div className="flex items-center gap-2">
-                <input type="checkbox" {...register('exclusiva')} />
-                <label>Exclusiva</label>
+            <div className="mt-4">
+              <label className="font-semibold text-mediumBlue block mb-2">
+                Exclusividad de la Operación*
+              </label>
+              <div className="flex gap-10">
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" {...register('exclusiva')} />
+                  <label>Exclusiva</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" {...register('no_exclusiva')} />
+                  <label>No Exclusiva</label>
+                </div>
               </div>
-              {errors.exclusiva && (
-                <p className="text-red-500">{errors.exclusiva.message}</p>
-              )}
-
-              <div className="flex items-center gap-2">
-                <input type="checkbox" {...register('no_exclusiva')} />
-                <label>No Exclusiva</label>
-              </div>
-              {errors.no_exclusiva && (
-                <p className="text-red-500">{errors.no_exclusiva.message}</p>
-              )}
             </div>
+          </div>
+
+          {/* Sección 2: Ubicación */}
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              2. UBICACIÓN
+            </h4>
+
+            <AddressAutocompleteManual
+              onAddressSelect={(address) => {
+                setAddressData((prev) => ({ ...prev, ...address }));
+                setValue('direccion_reserva', address.address);
+                setValue('localidad_reserva', address.city);
+                setValue('provincia_reserva', address.province);
+              }}
+              onHouseNumberChange={(houseNumber) =>
+                setAddressData((prev) => ({ ...prev, houseNumber }))
+              }
+            />
+          </div>
+
+          {/* Sección 3: Valores */}
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              3. VALORES
+            </h4>
 
             <Input
               label="Valor de oferta / operación*"
@@ -371,6 +384,13 @@ const OperationsForm = () => {
               value={`${porcentajeHonorariosBroker.toFixed(2)}%`}
               disabled
             />
+          </div>
+
+          {/* Sección 4: Reservas y Refuerzos */}
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              4. RESERVAS Y REFUERZOS
+            </h4>
 
             <Input
               label="Tipo de reserva"
@@ -405,8 +425,28 @@ const OperationsForm = () => {
             />
           </div>
 
-          <div className="w-full md:w-[40%] px-2">
-            {/* Right column */}
+          {/* Sección 5: Comisiones y Puntas */}
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              5. COMISIONES Y PUNTAS
+            </h4>
+
+            <div className="mt-4">
+              <label className="font-semibold text-mediumBlue block mb-2">
+                Cantidad de puntas*
+              </label>
+              <div className="flex gap-10">
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" {...register('punta_vendedora')} />
+                  <label>Punta Vendedora</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" {...register('punta_compradora')} />
+                  <label>Punta Compradora</label>
+                </div>
+              </div>
+            </div>
+
             <Input
               label="Asignar Gastos a la operación"
               type="number"
@@ -416,6 +456,13 @@ const OperationsForm = () => {
               })}
               error={errors.gastos_operacion?.message}
             />
+          </div>
+
+          {/* Sección 6: Compartido y Referido */}
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              6. COMPARTIDO Y REFERIDO
+            </h4>
 
             <Input
               label="Datos Referido"
@@ -452,41 +499,34 @@ const OperationsForm = () => {
               })}
               error={errors.porcentaje_compartido?.message}
             />
-            {/* {userRole === UserRole.TEAM_LEADER_BROKER && ( */}
-            <p className="text-sm text-mutedBlue mb-5">
-              <span className="font-bold">Importante:</span> Si sos Broker de
-              una oficina o Team leader y comercializas propiedades, en el
-              siguiente input debes poner el porcentaje que se lleva la
-              franquicia o el broker respectivamente para poder calcular el neto
-              de tu operación de manera correcta.
-            </p>
-            {/* )} */}
-            {/* {userRole === UserRole.TEAM_LEADER_BROKER && ( */}
-            <>
-              <Input
-                label="Porcentaje destinado a franquicia o broker"
-                type="text"
-                placeholder="Por ejemplo: 11%"
-                {...register('isFranchiseOrBroker', {
-                  setValueAs: (value) => parseFloat(value) || 0,
-                })}
-                error={errors.isFranchiseOrBroker?.message}
-              />
-              {errors.isFranchiseOrBroker && (
-                <p className="text-red-500">
-                  {errors.isFranchiseOrBroker.message}
-                </p>
-              )}
-            </>
-            {/* )} */}
+          </div>
+
+          {/* Sección 7: Asesores */}
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              7. ASESORES
+            </h4>
 
             {userRole === UserRole.TEAM_LEADER_BROKER && (
               <p className="text-sm text-mutedBlue mb-5">
-                <span className="font-bold">Importante:</span> Si sos Broker o
-                Team Leader y sos participante en la operación, no hace falta
-                que te agregues como Asesor en las opciones siguientes.
+                <span className="font-bold">Importante:</span> Si sos Broker de
+                una oficina o Team leader y comercializas propiedades, en el
+                siguiente input debes poner el porcentaje que se lleva la
+                franquicia o el broker respectivamente para poder calcular el
+                neto de tu operación de manera correcta.
               </p>
             )}
+
+            <Input
+              label="Porcentaje destinado a franquicia o broker"
+              type="text"
+              placeholder="Por ejemplo: 11%"
+              {...register('isFranchiseOrBroker', {
+                setValueAs: (value) => parseFloat(value) || 0,
+              })}
+              error={errors.isFranchiseOrBroker?.message}
+            />
+
             {userRole === UserRole.TEAM_LEADER_BROKER && (
               <>
                 <Input
@@ -498,15 +538,7 @@ const OperationsForm = () => {
                   })}
                   error={errors.reparticion_honorarios_asesor?.message}
                 />
-                {errors.reparticion_honorarios_asesor && (
-                  <p className="text-red-500">
-                    {errors.reparticion_honorarios_asesor.message}
-                  </p>
-                )}
-              </>
-            )}
-            {userRole === UserRole.TEAM_LEADER_BROKER && (
-              <>
+
                 <Select
                   label="Asesor que realizó la venta"
                   register={register}
@@ -524,13 +556,8 @@ const OperationsForm = () => {
                         label: member.name,
                       })),
                   ]}
-                  className="w-full p-2 mb-8 border border-gray-300 rounded"
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
-                {errors.realizador_venta && (
-                  <p className="text-red-500">
-                    {errors.realizador_venta.message}
-                  </p>
-                )}
               </>
             )}
 
@@ -544,7 +571,6 @@ const OperationsForm = () => {
               error={errors.porcentaje_honorarios_asesor?.message}
             />
 
-            {/* Additional advisor input block */}
             {showAdditionalAdvisor && (
               <>
                 <Select
@@ -564,13 +590,8 @@ const OperationsForm = () => {
                         label: member.name,
                       })),
                   ]}
-                  className="w-full p-2 mb-8 border border-gray-300 rounded"
+                  className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
-                {errors.realizador_venta_adicional && (
-                  <p className="text-red-500">
-                    {errors.realizador_venta_adicional.message}
-                  </p>
-                )}
 
                 <Input
                   label="Porcentaje honorarios asesor adicional"
@@ -583,10 +604,11 @@ const OperationsForm = () => {
                 />
               </>
             )}
+
             {userRole === UserRole.TEAM_LEADER_BROKER && (
-              <div className="flex justify-between">
+              <div className="flex justify-between mt-4">
                 <p
-                  className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                  className="text-lightBlue font-semibold text-sm cursor-pointer"
                   onClick={toggleAdditionalAdvisor}
                 >
                   {showAdditionalAdvisor
@@ -594,47 +616,34 @@ const OperationsForm = () => {
                     : 'Agregar asesor adicional a la operación'}
                 </p>
                 <p
-                  className="text-lightBlue font-semibold text-sm mb-6 -mt-4 cursor-pointer"
+                  className="text-lightBlue font-semibold text-sm cursor-pointer"
                   onClick={() => setIsAddUserModalOpen(true)}
                 >
                   Crear Asesor
                 </p>
               </div>
             )}
-            <label className="font-semibold text-mediumBlue">
-              Cantidad de puntas*
-            </label>
-            <div className="flex gap-10 mt-2 mb-6">
-              <div className="flex items-center gap-2">
-                <input type="checkbox" {...register('punta_vendedora')} />
-                <label>Punta Vendedora</label>
-              </div>
-              {errors.punta_vendedora && (
-                <p className="text-red-500">{errors.punta_vendedora.message}</p>
-              )}
+          </div>
 
-              <div className="flex items-center gap-2">
-                <input type="checkbox" {...register('punta_compradora')} />
-                <label>Punta Compradora</label>
-              </div>
-              {errors.punta_compradora && (
-                <p className="text-red-500">
-                  {errors.punta_compradora.message}
-                </p>
-              )}
-            </div>
+          {/* Sección 8: Observaciones */}
+          <div className="md:col-span-2 space-y-4 bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-bold text-[#0077b6] text-md border-b border-[#0077b6] pb-2 mb-3">
+              8. INFORMACIÓN ADICIONAL
+            </h4>
+
             <TextArea
-              className=""
+              className="w-full"
               label="Observaciones"
               {...register('observaciones')}
               error={errors.observaciones?.message}
             />
           </div>
         </div>
+
         <div className="flex justify-center items-center mt-8 w-full">
           <Button
             type="submit"
-            className="bg-mediumBlue hover:bg-lightBlue text-white p-2 rounded transition-all duration-300 font-semibold w-[200px]"
+            className="bg-[#0077b6] hover:bg-[#0077b6]/90 text-white p-2 rounded transition-all duration-300 font-semibold w-[200px]"
           >
             Guardar Operación
           </Button>
