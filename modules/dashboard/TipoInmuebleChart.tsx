@@ -7,23 +7,37 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
-import { CircleStackIcon } from '@heroicons/react/24/outline';
+import { BuildingOfficeIcon } from '@heroicons/react/24/outline';
 
 import { COLORS } from '@/lib/constants';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { useOperationsData } from '@/common/hooks/useOperationsData';
 import { Operation } from '@/common/types';
-import { tiposOperacionesPieChartData } from '@/common/utils/calculationsPrincipal';
 import useResponsiveOuterRadius from '@/common/hooks/useResponsiveOuterRadius';
 
-const CuadroPrincipalChart = () => {
+const TipoInmuebleChart = () => {
   const { operations, isLoading, operationsError } = useOperationsData();
 
   const closedOperations = useMemo(() => {
     return operations.filter((op: Operation) => op.estado === 'Cerrada');
   }, [operations]);
 
-  const pieChartData = tiposOperacionesPieChartData(closedOperations);
+  const pieChartData = useMemo(() => {
+    const propertyTypeCount = closedOperations.reduce(
+      (acc: { [key: string]: number }, op: Operation) => {
+        if (op.tipo_inmueble) {
+          acc[op.tipo_inmueble] = (acc[op.tipo_inmueble] || 0) + 1;
+        }
+        return acc;
+      },
+      {}
+    );
+
+    return Object.entries(propertyTypeCount).map(([name, value]) => ({
+      name,
+      value,
+    }));
+  }, [closedOperations]);
 
   const outerRadius = useResponsiveOuterRadius();
 
@@ -47,12 +61,12 @@ const CuadroPrincipalChart = () => {
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px]">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
-        Tipo de Operaciones
+        Tipo de Inmueble
       </h2>
       {currentYearOperations.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-[240px]">
           <p className="flex flex-col text-center text-[20px] xl:text-[16px] 2xl:text-[16px] font-semibold items-center justify-center">
-            <CircleStackIcon className="h-10 w-10 mr-2" />
+            <BuildingOfficeIcon className="h-10 w-10 mr-2" />
             No existen operaciones
           </p>
         </div>
@@ -96,4 +110,4 @@ const CuadroPrincipalChart = () => {
   );
 };
 
-export default CuadroPrincipalChart;
+export default TipoInmuebleChart;

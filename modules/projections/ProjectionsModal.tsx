@@ -101,112 +101,117 @@ const ProjectionsModal: React.FC<ProjectionsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-white p-6 rounded-xl shadow-lg font-bold w-[50%] max-h-[90vh] overflow-y-auto my-4 flex flex-col justify-center">
-        <h2 className="text-2xl font-bold mb-4 text-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl rounded-t-xl shadow-lg font-bold w-[50%] max-h-[90vh] flex flex-col justify-center">
+        <h2 className="text-2xl font-bold mb-4 text-center sticky top-0 bg-white z-10 p-6 rounded-xl">
           Editar Proyección Semanal
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Controller
-            name="actividadVerde"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Actividad Verde"
-                error={errors.actividadVerde?.message as string}
-              />
+        <div
+          className="overflow-y-auto px-6 pb-6"
+          style={{ maxHeight: 'calc(90vh - 80px)' }}
+        >
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Controller
+              name="actividadVerde"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Prospección"
+                  error={errors.actividadVerde?.message as string}
+                />
+              )}
+            />
+            <Controller
+              name="contactosReferidos"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Contactos / Referidos"
+                  error={errors.contactosReferidos?.message as string}
+                />
+              )}
+            />
+            <Controller
+              name="preBuying"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Pre Buying"
+                  error={errors.preBuying?.message as string}
+                />
+              )}
+            />
+            <Controller
+              name="preListing"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Pre Listing"
+                  error={errors.preListing?.message as string}
+                />
+              )}
+            />
+            <Controller
+              name="captaciones"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Captaciones"
+                  error={errors.captaciones?.message as string}
+                />
+              )}
+            />
+            <Controller
+              name="reservas"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Reservas"
+                  error={errors.reservas?.message as string}
+                />
+              )}
+            />
+            <Controller
+              name="cierres"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Cierres"
+                  error={errors.cierres?.message as string}
+                />
+              )}
+            />
+            <div className="flex justify-center gap-4">
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+                className="bg-mediumBlue text-white hover:bg-lightBlue transition-colors duration-300 w-[210px]"
+              >
+                {mutation.isPending ? 'Guardando...' : 'Guardar'}
+              </Button>
+              <Button
+                type="button"
+                onClick={onClose}
+                className="bg-lightBlue text-white hover:bg-mediumBlue transition-colors duration-300 w-[210px]"
+              >
+                Cancelar
+              </Button>
+            </div>
+            {mutation.isError && (
+              <p className="text-red-500 mt-2">Error guardando los datos.</p>
             )}
-          />
-          <Controller
-            name="contactosReferidos"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Contactos / Referidos"
-                error={errors.contactosReferidos?.message as string}
-              />
+            {mutation.isSuccess && (
+              <p className="text-green-500 mt-2">Datos guardados con éxito.</p>
             )}
-          />
-          <Controller
-            name="preBuying"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Pre Buying"
-                error={errors.preBuying?.message as string}
-              />
-            )}
-          />
-          <Controller
-            name="preListing"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Pre Listing"
-                error={errors.preListing?.message as string}
-              />
-            )}
-          />
-          <Controller
-            name="captaciones"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Captaciones"
-                error={errors.captaciones?.message as string}
-              />
-            )}
-          />
-          <Controller
-            name="reservas"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Reservas"
-                error={errors.reservas?.message as string}
-              />
-            )}
-          />
-          <Controller
-            name="cierres"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Cierres"
-                error={errors.cierres?.message as string}
-              />
-            )}
-          />
-          <div className="flex justify-center gap-4">
-            <Button
-              type="submit"
-              disabled={mutation.isPending}
-              className="bg-mediumBlue text-white hover:bg-lightBlue transition-colors duration-300 w-[210px]"
-            >
-              {mutation.isPending ? 'Guardando...' : 'Guardar'}
-            </Button>
-            <Button
-              type="button"
-              onClick={onClose}
-              className="bg-lightBlue text-white hover:bg-mediumBlue transition-colors duration-300 w-[210px]"
-            >
-              Cancelar
-            </Button>
-          </div>
-          {mutation.isError && (
-            <p className="text-red-500 mt-2">Error guardando los datos.</p>
-          )}
-          {mutation.isSuccess && (
-            <p className="text-green-500 mt-2">Datos guardados con éxito.</p>
-          )}
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
