@@ -23,7 +23,8 @@ const CuadroPrincipalChart = () => {
     return operations.filter((op: Operation) => op.estado === 'Cerrada');
   }, [operations]);
 
-  const pieChartData = tiposOperacionesPieChartData(closedOperations);
+  const rawData = tiposOperacionesPieChartData(closedOperations);
+  const pieChartData = rawData.filter((item) => item.value > 0);
 
   const outerRadius = useResponsiveOuterRadius();
 
@@ -36,20 +37,12 @@ const CuadroPrincipalChart = () => {
     );
   }
 
-  const currentYear = new Date().getFullYear();
-  const currentYearOperations = operations.filter(
-    (operation: Operation) =>
-      new Date(
-        operation.fecha_operacion || operation.fecha_reserva || ''
-      ).getFullYear() === currentYear
-  );
-
   return (
     <div className="bg-white p-3 rounded-xl shadow-md w-full h-[380px]">
       <h2 className="text-[30px] lg:text-[24px] xl:text-[20px] 2xl:text-[24px] text-center font-semibold mt-2 xl:mb-3">
         Tipo de Operaciones
       </h2>
-      {currentYearOperations.length === 0 ? (
+      {pieChartData.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-[240px]">
           <p className="flex flex-col text-center text-[20px] xl:text-[16px] 2xl:text-[16px] font-semibold items-center justify-center">
             <CircleStackIcon className="h-10 w-10 mr-2" />
@@ -68,6 +61,7 @@ const CuadroPrincipalChart = () => {
                 outerRadius={outerRadius}
                 fill="#8884d8"
                 dataKey="value"
+                label={({ name, value }) => `${name}: ${value}`}
               >
                 {pieChartData.map((_, index) => (
                   <Cell
