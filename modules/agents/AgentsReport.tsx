@@ -246,7 +246,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
             />
           </div>
         </div>
-        <h2 className="text-2xl font-bold">Informe Asesores</h2>
+        <h2 className="text-2xl font-bold">Tabla de Asesores</h2>
         <div className="flex items-center">
           <button
             onClick={handleAddAdvisorClick}
