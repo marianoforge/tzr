@@ -8,7 +8,7 @@ import {
   CurrencyDollarIcon,
   ChartBarIcon,
   UserPlusIcon,
-  UserIcon,
+  UsersIcon,
   VideoCameraIcon,
   Cog8ToothIcon,
 } from '@heroicons/react/24/outline';
@@ -110,6 +110,11 @@ const VerticalNavbar = () => {
         icon={<TableCellsIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Form de Eventos"
       />
+      <NavLink
+        href="/expenses-agents-form"
+        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Form de Gastos de Asesores"
+      />
     </>
   );
 
@@ -121,18 +126,13 @@ const VerticalNavbar = () => {
       </div>
       <NavLink
         href="/team-admin"
-        icon={<UserIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Admin de Equipo"
-      />
-      <NavLink
-        href="/expenses-agents-form"
-        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Form de Gastos de Asesores"
+        icon={<UsersIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Reporte del Equipo"
       />
       <NavLink
         href="/agents"
         icon={<UserPlusIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Informe Asesores"
+        label="Tabla de Asesores"
       />
       <NavLink
         href="/expenses-agents"
