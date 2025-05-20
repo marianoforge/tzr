@@ -38,6 +38,7 @@ const Navbar = () => {
         href="/expenses-agents-form"
         label="Form de Gastos de Asesores"
       />
+      <NavButton href="/team-admin" label="Admin de Equipo" />
       <NavButton href="/agents" label="Informe Asesores" />
       <NavButton href="/expenses-agents" label="Gastos por Asesor" />
     </>
