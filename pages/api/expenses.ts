@@ -108,13 +108,12 @@ const createExpense = async (
     const calculatedAmountInDollars =
       userCurrency === 'USD' ? amount : amount / dollarRate;
 
-    const newExpense = {
-      date,
+    const baseExpense = {
       amount,
       amountInDollars: calculatedAmountInDollars,
       expenseType,
       description,
-      dollarRate: userCurrency === 'USD' ? 1 : dollarRate, // Si es USD, usar 1 como tasa
+      dollarRate: userCurrency === 'USD' ? 1 : dollarRate,
       user_uid: userUID,
       otherType: otherType ?? '',
       isRecurring: isRecurring ?? false,
@@ -122,8 +121,60 @@ const createExpense = async (
       updatedAt: new Date().toISOString(),
     };
 
-    const docRef = await db.collection('expenses').add(newExpense);
+    // Si es un gasto recurrente, crear entradas para todos los meses desde la fecha original hasta el presente
+    if (isRecurring) {
+      const expenseDate = new Date(date);
+      const currentDate = new Date();
+      let batch = db.batch();
+      let operationCount = 0;
+      const processedExpenses = [];
 
+      // Iterar mes a mes desde la fecha original hasta el presente
+      while (expenseDate <= currentDate) {
+        const formattedDate = expenseDate.toISOString().split('T')[0];
+
+        // Crear un nuevo documento con los mismos datos pero fecha actualizada
+        const newExpense = {
+          ...baseExpense,
+          date: formattedDate,
+        };
+
+        const newDocRef = db.collection('expenses').doc();
+        batch.set(newDocRef, newExpense);
+        processedExpenses.push(newDocRef.id);
+        operationCount++;
+
+        // Si llegamos al límite del lote, comprometer y crear uno nuevo
+        if (operationCount >= 500) {
+          await batch.commit();
+          batch = db.batch();
+          operationCount = 0;
+        }
+
+        // Avanzar al siguiente mes
+        expenseDate.setMonth(expenseDate.getMonth() + 1);
+      }
+
+      // Comprometer cualquier operación restante
+      if (operationCount > 0) {
+        await batch.commit();
+      }
+
+      console.log(`✅ Creados ${processedExpenses.length} gastos recurrentes`);
+      return res.status(201).json({
+        message: 'Recurring expenses created successfully',
+        count: processedExpenses.length,
+        ids: processedExpenses,
+      });
+    }
+
+    // Si no es recurrente, crear solo un gasto
+    const newExpense = {
+      ...baseExpense,
+      date,
+    };
+
+    const docRef = await db.collection('expenses').add(newExpense);
     console.log('✅ Gasto creado con ID:', docRef.id);
     return res
       .status(201)
