@@ -7,6 +7,8 @@ export interface TeamMember {
   lastName?: string;
   role?: string;
   email?: string;
+  numeroTelefono?: string;
+  advisorUid?: string; // UID del asesor correspondiente en la colección usuarios
 }
 
 // Summary for each type of operation

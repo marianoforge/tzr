@@ -11,6 +11,7 @@ import FilterSection from './components/FilterSection';
 import GlobalSummary from './components/GlobalSummary';
 import OperationDetailsModal from './components/OperationDetailsModal';
 import TeamMemberSection from './components/TeamMemberSection';
+import TeamMembersWithoutOperations from './components/TeamMembersWithoutOperations';
 
 const TeamAdmin = () => {
   const { teamMembers, teamOperations, isLoading, error, refetch } =
@@ -133,10 +134,21 @@ const TeamAdmin = () => {
     );
   }
 
-  // Agrupar operaciones por agente (ID del usuario)
+  // Buscar miembro del equipo por user_uid para obtener su nombre completo
+  const findTeamMemberByUid = (uid: string): TeamMember | undefined => {
+    return teamMembers.find((member) => member.advisorUid === uid);
+  };
+
+  // Agrupar operaciones por agente (ID del usuario) y utilizar el ID del miembro del equipo correspondiente si existe
   const agentGroups = filteredOperations.reduce(
     (groups: Record<string, Operation[]>, operation: Operation) => {
-      const agentId = operation.user_uid || 'Sin Asignación';
+      const uid = operation.user_uid || 'Sin Asignación';
+      // Buscar el miembro del equipo correspondiente al uid
+      const teamMember = findTeamMemberByUid(uid);
+
+      // Usar el ID del miembro del equipo si existe, de lo contrario usar el uid original
+      const agentId = teamMember ? teamMember.id : uid;
+
       if (!groups[agentId]) {
         groups[agentId] = [];
       }
@@ -174,9 +186,22 @@ const TeamAdmin = () => {
 
   const globalSummary = calculateGlobalSummary();
 
+  // Encontrar miembros del equipo sin operaciones
+  const teamMembersWithoutOperations = teamMembers.filter((member) => {
+    // Verificar si el miembro tiene un advisorUid asignado
+    if (!member.advisorUid) return true;
+
+    // Verificar si hay operaciones para este miembro
+    return !filteredOperations.some(
+      (op) =>
+        op.user_uid === member.advisorUid ||
+        op.user_uid_adicional === member.advisorUid
+    );
+  });
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Reporte del Equipo</h1>
+      <h1 className="text-3xl font-bold mb-6">Seguimiento del Equipo</h1>
 
       {/* Filtros */}
       <FilterSection
@@ -216,6 +241,11 @@ const TeamAdmin = () => {
           ))}
         </div>
       )}
+
+      {/* Sección de miembros sin operaciones */}
+      <TeamMembersWithoutOperations
+        teamMembersWithoutOperations={teamMembersWithoutOperations}
+      />
 
       {/* Operation Details Modal */}
       {selectedOperation && (
