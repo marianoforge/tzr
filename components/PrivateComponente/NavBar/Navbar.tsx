@@ -27,6 +27,10 @@ const Navbar = () => {
       <NavButton href="/reservationInput" label="Form de Operaciones" />
       <NavButton href="/expenses" label="Form de Gastos" />
       <NavButton href="/eventForm" label="Form de Eventos" />
+      <NavButton
+        href="/expenses-agents-form"
+        label="Form de Gastos de Asesores"
+      />
       <NavButton href="/projections" label="Proyecciones" />
     </>
   );
@@ -34,11 +38,8 @@ const Navbar = () => {
   const renderAdminNavButtons = () => (
     <>
       {renderNavButtons()}
-      <NavButton
-        href="/expenses-agents-form"
-        label="Form de Gastos de Asesores"
-      />
-      <NavButton href="/agents" label="Informe Asesores" />
+      <NavButton href="/team-admin" label="Seguimiento del Equipo" />
+      <NavButton href="/agents" label="Tabla de Asesores" />
       <NavButton href="/expenses-agents" label="Gastos por Asesor" />
     </>
   );

@@ -45,6 +45,7 @@ export enum APIMethods {
 export enum QueryKeys {
   TEAM_MEMBERS_OPS = 'teamMembersOps',
   TEAM_MEMBERS = 'teamMembers',
+  TEAM_DATA = 'teamData',
   USERS_WITH_OPERATIONS = 'usersWithOperations',
   EXPENSES = 'expenses',
   EXPENSES_AGENTS = 'expensesAgents',

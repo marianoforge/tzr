@@ -8,7 +8,7 @@ import {
   CurrencyDollarIcon,
   ChartBarIcon,
   UserPlusIcon,
-  UserIcon,
+  UsersIcon,
   VideoCameraIcon,
   Cog8ToothIcon,
 } from '@heroicons/react/24/outline';
@@ -110,68 +110,69 @@ const VerticalNavbar = () => {
         icon={<TableCellsIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Form de Eventos"
       />
+      <NavLink
+        href="/expenses-agents-form"
+        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Form de Gastos de Asesores"
+      />
     </>
   );
 
-  const renderAdminNavButtons = () => (
+  const renderTeamLeaderNavButtons = () => (
     <>
       {renderNavButtons()}
-      <NavLink
-        href="/expenses-agents-form"
-        icon={<UserPlusIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Form de Gastos de Asesores"
-      />
       <div className="text-lg flex flex-col pt-10 pl-4 pb-2">
-        <p>Reportes Team</p>
+        <p>Administración</p>
       </div>
       <NavLink
+        href="/team-admin"
+        icon={<UsersIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Seguimiento del Equipo"
+      />
+      <NavLink
         href="/agents"
-        icon={
-          <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2 text-lightBlue" />
-        }
-        label="Informe Asesores"
+        icon={<UserPlusIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        label="Tabla de Asesores"
       />
       <NavLink
         href="/expenses-agents"
-        icon={<UserIcon className="w-5 h-5 mr-2 text-lightBlue" />}
+        icon={<CurrencyDollarIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Gastos por Asesor"
       />
     </>
   );
 
   const renderNavLinksBasedOnRole = () => {
-    if (isLoading || !userData) return null;
+    if (isLoading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      );
+    }
+
+    // Verificar el rol del usuario
+    if (!userData) return renderNavButtons();
 
     // Render admin link for specific user regardless of role
     const adminLinkForSpecificUser = renderAdminLink();
 
-    switch (userData.role) {
-      case UserRole.TEAM_LEADER_BROKER:
-        return (
-          <>
-            {adminLinkForSpecificUser}
-            {renderAdminNavButtons()}
-          </>
-        );
-      case UserRole.AGENTE_ASESOR:
-        return (
-          <>
-            {adminLinkForSpecificUser}
-            {renderNavButtons()}
-          </>
-        );
-      default:
-        return (
-          <>
-            {adminLinkForSpecificUser}
-            <NavLink
-              href="/dashboard"
-              icon={<HomeIcon className="w-5 h-5 mr-2" />}
-              label="Dashboard"
-            />
-          </>
-        );
+    if (userData.role === UserRole.TEAM_LEADER_BROKER) {
+      return (
+        <>
+          {adminLinkForSpecificUser}
+          {renderTeamLeaderNavButtons()}
+        </>
+      );
     }
+
+    // Default: mostrar botones estándar
+    return (
+      <>
+        {adminLinkForSpecificUser}
+        {renderNavButtons()}
+      </>
+    );
   };
 
   return (
