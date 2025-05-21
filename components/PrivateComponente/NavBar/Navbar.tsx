@@ -38,7 +38,7 @@ const Navbar = () => {
   const renderAdminNavButtons = () => (
     <>
       {renderNavButtons()}
-      <NavButton href="/team-admin" label="Reporte del Equipo" />
+      <NavButton href="/team-admin" label="Seguimiento del Equipo" />
       <NavButton href="/agents" label="Tabla de Asesores" />
       <NavButton href="/expenses-agents" label="Gastos por Asesor" />
     </>

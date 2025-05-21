@@ -71,8 +71,32 @@ export default async function handler(
         `✅ Se encontraron ${teamMembers.length} miembros del equipo`
       );
 
-      // Extract the IDs of the members of the team
-      const teamMemberIds = teamMembers.map((member) => member.id);
+      // Buscar usuarios correspondientes a los miembros del equipo por email
+      const advisorUids: string[] = [];
+
+      // Array para almacenar las promesas de búsqueda de usuario
+      const userQueries = teamMembers.map(async (member) => {
+        if (member.email) {
+          const usuariosSnapshot = await db
+            .collection('usuarios')
+            .where('email', '==', member.email)
+            .get();
+
+          if (!usuariosSnapshot.empty) {
+            const advisorUid = usuariosSnapshot.docs[0].id;
+            advisorUids.push(advisorUid);
+            // Añadir el UID del usuario al miembro del equipo para referencia
+            member.advisorUid = advisorUid;
+          }
+        }
+      });
+
+      // Esperar a que todas las consultas de usuario se completen
+      await Promise.all(userQueries);
+
+      console.log(
+        `✅ Se encontraron ${advisorUids.length} UIDs de asesores correspondientes`
+      );
 
       // Firestore 'in' queries have a limit of 30 values
       // So we need to chunk the array into groups of 30 or less
@@ -84,13 +108,19 @@ export default async function handler(
         return chunks;
       };
 
-      // Chunk the team member IDs
-      const teamMemberIdChunks = chunkArray(teamMemberIds, 30);
+      // Si no hay UIDs de asesores, devolver respuesta vacía
+      if (advisorUids.length === 0) {
+        console.log('⚠️ No se encontraron UIDs de asesores correspondientes');
+        return res.status(200).json({ teamMembers, operations: [] });
+      }
+
+      // Chunk the advisor UIDs
+      const advisorUidChunks = chunkArray(advisorUids, 30);
 
       // Execute multiple queries for user_uid field and combine results
       const operationsResults = [];
 
-      for (const chunk of teamMemberIdChunks) {
+      for (const chunk of advisorUidChunks) {
         const chunkSnapshot = await db
           .collection('operations')
           .where('user_uid', 'in', chunk)
@@ -102,7 +132,7 @@ export default async function handler(
       // Execute multiple queries for user_uid_adicional field and combine results
       const adicionalOperationsResults = [];
 
-      for (const chunk of teamMemberIdChunks) {
+      for (const chunk of advisorUidChunks) {
         const chunkSnapshot = await db
           .collection('operations')
           .where('user_uid_adicional', 'in', chunk)

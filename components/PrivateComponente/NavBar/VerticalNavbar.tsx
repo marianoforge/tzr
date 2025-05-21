@@ -127,7 +127,7 @@ const VerticalNavbar = () => {
       <NavLink
         href="/team-admin"
         icon={<UsersIcon className="w-5 h-5 mr-2 text-lightBlue" />}
-        label="Reporte del Equipo"
+        label="Seguimiento del Equipo"
       />
       <NavLink
         href="/agents"
