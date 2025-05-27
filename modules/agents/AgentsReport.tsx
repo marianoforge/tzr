@@ -99,6 +99,14 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
     queryFn: fetchTeamMembersWithOperations,
   });
 
+  // Deduplicar miembros por ID para evitar duplicados
+  const deduplicatedData = data
+    ? data.filter(
+        (member, index, self) =>
+          index === self.findIndex((m) => m.id === member.id)
+      )
+    : data;
+
   const deleteMemberMutation = useMutation({
     mutationFn: deleteMember,
     onSuccess: () => {
@@ -154,7 +162,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   };
 
   const filteredMembers =
-    data
+    deduplicatedData
       ?.filter((member) => {
         const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
         const searchWords = searchQuery.toLowerCase().split(' ');
@@ -177,7 +185,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
           }
         );
         return (
-          member.teamLeadID === userId &&
+          (member.teamLeadID === userId || member.id === userId) &&
           searchWords.every((word) => fullName.includes(word)) &&
           operationsInSelectedYear.length > 0
         );
@@ -197,6 +205,15 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
   const paginatedMembers = filteredMembers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
+  );
+
+  // Identificar al miembro con mayor facturación bruta (el primero en la lista ordenada)
+  const topPerformerMemberId =
+    filteredMembers.length > 0 ? filteredMembers[0].id : null;
+
+  // Verificar si el top performer está en la página actual
+  const isTopPerformerVisible = paginatedMembers.some(
+    (member) => member.id === topPerformerMemberId
   );
 
   // Primero calculamos el total de honorarios mostrados en la tabla actual
@@ -286,15 +303,22 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
               </tr>
             </thead>
             <tbody>
-              {paginatedMembers.map((member, index) => (
+              {paginatedMembers.map((member) => (
                 <tr
                   key={member.id}
                   className={`border-b text-center h-[75px] ${
-                    currentPage === 1 && index === 0 ? 'bg-green-100' : ''
+                    member.id === topPerformerMemberId && isTopPerformerVisible
+                      ? 'bg-green-100' // Resaltar al miembro con mayor facturación bruta
+                      : ''
                   }`}
                 >
                   <td className="py-3 px-4 font-semibold text-start w-1/5">
                     {member.firstName} {member.lastName}
+                    {member.id === userId && (
+                      <span className="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                        Team Leader
+                      </span>
+                    )}
                   </td>
                   <td className="py-3 px-4">
                     {member.operations.length > 0 ? (

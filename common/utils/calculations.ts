@@ -65,6 +65,50 @@ export const totalHonorariosTeamLead = (
 
   const isReparticionHonorariosAsesor = operation.reparticion_honorarios_asesor;
 
+  // 🚀 NUEVA LÓGICA: Verificar si el Team Leader es uno de los asesores
+  const teamLeaderUID = userData.uid;
+  const isTeamLeaderPrimaryAdvisor = operation.user_uid === teamLeaderUID;
+  const isTeamLeaderAdditionalAdvisor =
+    operation.user_uid_adicional === teamLeaderUID;
+
+  // 🚀 Si el Team Leader es uno de los asesores, devolver SU porcentaje como asesor
+  if (
+    isTeamLeaderBroker &&
+    (isTeamLeaderPrimaryAdvisor || isTeamLeaderAdditionalAdvisor)
+  ) {
+    let teamLeaderAsAdvisorFee = 0;
+
+    if (isTeamLeaderPrimaryAdvisor) {
+      teamLeaderAsAdvisorFee =
+        (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) /
+        100;
+    } else if (isTeamLeaderAdditionalAdvisor) {
+      teamLeaderAsAdvisorFee =
+        (honorariosBrutos *
+          (operation.porcentaje_honorarios_asesor_adicional || 0)) /
+        100;
+    }
+
+    // Aplicar descuentos de franquicia y repartición si corresponde
+    let finalFee = teamLeaderAsAdvisorFee;
+
+    if (isFranchise) {
+      const franchiseDiscount =
+        (teamLeaderAsAdvisorFee * (operation.isFranchiseOrBroker || 0)) / 100;
+      finalFee -= franchiseDiscount;
+    }
+
+    if (isReparticionHonorariosAsesor) {
+      const reparticionDiscount =
+        (teamLeaderAsAdvisorFee *
+          (operation.reparticion_honorarios_asesor || 0)) /
+        100;
+      finalFee -= reparticionDiscount;
+    }
+
+    return finalFee;
+  }
+
   // NUEVA LÓGICA: Primero se calcula la parte de los asesores
 
   // Para un asesor
@@ -77,13 +121,11 @@ export const totalHonorariosTeamLead = (
   // Para dos asesores
   let totalAsesoresHonorarios = 0;
   if (hasUserUid && hasAdditionalUserUid) {
-    const baseHonorariosParaAsesores = honorariosBrutos * 0.5;
+    // 🚀 CORREGIDO: Los porcentajes se aplican sobre el total de honorarios brutos, no sobre la mitad
     const asesor1Honorarios =
-      (baseHonorariosParaAsesores *
-        (operation.porcentaje_honorarios_asesor || 0)) /
-      100;
+      (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
     const asesor2Honorarios =
-      (baseHonorariosParaAsesores *
+      (honorariosBrutos *
         (operation.porcentaje_honorarios_asesor_adicional || 0)) /
       100;
     totalAsesoresHonorarios = asesor1Honorarios + asesor2Honorarios;

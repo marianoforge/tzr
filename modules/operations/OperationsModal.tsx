@@ -108,7 +108,7 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   const selectStyle = '!text-black font-normal';
 
   useEffect(() => {
-    if (operation) {
+    if (operation && isOpen) {
       const formattedOperation = {
         ...operation,
         fecha_operacion: operation.fecha_operacion
@@ -134,9 +134,26 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       });
       if (operation.realizador_venta_adicional) {
         setShowAdditionalAdvisor(true);
+      } else {
+        setShowAdditionalAdvisor(false);
       }
     }
-  }, [operation, reset]);
+  }, [operation, reset, isOpen]);
+
+  // Reset form when modal closes to ensure clean state for next open
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+      setShowAdditionalAdvisor(false);
+      setAddressData({
+        address: '',
+        city: null,
+        province: null,
+        country: null,
+        houseNumber: '',
+      });
+    }
+  }, [isOpen, reset]);
 
   useEffect(() => {
     const porcentaje_punta_compradora =
@@ -173,6 +190,8 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       queryClient.invalidateQueries({ queryKey: ['operations'] });
       onUpdate();
       onClose();
+      // Reset form state to ensure fresh data on next open
+      reset();
     },
     onError: (error) => {
       console.error('Error updating operation:', error);
@@ -237,21 +256,23 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       honorarios_asesor: honorariosAsesor,
       user_uid: selectedUser_id,
       user_uid_adicional: selectedUser_idAdicional,
-      pais: addressData.country || undefined,
-      numero_casa: addressData.houseNumber || undefined,
-      direccion_reserva: addressData.address || undefined,
-      localidad_reserva: addressData.city || undefined,
-      provincia_reserva: addressData.province || undefined,
-      reparticion_honorarios_asesor:
-        data.reparticion_honorarios_asesor ?? undefined,
+      pais: addressData.country || '',
+      numero_casa: addressData.houseNumber || '',
+      direccion_reserva: addressData.address || '',
+      localidad_reserva: addressData.city || '',
+      provincia_reserva: addressData.province || '',
+      reparticion_honorarios_asesor: data.reparticion_honorarios_asesor ?? 0,
       fecha_operacion: fechaOperacion,
       fecha_reserva: fechaReserva,
       fecha_captacion: fechaCaptacion,
       porcentaje_honorarios_broker: porcentajeHonorariosBroker,
-      realizador_venta: realizador_venta || undefined,
-      porcentaje_honorarios_asesor:
-        data.porcentaje_honorarios_asesor || undefined,
+      realizador_venta: realizador_venta || '',
+      realizador_venta_adicional: data.realizador_venta_adicional || null,
+      porcentaje_honorarios_asesor: data.porcentaje_honorarios_asesor ?? 0,
+      porcentaje_honorarios_asesor_adicional:
+        data.porcentaje_honorarios_asesor_adicional ?? null,
     };
+
     mutation.mutate({ id: operation.id, data: payload });
   };
 

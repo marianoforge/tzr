@@ -35,12 +35,20 @@ const AgentsReportByOps = ({ userId }: { userId: string }) => {
     queryFn: fetchTeamMembersWithOperations,
   });
 
+  // Deduplicar miembros por ID para evitar duplicados
+  const deduplicatedData = data
+    ? data.filter(
+        (member, index, self) =>
+          index === self.findIndex((m) => m.id === member.id)
+      )
+    : data;
+
   const filteredMembers =
-    data?.filter((member) => {
+    deduplicatedData?.filter((member) => {
       const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
       const searchWords = searchQuery.toLowerCase().split(' ');
       return (
-        member.teamLeadID === userId &&
+        (member.teamLeadID === userId || member.id === userId) &&
         searchWords.every((word) => fullName.includes(word))
       );
     }) || [];
