@@ -244,6 +244,25 @@ const OperationsTable: React.FC = () => {
 
       const totals = calculateTotals(sortedOps);
 
+      // Calcular las puntas correctamente considerando el filtro actual
+      const puntaCompradora = sortedOps.reduce((sum, operation) => {
+        return sum + (operation.punta_compradora ? 1 : 0);
+      }, 0);
+
+      const puntaVendedora = sortedOps.reduce((sum, operation) => {
+        return sum + (operation.punta_vendedora ? 1 : 0);
+      }, 0);
+
+      const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
+
+      // Sobrescribir los valores de puntas en totals con los calculados correctamente
+      const correctedTotals = {
+        ...totals,
+        punta_compradora: puntaCompradora,
+        punta_vendedora: puntaVendedora,
+        suma_total_de_puntas: sumaTotalDePuntas,
+      };
+
       // Calcular los honorarios brutos correctamente
       // Utilizamos la función calculateHonorarios de @/common/utils/calculations para cada operación
       const honorariosBrutos = sortedOps.reduce((total, op) => {
@@ -273,7 +292,7 @@ const OperationsTable: React.FC = () => {
 
       return {
         currentOperations: currentOps,
-        filteredTotals: totals,
+        filteredTotals: correctedTotals,
         calculatedHonorarios: {
           brutos: honorariosBrutos,
           netos: honorariosNetos,
