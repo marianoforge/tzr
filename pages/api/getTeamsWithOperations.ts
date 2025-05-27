@@ -39,16 +39,19 @@ export default async function handler(
 
     const token = authHeader.split('Bearer ')[1];
     const decodedToken = await adminAuth.verifyIdToken(token);
+    const teamLeaderUID = decodedToken.uid;
 
-    console.log('✅ Token verificado para UID:', decodedToken.uid);
+    console.log('✅ Token verificado para UID:', teamLeaderUID);
 
-    // 🔹 Paso 1: Obtener miembros del equipo y operaciones en paralelo
-    const [teamMembersSnapshot, operationsSnapshot] = await Promise.all([
-      db.collection('teams').get(),
-      db.collection('operations').get(),
-    ]);
+    // 🔹 Paso 1: Obtener miembros del equipo, operaciones y datos del Team Leader en paralelo
+    const [teamMembersSnapshot, operationsSnapshot, teamLeaderSnapshot] =
+      await Promise.all([
+        db.collection('teams').get(),
+        db.collection('operations').get(),
+        db.collection('usuarios').doc(teamLeaderUID).get(),
+      ]);
 
-    console.log('✅ Datos de equipos y operaciones obtenidos.');
+    console.log('✅ Datos de equipos, operaciones y Team Leader obtenidos.');
 
     const teamMembers: TeamMember[] = teamMembersSnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -62,7 +65,15 @@ export default async function handler(
       ...doc.data(),
     })) as Operation[];
 
-    // 🔹 Paso 2: Combinar datos
+    // 🔹 Paso 2: Verificar si el Team Leader tiene operaciones asignadas
+    const teamLeaderOperations = operations.filter((op) => {
+      const isPrimaryAdvisor = op.user_uid && op.user_uid === teamLeaderUID;
+      const isAdditionalAdvisor =
+        op.user_uid_adicional && op.user_uid_adicional === teamLeaderUID;
+      return isPrimaryAdvisor || isAdditionalAdvisor;
+    });
+
+    // 🔹 Paso 3: Combinar datos de team members
     const result: TeamMemberWithOperations[] = teamMembers.map((member) => {
       const memberOperations = operations.filter((op) => {
         // 🚀 Se asegura que ambos asesores reciban la operación
@@ -76,11 +87,31 @@ export default async function handler(
       return { ...member, operations: memberOperations };
     });
 
+    // 🔹 Paso 4: Si el Team Leader tiene operaciones, agregarlo a la lista
+    if (teamLeaderOperations.length > 0 && teamLeaderSnapshot.exists) {
+      const teamLeaderData = teamLeaderSnapshot.data();
+      const teamLeaderMember: TeamMemberWithOperations = {
+        id: teamLeaderUID,
+        email: teamLeaderData?.email || '',
+        firstName: teamLeaderData?.firstName || 'Team',
+        lastName: teamLeaderData?.lastName || 'Leader',
+        teamLeadID: teamLeaderUID, // El Team Leader se reporta a sí mismo
+        numeroTelefono: teamLeaderData?.numeroTelefono || '',
+        operations: teamLeaderOperations,
+      };
+
+      // Agregar el Team Leader al inicio de la lista para que aparezca primero
+      result.unshift(teamLeaderMember);
+      console.log(
+        `✅ Team Leader agregado con ${teamLeaderOperations.length} operaciones.`
+      );
+    }
+
     console.log(
-      `✅ Datos combinados: ${result.length} equipos con operaciones.`
+      `✅ Datos combinados: ${result.length} miembros con operaciones (incluyendo Team Leader si aplica).`
     );
 
-    // 🔹 Paso 3: Responder con los datos combinados
+    // 🔹 Paso 5: Responder con los datos combinados
     return res.status(200).json(result);
   } catch (error) {
     console.error('❌ Error en la API /api/getTeamsWithOperations:', error);
