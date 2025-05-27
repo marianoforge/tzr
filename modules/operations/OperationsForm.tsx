@@ -102,6 +102,14 @@ const OperationsForm = () => {
       : []),
   ];
 
+  // Detectar si el Team Leader está seleccionado como asesor
+  const currentUserName =
+    `${userData?.firstName} ${userData?.lastName}` || 'Logged User';
+  const isTeamLeaderPrimaryAdvisor =
+    watch('realizador_venta') === currentUserName;
+  const isTeamLeaderAdditionalAdvisor =
+    watch('realizador_venta_adicional') === currentUserName;
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUserUID(user ? user.uid : null);
@@ -565,11 +573,32 @@ const OperationsForm = () => {
               label="Porcentaje honorarios asesor*"
               type="text"
               placeholder="Por ejemplo: 45%"
+              value={
+                isTeamLeaderPrimaryAdvisor &&
+                userRole === UserRole.TEAM_LEADER_BROKER
+                  ? '100%'
+                  : undefined
+              }
+              disabled={
+                isTeamLeaderPrimaryAdvisor &&
+                userRole === UserRole.TEAM_LEADER_BROKER
+              }
               {...register('porcentaje_honorarios_asesor', {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
               error={errors.porcentaje_honorarios_asesor?.message}
             />
+
+            {isTeamLeaderPrimaryAdvisor &&
+              userRole === UserRole.TEAM_LEADER_BROKER && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                  <p className="text-sm text-blue-700">
+                    <span className="font-semibold">ℹ️ Información:</span>{' '}
+                    Cuando el Team Leader participa se lleva el 100% del 50% del
+                    bruto restante.
+                  </p>
+                </div>
+              )}
 
             {showAdditionalAdvisor && (
               <>
@@ -597,11 +626,32 @@ const OperationsForm = () => {
                   label="Porcentaje honorarios asesor adicional"
                   type="text"
                   placeholder="Por ejemplo: 40%"
+                  value={
+                    isTeamLeaderAdditionalAdvisor &&
+                    userRole === UserRole.TEAM_LEADER_BROKER
+                      ? '100%'
+                      : undefined
+                  }
+                  disabled={
+                    isTeamLeaderAdditionalAdvisor &&
+                    userRole === UserRole.TEAM_LEADER_BROKER
+                  }
                   {...register('porcentaje_honorarios_asesor_adicional', {
                     setValueAs: (value) => parseFloat(value) || 0,
                   })}
                   error={errors.porcentaje_honorarios_asesor_adicional?.message}
                 />
+
+                {isTeamLeaderAdditionalAdvisor &&
+                  userRole === UserRole.TEAM_LEADER_BROKER && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                      <p className="text-sm text-blue-700">
+                        <span className="font-semibold">ℹ️ Información:</span>{' '}
+                        Cuando el Team Leader participa se lleva el 100% del 50%
+                        del bruto restante.
+                      </p>
+                    </div>
+                  )}
               </>
             )}
 
