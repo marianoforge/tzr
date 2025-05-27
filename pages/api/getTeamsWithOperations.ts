@@ -13,6 +13,7 @@ type Operation = {
   id: string;
   user_uid: string;
   user_uid_adicional?: string | null; // ✅ Permite que sea string o null
+  teamId: string; // ✅ ID del equipo al que pertenece la operación
 } & {
   [key: string]: string | Operation[] | undefined; // ✅ Permite valores undefined sin error
 };
@@ -53,6 +54,24 @@ export default async function handler(
 
     console.log('✅ Datos de equipos, operaciones y Team Leader obtenidos.');
 
+    // Debug: Contar operaciones totales y sin asesor
+    const totalOperations = operationsSnapshot.docs.length;
+    const operationsForThisTeam = operationsSnapshot.docs.filter(
+      (doc) => doc.data().teamId === teamLeaderUID
+    );
+    const operationsWithoutAdvisor = operationsForThisTeam.filter((doc) => {
+      const data = doc.data();
+      return !data.user_uid || data.user_uid === '' || data.user_uid === null;
+    });
+
+    console.log(`📊 Total operaciones en BD: ${totalOperations}`);
+    console.log(
+      `📊 Operaciones de este equipo: ${operationsForThisTeam.length}`
+    );
+    console.log(
+      `📊 Operaciones sin asesor en este equipo: ${operationsWithoutAdvisor.length}`
+    );
+
     const teamMembers: TeamMember[] = teamMembersSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -62,15 +81,25 @@ export default async function handler(
       id: doc.id,
       user_uid: doc.data().user_uid,
       user_uid_adicional: doc.data().user_uid_adicional ?? null, // ✅ Asegura que no sea undefined
+      teamId: doc.data().teamId, // ✅ Mapear explícitamente el teamId
       ...doc.data(),
     })) as Operation[];
 
     // 🔹 Paso 2: Verificar si el Team Leader tiene operaciones asignadas
+    // Incluir operaciones sin asesor asignado (se asignan automáticamente al Team Leader)
     const teamLeaderOperations = operations.filter((op) => {
+      // Verificar que la operación pertenece al equipo del Team Leader
+      if (op.teamId !== teamLeaderUID) return false;
+
       const isPrimaryAdvisor = op.user_uid && op.user_uid === teamLeaderUID;
       const isAdditionalAdvisor =
         op.user_uid_adicional && op.user_uid_adicional === teamLeaderUID;
-      return isPrimaryAdvisor || isAdditionalAdvisor;
+
+      // 🚀 NUEVA LÓGICA: Si no hay asesor asignado, la operación va al Team Leader
+      const hasNoAdvisorAssigned =
+        !op.user_uid || op.user_uid === '' || op.user_uid === null;
+
+      return isPrimaryAdvisor || isAdditionalAdvisor || hasNoAdvisorAssigned;
     });
 
     // 🔹 Paso 3: Combinar datos de team members
@@ -81,6 +110,8 @@ export default async function handler(
         const isAdditionalAdvisor =
           op.user_uid_adicional && op.user_uid_adicional === member.id;
 
+        // 🚀 IMPORTANTE: Los team members NO reciben operaciones sin asesor asignado
+        // Esas operaciones van automáticamente al Team Leader
         return isPrimaryAdvisor || isAdditionalAdvisor;
       });
 
@@ -108,8 +139,17 @@ export default async function handler(
 
         // Agregar el Team Leader a la lista (el ordenamiento se hará en el frontend)
         result.push(teamLeaderMember);
+
+        // Debug: Contar operaciones sin asesor asignado
+        const operationsWithoutAdvisor = teamLeaderOperations.filter(
+          (op) => !op.user_uid || op.user_uid === '' || op.user_uid === null
+        );
+
         console.log(
-          `✅ Team Leader agregado con ${teamLeaderOperations.length} operaciones.`
+          `✅ Team Leader agregado con ${teamLeaderOperations.length} operaciones total.`
+        );
+        console.log(
+          `📋 Operaciones sin asesor asignado: ${operationsWithoutAdvisor.length}`
         );
       } else {
         console.log(
