@@ -20,14 +20,20 @@ export function filteredOperations(
     const operationYear = operationDate.getUTCFullYear();
     const operationMonth = operationDate.getUTCMonth() + 1; // Convertido a 1-indexado
 
-    const statusMatch =
-      statusFilter === OperationStatus.TODAS ||
-      (statusFilter === OperationStatus.EN_CURSO &&
-        operation.estado === OperationStatus.EN_CURSO) ||
-      (statusFilter === OperationStatus.CERRADA &&
-        operation.estado === OperationStatus.CERRADA) ||
-      (statusFilter === OperationStatus.CAIDA &&
-        operation.estado === OperationStatus.CAIDA);
+    let statusMatch = false;
+
+    if (statusFilter === OperationStatus.TODAS || statusFilter === 'all') {
+      // Cuando el filtro es "all" o "Estado de la Op.", mostrar operaciones abiertas y cerradas, pero no caídas
+      statusMatch =
+        operation.estado === OperationStatus.EN_CURSO ||
+        operation.estado === OperationStatus.CERRADA;
+    } else if (statusFilter === OperationStatus.EN_CURSO) {
+      statusMatch = operation.estado === OperationStatus.EN_CURSO;
+    } else if (statusFilter === OperationStatus.CERRADA) {
+      statusMatch = operation.estado === OperationStatus.CERRADA;
+    } else if (statusFilter === OperationStatus.CAIDA) {
+      statusMatch = operation.estado === OperationStatus.CAIDA;
+    }
 
     let dateMatch = false;
 
