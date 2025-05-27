@@ -87,29 +87,51 @@ export default async function handler(
       return { ...member, operations: memberOperations };
     });
 
-    // 🔹 Paso 4: Si el Team Leader tiene operaciones, agregarlo a la lista
+    // 🔹 Paso 4: Si el Team Leader tiene operaciones, agregarlo a la lista SOLO si no está ya incluido
     if (teamLeaderOperations.length > 0 && teamLeaderSnapshot.exists) {
-      const teamLeaderData = teamLeaderSnapshot.data();
-      const teamLeaderMember: TeamMemberWithOperations = {
-        id: teamLeaderUID,
-        email: teamLeaderData?.email || '',
-        firstName: teamLeaderData?.firstName || 'Team',
-        lastName: teamLeaderData?.lastName || 'Leader',
-        teamLeadID: teamLeaderUID, // El Team Leader se reporta a sí mismo
-        numeroTelefono: teamLeaderData?.numeroTelefono || '',
-        operations: teamLeaderOperations,
-      };
-
-      // Agregar el Team Leader al inicio de la lista para que aparezca primero
-      result.unshift(teamLeaderMember);
-      console.log(
-        `✅ Team Leader agregado con ${teamLeaderOperations.length} operaciones.`
+      // Verificar si el Team Leader ya está en la lista de team members
+      const isTeamLeaderAlreadyIncluded = result.some(
+        (member) => member.id === teamLeaderUID
       );
+
+      if (!isTeamLeaderAlreadyIncluded) {
+        const teamLeaderData = teamLeaderSnapshot.data();
+        const teamLeaderMember: TeamMemberWithOperations = {
+          id: teamLeaderUID,
+          email: teamLeaderData?.email || '',
+          firstName: teamLeaderData?.firstName || 'Team',
+          lastName: teamLeaderData?.lastName || 'Leader',
+          teamLeadID: teamLeaderUID, // El Team Leader se reporta a sí mismo
+          numeroTelefono: teamLeaderData?.numeroTelefono || '',
+          operations: teamLeaderOperations,
+        };
+
+        // Agregar el Team Leader a la lista (el ordenamiento se hará en el frontend)
+        result.push(teamLeaderMember);
+        console.log(
+          `✅ Team Leader agregado con ${teamLeaderOperations.length} operaciones.`
+        );
+      } else {
+        console.log(
+          'ℹ️ Team Leader ya está incluido en la lista de team members.'
+        );
+      }
     }
 
     console.log(
       `✅ Datos combinados: ${result.length} miembros con operaciones (incluyendo Team Leader si aplica).`
     );
+
+    // Debug: Verificar si hay duplicados
+    const memberIds = result.map((member) => member.id);
+    const uniqueIds = Array.from(new Set(memberIds));
+    if (memberIds.length !== uniqueIds.length) {
+      console.warn('⚠️ Se detectaron miembros duplicados en el resultado');
+      console.log(
+        'IDs duplicados:',
+        memberIds.filter((id, index) => memberIds.indexOf(id) !== index)
+      );
+    }
 
     // 🔹 Paso 5: Responder con los datos combinados
     return res.status(200).json(result);
