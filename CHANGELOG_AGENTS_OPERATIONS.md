@@ -60,4 +60,136 @@ const teamLeaderOperations = operations.filter((op) => {
 - Comprobar logs de debug en consola del servidor
 
 ### Fecha
-$(date +"%Y-%m-%d") 
+$(date +"%Y-%m-%d")
+
+---
+
+## Cambio: Fix Cálculo de Honorarios Netos para Team Leader con Dos Asesores
+
+### Problema Identificado
+Cuando el Team Leader participaba como asesor en una operación junto con otro asesor, el cálculo de honorarios netos era incorrecto. Los porcentajes de honorarios se aplicaban sobre la mitad de los honorarios brutos en lugar del total, resultando en un cálculo erróneo.
+
+**Ejemplo del bug:**
+- Operación: $21,000 honorarios brutos
+- Team Leader: 40% como asesor
+- Asesor adicional: 40%
+- **Resultado incorrecto**: Team Leader recibía 50% neto (debería ser ~20%)
+
+### Solución Implementada
+
+#### Backend Fix (`common/utils/calculations.ts`)
+
+Corregida la función `totalHonorariosTeamLead` en el cálculo para dos asesores:
+
+**Antes (incorrecto):**
+```typescript
+const baseHonorariosParaAsesores = honorariosBrutos * 0.5; // ❌ División incorrecta
+const asesor1Honorarios = (baseHonorariosParaAsesores * porcentaje1) / 100;
+const asesor2Honorarios = (baseHonorariosParaAsesores * porcentaje2) / 100;
+```
+
+**Después (correcto):**
+```typescript
+// 🚀 Los porcentajes se aplican sobre el total de honorarios brutos
+const asesor1Honorarios = (honorariosBrutos * porcentaje1) / 100;
+const asesor2Honorarios = (honorariosBrutos * porcentaje2) / 100;
+```
+
+#### Cálculo Correcto Resultante
+
+Para el ejemplo anterior:
+- Asesor 1 (Team Leader): $21,000 × 40% = $8,400
+- Asesor 2: $21,000 × 40% = $8,400
+- Total asesores: $16,800
+- **Team Leader neto**: $21,000 - $16,800 = $4,200 (20% correcto)
+
+### Beneficios
+
+- ✅ **Cálculos precisos**: Honorarios netos calculados correctamente
+- ✅ **Consistencia**: Lógica coherente con el resto del sistema
+- ✅ **Transparencia**: Los porcentajes reflejan la realidad de la operación
+
+### Archivos Modificados
+
+- `common/utils/calculations.ts`: Función `totalHonorariosTeamLead`
+
+### Testing
+
+- Verificar operaciones con Team Leader + asesor adicional
+- Confirmar que porcentajes suman correctamente
+- Validar que honorarios netos son precisos
+
+### Fecha
+$(date +"%Y-%m-%d")
+
+---
+
+## Cambio: Fix Cálculo Cuando Team Leader Participa Como Asesor
+
+### Problema Identificado
+Cuando el Team Leader participaba como asesor en una operación, la función `totalHonorariosTeamLead` calculaba incorrectamente los honorarios. En lugar de devolver el porcentaje que le corresponde como asesor, calculaba los honorarios netos (lo que queda después de pagar a todos los asesores), resultando en $0 cuando los porcentajes sumaban 100%.
+
+**Ejemplo del bug:**
+- Operación: $21,000 honorarios brutos
+- Team Leader: 40% como asesor principal
+- Asesor adicional: 60%
+- **Resultado incorrecto**: $0 (restaba 40% + 60% = 100% de los honorarios brutos)
+- **Resultado esperado**: $8,400 (40% de $21,000)
+
+### Solución Implementada
+
+#### Backend Fix (`common/utils/calculations.ts`)
+
+Agregada lógica para detectar cuando el Team Leader es uno de los asesores:
+
+```typescript
+// 🚀 Verificar si el Team Leader es uno de los asesores
+const teamLeaderUID = userData.uid;
+const isTeamLeaderPrimaryAdvisor = operation.user_uid === teamLeaderUID;
+const isTeamLeaderAdditionalAdvisor = operation.user_uid_adicional === teamLeaderUID;
+
+// 🚀 Si el Team Leader es uno de los asesores, devolver SU porcentaje como asesor
+if (isTeamLeaderBroker && (isTeamLeaderPrimaryAdvisor || isTeamLeaderAdditionalAdvisor)) {
+  let teamLeaderAsAdvisorFee = 0;
+  
+  if (isTeamLeaderPrimaryAdvisor) {
+    teamLeaderAsAdvisorFee = (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
+  } else if (isTeamLeaderAdditionalAdvisor) {
+    teamLeaderAsAdvisorFee = (honorariosBrutos * (operation.porcentaje_honorarios_asesor_adicional || 0)) / 100;
+  }
+  
+  return teamLeaderAsAdvisorFee; // Devolver SU porcentaje, no los honorarios netos
+}
+```
+
+#### Comportamiento Correcto Resultante
+
+**Caso 1: Team Leader como asesor principal (40%) + Asesor adicional (60%)**
+- Team Leader recibe: $21,000 × 40% = $8,400 ✅
+
+**Caso 2: Team Leader como asesor adicional (40%) + Asesor principal (60%)**  
+- Team Leader recibe: $21,000 × 40% = $8,400 ✅
+
+**Caso 3: Team Leader NO es asesor**
+- Team Leader recibe: Honorarios netos (después de pagar asesores) ✅
+
+### Beneficios
+
+- ✅ **Lógica correcta**: Team Leader recibe su porcentaje cuando actúa como asesor
+- ✅ **Flexibilidad**: Funciona tanto si es asesor principal o adicional
+- ✅ **Consistencia**: Mantiene la lógica de honorarios netos cuando no es asesor
+- ✅ **Precisión**: Cálculos exactos según los porcentajes asignados
+
+### Archivos Modificados
+
+- `common/utils/calculations.ts`: Función `totalHonorariosTeamLead`
+
+### Testing
+
+- Verificar Team Leader como asesor principal con diferentes porcentajes
+- Verificar Team Leader como asesor adicional con diferentes porcentajes  
+- Confirmar que honorarios netos funcionan cuando Team Leader no es asesor
+- Validar aplicación de descuentos de franquicia y repartición
+
+### Fecha
+$(date +"%Y-%m-%d")
