@@ -40,7 +40,7 @@ const AgentsReportByOps = ({ userId }: { userId: string }) => {
       const fullName = `${member.firstName.toLowerCase()} ${member.lastName.toLowerCase()}`;
       const searchWords = searchQuery.toLowerCase().split(' ');
       return (
-        member.teamLeadID === userId &&
+        (member.teamLeadID === userId || member.id === userId) &&
         searchWords.every((word) => fullName.includes(word))
       );
     }) || [];

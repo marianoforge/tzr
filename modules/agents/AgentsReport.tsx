@@ -177,7 +177,7 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
           }
         );
         return (
-          member.teamLeadID === userId &&
+          (member.teamLeadID === userId || member.id === userId) &&
           searchWords.every((word) => fullName.includes(word)) &&
           operationsInSelectedYear.length > 0
         );
@@ -295,6 +295,11 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                 >
                   <td className="py-3 px-4 font-semibold text-start w-1/5">
                     {member.firstName} {member.lastName}
+                    {member.id === userId && (
+                      <span className="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                        Team Leader
+                      </span>
+                    )}
                   </td>
                   <td className="py-3 px-4">
                     {member.operations.length > 0 ? (
