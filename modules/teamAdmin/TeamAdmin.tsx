@@ -203,6 +203,17 @@ const TeamAdmin = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Seguimiento del Equipo</h1>
 
+      <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
+        <p className="text-gray-700 leading-relaxed">
+          Esta tabla permite realizar un seguimiento detallado de los asesores
+          que tienen cuentas activas en Realtor TrackPro. A través de la
+          vinculación con la cuenta del Team Leader, es posible verificar el
+          registro de operaciones en los perfiles individuales de cada asesor.
+          Cabe destacar que esta conexión es únicamente informativa y no afecta
+          en absoluto los indicadores ni los datos del perfil del Team Leader.
+        </p>
+      </div>
+
       {/* Filtros */}
       <FilterSection
         yearFilter={yearFilter}
