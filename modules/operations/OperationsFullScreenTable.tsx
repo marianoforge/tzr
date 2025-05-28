@@ -7,7 +7,8 @@ import {
   calculateOperationProfit,
   formatProfitabilityPercentage,
 } from '@/common/utils/calculateOperationProfit';
-import { calculateHonorarios } from '@/common/utils/calculations';
+import { calculateAsesorHonorarios } from '@/common/utils/calculations';
+import { formatDate } from '@/common/utils/formatDate';
 
 interface FullScreenModalProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ export const displayValue = (value: string | number | null | undefined) => {
 const safeFormatDate = (dateString: string | null | undefined) => {
   if (!dateString) return 'N/A';
   try {
-    return new Date(dateString).toLocaleDateString();
+    return formatDate(dateString);
   } catch (error) {
     console.error('Error formatting date:', error);
     return dateString || 'N/A';
@@ -213,15 +214,8 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
               <span className="font-semibold">Honorarios Asesor:</span>{' '}
               <span className="font-medium text-green-700">
                 {currencySymbol}
-                {formatOperationsNumber(
-                  calculateHonorarios(
-                    operation.valor_reserva || 0,
-                    operation.porcentaje_honorarios_asesor || 0,
-                    operation.porcentaje_honorarios_broker || 0,
-                    operation.porcentaje_compartido || 0,
-                    operation.porcentaje_referido || 0
-                  ).honorariosAsesor
-                ) || '0'}
+                {formatOperationsNumber(calculateAsesorHonorarios(operation)) ||
+                  '0'}
               </span>
             </p>
             {operation.realizador_venta_adicional && (
@@ -245,13 +239,10 @@ const FullScreenModal: React.FC<FullScreenModalProps> = ({
                   <span className="font-medium text-green-700">
                     {currencySymbol}
                     {formatOperationsNumber(
-                      calculateHonorarios(
-                        operation.valor_reserva || 0,
-                        operation.porcentaje_honorarios_asesor_adicional || 0,
-                        operation.porcentaje_honorarios_broker || 0,
-                        operation.porcentaje_compartido || 0,
-                        operation.porcentaje_referido || 0
-                      ).honorariosAsesor / 2 // Dividimos entre 2 porque se reparte mitad de honorarios entre ambos asesores
+                      calculateAsesorHonorarios(
+                        operation,
+                        operation.porcentaje_honorarios_asesor_adicional || 0
+                      ) / 2 // Dividimos entre 2 porque se reparte mitad de honorarios entre ambos asesores
                     ) || '0'}
                   </span>
                 </p>
