@@ -119,7 +119,7 @@ const FormularioExpenses: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center mt-20">
+    <div className="flex flex-col justify-center items-center mt-4">
       {userRole ? (
         <form
           onSubmit={handleSubmit(onSubmit)}
