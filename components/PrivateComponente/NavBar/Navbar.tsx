@@ -32,6 +32,7 @@ const Navbar = () => {
         label="Form de Gastos de Asesores"
       />
       <NavButton href="/projections" label="Proyecciones" />
+      <NavButton href="/faqs" label="Preguntas Frecuentes" />
     </>
   );
 
