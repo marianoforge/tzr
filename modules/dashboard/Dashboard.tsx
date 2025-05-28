@@ -92,7 +92,7 @@ const DashBoard = () => {
           <ChatHelper />
         </div>
       </div>
-      <div className="grid grid-cols-1 mt-28 sm:mt-20 xl:mt-2 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-10 lg:gap-6 mb-6">
+      <div className="grid grid-cols-1 mt-4 sm:mt-2 xl:mt-2 md:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-10 lg:gap-6 mb-6">
         <div className="md:col-span-1 lg:col-span-1 2xl:col-span-4">
           <Bubbles />
         </div>

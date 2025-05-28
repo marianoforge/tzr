@@ -14,30 +14,31 @@ export const UserActions = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-
-      router.push('/login'); // Redirigir a la página de inicio después del sign out
+      router.push('/login');
     } catch (error) {
       console.error('❌ Error al cerrar sesión:', error);
     }
   };
 
   return (
-    <div className="w-full flex justify-around my-4">
+    <div className="w-full space-y-2">
+      {/* Botón de Configuración */}
       <Link
         href={'/settings'}
-        className="text-white xl:text-mediumBlue font-semibold rounded cursor-pointer transition duration-150 ease-in-out flex justify-center items-center gap-1 w-1/2"
+        className="flex items-center space-x-3 w-full px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200"
       >
-        <Cog6ToothIcon className="h-5 w-5" />
-        Perfil Personal
+        <Cog6ToothIcon className="h-5 w-5 text-gray-600" />
+        <span className="text-sm font-medium text-gray-700">Configuración</span>
       </Link>
-      <Link
-        href="/"
+
+      {/* Botón de Cerrar Sesión */}
+      <button
         onClick={handleSignOut}
-        className="text-white xl:text-redAccent font-semibold rounded cursor-pointer transition duration-150 ease-in-out flex xl:pr-4 justify-center items-center gap-1 w-1/2"
+        className="flex items-center space-x-3 w-full px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 text-left"
       >
-        <ArrowLeftStartOnRectangleIcon className="h-5 w-5" />
-        <p>Sign Out</p>
-      </Link>
+        <ArrowLeftStartOnRectangleIcon className="h-5 w-5 text-gray-600" />
+        <span className="text-sm font-medium text-gray-700">Cerrar Sesión</span>
+      </button>
     </div>
   );
 };

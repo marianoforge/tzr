@@ -22,7 +22,7 @@ const FormularioEvento: React.FC = () => {
     useEventMutation(reset);
 
   return (
-    <div className="flex flex-col justify-center items-center mt-20">
+    <div className="flex flex-col justify-center items-center mt-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white rounded-lg shadow-md w-full xl:w-[80%] 2xl:w-[70%]"
