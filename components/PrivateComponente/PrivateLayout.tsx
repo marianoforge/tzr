@@ -87,6 +87,9 @@ const PrivateLayout: React.FC<PrivateLayoutProps> = ({ children }) => {
       case PATHS.EXPENSES_AGENTS_FORM:
         router.push(PATHS.EXPENSES_AGENTS_FORM);
         break;
+      case PATHS.FAQS:
+        router.push(PATHS.FAQS);
+        break;
     }
   };
 
