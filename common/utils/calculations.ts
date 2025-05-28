@@ -69,89 +69,141 @@ export const totalHonorariosTeamLead = (
   const isTeamLeaderParticipating =
     isTeamLeaderPrimaryAdvisor || isTeamLeaderAdditionalAdvisor;
 
-  // Aplicar descuentos primero (franquicia y repartición)
-  let honorariosAfterDiscounts = honorariosBrutos;
-
-  if (isFranchise) {
-    const franchiseDiscount =
-      (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
-    honorariosAfterDiscounts -= franchiseDiscount;
-  }
-
-  if (isReparticionHonorariosAsesor) {
-    const reparticionDiscount =
-      (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) / 100;
-    honorariosAfterDiscounts -= reparticionDiscount;
-  }
+  // NUEVA LÓGICA SEGÚN LA EXPLICACIÓN:
+  // 1. El asesor recibe su porcentaje del bruto total
+  // 2. El descuento de franquicia/broker se aplica al bruto total
+  // 3. El Team Lead recibe lo que queda después del descuento y del pago al asesor
 
   if (!isTeamLeaderBroker) {
-    // Para usuarios que no son team leaders, mantener lógica original
-    return isFranchise
-      ? ((honorariosBrutos -
-          (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100) *
-          (operation.porcentaje_honorarios_asesor || 0)) /
-          100
-      : operation.honorarios_asesor;
+    // Para usuarios que no son team leaders, calcular honorarios del asesor
+    // El asesor recibe su porcentaje del bruto total (antes del descuento de franquicia)
+    const honorariosAsesor =
+      (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) / 100;
+
+    // Si hay franquicia, aplicar el descuento al resultado del asesor
+    if (isFranchise) {
+      // El asesor recibe su parte después del descuento de franquicia proporcional
+      const honorariosAsesorAfterFranchise =
+        honorariosAsesor -
+        (honorariosAsesor * (operation.isFranchiseOrBroker || 0)) / 100;
+      return honorariosAsesorAfterFranchise;
+    }
+
+    return honorariosAsesor;
   }
 
-  // CASO 1: Sin asesores - Team Leader recibe todo
+  // CASO 1: Sin asesores - Team Leader recibe todo después del descuento de franquicia
   if (!hasUserUid && !hasAdditionalUserUid) {
-    return honorariosAfterDiscounts;
+    let honorariosTeamLead = honorariosBrutos;
+
+    // Aplicar descuento de franquicia
+    if (isFranchise) {
+      const franchiseDiscount =
+        (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
+      honorariosTeamLead -= franchiseDiscount;
+    }
+
+    // Aplicar descuento de repartición de honorarios asesor
+    if (isReparticionHonorariosAsesor) {
+      const reparticionDiscount =
+        (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) /
+        100;
+      honorariosTeamLead -= reparticionDiscount;
+    }
+
+    return honorariosTeamLead;
   }
 
   // CASO 2: Un asesor solamente
   if (hasUserUid && !hasAdditionalUserUid) {
     if (isTeamLeaderPrimaryAdvisor) {
-      // Si el Team Leader es el único asesor, recibe todo
-      return honorariosAfterDiscounts;
+      // Si el Team Leader es el único asesor, recibe todo después del descuento de franquicia
+      let honorariosTeamLead = honorariosBrutos;
+
+      if (isFranchise) {
+        const franchiseDiscount =
+          (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
+        honorariosTeamLead -= franchiseDiscount;
+      }
+
+      if (isReparticionHonorariosAsesor) {
+        const reparticionDiscount =
+          (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) /
+          100;
+        honorariosTeamLead -= reparticionDiscount;
+      }
+
+      return honorariosTeamLead;
     } else {
       // Si hay un asesor diferente al Team Leader
+      // El asesor recibe su porcentaje del bruto total
       const asesorHonorarios =
-        (honorariosAfterDiscounts *
-          (operation.porcentaje_honorarios_asesor || 0)) /
+        (honorariosBrutos * (operation.porcentaje_honorarios_asesor || 0)) /
         100;
-      return honorariosAfterDiscounts - asesorHonorarios;
+
+      // Calcular lo que queda después del descuento de franquicia y del pago al asesor
+      let honorariosTeamLead = honorariosBrutos - asesorHonorarios;
+
+      if (isFranchise) {
+        const franchiseDiscount =
+          (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
+        honorariosTeamLead =
+          honorariosBrutos - franchiseDiscount - asesorHonorarios;
+      }
+
+      if (isReparticionHonorariosAsesor) {
+        const reparticionDiscount =
+          (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) /
+          100;
+        honorariosTeamLead -= reparticionDiscount;
+      }
+
+      return Math.max(0, honorariosTeamLead); // Asegurar que no sea negativo
     }
   }
 
   // CASO 3: Dos asesores
   if (hasUserUid && hasAdditionalUserUid) {
-    // Dividir honorarios después de descuentos en dos mitades
-    const mitad = honorariosAfterDiscounts / 2;
+    // Calcular honorarios de ambos asesores del bruto total (como en el caso de un asesor)
+    const asesor1Porcentaje = operation.porcentaje_honorarios_asesor || 0;
+    const asesor2Porcentaje =
+      operation.porcentaje_honorarios_asesor_adicional || 0;
 
+    const asesor1Honorarios = (honorariosBrutos * asesor1Porcentaje) / 100;
+    const asesor2Honorarios = (honorariosBrutos * asesor2Porcentaje) / 100;
+    const totalHonorariosAsesores = asesor1Honorarios + asesor2Honorarios;
+
+    // Calcular lo que queda para el Team Lead después de pagar a los asesores y aplicar descuentos
+    let honorariosTeamLead = honorariosBrutos - totalHonorariosAsesores;
+
+    // Aplicar descuento de franquicia
+    if (isFranchise) {
+      const franchiseDiscount =
+        (honorariosBrutos * (operation.isFranchiseOrBroker || 0)) / 100;
+      honorariosTeamLead =
+        honorariosBrutos - franchiseDiscount - totalHonorariosAsesores;
+    }
+
+    // Aplicar descuento de repartición de honorarios asesor
+    if (isReparticionHonorariosAsesor) {
+      const reparticionDiscount =
+        (honorariosBrutos * (operation.reparticion_honorarios_asesor || 0)) /
+        100;
+      honorariosTeamLead -= reparticionDiscount;
+    }
+
+    // Si el Team Leader participa como uno de los asesores, recibe su parte de asesor + lo que queda
     if (isTeamLeaderParticipating) {
-      // SUBCASO 3A: Team Leader participa como uno de los asesores
       if (isTeamLeaderPrimaryAdvisor) {
-        // Team Leader es asesor principal
-        // Recibe 100% de una mitad + resto de la otra mitad
-        const asesorAdicionalPorcentaje =
-          operation.porcentaje_honorarios_asesor_adicional || 0;
-        const asesorAdicionalRecibe = (mitad * asesorAdicionalPorcentaje) / 100;
-        const restoMitad2 = mitad - asesorAdicionalRecibe;
-        return mitad + restoMitad2;
+        // Team Leader es asesor principal: recibe su parte de asesor + el resto
+        return asesor1Honorarios + Math.max(0, honorariosTeamLead);
       } else if (isTeamLeaderAdditionalAdvisor) {
-        // Team Leader es asesor adicional
-        // Recibe 100% de una mitad + resto de la otra mitad
-        const asesorPrincipalPorcentaje =
-          operation.porcentaje_honorarios_asesor || 0;
-        const asesorPrincipalRecibe = (mitad * asesorPrincipalPorcentaje) / 100;
-        const restoMitad1 = mitad - asesorPrincipalRecibe;
-        return mitad + restoMitad1;
+        // Team Leader es asesor adicional: recibe su parte de asesor + el resto
+        return asesor2Honorarios + Math.max(0, honorariosTeamLead);
       }
     } else {
-      // SUBCASO 3B: Team Leader NO participa como asesor
-      // Recibe el resto de ambas mitades
-      const asesor1Porcentaje = operation.porcentaje_honorarios_asesor || 0;
-      const asesor2Porcentaje =
-        operation.porcentaje_honorarios_asesor_adicional || 0;
-
-      const asesor1Recibe = (mitad * asesor1Porcentaje) / 100;
-      const asesor2Recibe = (mitad * asesor2Porcentaje) / 100;
-
-      const restoMitad1 = mitad - asesor1Recibe;
-      const restoMitad2 = mitad - asesor2Recibe;
-
-      return restoMitad1 + restoMitad2;
+      // Team Leader NO participa como asesor: recibe solo lo que queda
+      return Math.max(0, honorariosTeamLead);
     }
   }
 
@@ -239,6 +291,39 @@ export const calculateHonorarios = (
     (honorariosBroker * porcentaje_honorarios_asesor) / 100;
 
   return { honorariosBroker, honorariosAsesor };
+};
+
+// Nueva función para calcular honorarios de asesor considerando franquicia
+export const calculateAsesorHonorarios = (
+  operation: Operation,
+  porcentajeAsesor?: number
+) => {
+  // Usar el porcentaje del asesor pasado como parámetro o el de la operación
+  const porcentajeHonorariosAsesor =
+    porcentajeAsesor || operation.porcentaje_honorarios_asesor || 0;
+
+  // Calcular honorarios brutos
+  const honorariosBrutos = calculateHonorarios(
+    operation.valor_reserva || 0,
+    porcentajeHonorariosAsesor,
+    operation.porcentaje_honorarios_broker || 0,
+    operation.porcentaje_compartido || 0,
+    operation.porcentaje_referido || 0
+  ).honorariosBroker;
+
+  // Calcular honorarios del asesor del bruto total
+  const honorariosAsesor =
+    (honorariosBrutos * porcentajeHonorariosAsesor) / 100;
+
+  // Si hay franquicia, el asesor también recibe su parte después del descuento de franquicia proporcional
+  if (operation.isFranchiseOrBroker) {
+    const honorariosAsesorAfterFranchise =
+      honorariosAsesor -
+      (honorariosAsesor * (operation.isFranchiseOrBroker || 0)) / 100;
+    return honorariosAsesorAfterFranchise;
+  }
+
+  return honorariosAsesor;
 };
 
 // Calculos de totales para operaciones
