@@ -224,9 +224,11 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
         : data.realizador_venta;
 
     // Find the additional advisor by name to get the uid
-    const selectedUserAdicional = usersMapped.find(
-      (user) => user.name === data.realizador_venta_adicional
-    );
+    const selectedUserAdicional = showAdditionalAdvisor
+      ? usersMapped.find(
+          (user) => user.name === data.realizador_venta_adicional
+        )
+      : null;
     const selectedUser_idAdicional = selectedUserAdicional
       ? selectedUserAdicional.uid
       : null;
@@ -275,10 +277,13 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
       fecha_captacion: fechaCaptacion,
       porcentaje_honorarios_broker: porcentajeHonorariosBroker,
       realizador_venta: realizador_venta || '',
-      realizador_venta_adicional: data.realizador_venta_adicional || null,
+      realizador_venta_adicional: showAdditionalAdvisor
+        ? data.realizador_venta_adicional || null
+        : null,
       porcentaje_honorarios_asesor: data.porcentaje_honorarios_asesor ?? 0,
-      porcentaje_honorarios_asesor_adicional:
-        data.porcentaje_honorarios_asesor_adicional ?? null,
+      porcentaje_honorarios_asesor_adicional: showAdditionalAdvisor
+        ? (data.porcentaje_honorarios_asesor_adicional ?? null)
+        : null,
     };
 
     mutation.mutate({ id: operation.id, data: payload });
@@ -287,7 +292,15 @@ const OperationsModal: React.FC<OperationsModalProps> = ({
   const [showAdditionalAdvisor, setShowAdditionalAdvisor] = useState(false);
 
   const toggleAdditionalAdvisor = () => {
-    setShowAdditionalAdvisor((prev) => !prev);
+    setShowAdditionalAdvisor((prev) => {
+      const newValue = !prev;
+      // Si se está ocultando el asesor adicional (newValue = false), limpiar los campos
+      if (!newValue) {
+        setValue('realizador_venta_adicional', '');
+        setValue('porcentaje_honorarios_asesor_adicional', 0);
+      }
+      return newValue;
+    });
   };
 
   // Skeleton loader component for inputs
