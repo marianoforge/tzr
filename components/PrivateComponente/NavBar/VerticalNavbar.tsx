@@ -11,6 +11,7 @@ import {
   UsersIcon,
   VideoCameraIcon,
   Cog8ToothIcon,
+  QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
@@ -64,6 +65,13 @@ const VerticalNavbar = () => {
         target="_blank"
         icon={<VideoCameraIcon className="w-5 h-5 mr-2 text-lightBlue" />}
         label="Tutoriales"
+      />
+      <NavLink
+        href="/faqs"
+        icon={
+          <QuestionMarkCircleIcon className="w-5 h-5 mr-2 text-orange-500" />
+        }
+        label="Preguntas Frecuentes"
       />
       <div className="text-lg flex flex-col pt-4 pl-4 pb-2">
         <p>Informes</p>
