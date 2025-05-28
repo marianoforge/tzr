@@ -176,7 +176,7 @@ const ExpensesList = () => {
     return <p>Error: {expensesError.message || 'An unknown error occurred'}</p>;
   }
   return (
-    <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
+    <div className="bg-white p-4 mt-4 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
       <div className="overflow-x-auto flex flex-col justify-around">
         <div className="flex md:flex-col lg:flex-row justify-center items-center mt-2  text-mediumBlue w-full">

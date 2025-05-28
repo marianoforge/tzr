@@ -30,6 +30,12 @@ import OperationsTableBody from './OperationsTableBody';
 import OperationsTableHeader from './OperationsTableHeader';
 import OperationsModal from './OperationsModal';
 import OperationsFullScreenTable from './OperationsFullScreenTable';
+import OperationsMobileView from './OperationsMobileView';
+import OperationsTabletView from './OperationsTabletView';
+import OperationsMobileFilters from './OperationsMobileFilters';
+import OperationsModernGridView from './OperationsModernGridView';
+import OperationsModernTableView from './OperationsModernTableView';
+import OperationsViewSelector, { ViewType } from './OperationsViewSelector';
 
 const OperationsTableTent: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -60,6 +66,7 @@ const OperationsTableTent: React.FC = () => {
     brutos: 0,
     netos: 0,
   });
+  const [desktopView, setDesktopView] = useState<ViewType>('original');
 
   const { userID } = useAuthStore();
   const queryClient = useQueryClient();
@@ -323,25 +330,70 @@ const OperationsTableTent: React.FC = () => {
   }, [calculatedHonorarios]);
 
   const totalPages = useMemo(() => {
-    return Math.ceil(
-      (filteredOperations(
-        transformedOperations,
-        statusFilter,
-        yearFilter,
-        monthFilter
-      )?.length || 0) / itemsPerPage
+    // Usar exactamente la misma lógica de filtrado que currentOperations
+    const filteredOps = filteredOperations(
+      transformedOperations,
+      statusFilter,
+      yearFilter,
+      monthFilter
     );
+
+    const typeFilteredOps =
+      operationTypeFilter === 'all'
+        ? filteredOps
+        : filteredOps?.filter(
+            (op) => op.tipo_operacion === operationTypeFilter
+          );
+
+    const searchedOps = filterOperationsBySearch(
+      typeFilteredOps || [],
+      searchQuery
+    );
+
+    const allOps = searchedOps.filter((op) => {
+      if (statusFilter === OperationStatus.CAIDA) {
+        return op.estado === OperationStatus.CAIDA;
+      } else if (statusFilter === 'all') {
+        // Si el filtro es 'all', excluir operaciones CAIDA
+        return op.estado !== OperationStatus.CAIDA;
+      } else {
+        // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
+        return op.estado === statusFilter;
+      }
+    });
+
+    return Math.ceil((allOps.length || 0) / itemsPerPage);
   }, [
     transformedOperations,
     statusFilter,
     yearFilter,
     monthFilter,
+    operationTypeFilter,
+    searchQuery,
     itemsPerPage,
   ]);
 
-  const handlePageChange = useCallback((newPage: number) => {
-    setCurrentPage(newPage);
-  }, []);
+  // Resetear página cuando cambien los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, yearFilter, monthFilter, operationTypeFilter, searchQuery]);
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      // Validar que la página esté en el rango válido
+      if (newPage >= 1 && newPage <= totalPages) {
+        setCurrentPage(newPage);
+      }
+    },
+    [totalPages]
+  );
+
+  // Validar y ajustar página actual si está fuera del rango
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
   const handleEstadoChange = useCallback(
     (id: string, currentEstado: string) => {
@@ -460,63 +512,167 @@ const OperationsTableTent: React.FC = () => {
         Lista de Operaciones - Alquileres
       </h2>
       <div className="overflow-x-auto flex flex-col justify-around">
-        <OperationsTableFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          yearFilter={yearFilter}
-          setYearFilter={(year: string) => setYearFilter(year)}
-          monthFilter={monthFilter}
-          setMonthFilter={setMonthFilter}
-          operationTypeFilter={operationTypeFilter}
-          setOperationTypeFilter={setOperationTypeFilter}
-          statusOptions={statusOptions}
-          yearsFilter={yearsFilter}
-          monthsFilter={monthsFilter}
-          operationVentasTypeFilter={operationVentasTypeFilterRent}
-        />
-        <table className="w-full text-left border-collapse">
-          <OperationsTableHeader
-            isReservaDateAscending={isReservaDateAscending}
-            isClosingDateAscending={isClosingDateAscending}
-            isValueAscending={isValueAscending}
-            toggleReservaDateSortOrder={toggleReservaDateSortOrder}
-            toggleClosingDateSortOrder={toggleClosingDateSortOrder}
-            toggleValueSortOrder={toggleValueSortOrder}
+        {/* Filtros originales solo para desktop */}
+        <div className="hidden lg:block">
+          <OperationsTableFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            yearFilter={yearFilter}
+            setYearFilter={(year: string) => setYearFilter(year)}
+            monthFilter={monthFilter}
+            setMonthFilter={setMonthFilter}
+            operationTypeFilter={operationTypeFilter}
+            setOperationTypeFilter={setOperationTypeFilter}
+            statusOptions={statusOptions}
+            yearsFilter={yearsFilter}
+            monthsFilter={monthsFilter}
+            operationVentasTypeFilter={operationVentasTypeFilterRent}
           />
-          <OperationsTableBody
-            currentOperations={currentOperations}
-            userData={userData as UserData}
-            handleEstadoChange={handleEstadoChange}
-            handleEditClick={handleEditClick}
-            handleDeleteButtonClick={handleDeleteButtonClick}
-            handleViewClick={handleViewClick}
-            filteredTotals={filteredTotals}
-            currencySymbol={currencySymbol}
-            totalNetFees={filteredHonorarios.netos}
-            totalHonorariosBrutos={filteredHonorarios.brutos}
-          />
-        </table>
-        <div className="flex justify-center mt-4 mb-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
-          >
-            Anterior
-          </button>
-          <span className="px-4 py-2 mx-1">
-            Página {currentPage} de {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink"
-          >
-            Siguiente
-          </button>
         </div>
+
+        {/* Vista móvil para pantallas pequeñas */}
+        <div className="block md:hidden">
+          <OperationsMobileFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            yearFilter={yearFilter}
+            setYearFilter={(year: string) => setYearFilter(year)}
+            monthFilter={monthFilter}
+            setMonthFilter={setMonthFilter}
+            operationTypeFilter={operationTypeFilter}
+            setOperationTypeFilter={setOperationTypeFilter}
+            statusOptions={statusOptions}
+            yearsFilter={yearsFilter}
+            monthsFilter={monthsFilter}
+            operationVentasTypeFilter={operationVentasTypeFilterRent}
+          />
+          <OperationsMobileView
+            operations={currentOperations}
+            userData={userData as UserData}
+            currencySymbol={currencySymbol}
+            onEditClick={handleEditClick}
+            onDeleteClick={handleDeleteButtonClick}
+            onViewClick={handleViewClick}
+            onStatusChange={handleEstadoChange}
+          />
+        </div>
+
+        {/* Vista tablet para pantallas medianas */}
+        <div className="hidden md:block lg:hidden">
+          <OperationsTabletView
+            operations={currentOperations}
+            userData={userData as UserData}
+            currencySymbol={currencySymbol}
+            onEditClick={handleEditClick}
+            onDeleteClick={handleDeleteButtonClick}
+            onViewClick={handleViewClick}
+            onStatusChange={handleEstadoChange}
+          />
+        </div>
+
+        {/* Vista de tabla para pantallas grandes */}
+        <div className="hidden lg:block">
+          <OperationsViewSelector
+            currentView={desktopView}
+            onViewChange={setDesktopView}
+          />
+
+          {desktopView === 'grid' && (
+            <OperationsModernGridView
+              operations={currentOperations}
+              userData={userData as UserData}
+              currencySymbol={currencySymbol}
+              onEditClick={handleEditClick}
+              onDeleteClick={handleDeleteButtonClick}
+              onViewClick={handleViewClick}
+              onStatusChange={handleEstadoChange}
+            />
+          )}
+
+          {desktopView === 'table' && (
+            <OperationsModernTableView
+              operations={currentOperations}
+              userData={userData as UserData}
+              currencySymbol={currencySymbol}
+              onEditClick={handleEditClick}
+              onDeleteClick={handleDeleteButtonClick}
+              onViewClick={handleViewClick}
+              onStatusChange={handleEstadoChange}
+              isReservaDateAscending={isReservaDateAscending}
+              isClosingDateAscending={isClosingDateAscending}
+              isValueAscending={isValueAscending}
+              toggleReservaDateSortOrder={toggleReservaDateSortOrder}
+              toggleClosingDateSortOrder={toggleClosingDateSortOrder}
+              toggleValueSortOrder={toggleValueSortOrder}
+              filteredTotals={filteredTotals}
+              totalNetFees={filteredHonorarios.netos}
+            />
+          )}
+
+          {desktopView === 'original' && (
+            <table className="w-full text-left border-collapse">
+              <OperationsTableHeader
+                isReservaDateAscending={isReservaDateAscending}
+                isClosingDateAscending={isClosingDateAscending}
+                isValueAscending={isValueAscending}
+                toggleReservaDateSortOrder={toggleReservaDateSortOrder}
+                toggleClosingDateSortOrder={toggleClosingDateSortOrder}
+                toggleValueSortOrder={toggleValueSortOrder}
+              />
+              <OperationsTableBody
+                currentOperations={currentOperations}
+                userData={userData as UserData}
+                handleEstadoChange={handleEstadoChange}
+                handleEditClick={handleEditClick}
+                handleDeleteButtonClick={handleDeleteButtonClick}
+                handleViewClick={handleViewClick}
+                filteredTotals={filteredTotals}
+                currencySymbol={currencySymbol}
+                totalNetFees={filteredHonorarios.netos}
+                totalHonorariosBrutos={filteredHonorarios.brutos}
+              />
+            </table>
+          )}
+        </div>
+        {/* Paginación mejorada */}
+        {totalPages > 0 ? (
+          <div className="flex flex-col sm:flex-row justify-center items-center mt-4 mb-4 space-y-2 sm:space-y-0">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink transition-opacity duration-200"
+            >
+              Anterior
+            </button>
+            <span className="px-4 py-2 mx-1 text-sm text-gray-600">
+              Página {currentPage} de {totalPages}
+              {currentOperations.length > 0 && (
+                <span className="text-xs text-gray-500 ml-2">
+                  ({currentOperations.length} resultados)
+                </span>
+              )}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 mx-1 bg-mediumBlue rounded disabled:opacity-50 text-lightPink transition-opacity duration-200"
+            >
+              Siguiente
+            </button>
+          </div>
+        ) : (
+          currentOperations.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-sm">
+                No se encontraron operaciones con los filtros aplicados.
+              </p>
+            </div>
+          )
+        )}
         {isEditModalOpen && (
           <OperationsModal
             isOpen={isEditModalOpen}

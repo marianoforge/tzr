@@ -13,7 +13,7 @@ const ProjectionsMain = () => {
     <div className="max-w-[1800px] mx-auto">
       <div
         className="bg-white p-4 gap-4 rounded-xl shadow-md flex flex-col justify-center items-center 
-      w-full text-center text-sm text-mediumBlue mt-20 mb-10 px-10"
+      w-full text-center text-sm text-mediumBlue mt-4 mb-10 px-10"
       >
         Esta sección tiene el objetivo de ayudar al asesor inmobiliario a
         proyectar sus ventas y actividades para el año. De acuerdo a los datos

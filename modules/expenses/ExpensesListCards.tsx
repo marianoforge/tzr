@@ -129,7 +129,7 @@ const ExpensesListCards: React.FC = () => {
   if (isLoading) return <SkeletonLoader height={64} count={11} />;
 
   return (
-    <div className="bg-white p-4 mt-28 lg:mt-20 rounded-xl shadow-md pb-10">
+    <div className="bg-white p-4 mt-4 lg:mt-4 rounded-xl shadow-md pb-10">
       <h2 className="text-2xl font-bold text-center">{pageTitle}</h2>
       <div className="flex justify-center  flex-col items-center">
         <input
