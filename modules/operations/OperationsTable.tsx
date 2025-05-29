@@ -64,22 +64,13 @@ const OperationsTable: React.FC = () => {
     boolean | null
   >(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [filteredHonorarios, setFilteredHonorarios] = useState({
-    brutos: 0,
-    netos: 0,
-  });
   const [desktopView, setDesktopView] = useState<ViewType>('original');
 
   const router = useRouter();
   const { userData } = useUserDataStore();
   const { currencySymbol } = useUserCurrencySymbol(userUID || '');
-  const {
-    setOperations,
-    setUserData,
-    setUserRole,
-    calculateResults,
-    calculateResultsByFilters,
-  } = useCalculationsStore();
+  const { setOperations, setUserData, setUserRole, calculateResults } =
+    useCalculationsStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -122,13 +113,6 @@ const OperationsTable: React.FC = () => {
 
         // Calculamos los resultados generales
         calculateResults();
-
-        // Calculamos los resultados filtrados para la tabla actual
-        const filtered = calculateResultsByFilters(yearFilter, statusFilter);
-        setFilteredHonorarios({
-          brutos: filtered.honorariosBrutos,
-          netos: filtered.honorariosNetos,
-        });
       }
     };
 
@@ -139,26 +123,11 @@ const OperationsTable: React.FC = () => {
     transformedOperations,
     userData,
     operationsLoaded,
-    yearFilter,
-    statusFilter,
     setOperations,
     setUserData,
     setUserRole,
     calculateResults,
-    calculateResultsByFilters,
   ]);
-
-  const filterOperations = (operations: Operation[]) => {
-    if (statusFilter === OperationStatus.CAIDA) {
-      return operations.filter((op) => op.estado === OperationStatus.CAIDA);
-    } else if (statusFilter === 'all') {
-      // Si el filtro es 'all', excluir operaciones CAIDA
-      return operations.filter((op) => op.estado !== OperationStatus.CAIDA);
-    } else {
-      // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
-      return operations.filter((op) => op.estado === statusFilter);
-    }
-  };
 
   const sortOperations = (operations: Operation[]) => {
     // Make a copy of the operations array to avoid modifying the original
@@ -225,107 +194,104 @@ const OperationsTable: React.FC = () => {
     return sortedOps;
   };
 
-  const { currentOperations, filteredTotals, calculatedHonorarios } =
-    useMemo(() => {
-      const filteredOps = filteredOperations(
-        transformedOperations,
-        statusFilter,
-        yearFilter,
-        monthFilter
-      );
-
-      const typeFilteredOps =
-        operationTypeFilter === 'all'
-          ? filteredOps
-          : filteredOps?.filter(
-              (op) => op.tipo_operacion === operationTypeFilter
-            );
-
-      const searchedOps = filterOperationsBySearch(
-        typeFilteredOps || [],
-        searchQuery
-      );
-
-      const nonFallenOps = filterOperations(searchedOps);
-      const sortedOps = sortOperations(nonFallenOps);
-
-      const totals = calculateTotals(sortedOps);
-
-      // Calcular las puntas correctamente considerando el filtro actual
-      const puntaCompradora = sortedOps.reduce((sum, operation) => {
-        return sum + (operation.punta_compradora ? 1 : 0);
-      }, 0);
-
-      const puntaVendedora = sortedOps.reduce((sum, operation) => {
-        return sum + (operation.punta_vendedora ? 1 : 0);
-      }, 0);
-
-      const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
-
-      // Sobrescribir los valores de puntas en totals con los calculados correctamente
-      const correctedTotals = {
-        ...totals,
-        punta_compradora: puntaCompradora,
-        punta_vendedora: puntaVendedora,
-        suma_total_de_puntas: sumaTotalDePuntas,
-      };
-
-      // Calcular los honorarios brutos correctamente
-      // Utilizamos la función calculateHonorarios de @/common/utils/calculations para cada operación
-      const honorariosBrutos = sortedOps.reduce((total, op) => {
-        const resultado = calculateHonorarios(
-          op.valor_reserva,
-          op.porcentaje_honorarios_asesor || 0,
-          op.porcentaje_honorarios_broker || 0,
-          op.porcentaje_compartido || 0
-        );
-
-        return total + resultado.honorariosBroker;
-      }, 0);
-
-      let honorariosNetos = 0;
-
-      // Verificar que userData existe antes de calcular
-      if (userData) {
-        honorariosNetos = sortedOps.reduce(
-          (total, op) => total + calculateNetFees(op, userData as UserData),
-          0
-        );
-      }
-
-      const indexOfLastItem = currentPage * itemsPerPage;
-      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-      const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
-
-      return {
-        currentOperations: currentOps,
-        filteredTotals: correctedTotals,
-        calculatedHonorarios: {
-          brutos: honorariosBrutos,
-          netos: honorariosNetos,
-        },
-      };
-    }, [
+  const {
+    currentOperations,
+    allFilteredOperations,
+    filteredTotals,
+    calculatedHonorarios,
+  } = useMemo(() => {
+    const filteredOps = filteredOperations(
       transformedOperations,
       statusFilter,
       yearFilter,
-      monthFilter,
-      operationTypeFilter,
-      currentPage,
-      itemsPerPage,
-      searchQuery,
-      isValueAscending,
-      isReservaDateAscending,
-      isClosingDateAscending,
-      userData,
-    ]);
+      monthFilter
+    );
 
-  // Actualizar el estado fuera del useMemo en un useEffect
-  useEffect(() => {
-    if (calculatedHonorarios) {
-      setFilteredHonorarios(calculatedHonorarios);
+    const typeFilteredOps =
+      operationTypeFilter === 'all'
+        ? filteredOps
+        : filteredOps?.filter(
+            (op) => op.tipo_operacion === operationTypeFilter
+          );
+
+    const searchedOps = filterOperationsBySearch(
+      typeFilteredOps || [],
+      searchQuery
+    );
+
+    const sortedOps = sortOperations(searchedOps);
+
+    const totals = calculateTotals(sortedOps);
+
+    // Calcular las puntas correctamente considerando el filtro actual
+    const puntaCompradora = sortedOps.reduce((sum, operation) => {
+      return sum + (operation.punta_compradora ? 1 : 0);
+    }, 0);
+
+    const puntaVendedora = sortedOps.reduce((sum, operation) => {
+      return sum + (operation.punta_vendedora ? 1 : 0);
+    }, 0);
+
+    const sumaTotalDePuntas = puntaCompradora + puntaVendedora;
+
+    // Sobrescribir los valores de puntas en totals con los calculados correctamente
+    const correctedTotals = {
+      ...totals,
+      punta_compradora: puntaCompradora,
+      punta_vendedora: puntaVendedora,
+      suma_total_de_puntas: sumaTotalDePuntas,
+    };
+
+    // Calcular los honorarios brutos correctamente
+    // Utilizamos la función calculateHonorarios de @/common/utils/calculations para cada operación
+    const honorariosBrutos = sortedOps.reduce((total, op) => {
+      const resultado = calculateHonorarios(
+        op.valor_reserva,
+        op.porcentaje_honorarios_asesor || 0,
+        op.porcentaje_honorarios_broker || 0,
+        op.porcentaje_compartido || 0
+      );
+
+      return total + resultado.honorariosBroker;
+    }, 0);
+
+    let honorariosNetos = 0;
+
+    // Verificar que userData existe antes de calcular
+    if (userData) {
+      honorariosNetos = sortedOps.reduce(
+        (total, op) => total + calculateNetFees(op, userData as UserData),
+        0
+      );
     }
-  }, [calculatedHonorarios]);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentOps = sortedOps.slice(indexOfFirstItem, indexOfLastItem);
+
+    return {
+      currentOperations: currentOps,
+      allFilteredOperations: sortedOps,
+      filteredTotals: correctedTotals,
+      calculatedHonorarios: {
+        brutos: honorariosBrutos,
+        netos: honorariosNetos,
+      },
+    };
+  }, [
+    transformedOperations,
+    statusFilter,
+    yearFilter,
+    monthFilter,
+    operationTypeFilter,
+    currentPage,
+    itemsPerPage,
+    searchQuery,
+    isValueAscending,
+    isReservaDateAscending,
+    isClosingDateAscending,
+    userData,
+  ]);
 
   const totalPages = useMemo(() => {
     // Usar exactamente la misma lógica de filtrado que currentOperations
@@ -348,9 +314,7 @@ const OperationsTable: React.FC = () => {
       searchQuery
     );
 
-    const nonFallenOps = filterOperations(searchedOps);
-
-    return Math.ceil((nonFallenOps.length || 0) / itemsPerPage);
+    return Math.ceil((searchedOps.length || 0) / itemsPerPage);
   }, [
     transformedOperations,
     statusFilter,
@@ -586,7 +550,7 @@ const OperationsTable: React.FC = () => {
               toggleClosingDateSortOrder={toggleClosingDateSortOrder}
               toggleValueSortOrder={toggleValueSortOrder}
               filteredTotals={filteredTotals}
-              totalNetFees={filteredHonorarios.netos}
+              totalNetFees={calculatedHonorarios.netos}
             />
           )}
 
@@ -602,6 +566,7 @@ const OperationsTable: React.FC = () => {
               />
               <OperationsTableBody
                 currentOperations={currentOperations}
+                allFilteredOperations={allFilteredOperations}
                 userData={userData as UserData}
                 handleEstadoChange={handleEstadoChange}
                 handleEditClick={handleEditClick}
@@ -609,8 +574,7 @@ const OperationsTable: React.FC = () => {
                 handleViewClick={handleViewClick}
                 filteredTotals={filteredTotals}
                 currencySymbol={currencySymbol}
-                totalNetFees={filteredHonorarios.netos}
-                totalHonorariosBrutos={filteredHonorarios.brutos}
+                totalNetFees={calculatedHonorarios.netos}
               />
             </table>
           )}
