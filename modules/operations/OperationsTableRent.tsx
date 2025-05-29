@@ -479,9 +479,54 @@ const OperationsTableTent: React.FC = () => {
   if (isLoading) {
     return (
       <div className="bg-white p-4 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          Lista de Operaciones - Alquileres
-        </h2>
+        {/* Header profesional y moderno - ALQUILERES */}
+        <div className="mb-6 border-l-4 border-emerald-500 pl-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center shadow-lg">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Operaciones de Alquiler
+                  </h1>
+                  <p className="text-sm text-emerald-600 font-medium">
+                    Gestión de propiedades
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200 shadow-sm">
+                <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-sm"></div>
+                <span className="text-sm font-semibold text-emerald-700">
+                  Alquileres
+                </span>
+              </div>
+              <div className="text-sm text-gray-400">
+                {new Date().toLocaleDateString('es-ES', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
         <p className="text-center">Cargando datos...</p>
       </div>
     );
@@ -490,9 +535,54 @@ const OperationsTableTent: React.FC = () => {
   if (operationsError) {
     return (
       <div className="bg-white p-4 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          Lista de Operaciones - Alquileres
-        </h2>
+        {/* Header profesional y moderno - ALQUILERES */}
+        <div className="mb-6 border-l-4 border-emerald-500 pl-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center shadow-lg">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Operaciones de Alquiler
+                  </h1>
+                  <p className="text-sm text-emerald-600 font-medium">
+                    Gestión de propiedades
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200 shadow-sm">
+                <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-sm"></div>
+                <span className="text-sm font-semibold text-emerald-700">
+                  Alquileres
+                </span>
+              </div>
+              <div className="text-sm text-gray-400">
+                {new Date().toLocaleDateString('es-ES', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
         <p className="text-center text-red-500">
           Error: {operationsError.message || 'An unknown error occurred'}
         </p>
@@ -502,10 +592,61 @@ const OperationsTableTent: React.FC = () => {
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        Lista de Operaciones - Alquileres
-      </h2>
+      {/* Header profesional y moderno - ALQUILERES */}
+      <div className="mb-6 border-l-4 border-emerald-500 pl-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center shadow-lg">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Alquileres</h1>
+                <p className="text-sm text-emerald-600 font-medium">
+                  Gestión de propiedades
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200 shadow-sm">
+              <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-sm"></div>
+              <span className="text-sm font-semibold text-emerald-700">
+                Alquileres
+              </span>
+            </div>
+            <div className="text-sm text-gray-400">
+              {new Date().toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="overflow-x-auto flex flex-col justify-around">
+        {/* Selector de vista para desktop */}
+        <div className="hidden lg:block mb-4">
+          <OperationsViewSelector
+            currentView={desktopView}
+            onViewChange={setDesktopView}
+          />
+        </div>
+
         {/* Filtros originales solo para desktop */}
         <div className="hidden lg:block">
           <OperationsTableFilters
@@ -570,11 +711,6 @@ const OperationsTableTent: React.FC = () => {
 
         {/* Vista de tabla para pantallas grandes */}
         <div className="hidden lg:block">
-          <OperationsViewSelector
-            currentView={desktopView}
-            onViewChange={setDesktopView}
-          />
-
           {desktopView === 'grid' && (
             <OperationsModernGridView
               operations={currentOperations}
