@@ -15,13 +15,34 @@ interface CachedNews {
   nextUpdate: string;
 }
 
-const CACHE_DIR = path.join(process.cwd(), 'cache');
+// Detectar si estamos en un entorno serverless
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NETLIFY;
+
+// Usar /tmp en serverless, cache/ en desarrollo
+const CACHE_DIR = isServerless 
+  ? '/tmp/cache' 
+  : path.join(process.cwd(), 'cache');
+
 const NEWS_CACHE_FILE = path.join(CACHE_DIR, 'market-news.json');
+
+// Cache en memoria como fallback para entornos serverless
+let inMemoryCache: CachedNews | null = null;
+let lastMemoryCacheTime = 0;
+const MEMORY_CACHE_TTL = 3 * 60 * 60 * 1000; // 3 horas en millisegundos
 
 // Asegurar que el directorio cache existe
 function ensureCacheDir() {
-  if (!fs.existsSync(CACHE_DIR)) {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(CACHE_DIR)) {
+      fs.mkdirSync(CACHE_DIR, { recursive: true });
+      console.log(`Cache directory created: ${CACHE_DIR}`);
+    }
+  } catch (error) {
+    console.error('Error creating cache directory:', error);
+    // En caso de error, intentar con /tmp directamente
+    if (!isServerless) {
+      throw error;
+    }
   }
 }
 
@@ -56,27 +77,67 @@ function getNextUpdateTime(): Date {
   return nextUpdate;
 }
 
-// Leer noticias del caché
-export function getCachedNews(region: string = 'Argentina'): CachedNews | null {
-  ensureCacheDir();
+// Función para obtener desde caché en memoria
+function getMemoryCache(region: string): CachedNews | null {
+  if (!inMemoryCache) return null;
 
-  try {
-    if (!fs.existsSync(NEWS_CACHE_FILE)) {
-      return null;
-    }
-
-    const cacheData = JSON.parse(fs.readFileSync(NEWS_CACHE_FILE, 'utf8'));
-
-    // Verificar si es para la misma región
-    if (cacheData.region !== region) {
-      return null;
-    }
-
-    return cacheData;
-  } catch (error) {
-    console.error('Error reading news cache:', error);
+  const now = Date.now();
+  if (now - lastMemoryCacheTime > MEMORY_CACHE_TTL) {
+    console.log('Memory cache expired');
+    inMemoryCache = null;
     return null;
   }
+
+  if (inMemoryCache.region !== region) {
+    console.log(
+      `Memory cache region mismatch: ${inMemoryCache.region} !== ${region}`
+    );
+    return null;
+  }
+
+  console.log('Memory cache hit');
+  return inMemoryCache;
+}
+
+// Función para guardar en caché en memoria
+function setMemoryCache(news: NewsItem[], region: string): void {
+  inMemoryCache = {
+    news,
+    region,
+    lastUpdated: new Date().toISOString(),
+    nextUpdate: getNextUpdateTime().toISOString(),
+  };
+  lastMemoryCacheTime = Date.now();
+  console.log(`Memory cache updated for ${region}`);
+}
+
+// Leer noticias del caché
+export function getCachedNews(region: string = 'Argentina'): CachedNews | null {
+  // Intentar primero desde filesystem
+  try {
+    ensureCacheDir();
+
+    if (fs.existsSync(NEWS_CACHE_FILE)) {
+      const cacheData = JSON.parse(fs.readFileSync(NEWS_CACHE_FILE, 'utf8'));
+
+      if (cacheData.region === region) {
+        console.log(`Filesystem cache hit for region: ${region}`);
+        return cacheData;
+      } else {
+        console.log(
+          `Filesystem cache region mismatch: ${cacheData.region} !== ${region}`
+        );
+      }
+    } else {
+      console.log(`Cache file not found: ${NEWS_CACHE_FILE}`);
+    }
+  } catch (error) {
+    console.error('Error reading filesystem cache:', error);
+  }
+
+  // Fallback a caché en memoria
+  console.log('Falling back to memory cache');
+  return getMemoryCache(region);
 }
 
 // Verificar si el caché necesita actualización
@@ -98,20 +159,29 @@ export function setCachedNews(
   news: NewsItem[],
   region: string = 'Argentina'
 ): void {
-  ensureCacheDir();
+  // Siempre guardar en memoria cache como backup
+  setMemoryCache(news, region);
 
-  const cacheData: CachedNews = {
-    news,
-    region,
-    lastUpdated: new Date().toISOString(),
-    nextUpdate: getNextUpdateTime().toISOString(),
-  };
-
+  // Intentar guardar en filesystem
   try {
+    ensureCacheDir();
+
+    const cacheData: CachedNews = {
+      news,
+      region,
+      lastUpdated: new Date().toISOString(),
+      nextUpdate: getNextUpdateTime().toISOString(),
+    };
+
     fs.writeFileSync(NEWS_CACHE_FILE, JSON.stringify(cacheData, null, 2));
-    console.log(`News cache updated for ${region} at ${cacheData.lastUpdated}`);
+    console.log(
+      `Filesystem cache updated for ${region} at ${cacheData.lastUpdated} in ${CACHE_DIR}`
+    );
   } catch (error) {
-    console.error('Error writing news cache:', error);
+    console.error('Error writing filesystem cache:', error);
+    console.error('Cache directory:', CACHE_DIR);
+    console.error('Is serverless:', isServerless);
+    console.log('Using memory cache as fallback');
   }
 }
 

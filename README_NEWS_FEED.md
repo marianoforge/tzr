@@ -87,6 +87,13 @@ CRON_SECRET=cron-secret-key-change-this-in-production
 - **Automatizado**: `POST /api/cron` (requiere Authorization header)
 - **Configuración**: Usar servicios como Vercel Cron, crontab, etc.
 
+### 💾 Sistema de Caché Híbrido
+- **Desarrollo**: Caché en filesystem (`cache/` directorio)
+- **Producción/Serverless**: Caché en memoria + filesystem `/tmp`
+- **Fallback**: Si falla filesystem, usa caché en memoria
+- **TTL**: 3 horas para caché en memoria
+- **Persistencia**: Solo durante la sesión de la función serverless
+
 ### 🛡️ Protección de Costos
 - ❌ No hay botón de refresh para usuarios
 - ✅ Solo actualiza en horarios programados
