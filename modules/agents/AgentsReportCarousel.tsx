@@ -12,6 +12,8 @@ import {
   calculateTotalOperations,
   calculateTotalTips,
   calculateTotalReservationValue,
+  calculateAverageOperationValue,
+  calculateAverageDaysToSell,
 } from '@/common/utils/calculationsAgents';
 import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 import { currentYearOperations } from '@/common/utils/currentYearOps';
@@ -256,6 +258,28 @@ const AgentsReportCarousel = ({ userId }: { userId: string }) => {
                         Number(selectedYear)
                       )
                     )}
+                  </p>
+                  <p>
+                    <strong>Promedio Valor Operación:</strong>{' '}
+                    {formatNumber(
+                      calculateAverageOperationValue(
+                        usuario.operations,
+                        Number(selectedYear)
+                      )
+                    )}
+                  </p>
+                  <p>
+                    <strong>Promedio Días de Venta:</strong>{' '}
+                    {(() => {
+                      const avgDays = calculateAverageDaysToSell(
+                        usuario.operations,
+                        Number(selectedYear)
+                      );
+                      if (avgDays === 0) {
+                        return 'N/A';
+                      }
+                      return `${Number(avgDays.toFixed(1))} días`;
+                    })()}
                   </p>
                   {usuario.id !== userId && (
                     <div className="flex w-full justify-center gap-8">
