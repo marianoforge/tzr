@@ -9,6 +9,8 @@ import {
   calculateTotalOperations,
   calculateTotalReservationValue,
   calculateTotalTips,
+  calculateAverageOperationValue,
+  calculateAverageDaysToSell,
 } from '@/common/utils/calculationsAgents';
 import { Operation } from '@/common/types';
 import ModalDelete from '@/components/PrivateComponente/CommonComponents/Modal';
@@ -298,6 +300,12 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                   Monto Total Operaciones
                 </th>
                 <th className="py-3 px-4 font-semibold text-center">
+                  Promedio Valor Operación (sin alquileres)
+                </th>
+                <th className="py-3 px-4 font-semibold text-center">
+                  Tiempo Promedio de Venta (días)
+                </th>
+                <th className="py-3 px-4 font-semibold text-center">
                   Acciones
                 </th>
               </tr>
@@ -382,6 +390,29 @@ const AgentsReport: React.FC<AgentsReportProps> = ({ userId }) => {
                         selectedMonth
                       )
                     )}
+                  </td>
+                  <td className="py-3 px-4">
+                    {currencySymbol}
+                    {formatNumber(
+                      calculateAverageOperationValue(
+                        member.operations,
+                        selectedYear,
+                        selectedMonth
+                      )
+                    )}
+                  </td>
+                  <td className="py-3 px-4">
+                    {(() => {
+                      const avgDays = calculateAverageDaysToSell(
+                        member.operations,
+                        selectedYear,
+                        selectedMonth
+                      );
+                      if (avgDays === 0) {
+                        return 'N/A';
+                      }
+                      return `${Number(avgDays.toFixed(1))} días`;
+                    })()}
                   </td>
                   <td className="py-3 px-4">
                     {member.id !== userId && (
