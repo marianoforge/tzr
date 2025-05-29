@@ -10,7 +10,10 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCalculationsStore } from '@/stores';
 import { Operation, UserData } from '@/common/types/';
 import { useUserDataStore } from '@/stores/userDataStore';
-import { calculateTotals } from '@/common/utils/calculations';
+import {
+  calculateTotals,
+  calculateHonorarios,
+} from '@/common/utils/calculations';
 import { filteredOperations } from '@/common/utils/filteredOperations';
 import { filterOperationsBySearch } from '@/common/utils/filterOperationsBySearch';
 import { sortOperationValue } from '@/common/utils/sortUtils';
@@ -205,17 +208,7 @@ const OperationsTableTent: React.FC = () => {
         searchQuery
       );
 
-      const allOps = searchedOps.filter((op) => {
-        if (statusFilter === OperationStatus.CAIDA) {
-          return op.estado === OperationStatus.CAIDA;
-        } else if (statusFilter === 'all') {
-          // Si el filtro es 'all', excluir operaciones CAIDA
-          return op.estado !== OperationStatus.CAIDA;
-        } else {
-          // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
-          return op.estado === statusFilter;
-        }
-      });
+      const allOps = searchedOps;
 
       const dateSortedOps = allOps.sort((a, b) => {
         return b.fecha_operacion.localeCompare(a.fecha_operacion);
@@ -283,8 +276,19 @@ const OperationsTableTent: React.FC = () => {
         suma_total_de_puntas: sumaTotalDePuntas,
       };
 
-      // Calcular los honorarios filtrados aquí sin actualizar el estado
-      const honorariosBrutos = totals.honorarios_broker || 0;
+      // Calcular los honorarios brutos correctamente
+      // Utilizamos la función calculateHonorarios de @/common/utils/calculations para cada operación
+      const honorariosBrutos = sortedOps.reduce((total, op) => {
+        const resultado = calculateHonorarios(
+          op.valor_reserva,
+          op.porcentaje_honorarios_asesor || 0,
+          op.porcentaje_honorarios_broker || 0,
+          op.porcentaje_compartido || 0
+        );
+
+        return total + resultado.honorariosBroker;
+      }, 0);
+
       let honorariosNetos = 0;
 
       // Verificar que userData existe antes de calcular
@@ -350,17 +354,7 @@ const OperationsTableTent: React.FC = () => {
       searchQuery
     );
 
-    const allOps = searchedOps.filter((op) => {
-      if (statusFilter === OperationStatus.CAIDA) {
-        return op.estado === OperationStatus.CAIDA;
-      } else if (statusFilter === 'all') {
-        // Si el filtro es 'all', excluir operaciones CAIDA
-        return op.estado !== OperationStatus.CAIDA;
-      } else {
-        // Si es otro estado específico (EN_CURSO, CERRADA), mostrar solo ese estado
-        return op.estado === statusFilter;
-      }
-    });
+    const allOps = searchedOps;
 
     return Math.ceil((allOps.length || 0) / itemsPerPage);
   }, [
@@ -625,6 +619,7 @@ const OperationsTableTent: React.FC = () => {
               />
               <OperationsTableBody
                 currentOperations={currentOperations}
+                allFilteredOperations={[]}
                 userData={userData as UserData}
                 handleEstadoChange={handleEstadoChange}
                 handleEditClick={handleEditClick}
@@ -633,7 +628,6 @@ const OperationsTableTent: React.FC = () => {
                 filteredTotals={filteredTotals}
                 currencySymbol={currencySymbol}
                 totalNetFees={filteredHonorarios.netos}
-                totalHonorariosBrutos={filteredHonorarios.brutos}
               />
             </table>
           )}

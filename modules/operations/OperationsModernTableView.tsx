@@ -22,6 +22,7 @@ import { Operation, UserData } from '@/common/types/';
 import { formatDate } from '@/common/utils/formatDate';
 import { formatOperationsNumber } from '@/common/utils/formatNumber';
 import { calculateNetFees } from '@/common/utils/calculateNetFees';
+import { calculateHonorarios } from '@/common/utils/calculations';
 import { OperationStatus } from '@/common/enums';
 
 interface OperationsModernTableViewProps {
@@ -43,6 +44,9 @@ interface OperationsModernTableViewProps {
     suma_total_de_puntas?: number;
     punta_compradora?: number;
     punta_vendedora?: number;
+    promedio_punta_compradora_porcentaje?: number;
+    promedio_punta_vendedora_porcentaje?: number;
+    promedio_suma_puntas?: number;
   };
   totalNetFees: number;
 }
@@ -183,17 +187,12 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
           {/* Header de la tabla */}
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-4 text-left">
+              <th className="px-4 py-4 text-left">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Estado
+                  Captación
                 </span>
               </th>
-              <th className="px-6 py-4 text-left">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Dirección
-                </span>
-              </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-4 py-4 text-left">
                 <SortButton
                   label="F. Reserva"
                   isAscending={isReservaDateAscending}
@@ -201,7 +200,7 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
                   className="text-xs uppercase tracking-wider"
                 />
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-4 py-4 text-left">
                 <SortButton
                   label="F. Cierre"
                   isAscending={isClosingDateAscending}
@@ -209,7 +208,17 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
                   className="text-xs uppercase tracking-wider"
                 />
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-4 py-4 text-left">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Dirección
+                </span>
+              </th>
+              <th className="px-4 py-4 text-left">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Operación
+                </span>
+              </th>
+              <th className="px-4 py-4 text-left">
                 <SortButton
                   label="Valor"
                   isAscending={isValueAscending}
@@ -217,22 +226,42 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
                   className="text-xs uppercase tracking-wider"
                 />
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-4 py-4 text-left">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  P. Vendedora
+                </span>
+              </th>
+              <th className="px-4 py-4 text-left">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  P. Compradora
+                </span>
+              </th>
+              <th className="px-4 py-4 text-left">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  % Puntas
+                </span>
+              </th>
+              <th className="px-4 py-4 text-left">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Puntas $
+                </span>
+              </th>
+              <th className="px-4 py-4 text-left">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Hon. Brutos
+                </span>
+              </th>
+              <th className="px-4 py-4 text-left">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Hon. Netos
                 </span>
               </th>
-              <th className="px-6 py-4 text-left">
+              <th className="px-4 py-4 text-left">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Comisiones
+                  Estado
                 </span>
               </th>
-              <th className="px-6 py-4 text-left">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                  Realizador
-                </span>
-              </th>
-              <th className="px-6 py-4 text-center">
+              <th className="px-4 py-4 text-center">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Acciones
                 </span>
@@ -244,6 +273,14 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
           <tbody className="bg-white divide-y divide-gray-100">
             {operations.map((operation, index) => {
               const netFees = calculateNetFees(operation, userData);
+              const honorariosBroker = calculateHonorarios(
+                operation.valor_reserva,
+                operation.porcentaje_honorarios_asesor || 0,
+                operation.porcentaje_honorarios_broker || 0,
+                operation.porcentaje_compartido ?? 0,
+                operation.porcentaje_referido ?? 0
+              ).honorariosBroker;
+
               const statusConfig = getStatusConfig(operation.estado);
               const isHovered = hoveredRow === operation.id;
               const isEven = index % 2 === 0;
@@ -257,37 +294,22 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
                   onMouseEnter={() => setHoveredRow(operation.id)}
                   onMouseLeave={() => setHoveredRow(null)}
                 >
-                  {/* Estado */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div
-                        className={`flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${statusConfig.color}`}
-                      >
-                        <div
-                          className={`w-2 h-2 rounded-full ${statusConfig.dotColor} mr-2`}
-                        />
-                        {statusConfig.text}
+                  {/* Fecha Captación */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    {operation.fecha_captacion ? (
+                      <div className="flex items-center">
+                        <CalendarIcon className="h-4 w-4 text-purple-500 mr-2" />
+                        <span className="text-sm text-gray-900">
+                          {formatDate(operation.fecha_captacion)}
+                        </span>
                       </div>
-                    </div>
-                  </td>
-
-                  {/* Dirección */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <BuildingOfficeIcon className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-gray-900 truncate">
-                          {operation.direccion_reserva}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {operation.tipo_operacion} • {operation.tipo_inmueble}
-                        </p>
-                      </div>
-                    </div>
+                    ) : (
+                      <span className="text-gray-400 text-sm">-</span>
+                    )}
                   </td>
 
                   {/* Fecha Reserva */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     {operation.fecha_reserva ? (
                       <div className="flex items-center">
                         <CalendarIcon className="h-4 w-4 text-blue-500 mr-2" />
@@ -301,7 +323,7 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
                   </td>
 
                   {/* Fecha Cierre */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     {operation.fecha_operacion ? (
                       <div className="flex items-center">
                         <CalendarIcon className="h-4 w-4 text-green-500 mr-2" />
@@ -314,8 +336,37 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
                     )}
                   </td>
 
+                  {/* Dirección */}
+                  <td className="px-4 py-4 max-w-40">
+                    <div className="flex items-center">
+                      <BuildingOfficeIcon className="h-5 w-5 text-gray-400 mr-2 flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
+                          {operation.direccion_reserva}
+                        </p>
+                        {operation.numero_casa && (
+                          <p className="text-xs text-gray-500 truncate">
+                            Piso/Apto: {operation.numero_casa}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Operación */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <div className="text-sm">
+                      <div className="font-medium text-gray-900">
+                        {operation.tipo_operacion}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {operation.tipo_inmueble}
+                      </div>
+                    </div>
+                  </td>
+
                   {/* Valor */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <CurrencyDollarIcon className="h-4 w-4 text-green-500 mr-2" />
                       <span className="text-sm font-semibold text-gray-900">
@@ -325,43 +376,80 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
                     </div>
                   </td>
 
+                  {/* Punta Vendedora */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="text-sm text-gray-900">
+                      {formatOperationsNumber(
+                        operation.porcentaje_punta_vendedora ?? 0,
+                        true
+                      )}
+                    </span>
+                  </td>
+
+                  {/* Punta Compradora */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="text-sm text-gray-900">
+                      {formatOperationsNumber(
+                        operation.porcentaje_punta_compradora ?? 0,
+                        true
+                      )}
+                    </span>
+                  </td>
+
+                  {/* % Puntas Total */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="text-sm font-medium text-blue-600">
+                      {formatOperationsNumber(
+                        (operation.porcentaje_punta_compradora ?? 0) +
+                          (operation.porcentaje_punta_vendedora ?? 0),
+                        true
+                      )}
+                    </span>
+                  </td>
+
+                  {/* Puntas en dinero */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="text-sm text-gray-900">
+                      {currencySymbol}
+                      {formatOperationsNumber(
+                        Number(operation.punta_compradora || 0) +
+                          Number(operation.punta_vendedora || 0)
+                      )}
+                    </span>
+                  </td>
+
+                  {/* Honorarios Brutos */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="text-sm font-semibold text-orange-600">
+                      {currencySymbol}
+                      {formatOperationsNumber(honorariosBroker)}
+                    </span>
+                  </td>
+
                   {/* Honorarios Netos */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <span className="text-sm font-semibold text-blue-600">
                       {currencySymbol}
                       {formatOperationsNumber(netFees)}
                     </span>
                   </td>
 
-                  {/* Comisiones */}
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-xs text-gray-600">
-                      <div>
-                        C:{' '}
-                        {formatOperationsNumber(
-                          operation.porcentaje_punta_compradora ?? 0,
-                          true
-                        )}
-                      </div>
-                      <div>
-                        V:{' '}
-                        {formatOperationsNumber(
-                          operation.porcentaje_punta_vendedora ?? 0,
-                          true
-                        )}
+                  {/* Estado */}
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div
+                        className={`flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${statusConfig.color}`}
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full ${statusConfig.dotColor} mr-2`}
+                        />
+                        {statusConfig.text}
                       </div>
                     </div>
                   </td>
 
-                  {/* Realizador */}
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600 truncate block max-w-32">
-                      {operation.realizador_venta || 'Sin asignar'}
-                    </span>
-                  </td>
-
                   {/* Acciones */}
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <td className="px-4 py-4 whitespace-nowrap text-center">
                     <Menu as="div" className="relative inline-block text-left">
                       <Menu.Button className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
                         <EllipsisVerticalIcon className="h-5 w-5 text-gray-500" />
@@ -456,32 +544,75 @@ const OperationsModernTableView: React.FC<OperationsModernTableViewProps> = ({
           {/* Footer con totales */}
           <tfoot className="bg-gradient-to-r from-gray-50 to-blue-50 border-t-2 border-blue-200">
             <tr className="font-semibold">
-              <td colSpan={4} className="px-6 py-4 text-sm text-gray-700">
+              <td colSpan={5} className="px-4 py-4 text-sm text-gray-700">
                 <div className="flex items-center">
                   <ChartBarIcon className="h-5 w-5 text-blue-500 mr-2" />
                   TOTALES
                 </div>
               </td>
-              <td className="px-6 py-4 text-sm font-bold text-gray-900">
+              <td className="px-4 py-4 text-sm font-bold text-gray-900">
                 {currencySymbol}
                 {formatOperationsNumber(filteredTotals.valor_reserva || 0)}
               </td>
-              <td className="px-6 py-4 text-sm font-bold text-blue-600">
+              <td className="px-4 py-4 text-sm text-gray-700">
+                {filteredTotals?.promedio_punta_vendedora_porcentaje !==
+                  undefined &&
+                filteredTotals?.promedio_punta_vendedora_porcentaje !== null &&
+                filteredTotals?.promedio_punta_vendedora_porcentaje !== 0
+                  ? formatOperationsNumber(
+                      filteredTotals.promedio_punta_vendedora_porcentaje,
+                      true
+                    )
+                  : 'N/A'}
+              </td>
+              <td className="px-4 py-4 text-sm text-gray-700">
+                {filteredTotals?.promedio_punta_compradora_porcentaje !==
+                  undefined &&
+                filteredTotals?.promedio_punta_compradora_porcentaje !== null &&
+                filteredTotals?.promedio_punta_compradora_porcentaje !== 0
+                  ? formatOperationsNumber(
+                      filteredTotals.promedio_punta_compradora_porcentaje,
+                      true
+                    )
+                  : 'N/A'}
+              </td>
+              <td className="px-4 py-4 text-sm text-gray-700">
+                {filteredTotals?.promedio_suma_puntas !== undefined &&
+                filteredTotals?.promedio_suma_puntas !== null &&
+                !isNaN(filteredTotals?.promedio_suma_puntas) &&
+                filteredTotals?.promedio_suma_puntas !== 0
+                  ? formatOperationsNumber(
+                      filteredTotals.promedio_suma_puntas,
+                      true
+                    )
+                  : 'N/A'}
+              </td>
+              <td className="px-4 py-4 text-sm font-bold text-gray-900">
+                {currencySymbol}
+                {formatOperationsNumber(
+                  filteredTotals.suma_total_de_puntas || 0
+                )}
+              </td>
+              <td className="px-4 py-4 text-sm font-bold text-orange-600">
+                {currencySymbol}
+                {formatOperationsNumber(
+                  operations.reduce((total, op) => {
+                    const honorariosBroker = calculateHonorarios(
+                      op.valor_reserva,
+                      op.porcentaje_honorarios_asesor || 0,
+                      op.porcentaje_honorarios_broker || 0,
+                      op.porcentaje_compartido ?? 0,
+                      op.porcentaje_referido ?? 0
+                    ).honorariosBroker;
+                    return total + honorariosBroker;
+                  }, 0)
+                )}
+              </td>
+              <td className="px-4 py-4 text-sm font-bold text-blue-600">
                 {currencySymbol}
                 {formatOperationsNumber(totalNetFees)}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-700">
-                <div className="text-xs">
-                  <div>
-                    P. Total: {filteredTotals.suma_total_de_puntas || 0}
-                  </div>
-                  <div>
-                    C: {filteredTotals.punta_compradora || 0} | V:{' '}
-                    {filteredTotals.punta_vendedora || 0}
-                  </div>
-                </div>
-              </td>
-              <td colSpan={2} className="px-6 py-4 text-right">
+              <td colSpan={2} className="px-4 py-4 text-right">
                 <span className="text-xs text-gray-500">
                   {operations.length} operación
                   {operations.length !== 1 ? 'es' : ''}
