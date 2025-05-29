@@ -178,7 +178,11 @@ const MonthlyLineChartPoints = () => {
   }, [operations]);
 
   if (isLoading) {
-    return <SkeletonLoader height={380} count={1} />;
+    return (
+      <div className="bg-white p-6 rounded-xl shadow-md w-full">
+        <SkeletonLoader height={380} count={1} />
+      </div>
+    );
   }
 
   if (operationsError) {

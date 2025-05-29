@@ -19,6 +19,7 @@ import { auth } from '@/lib/firebase';
 import { useUserDataStore } from '@/stores/userDataStore';
 import { UserActions } from '@/components/PrivateComponente/NavComponents/UserActions';
 import { UserRole } from '@/common/enums';
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
 import { NavLink } from '../NavComponents/NavLink';
 
@@ -151,14 +152,6 @@ const VerticalNavbar = () => {
   );
 
   const renderNavLinksBasedOnRole = () => {
-    if (isLoading) {
-      return (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      );
-    }
-
     // Verificar el rol del usuario
     if (!userData) return renderNavButtons();
 
@@ -182,6 +175,21 @@ const VerticalNavbar = () => {
       </>
     );
   };
+
+  // Si está cargando, mostrar el skeleton loader para todo el navbar
+  if (isLoading) {
+    return (
+      <nav className="h-[calc(100vh-8rem)] text-sm flex-col w-[320px] fixed left-0 top-16 hidden xl:block overflow-y-auto">
+        <div className="flex items-center justify-center h-20">
+          <Image src="/trackProLogo.png" alt="Logo" width={350} height={350} />
+        </div>
+        <div className="ml-6 h-[1px] w-64 bg-gray-300"></div>
+        <div className="p-4 space-y-2">
+          <SkeletonLoader height={40} count={15} />
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="h-[calc(100vh-8rem)] text-sm flex-col w-[320px] fixed left-0 top-16 hidden xl:block overflow-y-auto">
