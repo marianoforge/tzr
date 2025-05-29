@@ -26,6 +26,7 @@ interface OperationTotal {
 
 interface OperationsTableBodyProps {
   currentOperations: Operation[];
+  allFilteredOperations: Operation[];
   userData: UserData;
   handleEstadoChange: (id: string, currentEstado: string) => void;
   handleEditClick: (operation: Operation) => void;
@@ -34,11 +35,11 @@ interface OperationsTableBodyProps {
   filteredTotals: OperationTotal;
   currencySymbol: string;
   totalNetFees: number;
-  totalHonorariosBrutos?: number;
 }
 
 const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
   currentOperations,
+  allFilteredOperations,
   userData,
   handleEstadoChange,
   handleEditClick,
@@ -47,7 +48,6 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
   filteredTotals,
   currencySymbol,
   totalNetFees,
-  totalHonorariosBrutos,
 }) => {
   return (
     <tbody>
@@ -276,7 +276,18 @@ const OperationsTableBody: React.FC<OperationsTableBodyProps> = ({
           )}
         </td>
         <td className="py-3 px-2 text-center">
-          {`${currencySymbol}${formatOperationsNumber(totalHonorariosBrutos || 0)}`}
+          {`${currencySymbol}${formatOperationsNumber(
+            allFilteredOperations.reduce((total, op) => {
+              const honorariosBroker = calculateHonorarios(
+                op.valor_reserva,
+                op.porcentaje_honorarios_asesor || 0,
+                op.porcentaje_honorarios_broker || 0,
+                op.porcentaje_compartido ?? 0,
+                op.porcentaje_referido ?? 0
+              ).honorariosBroker;
+              return total + honorariosBroker;
+            }, 0)
+          )}`}
         </td>
         <td className="py-3 px-2 text-center">
           {`${currencySymbol}${formatOperationsNumber(totalNetFees)}`}
