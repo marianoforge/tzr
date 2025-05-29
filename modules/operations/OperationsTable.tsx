@@ -449,10 +449,61 @@ const OperationsTable: React.FC = () => {
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        Lista de Operaciones - Ventas
-      </h2>
+      {/* Header profesional y moderno - VENTAS */}
+      <div className="mb-6 border-l-4 border-blue-500 pl-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Ventas</h1>
+                <p className="text-sm text-blue-600 font-medium">
+                  Gestión de propiedades
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 shadow-sm">
+              <div className="w-3 h-3 bg-blue-500 rounded-full shadow-sm"></div>
+              <span className="text-sm font-semibold text-blue-700">
+                Ventas
+              </span>
+            </div>
+            <div className="text-sm text-gray-400">
+              {new Date().toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="overflow-x-auto flex flex-col justify-around">
+        {/* Selector de vista para desktop */}
+        <div className="hidden lg:block mb-4">
+          <OperationsViewSelector
+            currentView={desktopView}
+            onViewChange={setDesktopView}
+          />
+        </div>
+
         {/* Filtros originales solo para desktop */}
         <div className="hidden lg:block">
           <OperationsTableFilters
@@ -517,11 +568,6 @@ const OperationsTable: React.FC = () => {
 
         {/* Vista de tabla para pantallas grandes */}
         <div className="hidden lg:block">
-          <OperationsViewSelector
-            currentView={desktopView}
-            onViewChange={setDesktopView}
-          />
-
           {desktopView === 'grid' && (
             <OperationsModernGridView
               operations={currentOperations}
@@ -656,9 +702,9 @@ const OperationsTable: React.FC = () => {
               setIsDeleteModalOpen(false);
             }
           }}
-          secondButtonText="Borrar"
+          secondButtonText="Borrar Operación"
           className="w-[450px]"
-          thirdButtonText="Caída"
+          thirdButtonText="Operación Caída"
           onThirdButtonClick={() => {
             if (selectedOperation?.id) {
               handleFallenOperation(selectedOperation.id);
