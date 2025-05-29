@@ -20,6 +20,7 @@ import { useUserCurrencySymbol } from '@/common/hooks/useUserCurrencySymbol';
 import { OperationStatus, UserRole } from '@/common/enums';
 import { calculateTotalHonorariosBroker } from '@/common/utils/calculations';
 import { fetchUserOperations } from '@/lib/api/operationsApi';
+import SkeletonLoader from '@/components/PrivateComponente/CommonComponents/SkeletonLoader';
 
 const generateData = (
   operations: Operation[],
@@ -185,11 +186,7 @@ const VentasAcumuladas = () => {
   );
 
   if (isLoading) {
-    return (
-      <div className="bg-white p-6 rounded-xl shadow-md w-full">
-        <p className="text-center">Cargando datos...</p>
-      </div>
-    );
+    return <SkeletonLoader height={480} count={1} />;
   }
 
   if (operationsError) {

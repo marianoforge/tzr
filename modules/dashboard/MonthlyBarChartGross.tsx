@@ -180,6 +180,15 @@ const MonthlyBarChartGross: React.FC = () => {
     setData,
   ]);
 
+  if (isLoading) {
+    return <SkeletonLoader height={380} count={1} />;
+  }
+  if (operationsError) {
+    return (
+      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
+    );
+  }
+
   if (data.length === 0) {
     return (
       <div className="bg-white p-4 rounded shadow-md w-full">
@@ -188,15 +197,6 @@ const MonthlyBarChartGross: React.FC = () => {
         </h2>
         <p className="text-center text-gray-600">No existen operaciones</p>
       </div>
-    );
-  }
-
-  if (isLoading) {
-    return <SkeletonLoader height={380} count={1} />;
-  }
-  if (operationsError) {
-    return (
-      <p>Error: {operationsError.message || 'An unknown error occurred'}</p>
     );
   }
 
