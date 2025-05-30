@@ -15,13 +15,53 @@ interface CachedNews {
   nextUpdate: string;
 }
 
-const CACHE_DIR = path.join(process.cwd(), 'cache');
+// Función para determinar el directorio de caché más seguro
+function getCacheDirectory(): string {
+  // Detectar entorno serverless por la estructura de paths
+  const isLambda =
+    process.cwd().includes('/var/task') ||
+    process.cwd().includes('/var/runtime');
+  const isVercel = process.env.VERCEL === '1';
+  const isNetlify = process.env.NETLIFY === 'true';
+
+  // En entornos serverless, siempre usar /tmp
+  if (
+    isLambda ||
+    isVercel ||
+    isNetlify ||
+    process.env.NODE_ENV === 'production'
+  ) {
+    return '/tmp';
+  }
+
+  // En desarrollo, usar directorio local
+  return path.join(process.cwd(), 'cache');
+}
+
+const CACHE_DIR = getCacheDirectory();
 const NEWS_CACHE_FILE = path.join(CACHE_DIR, 'market-news.json');
+
+// Cache en memoria como fallback para entornos serverless
+let inMemoryCache: CachedNews | null = null;
+let lastMemoryCacheTime = 0;
+const MEMORY_CACHE_TTL = 3 * 60 * 60 * 1000; // 3 horas en millisegundos
 
 // Asegurar que el directorio cache existe
 function ensureCacheDir() {
-  if (!fs.existsSync(CACHE_DIR)) {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  try {
+    // Si es /tmp, no necesita crear subdirectorio
+    if (CACHE_DIR === '/tmp') {
+      console.log('Using /tmp directory for cache (serverless environment)');
+      return;
+    }
+
+    if (!fs.existsSync(CACHE_DIR)) {
+      fs.mkdirSync(CACHE_DIR, { recursive: true });
+      console.log(`Cache directory created: ${CACHE_DIR}`);
+    }
+  } catch (error) {
+    console.error('Error creating cache directory:', error);
+    console.log('Will use memory cache only');
   }
 }
 
@@ -56,27 +96,73 @@ function getNextUpdateTime(): Date {
   return nextUpdate;
 }
 
-// Leer noticias del caché
-export function getCachedNews(region: string = 'Argentina'): CachedNews | null {
-  ensureCacheDir();
+// Función para obtener desde caché en memoria
+function getMemoryCache(region: string): CachedNews | null {
+  if (!inMemoryCache) return null;
 
-  try {
-    if (!fs.existsSync(NEWS_CACHE_FILE)) {
-      return null;
-    }
-
-    const cacheData = JSON.parse(fs.readFileSync(NEWS_CACHE_FILE, 'utf8'));
-
-    // Verificar si es para la misma región
-    if (cacheData.region !== region) {
-      return null;
-    }
-
-    return cacheData;
-  } catch (error) {
-    console.error('Error reading news cache:', error);
+  const now = Date.now();
+  if (now - lastMemoryCacheTime > MEMORY_CACHE_TTL) {
+    console.log('Memory cache expired');
+    inMemoryCache = null;
     return null;
   }
+
+  if (inMemoryCache.region !== region) {
+    console.log(
+      `Memory cache region mismatch: ${inMemoryCache.region} !== ${region}`
+    );
+    return null;
+  }
+
+  console.log('Memory cache hit');
+  return inMemoryCache;
+}
+
+// Función para guardar en caché en memoria
+function setMemoryCache(news: NewsItem[], region: string): void {
+  inMemoryCache = {
+    news,
+    region,
+    lastUpdated: new Date().toISOString(),
+    nextUpdate: getNextUpdateTime().toISOString(),
+  };
+  lastMemoryCacheTime = Date.now();
+  console.log(`Memory cache updated for ${region}`);
+}
+
+// Leer noticias del caché
+export function getCachedNews(region: string = 'Argentina'): CachedNews | null {
+  // En producción, usar solo caché en memoria para evitar problemas de filesystem
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Production mode: using memory cache only');
+    return getMemoryCache(region);
+  }
+
+  // En desarrollo, intentar filesystem primero
+  try {
+    ensureCacheDir();
+
+    if (fs.existsSync(NEWS_CACHE_FILE)) {
+      const cacheData = JSON.parse(fs.readFileSync(NEWS_CACHE_FILE, 'utf8'));
+
+      if (cacheData.region === region) {
+        console.log(`Filesystem cache hit for region: ${region}`);
+        return cacheData;
+      } else {
+        console.log(
+          `Filesystem cache region mismatch: ${cacheData.region} !== ${region}`
+        );
+      }
+    } else {
+      console.log(`Cache file not found: ${NEWS_CACHE_FILE}`);
+    }
+  } catch (error) {
+    console.error('Error reading filesystem cache:', error);
+  }
+
+  // Fallback a caché en memoria
+  console.log('Falling back to memory cache');
+  return getMemoryCache(region);
 }
 
 // Verificar si el caché necesita actualización
@@ -98,41 +184,63 @@ export function setCachedNews(
   news: NewsItem[],
   region: string = 'Argentina'
 ): void {
-  ensureCacheDir();
+  // Siempre guardar en memoria cache como backup
+  setMemoryCache(news, region);
 
-  const cacheData: CachedNews = {
-    news,
-    region,
-    lastUpdated: new Date().toISOString(),
-    nextUpdate: getNextUpdateTime().toISOString(),
-  };
+  // En producción, usar solo caché en memoria
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Production mode: using memory cache only');
+    return;
+  }
 
+  // En desarrollo, intentar guardar en filesystem también
   try {
+    ensureCacheDir();
+
+    const cacheData: CachedNews = {
+      news,
+      region,
+      lastUpdated: new Date().toISOString(),
+      nextUpdate: getNextUpdateTime().toISOString(),
+    };
+
     fs.writeFileSync(NEWS_CACHE_FILE, JSON.stringify(cacheData, null, 2));
-    console.log(`News cache updated for ${region} at ${cacheData.lastUpdated}`);
+    console.log(
+      `Filesystem cache updated for ${region} at ${cacheData.lastUpdated} in ${CACHE_DIR}`
+    );
   } catch (error) {
-    console.error('Error writing news cache:', error);
+    console.error('Error writing filesystem cache:', error);
+    console.error('Cache directory:', CACHE_DIR);
+    console.log('Using memory cache as fallback');
   }
 }
 
 // Obtener información del estado del caché
 export function getCacheStatus(region: string = 'Argentina') {
   const cached = getCachedNews(region);
-
+  
   if (!cached) {
     return {
       hasCache: false,
       shouldUpdate: isUpdateTime(),
       isUpdateTime: isUpdateTime(),
       nextUpdate: null,
+      cacheType:
+        process.env.NODE_ENV === 'production'
+          ? 'memory-only'
+          : 'filesystem+memory',
     };
   }
-
+  
   return {
     hasCache: true,
     lastUpdated: cached.lastUpdated,
     nextUpdate: cached.nextUpdate,
     shouldUpdate: shouldUpdateCache(region),
     isUpdateTime: isUpdateTime(),
+    cacheType:
+      process.env.NODE_ENV === 'production'
+        ? 'memory-only'
+        : 'filesystem+memory',
   };
 }

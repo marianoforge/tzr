@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowUpIcon,
+  ArrowDownIcon,
+  ServerIcon,
+  MagnifyingGlassIcon,
+  CalendarIcon,
+  AdjustmentsHorizontalIcon,
+} from '@heroicons/react/24/outline';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ServerIcon } from '@heroicons/react/24/solid';
 
 import { useExpensesStore } from '@/stores/useExpensesStore';
 import { formatNumber } from '@/common/utils/formatNumber';
@@ -251,29 +257,156 @@ const ExpensesAgentsList = () => {
     <div className="bg-white p-4 mt-20 rounded-xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">{pageTitle}</h2>
       <div className="overflow-x-auto flex flex-col justify-around">
-        <div className="flex md:flex-col lg:flex-row justify-around items-center mt-2  text-mediumBlue w-full">
-          <input
-            type="text"
-            placeholder="Buscar por asesor "
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold placeholder-mediumBlue placeholder-italic text-center"
-          />
-          <Select
-            options={yearsFilter}
-            value={yearFilter}
-            onChange={(value: string | number) => setYearFilter(Number(value))}
-            className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          />
+        {/* Filtros modernos con el mismo estilo que operaciones y gastos */}
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl shadow-md border border-gray-200 mb-6">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg">
+              <AdjustmentsHorizontalIcon className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-blue-600">
+                Filtros de Búsqueda
+              </h3>
+              <p className="text-sm text-gray-600">
+                Personaliza tu búsqueda de gastos de agentes
+              </p>
+            </div>
+          </div>
 
-          <Select
-            options={monthsFilter}
-            value={monthFilter}
-            onChange={(value: string | number) =>
-              setMonthFilter(value.toString())
-            }
-            className="w-[200px] h-[40px] p-2 mb-8 border border-gray-300 rounded font-semibold"
-          />
+          {/* Filters in Single Row */}
+          <div className="flex gap-4 items-end w-full">
+            {/* Search Input */}
+            <div className="w-[220px]">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <MagnifyingGlassIcon className="w-4 h-4 inline mr-2" />
+                Búsqueda General
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Buscar por asesor..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-11 pl-4 pr-10 border-2 border-gray-300 rounded-lg font-medium placeholder-gray-400 text-gray-700 bg-white shadow-sm transition-all duration-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none hover:border-gray-400"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 cursor-pointer hover:text-blue-600 transition-colors duration-200" />
+                </div>
+              </div>
+            </div>
+
+            {/* Year Filter */}
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <CalendarIcon className="w-4 h-4 inline mr-2" />
+                Año
+              </label>
+              <div className="relative">
+                <Select
+                  options={yearsFilter}
+                  value={yearFilter}
+                  onChange={(value: string | number) =>
+                    setYearFilter(Number(value))
+                  }
+                  className="w-full h-11 px-4 border-2 border-gray-300 rounded-lg font-medium text-gray-700 bg-white shadow-sm transition-all duration-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none hover:border-gray-400 appearance-none cursor-pointer"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Month Filter */}
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <CalendarIcon className="w-4 h-4 inline mr-2" />
+                Mes
+              </label>
+              <div className="relative">
+                <Select
+                  options={monthsFilter}
+                  value={monthFilter}
+                  onChange={(value: string | number) =>
+                    setMonthFilter(value.toString())
+                  }
+                  className="w-full h-11 px-4 border-2 border-gray-300 rounded-lg font-medium text-gray-700 bg-white shadow-sm transition-all duration-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 focus:outline-none hover:border-gray-400 appearance-none cursor-pointer"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Clear Filters Button */}
+            <div className="flex items-end">
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setYearFilter(new Date().getFullYear());
+                  setMonthFilter('all');
+                }}
+                className="text-xs font-medium text-gray-500 hover:text-blue-600 transition-colors duration-200 px-3 py-1 rounded-lg hover:bg-gray-100"
+              >
+                Limpiar filtros
+              </button>
+            </div>
+          </div>
+
+          {/* Filter Stats */}
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-gray-500">
+                Filtros activos:
+              </span>
+              <div className="flex gap-1 flex-wrap">
+                {searchQuery && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600/10 text-blue-600">
+                    Búsqueda
+                  </span>
+                )}
+                {yearFilter !== new Date().getFullYear() && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600/10 text-blue-600">
+                    Año
+                  </span>
+                )}
+                {monthFilter !== 'all' && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-600/10 text-blue-600">
+                    Mes
+                  </span>
+                )}
+              </div>
+              {!searchQuery &&
+                yearFilter === new Date().getFullYear() &&
+                monthFilter === 'all' && (
+                  <span className="text-xs text-gray-400">Ninguno</span>
+                )}
+            </div>
+          </div>
         </div>
 
         {currentExpenses.length === 0 ? (
