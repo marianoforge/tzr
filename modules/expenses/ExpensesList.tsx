@@ -5,10 +5,10 @@ import {
   ArrowUpIcon,
   ArrowDownIcon,
   MagnifyingGlassIcon,
-  FunnelIcon,
   CalendarIcon,
   TagIcon,
   CurrencyDollarIcon,
+  AdjustmentsHorizontalIcon,
 } from '@heroicons/react/24/outline';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -98,16 +98,6 @@ const ExpensesList = () => {
     setYearFilter(new Date().getFullYear());
     setMonthFilter('all');
     setExpenseTypeFilter('all');
-  };
-
-  // Función para contar filtros activos
-  const getActiveFiltersCount = () => {
-    let count = 0;
-    if (searchQuery.trim()) count++;
-    if (yearFilter !== new Date().getFullYear()) count++;
-    if (monthFilter !== 'all') count++;
-    if (expenseTypeFilter !== 'all') count++;
-    return count;
   };
 
   const itemsPerPage = 10;
@@ -308,105 +298,190 @@ const ExpensesList = () => {
       </div>
 
       <div className="overflow-x-auto flex flex-col justify-around">
-        {/* Filtros modernos en diseño horizontal */}
-        <div className="mb-6">
-          {/* Header de filtros */}
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <FunnelIcon className="h-5 w-5 text-orange-600" />
-              <h3 className="text-lg font-semibold text-gray-800">
+        {/* Filtros modernos con el mismo estilo que operaciones */}
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 rounded-xl shadow-md border border-gray-200 mb-6">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg">
+              <AdjustmentsHorizontalIcon className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-orange-600">
                 Filtros de Búsqueda
               </h3>
-              {getActiveFiltersCount() > 0 && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                  {getActiveFiltersCount()} filtro
-                  {getActiveFiltersCount() > 1 ? 's' : ''} activo
-                  {getActiveFiltersCount() > 1 ? 's' : ''}
-                </span>
-              )}
+              <p className="text-sm text-gray-600">
+                Personaliza tu búsqueda de gastos
+              </p>
             </div>
-            <p className="text-sm text-gray-600">
-              Utiliza los filtros para encontrar gastos específicos y refinar tu
-              búsqueda
-            </p>
           </div>
 
-          {/* Filtros en layout horizontal */}
-          <div className="flex gap-4 items-end flex-wrap">
-            {/* Campo de búsqueda */}
-            <div className="flex-1 min-w-[280px]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                <MagnifyingGlassIcon className="h-4 w-4 inline mr-1" />
-                Buscar por descripción
+          {/* Filters in Single Row */}
+          <div className="flex gap-4 items-end w-full">
+            {/* Search Input */}
+            <div className="w-[220px]">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <MagnifyingGlassIcon className="w-4 h-4 inline mr-2" />
+                Búsqueda General
               </label>
-              <input
-                type="text"
-                placeholder="Ej: oficina, viáticos, marketing..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 px-3 border border-gray-300 rounded-lg font-medium placeholder-gray-400 text-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Buscar por descripción..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-11 pl-4 pr-10 border-2 border-gray-300 rounded-lg font-medium placeholder-gray-400 text-gray-700 bg-white shadow-sm transition-all duration-200 focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20 focus:outline-none hover:border-gray-400"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 cursor-pointer hover:text-orange-600 transition-colors duration-200" />
+                </div>
+              </div>
             </div>
 
-            {/* Filtro de año */}
-            <div className="min-w-[140px]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                <CalendarIcon className="h-4 w-4 inline mr-1" />
+            {/* Year Filter */}
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <CalendarIcon className="w-4 h-4 inline mr-2" />
                 Año
               </label>
-              <Select
-                options={yearsFilter}
-                value={yearFilter}
-                onChange={(value: string | number) =>
-                  setYearFilter(Number(value))
-                }
-                className="w-full h-10 px-3 border border-gray-300 rounded-lg font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
+              <div className="relative">
+                <Select
+                  options={yearsFilter}
+                  value={yearFilter}
+                  onChange={(value: string | number) =>
+                    setYearFilter(Number(value))
+                  }
+                  className="w-full h-11 px-4 border-2 border-gray-300 rounded-lg font-medium text-gray-700 bg-white shadow-sm transition-all duration-200 focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20 focus:outline-none hover:border-gray-400 appearance-none cursor-pointer"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            {/* Filtro de mes */}
-            <div className="min-w-[140px]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                <CalendarIcon className="h-4 w-4 inline mr-1" />
+            {/* Month Filter */}
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <CalendarIcon className="w-4 h-4 inline mr-2" />
                 Mes
               </label>
-              <Select
-                options={monthsFilter}
-                value={monthFilter}
-                onChange={(value: string | number) =>
-                  setMonthFilter(value.toString())
-                }
-                className="w-full h-10 px-3 border border-gray-300 rounded-lg font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
+              <div className="relative">
+                <Select
+                  options={monthsFilter}
+                  value={monthFilter}
+                  onChange={(value: string | number) =>
+                    setMonthFilter(value.toString())
+                  }
+                  className="w-full h-11 px-4 border-2 border-gray-300 rounded-lg font-medium text-gray-700 bg-white shadow-sm transition-all duration-200 focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20 focus:outline-none hover:border-gray-400 appearance-none cursor-pointer"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            {/* Filtro de tipo */}
-            <div className="min-w-[180px]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                <TagIcon className="h-4 w-4 inline mr-1" />
+            {/* Expense Type Filter */}
+            <div className="flex-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <TagIcon className="w-4 h-4 inline mr-2" />
                 Tipo de Gasto
               </label>
-              <Select
-                options={expenseTypes}
-                value={expenseTypeFilter}
-                onChange={(value: string | number) =>
-                  setExpenseTypeFilter(value.toString())
-                }
-                className="w-full h-10 px-3 border border-gray-300 rounded-lg font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-              />
+              <div className="relative">
+                <Select
+                  options={expenseTypes}
+                  value={expenseTypeFilter}
+                  onChange={(value: string | number) =>
+                    setExpenseTypeFilter(value.toString())
+                  }
+                  className="w-full h-11 px-4 border-2 border-gray-300 rounded-lg font-medium text-gray-700 bg-white shadow-sm transition-all duration-200 focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20 focus:outline-none hover:border-gray-400 appearance-none cursor-pointer"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            {/* Botón limpiar filtros */}
-            {getActiveFiltersCount() > 0 && (
-              <div className="min-w-[120px]">
-                <button
-                  onClick={clearFilters}
-                  className="w-full h-10 px-4 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:from-gray-100 hover:to-gray-200 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow"
-                >
-                  Limpiar Filtros
-                </button>
+            {/* Clear Filters Button */}
+            <div className="flex items-end">
+              <button
+                onClick={clearFilters}
+                className="text-xs font-medium text-gray-500 hover:text-orange-600 transition-colors duration-200 px-3 py-1 rounded-lg hover:bg-gray-100"
+              >
+                Limpiar filtros
+              </button>
+            </div>
+          </div>
+
+          {/* Filter Stats */}
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-gray-500">
+                Filtros activos:
+              </span>
+              <div className="flex gap-1 flex-wrap">
+                {searchQuery && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-600/10 text-orange-600">
+                    Búsqueda
+                  </span>
+                )}
+                {yearFilter !== new Date().getFullYear() && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-600/10 text-orange-600">
+                    Año
+                  </span>
+                )}
+                {monthFilter !== 'all' && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-600/10 text-orange-600">
+                    Mes
+                  </span>
+                )}
+                {expenseTypeFilter !== 'all' && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-600/10 text-orange-600">
+                    Tipo
+                  </span>
+                )}
               </div>
-            )}
+              {!searchQuery &&
+                yearFilter === new Date().getFullYear() &&
+                monthFilter === 'all' &&
+                expenseTypeFilter === 'all' && (
+                  <span className="text-xs text-gray-400">Ninguno</span>
+                )}
+            </div>
           </div>
         </div>
 
